@@ -40,12 +40,17 @@ async function launchInstalled() {
   await launcher.waitForFunction(() => typeof window.strikeZone?.getState === 'function');
   return launcher;
 }
-async function expectedState(page, phase) {
-  for (let i = 0; i < 12; i++) {
+async function expectedState(page, phase, { timeout = 30000, retry = true } = {}) {
+  const deadline = Date.now() + timeout;
+  let lastPhase;
+  while (Date.now() < deadline) {
     const state = await page.evaluate(() => window.strikeZone.getState());
+    if (state.update.phase !== lastPhase) console.log('Update state:', JSON.stringify(state.update));
+    lastPhase = state.update.phase;
     if (state.update.phase === phase) return state;
-    if (state.update.phase === 'error' || state.update.phase === 'idle') await page.evaluate(() => window.strikeZone.check());
-    await wait(2000);
+    if (state.update.phase === 'error' && !retry) throw new Error('Update failed: ' + JSON.stringify(state.update));
+    if (retry && ['error', 'idle'].includes(state.update.phase)) await page.evaluate(() => window.strikeZone.check());
+    await wait(1000);
   }
   throw new Error('Expected update state ' + phase + ', got ' + JSON.stringify(await page.evaluate(() => window.strikeZone.getState())));
 }
@@ -64,12 +69,16 @@ async function main() {
   const probe = 'probe-' + Date.now();
   await launcher.evaluate(value => localStorage.setItem('sz-update-smoke', value), probe);
   await launcher.locator('#update-action').click();
-  await launcher.waitForFunction(async () => (await window.strikeZone.getState()).update.phase === 'downloaded', null, { timeout: 300000 });
+  // Playwright treats an async predicate's Promise as truthy. Poll the resolved IPC state in Node.
+  const downloaded = await expectedState(launcher, 'downloaded', { timeout: 300000, retry: false });
+  assert.equal(downloaded.update.latestVersion, version);
+  assert.equal(downloaded.update.canPlay, false);
   passed('Installer downloaded and verified by electron-updater');
   const closed = electron.waitForEvent('close', { timeout: 120000 });
-  await launcher.evaluate(() => window.strikeZone.install()).catch(error => {
+  const installState = await launcher.evaluate(() => window.strikeZone.install()).catch(error => {
     if (!/closed|destroyed/i.test(error.message)) throw error;
   });
+  if (installState) assert.equal(installState.update.phase, 'installing');
   await closed; electron = null;
   for (let i = 0; i < 120 && installedVersion() !== version; i++) await wait(1000);
   assert.equal(installedVersion(), version);

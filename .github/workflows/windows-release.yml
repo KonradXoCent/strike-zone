@@ -37,18 +37,31 @@ jobs:
         run: node scripts/configure-updates.cjs --github "$env:GITHUB_REPOSITORY"
       - run: npm test
       - name: Build current Windows installer
+        if: ${{ !startsWith(github.event.head_commit.message, 'test:') }}
         run: npm run dist:win
       - name: Stage current release artifacts
+        if: ${{ !startsWith(github.event.head_commit.message, 'test:') }}
         shell: pwsh
         run: |
           New-Item release -ItemType Directory -Force | Out-Null
           Copy-Item dist/*.exe, dist/*.blockmap, dist/latest.yml release/
       - name: Build connected 1.0.0 installer for update test
+        if: ${{ !startsWith(github.event.head_commit.message, 'test:') }}
         run: node scripts/build-test-bootstrap.cjs
       - name: Publish test release
+        if: ${{ !startsWith(github.event.head_commit.message, 'test:') }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/publish-release.cjs
+      # A test-only fix verifies the exact public binaries without replacing a released installer.
+      - name: Download published bootstrap for test-only commit
+        if: ${{ startsWith(github.event.head_commit.message, 'test:') }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          $version = node -p "require('./package.json').version"
+          gh release download "v$version" --repo "$env:GITHUB_REPOSITORY" --pattern "StrikeZone-Test-1.0.0.exe" --dir release
       - name: Test installed 1.0.0 to latest update on Windows
         run: node scripts/windows-update-smoke.cjs
       - name: Attach Windows update test report
