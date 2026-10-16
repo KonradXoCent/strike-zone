@@ -5,6 +5,7 @@ const { EventEmitter } = require('node:events');
 const { UpdateController, plainNotes } = require('../core/updater.cjs');
 const { normalizeConfig } = require('../core/config.cjs');
 const { resolveAsset } = require('../core/protocol.cjs');
+const path = require('node:path');
 
 function fixture(config = { enabled: true, provider: 'generic', url: 'https://updates.example.com/game/' }, packaged = true) {
   const updater = new EventEmitter();
@@ -99,10 +100,11 @@ test('a broken required channel fails closed', async () => {
   assert.equal(controller.state.phase, 'error');
 });
 test('the asset protocol cannot read source code or escape its route', () => {
-  assert.equal(resolveAsset('/app', 'strikezone://app/game/index.html'), '/app/game/index.html');
+  const root = path.resolve('test-bundle');
+  assert.equal(resolveAsset(root, 'strikezone://app/game/index.html'), path.join(root, 'game', 'index.html'));
   for (const url of ['https://app/game/index.html', 'strikezone://other/game/index.html',
     'strikezone://app/main.cjs', 'strikezone://app/launcher/..%2fcore/config.cjs',
     'strikezone://app/game/%00index.html', 'strikezone://app/game/%5c..%5cmain.cjs']) {
-    assert.equal(resolveAsset('/app', url), null, url);
+    assert.equal(resolveAsset(root, url), null, url);
   }
 });
