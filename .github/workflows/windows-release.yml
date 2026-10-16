@@ -1,0 +1,63 @@
+name: Build, publish and test Windows update
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'package*.json'
+      - 'main.cjs'
+      - '*preload.cjs'
+      - 'core/**'
+      - 'launcher/**'
+      - 'assets/**'
+      - 'game-source/**'
+      - 'game/desktop.js'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'updates.json'
+      - '.github/workflows/windows-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: windows-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Configure mandatory GitHub updates
+        shell: pwsh
+        run: node scripts/configure-updates.cjs --github "$env:GITHUB_REPOSITORY"
+      - run: npm test
+      - name: Build current Windows installer
+        run: npm run dist:win
+      - name: Stage current release artifacts
+        shell: pwsh
+        run: |
+          New-Item release -ItemType Directory -Force | Out-Null
+          Copy-Item dist/*.exe, dist/*.blockmap, dist/latest.yml release/
+      - name: Build connected 1.0.0 installer for update test
+        run: node scripts/build-test-bootstrap.cjs
+      - name: Publish test release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/publish-release.cjs
+      - name: Test installed 1.0.0 to latest update on Windows
+        run: node scripts/windows-update-smoke.cjs
+      - name: Attach Windows update test report
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          if (Test-Path release/update-smoke-report.json) {
+            $version = node -p "require('./package.json').version"
+            gh release upload "v$version" release/update-smoke-report.json --repo "$env:GITHUB_REPOSITORY" --clobber
+          }

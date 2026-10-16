@@ -1,0 +1,8 @@
+node_modules/
+dist/
+release/
+game/index.html
+game/source-sha256.txt
+vendor/
+*.log
+.DS_Store

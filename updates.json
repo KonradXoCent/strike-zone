@@ -1,0 +1,8 @@
+{
+  "enabled": true,
+  "required": true,
+  "provider": "github",
+  "owner": "KonradXoCent",
+  "repo": "strike-zone",
+  "releaseType": "release"
+}
