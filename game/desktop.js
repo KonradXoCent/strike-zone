@@ -43,10 +43,17 @@
           } else CL.msg = 'Cloud save is in sync.';
         } else if (readOwner() && readOwner() !== userId) {
           // A new account must not inherit the other account's local inventory.
-          DB = { profiles: { Player: mk('Player') }, cur: 'Player' };
+          const name = String(SBU.user_metadata?.nickname || 'Player').replace(/[<>&"']/g, '').trim().slice(0, 14) || 'Player';
+          DB = { profiles: { [name]: mk(name) }, cur: name };
           try { localStorage.setItem('sz2', JSON.stringify(DB)); } catch {}
           CL.msg = 'Cloud save enabled.';
-        } else CL.msg = 'Cloud save enabled.';
+        } else {
+          if (SBU.user_metadata?.nickname && DB.cur === 'Player' && Object.keys(DB.profiles).length === 1) {
+            const name = String(SBU.user_metadata.nickname).replace(/[<>&"']/g, '').trim().slice(0, 14) || 'Player';
+            DB.profiles[name] = { ...DB.profiles.Player, name }; if (name !== 'Player') delete DB.profiles.Player; DB.cur = name;
+          }
+          CL.msg = 'Cloud save enabled.';
+        }
         setOwner(userId);
         loadedUser = userId;
         if (!saved || (DB.ts || 0) > (saved.ts || 0)) cloudPush(1);
@@ -79,6 +86,7 @@
     CL.h = setTimeout(flush, now ? 0 : 2500);
   };
   window.szDesktopFlush = flush;
+  window.szDesktopCloudReady = () => !!SBU && loadedUser === SBU.id;
 
   const bar = document.createElement('div');
   bar.id = 'desktop-toolbar';

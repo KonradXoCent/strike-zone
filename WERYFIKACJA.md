@@ -1,13 +1,18 @@
-# Weryfikacja 1.0.1
+# Weryfikacja 1.1.0
 
-Lokalnie przechodzi 16 testów automatycznych synchronizacji i aktualizatora.
-Obejmują blokadę gry przed sprawdzeniem wersji, po wykryciu aktualizacji,
-po błędzie sieci i przy uszkodzonej konfiguracji. Weryfikują również instalację
-po pobraniu oraz odczyt chmury przed pierwszym zapisem nowej instalacji.
+Testy jednostkowe: konta i komunikaty logowania, potwierdzenie e-maila, weryfikacja
+sesji z serwerem, szyfrowane przechowywanie tokenów, rozmiar okna, synchronizacja
+zapisu i wymagane aktualizacje.
 
-Pełny test instalacji i aktualizacji Windows wykonuje workflow w repozytorium.
-Jego wynik jest dołączany do wydania jako update-smoke-report.json.
-Stanem rozstrzygającym jest status w tym raporcie i wynik workflow.
+Lokalny test Electron: pełny formularz konta, istniejący nick i awatar, ta sama
+sesja w grze, odczyt zapisu, brak osobnych przycisków konta w grze, wylogowanie,
+rejestracja, izolacja dwóch kont, Escape oraz układ 900, 760 i 680 px.
 
-Nie testuje się logowania na prawdziwe konto ani nie modyfikuje bazy Supabase.
-Załączony HTML jest identyczny z poprzednią wersją; zmiany dotyczą launchera.
+Test Windows zainstalowanego wydania: publiczna aktualizacja 1.0.1 do 1.1.0 oraz
+te same scenariusze konta i wyjścia. Wynik workflow i status w raporcie
+update-smoke-report.json stanowią końcowy wynik testu Windows.
+
+Prawdziwy Supabase: potwierdzono HTTP 200 endpointów health i settings,
+włączony e-mail, dostępną rejestrację i wymagane potwierdzenie e-maila.
+Nie tworzono kont testowych w produkcji, nie odczytywano danych graczy
+ani nie wykonywano migracji bazy. Test konta jest odizolowany od produkcji.

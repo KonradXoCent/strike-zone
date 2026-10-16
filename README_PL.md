@@ -1,55 +1,48 @@
-# Strike Zone 2D — wydanie testowe 1.0.1
+# Strike Zone 2D — 1.1.0
 
-Pobierz instalator z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
-`StrikeZone-Setup-1.0.1.exe` instaluje aktualną wersję.
-Gracze nie potrzebują Node.js ani plików projektu.
+Pobierz `StrikeZone-Setup-1.1.0.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
+Posiadacze wersji 1.0.1 aktualizują grę przez launcher. Gracz nie potrzebuje Node.js.
 
 ## Konto i sterowanie
 
-W grze otwórz Profile i zaloguj się dotychczasowym kontem Supabase.
-F11 przełącza pełny ekran. Ctrl + Shift + L wraca do launchera.
-Zamknięcie gry również przywraca launcher i podejmuje próbę wysłania zapisu.
-Dane z samej przeglądarki przeniesiesz przez Export save i Import save
-w zakładce Profile, po zalogowaniu i wczytaniu chmury.
+Zaloguj się w launcherze tym samym e-mailem i hasłem co w przeglądarkowej wersji gry.
+Można też utworzyć konto; jeśli pojawi się komunikat o potwierdzeniu e-maila,
+otwórz wiadomość, potwierdź adres i zaloguj się w launcherze.
+Launcher pokazuje nick i awatar z bieżącego profilu zapisanego w chmurze.
+Po zmianie profilu w grze widok w launcherze aktualizuje się automatycznie.
+Wylogowanie jest dostępne w launcherze. W grze nie ma osobnego logowania.
 
-## Test aktualizacji
+F11 przełącza pełny ekran gry. Escape w menu głównym otwiera potwierdzenie:
+„Nie” po lewej w zieleni anuluje, „Tak” po prawej w czerwieni zapisuje postęp
+i zamyka okno gry, wracając do launchera. W meczu Escape nadal włącza pauzę.
+Ctrl + Shift + L również wraca do launchera.
 
-Do sprawdzenia aktualizacji zainstaluj `StrikeZone-Test-1.0.0.exe` z tego samego
-wydania. To wersja 1.0.0 z już włączonym kanałem GitHub. Launcher powinien wykryć
-1.0.1, zablokować grę, pobrać aktualizację po kliknięciu przycisku, zainstalować
-ją po kolejnym kliknięciu i uruchomić nowszy launcher.
+Konta i postęp korzystają z dotychczasowego Supabase. Nie zmieniono schematu bazy.
+Dane lokalne są w `%APPDATA%\StrikeZone2D`, a sesja jest chroniona przez Windows DPAPI.
+Hasło nie jest zapisywane. Do konta, chmury i sprawdzania wersji potrzebny jest internet.
+Gra najpierw wczytuje zapis konta, zanim pozwala wysłać własny zapis do chmury.
+Gdy odczyt się nie powiedzie, można go ponowić bez nadpisania danych.
 
-Pierwsza paczka 1.0.0 otrzymana wcześniej poza GitHubem miała wyłączony kanał.
-Jednorazowo użyj instalatora z repozytorium. Kolejne wydania obsłuży launcher.
+## Nowe wydania
 
-Launcher sprawdza wersję przy starcie i przed uruchomieniem gry. Wymagana
-aktualizacja i błąd weryfikacji blokują uruchomienie w procesie głównym,
-a nie tylko przez wyłączenie przycisku. Trwający mecz nie jest przerywany.
-Do uruchomienia gry potrzebny jest internet do sprawdzenia wersji.
-Dane lokalne pozostają w `%APPDATA%\StrikeZone2D`.
-
-## Nowe wydania dla twórcy
-
-1. Zapisz nową grę jako `game-source/index.html`.
-2. Zwiększ wersję w `package.json` i `package-lock.json`.
+1. Podmień `game-source/index.html`, jeśli zmienia się gra.
+2. Zwiększ numer wersji w `package.json` i `package-lock.json`.
 3. Uruchom `npm ci`, `npm test` i `npm run prepare:game`.
-4. Wyślij zmiany na main. GitHub Actions buduje, publikuje i testuje wydanie.
+4. Wyślij zmiany na main. GitHub Actions buduje i publikuje instalator, blockmap i latest.yml.
 
-Na Windows z Node.js 24 możesz też uruchomić `ZBUDUJ_WINDOWS.cmd` lub
-`NOWA_WERSJA.cmd`. Zachowaj appId, origin `strikezone://app` i katalog danych.
-Konfiguracja `updates.json` jest wewnątrz aplikacji. Zawiera publiczny kanał
-GitHub i `required: true`; nie wymaga tokena na komputerze gracza.
+Zachowaj appId, origin `strikezone://app` i katalog danych między wersjami.
+Konfiguracja `updates.json` jest wewnątrz aplikacji. Wymagana aktualizacja blokuje
+uruchomienie starszej wersji w procesie głównym. Trwający mecz nie jest przerywany.
+Pierwsza paczka 1.0.0 spoza GitHuba miała wyłączony kanał i wymaga nowego instalatora.
 
-SDK Supabase 2.45.4 jest dołączane lokalnie. Konto, postęp i konfiguracja bazy
-pochodzą z oryginalnego HTML. Projekt nie wykonuje migracji bazy Supabase.
+## Testy
 
-## Wynik testu
-
-`npm test` sprawdza synchronizację zapisów i mechanizm obowiązkowych aktualizacji.
-GitHub Actions instaluje testową 1.0.0 na Windows, wykrywa wydanie z GitHuba,
-sprawdza blokadę gry, pobiera i instaluje aktualizację, weryfikuje nową wersję,
-zachowanie localStorage oraz uruchomienie gry i powrót do launchera.
+`npm test` sprawdza konta, sesje, odczyt chmury przed zapisem, rozmiar okna i aktualizator.
+Workflow Windows instaluje prawdziwą publiczną 1.0.1 i aktualizuje ją do bieżącej wersji.
+Następnie sprawdza błędne hasło, rejestrację z potwierdzeniem e-maila i bez niego,
+odczyt nicku i awatara, tę samą sesję w grze, brak osobnych kontrolek logowania,
+Escape, zapis postępu, zmiany profilu, wylogowanie oraz izolację dwóch kont.
+Testy kont używają odizolowanych odpowiedzi HTTP; bez modyfikacji prawdziwych kont i bazy.
 Raport `update-smoke-report.json` jest dołączany do wydania.
-Testy nie logują się na prawdziwe konto ani nie zmieniają bazy Supabase.
 
 Instalatory nie mają podpisu cyfrowego wydawcy.

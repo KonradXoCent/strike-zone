@@ -20,23 +20,37 @@
         <div class="map-label"><span class="crosshair"></span><div>OPERATION: STRIKE ZONE<small>TOP-DOWN TACTICAL COMBAT</small></div><span class="map-coordinate">52° / 21°</span></div>
       </section>
       <aside class="launch-panel">
-        <div class="panel-top"><span class="eyebrow">CENTRUM GRY</span><span id="version" class="version">v1.0.0</span></div>
-        <div class="ready-icon" id="ready-icon"><img src="../assets/mark.svg" alt=""></div>
+        <div class="panel-top"><span class="eyebrow">CENTRUM GRY</span><span id="version" class="version">v1.1.0</span></div>
+        <section id="auth-gate" class="auth-gate">
+          <span class="auth-kicker">TWOJE KONTO W STRIKE ZONE</span>
+          <h2 id="auth-title">Witaj ponownie</h2><p class="auth-intro">Zaloguj się, aby wejść do gry ze swoim postępem.</p>
+          <div class="auth-tabs" role="tablist" aria-label="Konto"><button type="button" id="auth-signin" role="tab" aria-selected="true">Logowanie</button><button type="button" id="auth-signup" role="tab" aria-selected="false">Rejestracja</button></div>
+          <form id="auth-form">
+            <label id="nickname-field" hidden>Nick gracza<input id="auth-nickname" name="nickname" maxlength="14" autocomplete="nickname" placeholder="Twój nick"></label>
+            <label>E-mail<input id="auth-email" name="email" type="email" required maxlength="254" autocomplete="username" placeholder="gracz@example.com"></label>
+            <label>Hasło<input id="auth-password" name="password" type="password" required maxlength="512" autocomplete="current-password" placeholder="Twoje hasło"></label>
+            <button class="auth-submit" id="auth-submit" type="submit">Zaloguj się</button>
+          </form>
+          <p class="auth-note">Użyj tego samego konta co w przeglądarkowej wersji gry.</p>
+        </section>
+        <p id="auth-message" class="auth-message" role="status" hidden></p>
+        <div id="launch-status" class="launch-status" hidden><div class="ready-icon" id="ready-icon"><img src="../assets/mark.svg" alt=""></div>
         <span class="status-label" id="status-label">GRA ZAINSTALOWANA</span>
         <h2 id="status-title">Gotowy do gry</h2>
         <p class="status-description" id="status-description">Twoja następna runda czeka.</p>
-        <div class="update-card" aria-live="polite">
+        </div><div class="update-card" aria-live="polite">
           <div class="update-heading"><span id="update-dot" class="dot neutral"></span><strong id="update-title">Sprawdzanie wersji…</strong><span id="progress-value"></span></div>
           <p id="update-description">Przygotowujemy grę.</p>
           <div id="progress-track" class="progress-track" hidden><div id="progress-fill"></div></div>
           <div class="download-stats" id="download-stats" hidden></div>
           <button id="update-action" class="text-button" hidden>Sprawdź ponownie <span>↻</span></button>
         </div>
-        <div class="actions"><button id="play" class="play-button"><svg width="18" height="20" viewBox="0 0 18 20" aria-hidden="true"><path d="M2 1L17 10 2 19Z" fill="currentColor"/></svg><span id="play-label">GRAJ</span><span class="button-arrow">↗</span></button><span id="play-hint">Uruchom Strike Zone 2D</span></div>
+        <div class="actions"><button id="play" class="play-button" disabled><svg width="18" height="20" viewBox="0 0 18 20" aria-hidden="true"><path d="M2 1L17 10 2 19Z" fill="currentColor"/></svg><span id="play-label">GRAJ</span><span class="button-arrow">↗</span></button><span id="play-hint">Uruchom Strike Zone 2D</span></div>
         <div class="panel-bottom"><span id="network-dot" class="dot neutral"></span><span id="network-label">Sprawdzanie usług online…</span></div>
       </aside>
       <section class="below">
-        <div class="account-info"><div class="account-symbol"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4 21v-3a8 8 0 0116 0v3"/></svg></div><div><h3>Twoje konto. Twój postęp.</h3><p>Zaloguj się w zakładce Profile w grze, aby wczytać zapis z Supabase.</p></div></div>
+        <div class="account-info"><div class="account-symbol" id="account-avatar">😎</div><div><h3 id="account-name">Jedno konto. Cały Twój postęp.</h3><p id="account-caption">Zaloguj się w launcherze — gra otworzy się na tym samym koncie.</p></div></div>
+        <button id="account-logout" class="secondary-button" hidden>Wyloguj się</button>
         <button class="secondary-button" id="news">Co nowego <span>↗</span></button>
       </section>
     </main>

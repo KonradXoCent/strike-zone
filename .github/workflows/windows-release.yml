@@ -10,7 +10,7 @@ on:
       - 'launcher/**'
       - 'assets/**'
       - 'game-source/**'
-      - 'game/desktop.js'
+      - 'game/*.js'
       - 'scripts/**'
       - 'tests/**'
       - 'updates.json'
@@ -45,24 +45,17 @@ jobs:
         run: |
           New-Item release -ItemType Directory -Force | Out-Null
           Copy-Item dist/*.exe, dist/*.blockmap, dist/latest.yml release/
-      - name: Build connected 1.0.0 installer for update test
-        if: ${{ !startsWith(github.event.head_commit.message, 'test:') }}
-        run: node scripts/build-test-bootstrap.cjs
       - name: Publish test release
         if: ${{ !startsWith(github.event.head_commit.message, 'test:') }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/publish-release.cjs
-      # A test-only fix verifies the exact public binaries without replacing a released installer.
-      - name: Download published bootstrap for test-only commit
-        if: ${{ startsWith(github.event.head_commit.message, 'test:') }}
+      - name: Download previous public 1.0.1 installer
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: pwsh
-        run: |
-          $version = node -p "require('./package.json').version"
-          gh release download "v$version" --repo "$env:GITHUB_REPOSITORY" --pattern "StrikeZone-Test-1.0.0.exe" --dir release
-      - name: Test installed 1.0.0 to latest update on Windows
+        run: gh release download v1.0.1 --repo "$env:GITHUB_REPOSITORY" --pattern "StrikeZone-Setup-1.0.1.exe" --dir release
+      - name: Test installed 1.0.1 update, launcher accounts and Escape on Windows
         run: node scripts/windows-update-smoke.cjs
       - name: Attach Windows update test report
         if: always()

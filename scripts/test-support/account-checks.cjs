@@ -1,0 +1,77 @@
+'use strict';
+const assert = require('node:assert/strict');
+const { startFixture, connectFixture } = require('./supabase-fixture.cjs');
+async function accountChecks(electron, launcher, passed, { screenshots } = {}) {
+  const fixture = await startFixture();
+  try {
+    await connectFixture(electron, fixture);
+    const initial = await launcher.evaluate(() => window.strikeZone.getState());
+    assert.equal(initial.account.authenticated, false);
+    await launcher.evaluate(() => window.strikeZone.play());
+    assert.equal(await electron.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().length), 1);
+    passed('Main process blocks game launch without authentication');
+    await launcher.locator('#auth-form').waitFor();
+    if (screenshots) await launcher.screenshot({ path: screenshots + '/launcher-login.png' });
+    await launcher.locator('#auth-email').fill(fixture.email); await launcher.locator('#auth-password').fill('wrong-password');
+    await launcher.locator('#auth-submit').click();
+    await launcher.getByText('Nieprawidłowy e-mail lub hasło.', { exact: true }).waitFor();
+    assert.equal((await launcher.evaluate(() => window.strikeZone.getState())).account.authenticated, false);
+    passed('Incorrect password leaves the game locked');
+    await launcher.locator('#auth-signup').click();
+    await launcher.locator('#auth-nickname').fill('NewQA'); await launcher.locator('#auth-email').fill('confirm@example.test'); await launcher.locator('#auth-password').fill(fixture.password);
+    await launcher.locator('#auth-submit').click();
+    await launcher.getByText('Sprawdź pocztę i potwierdź adres e-mail, a następnie zaloguj się tutaj.', { exact: true }).waitFor();
+    assert.equal((await launcher.evaluate(() => window.strikeZone.getState())).account.authenticated, false);
+    passed('Registration handles required email confirmation without creating a session');
+    await launcher.locator('#auth-signin').click(); await launcher.locator('#auth-email').fill(fixture.email); await launcher.locator('#auth-password').fill(fixture.password);
+    await launcher.locator('#auth-submit').click();
+    await launcher.locator('#account-name').filter({ hasText: 'KonradQA' }).waitFor();
+    await launcher.locator('#play').waitFor(); assert(await launcher.locator('#play').isEnabled());
+    assert.equal(await launcher.locator('#account-avatar img').count(), 1);
+    passed('Launcher sign-in reads the existing nickname and custom avatar from the game save');
+    if (screenshots) await launcher.screenshot({ path: screenshots + '/launcher-account.png' });
+    const next = electron.waitForEvent('window'); await launcher.locator('#play').click(); const game = await next;
+    const errors = []; game.on('pageerror', e => errors.push(e.message));
+    await game.waitForFunction(() => window.szDesktopCloudReady?.() && document.getElementById('desktop-account-loading')?.hidden, null, { timeout: 30000 });
+    if (process.platform === 'linux') await electron.evaluate(({ BrowserWindow }) => { const w = BrowserWindow.getAllWindows().find(w => w.webContents.getURL().includes('/game/')); w.unmaximize(); w.setBounds({ x: 0, y: 0, width: 1100, height: 750 }); });
+    const loaded = await game.evaluate(() => ({ id: SBU.id, name: P().name, wallet: P().wallet, secure: isSecureContext, profile: acctHTML() }));
+    assert.equal(loaded.id, fixture.user.id); assert.equal(loaded.name, 'KonradQA'); assert.equal(loaded.wallet, 4242); assert(loaded.secure);
+    assert(!/sbIn|sbUp|sbOut|id=em|id=pw/.test(loaded.profile));
+    passed('Game shares the launcher account, reads existing progress and has no separate auth controls');
+    await game.waitForFunction(() => document.getElementById('splash').style.display === 'none');
+    await game.keyboard.press('Escape'); await game.locator('#desktop-exit').waitFor();
+    const colors = await game.evaluate(() => { const no = document.getElementById('desktop-exit-no'), yes = document.getElementById('desktop-exit-yes'); return { no: getComputedStyle(no).backgroundColor, yes: getComputedStyle(yes).backgroundColor, left: no.getBoundingClientRect().left < yes.getBoundingClientRect().left }; });
+    assert.equal(colors.no, 'rgb(35, 128, 70)'); assert.equal(colors.yes, 'rgb(184, 50, 56)'); assert(colors.left);
+    if (screenshots) await game.screenshot({ path: screenshots + '/game-exit.png' });
+    await game.locator('#desktop-exit-no').click(); assert.equal(await game.locator('#desktop-exit').isVisible(), false);
+    // Escape during a match retains the original pause behavior.
+    await game.evaluate(() => { sel.mode = 'tdm'; sel.team = 'CT'; begin(); });
+    await game.waitForFunction(() => !!G);
+    await game.evaluate(() => { if (G.intro) skipIntro(); });
+    await game.keyboard.press('Escape'); assert.equal(await game.locator('#desktop-exit').isVisible(), false);
+    assert.equal(await game.evaluate(() => G.paused), true);
+    await game.evaluate(() => { quit(); P().name = 'ChangedQA'; P().av = '🔥'; delete P().avimg; save(); hdr(); });
+    await launcher.locator('#account-name').filter({ hasText: 'ChangedQA' }).waitFor();
+    assert.equal(await launcher.locator('#account-avatar').textContent(), '🔥');
+    await game.keyboard.press('Escape'); await game.locator('#desktop-exit').waitFor();
+    const closed = game.waitForEvent('close'); await game.locator('#desktop-exit-yes').click(); await closed;
+    assert(fixture.writes.some(w => w.user_id === fixture.user.id && w.json.profiles[w.json.cur].name === 'ChangedQA'));
+    assert.deepEqual(errors, []);
+    passed('Escape confirmation uses green No on the left and red Yes on the right, saves and returns to launcher');
+    passed('In-match Escape still pauses, and launcher profile reflects in-game changes');
+    await launcher.locator('#account-logout').click(); await launcher.locator('#auth-form').waitFor();
+    assert.equal((await launcher.evaluate(() => window.strikeZone.getState())).account.authenticated, false);
+    await launcher.evaluate(() => window.strikeZone.play()); assert.equal(await electron.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().length), 1);
+    passed('Logout removes the shared session and locks the game again');
+    // Test immediate-session registration and a separate new account with no cloud inventory.
+    await launcher.locator('#auth-signup').click(); await launcher.locator('#auth-nickname').fill('FreshQA'); await launcher.locator('#auth-email').fill('fresh@example.test'); await launcher.locator('#auth-password').fill(fixture.password); await launcher.locator('#auth-submit').click();
+    await launcher.locator('#account-name').filter({ hasText: 'FreshQA' }).waitFor();
+    const freshWindow = electron.waitForEvent('window'); await launcher.locator('#play').click(); const fresh = await freshWindow;
+    await fresh.waitForFunction(() => window.szDesktopCloudReady?.() && document.getElementById('desktop-account-loading')?.hidden);
+    assert.equal(await fresh.evaluate(() => P().name), 'FreshQA'); assert.equal(await fresh.evaluate(() => P().wallet), 500);
+    const back = fresh.waitForEvent('close'); await fresh.evaluate(() => window.strikeZoneDesktop.launcher()); await back;
+    await launcher.locator('#account-logout').click(); await launcher.locator('#auth-form').waitFor();
+    passed('Immediate-session signup works and a second account does not inherit another player inventory');
+  } finally { await fixture.close(); }
+}
+module.exports = { accountChecks };

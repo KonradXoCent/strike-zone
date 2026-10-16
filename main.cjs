@@ -1,11 +1,14 @@
 'use strict';
-const { app, BrowserWindow, Menu, ipcMain, protocol, net, session } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, protocol, net, session, safeStorage, screen } = require('electron');
 const fs = require('node:fs');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { resolveAsset } = require('./core/protocol.cjs');
 const { loadConfig } = require('./core/config.cjs');
 const { UpdateController } = require('./core/updater.cjs');
+const { AccountController } = require('./core/account.cjs');
+const { createAuthStorage } = require('./core/auth-storage.cjs');
+const { launcherBounds } = require('./core/window-size.cjs');
 
 app.setName('Strike Zone 2D');
 app.setAppUserModelId('pl.konradxocent.strikezone.desktop');
@@ -18,6 +21,7 @@ protocol.registerSchemesAsPrivileged([{ scheme: 'strikezone', privileges: {
 let launcher = null;
 let game = null;
 let controller = null;
+let account = null;
 let closingGame = null;
 let backend = { phase: 'checking' };
 let configError = false;
@@ -26,9 +30,10 @@ const LAUNCHER_URL = 'strikezone://app/launcher/index.html';
 const GAME_URL = 'strikezone://app/game/index.html';
 const gameSource = fs.readFileSync(path.join(root, 'game/index.html'), 'utf8');
 const supabaseUrl = gameSource.match(/const SB_URL='(https:\/\/[a-z0-9]+\.supabase\.co)'/)?.[1];
+const supabaseKey = gameSource.match(/SB_KEY='([^']+)'/)?.[1];
 
 function snapshot() {
-  return { update: controller.snapshot(), backend, configError, gameRunning: !!game };
+  return { update: controller.snapshot(), account: account.snapshot(), backend, configError, gameRunning: !!game };
 }
 function broadcast() {
   if (launcher && !launcher.isDestroyed()) launcher.webContents.send('launcher:state', snapshot());
@@ -54,7 +59,7 @@ function protectWindow(win, expectedUrl) {
   win.webContents.on('will-attach-webview', event => event.preventDefault());
 }
 function createLauncher() {
-  launcher = new BrowserWindow({ width: 1280, height: 800, minWidth: 1040, minHeight: 700,
+  launcher = new BrowserWindow({ ...launcherBounds(screen.getDisplayNearestPoint(screen.getCursorScreenPoint()).workArea),
     title: 'Strike Zone 2D — Launcher', titleBarStyle: 'hidden', backgroundColor: '#101418',
     icon: path.join(root, 'assets/icon.png'), show: false,
     webPreferences: { preload: path.join(root, 'preload.cjs'), contextIsolation: true,
@@ -71,6 +76,8 @@ async function openGame() {
   // Enforce the gate in the main process too, including direct IPC calls.
   await controller.check();
   if (!controller.canPlay()) return snapshot();
+  if (!await account.validate()) return snapshot();
+  if (!account.snapshot().authenticated || account.busy) return snapshot();
   if (game) { game.focus(); return snapshot(); }
   game = new BrowserWindow({ width: 1440, height: 900, minWidth: 960, minHeight: 640,
     title: 'Strike Zone 2D', backgroundColor: '#10141b', autoHideMenuBar: true,
@@ -118,6 +125,18 @@ else {
     catch { config = { enabled: false, required: true }; configError = true; }
     controller = new UpdateController({ updater: require('electron-updater').autoUpdater,
       config, version: app.getVersion(), packaged: app.isPackaged });
+    const client = require('@supabase/supabase-js').createClient(supabaseUrl, supabaseKey, {
+      auth: { storage: createAuthStorage(path.join(app.getPath('userData'), 'account-session.json'), safeStorage),
+        storageKey: 'strikezone-desktop-account', persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
+      global: { fetch: (url, options) => net.fetch(url, { ...options, signal: options?.signal || AbortSignal.timeout(15000) }) }
+    });
+    account = new AccountController(client);
+    account.on('state', broadcast);
+    account.on('session', value => {
+      if (!game || game.isDestroyed()) return;
+      if (value) game.webContents.send('game:session', value);
+      else closeGame();
+    });
     controller.on('state', broadcast);
     Menu.setApplicationMenu(null);
     session.defaultSession.setPermissionRequestHandler((contents, permission, callback) => {
@@ -133,7 +152,7 @@ else {
         const isGame = new URL(request.url).pathname.startsWith('/game/');
         headers.set('Content-Security-Policy', isGame
           ? `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' ${connect}; object-src 'none'; base-uri 'none'; frame-src 'none'`
-          : "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-src 'none'");
+          : "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'");
         headers.set('Cache-Control', 'no-store');
         headers.set('X-Content-Type-Options', 'nosniff');
         return new Response(request.method === 'HEAD' ? null : response.body, { status: response.status, headers });
@@ -141,6 +160,9 @@ else {
     });
     ipcMain.handle('launcher:state', event => { trusted(event, LAUNCHER_URL); return snapshot(); });
     ipcMain.handle('launcher:play', event => { trusted(event, LAUNCHER_URL); return openGame(); });
+    ipcMain.handle('launcher:login', async (event, input) => { trusted(event, LAUNCHER_URL); if (!game) await account.credentials('signin', input); return snapshot(); });
+    ipcMain.handle('launcher:register', async (event, input) => { trusted(event, LAUNCHER_URL); if (!game) await account.credentials('signup', input); return snapshot(); });
+    ipcMain.handle('launcher:logout', async event => { trusted(event, LAUNCHER_URL); await closeGame(); await account.signOut(); return snapshot(); });
     ipcMain.handle('launcher:check', async event => { trusted(event, LAUNCHER_URL); checkBackend(); await controller.check(); return snapshot(); });
     ipcMain.handle('launcher:download', async event => { trusted(event, LAUNCHER_URL); if (!game) await controller.download(); return snapshot(); });
     ipcMain.handle('launcher:install', event => { trusted(event, LAUNCHER_URL); if (!game) controller.install(); return snapshot(); });
@@ -148,7 +170,10 @@ else {
     ipcMain.handle('launcher:quit', event => { trusted(event, LAUNCHER_URL); app.quit(); });
     ipcMain.handle('game:launcher', event => { trusted(event, GAME_URL); closeGame(); });
     ipcMain.handle('game:fullscreen', event => { trusted(event, GAME_URL); game.setFullScreen(!game.isFullScreen()); });
+    ipcMain.handle('game:session', event => { trusted(event, GAME_URL); return account.gameSession(); });
+    ipcMain.handle('game:profile', (event, profile) => { trusted(event, GAME_URL); if (profile && typeof profile === 'object') account.updateProfile(profile); });
     createLauncher();
+    account.init();
     setInterval(() => { if (!game && launcher?.isVisible()) controller.check(); }, 120000).unref();
   }).catch(() => { app.exit(1); });
   app.on('window-all-closed', () => app.quit());

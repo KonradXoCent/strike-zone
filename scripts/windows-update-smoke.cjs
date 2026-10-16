@@ -5,12 +5,14 @@ const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const asar = require('@electron/asar');
+const { accountChecks } = require('./test-support/account-checks.cjs');
 
 const root = path.join(__dirname, '..');
 const version = require('../package.json').version;
+const baseVersion = '1.0.1';
 const installDir = path.join(process.env.RUNNER_TEMP || process.env.TEMP, 'StrikeZoneUpdateSmoke');
 const installedExe = path.join(installDir, 'StrikeZone.exe');
-const report = { expectedVersion: version, bootstrapVersion: '1.0.0', startedAt: new Date().toISOString(), checks: [] };
+const report = { expectedVersion: version, bootstrapVersion: baseVersion, authenticationTest: 'Isolated Supabase HTTP fixture; no production account or database writes', startedAt: new Date().toISOString(), checks: [] };
 let electron;
 function passed(check) { report.checks.push(check); console.log('PASS:', check); }
 function wait(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -25,18 +27,18 @@ function stopInstalledApp() {
 }
 async function installBootstrap() {
   await new Promise((resolve, reject) => {
-    const child = spawn(path.join(root, 'release/StrikeZone-Test-1.0.0.exe'), ['/S', '/D=' + installDir], { stdio: 'inherit' });
+    const child = spawn(path.join(root, 'release/StrikeZone-Setup-' + baseVersion + '.exe'), ['/S', '/D=' + installDir], { stdio: 'inherit' });
     child.on('error', reject); child.on('exit', code => code === 0 ? resolve() : reject(new Error('Installer exit ' + code)));
   });
-  for (let i = 0; i < 30 && installedVersion() !== '1.0.0'; i++) await wait(1000);
-  assert.equal(installedVersion(), '1.0.0');
+  for (let i = 0; i < 30 && installedVersion() !== baseVersion; i++) await wait(1000);
+  assert.equal(installedVersion(), baseVersion);
   stopInstalledApp();
   passed('Windows NSIS bootstrap installation');
 }
 async function launchInstalled() {
   electron = await _electron.launch({ executablePath: installedExe, timeout: 45000 });
   const launcher = await electron.firstWindow();
-  await launcher.locator('#play').waitFor();
+  await launcher.waitForFunction(() => typeof window.strikeZone?.getState === 'function');
   await launcher.waitForFunction(() => typeof window.strikeZone?.getState === 'function');
   return launcher;
 }
@@ -59,10 +61,10 @@ async function main() {
   await installBootstrap();
   let launcher = await launchInstalled();
   const oldState = await expectedState(launcher, 'available');
-  assert.equal(oldState.update.version, '1.0.0'); assert.equal(oldState.update.latestVersion, version);
+  assert.equal(oldState.update.version, baseVersion); assert.equal(oldState.update.latestVersion, version);
   assert.equal(oldState.update.required, true); assert.equal(oldState.update.canPlay, false);
   assert.equal(await launcher.locator('#play').isDisabled(), true);
-  passed('GitHub release detected by installed 1.0.0');
+  passed('GitHub release detected by installed ' + baseVersion);
   await launcher.evaluate(() => window.strikeZone.play());
   assert.equal(await electron.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().length), 1);
   passed('Required update enforced in main process and UI');
@@ -89,16 +91,7 @@ async function main() {
   assert.equal(state.update.version, version); assert.equal(state.update.canPlay, true);
   assert.equal(await launcher.evaluate(() => localStorage.getItem('sz-update-smoke')), probe);
   passed('New launcher runs and preserves local data');
-  const nextWindow = electron.waitForEvent('window', { timeout: 45000 });
-  await launcher.locator('#play').click();
-  const game = await nextWindow;
-  await game.waitForFunction(() => typeof window.szDesktopFlush === 'function', null, { timeout: 30000 });
-  const gameVersion = await game.evaluate(() => ({ sdk: typeof window.supabase?.createClient, secure: isSecureContext }));
-  assert.equal(gameVersion.sdk, 'function'); assert.equal(gameVersion.secure, true);
-  passed('Game starts after mandatory update with bundled Supabase SDK');
-  const gameClosed = game.waitForEvent('close');
-  await game.evaluate(() => window.strikeZoneDesktop.launcher()); await gameClosed;
-  passed('Game returns to launcher on Windows');
+  await accountChecks(electron, launcher, passed);
   report.status = 'passed';
 }
 main().catch(error => { report.status = 'failed'; report.error = error.stack || String(error); console.error(error); process.exitCode = 1; })

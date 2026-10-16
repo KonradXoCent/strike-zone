@@ -22,7 +22,9 @@ fs.copyFileSync(sdk, path.join(root, 'vendor/supabase.js'));
 let html = source.replace(tag, '<script src="../vendor/supabase.js"></script>');
 // The supplied file still calls an obsolete host-specific cloud initializer.
 html = html.replace("addEventListener('resize',drawScene);cloudInit();splashRun();", "addEventListener('resize',drawScene);splashRun();");
-html = html.replace('</body>', '<script src="./desktop.js"></script></body>');
+if (!html.includes('\nsbInit();')) throw new Error('Nie znaleziono inicjalizacji konta gry.');
+html = html.replace('\nsbInit();', '\n/* Session initialization is owned by the desktop launcher. */');
+html = html.replace('</body>', '<script src="./desktop.js"></script><script src="./account.js"></script><script src="./exit.js"></script></body>');
 fs.writeFileSync(path.join(root, 'game/index.html'), html);
 fs.copyFileSync(path.join(root, 'node_modules/@supabase/supabase-js/LICENSE'), path.join(root, 'vendor/SUPABASE-LICENSE.txt'));
 fs.writeFileSync(path.join(root, 'game/source-sha256.txt'), crypto.createHash('sha256').update(source).digest('hex') + '\n');

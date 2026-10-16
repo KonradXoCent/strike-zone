@@ -1,17 +1,21 @@
-Wydanie testowe mechanizmu aktualizacji Strike Zone 2D.
+Strike Zone 2D 1.1.0 — konto w launcherze
 
-- Launcher połączony z GitHub Releases KonradXoCent/strike-zone.
-- Wymagana aktualizacja przed uruchomieniem starszej wersji gry.
-- Instalacja aktualizacji i ponowne uruchomienie launchera.
-- Zachowanie danych lokalnych i dotychczasowej konfiguracji Supabase.
-- Dołączona testowa wersja 1.0.0 do sprawdzenia aktualizacji do 1.0.1.
+- Logowanie istniejącym kontem gry i rejestracja bezpośrednio w launcherze.
+- Obsługa potwierdzenia adresu e-mail przy rejestracji.
+- Awatar, nick i przycisk wylogowania w launcherze.
+- Jedna sesja konta: gra uruchamia się na koncie zalogowanym w launcherze.
+- Usunięte oddzielne przyciski logowania, rejestracji i wylogowania z gry.
+- Sesja launchera zapisywana z szyfrowaniem systemu Windows; hasło nie jest zapisywane.
+- Mniejszy launcher dopasowany do obszaru roboczego ekranu i układ na małe okna.
+- Escape w menu głównym: potwierdzenie zamknięcia gry i powrotu do launchera.
+- Zielone „Nie” po lewej, czerwone „Tak” po prawej; zapis postępu przed zamknięciem.
+- Escape podczas meczu nadal otwiera pauzę.
 
-Plik gry jest identyczny z poprzednio przesłanym HTML. To test publikowania,
-wykrywania i instalowania nowych wydań, bez nowych zmian rozgrywki.
+Konta, zapis gry i dotychczasowy projekt Supabase pozostają zgodne. Nowe konta
+w tym projekcie wymagają potwierdzenia adresu e-mail przed pierwszym logowaniem.
+Nick i awatar nadal można zmieniać w zakładce Profile w grze.
 
-Do zwykłej instalacji użyj StrikeZone-Setup-1.0.1.exe.
-Do testu aktualizacji użyj StrikeZone-Test-1.0.0.exe.
-Wcześniejsza paczka 1.0.0 bez kanału GitHub wymaga jednorazowo instalatora
-z tego wydania. Kolejne aktualizacje obsługuje już launcher.
-
-Automatyczny wynik testu Windows znajduje się w update-smoke-report.json.
+Posiadacze wersji 1.0.1 otrzymają wymaganą aktualizację w launcherze.
+Nowa instalacja: StrikeZone-Setup-1.1.0.exe.
+Raport testu aktualizacji 1.0.1 → 1.1.0 na Windows: update-smoke-report.json.
+Test logowania używa odizolowanych odpowiedzi Supabase i nie zmienia prawdziwych kont.
