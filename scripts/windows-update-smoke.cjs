@@ -17,7 +17,12 @@ let electron;
 function passed(check) { report.checks.push(check); console.log('PASS:', check); }
 function wait(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 function installedVersion() {
-  try { return JSON.parse(asar.extractFile(path.join(installDir, 'resources/app.asar'), 'package.json').toString()).version; }
+  const archive = path.join(installDir, 'resources/app.asar');
+  try {
+    // NSIS replaces this file in place; asar otherwise keeps the old header/offsets cached.
+    asar.uncache(archive);
+    return JSON.parse(asar.extractFile(archive, 'package.json').toString()).version;
+  }
   catch { return null; }
 }
 function stopInstalledApp() {
@@ -38,7 +43,6 @@ async function installBootstrap() {
 async function launchInstalled() {
   electron = await _electron.launch({ executablePath: installedExe, timeout: 45000 });
   const launcher = await electron.firstWindow();
-  await launcher.waitForFunction(() => typeof window.strikeZone?.getState === 'function');
   await launcher.waitForFunction(() => typeof window.strikeZone?.getState === 'function');
   return launcher;
 }
