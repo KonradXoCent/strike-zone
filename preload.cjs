@@ -2,6 +2,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('strikeZone', {
   getState: () => ipcRenderer.invoke('launcher:state'),
+  refreshFriends: () => ipcRenderer.invoke('launcher:friends-refresh'),
   play: () => ipcRenderer.invoke('launcher:play'),
   login: input => ipcRenderer.invoke('launcher:login', input),
   register: input => ipcRenderer.invoke('launcher:register', input),

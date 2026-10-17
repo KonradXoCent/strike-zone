@@ -15,13 +15,21 @@ Zaloguj się w launcherze na swoje dotychczasowe konto gry lub wybierz rejestrac
 Nowe konto wymaga potwierdzenia adresu e-mail. W launcherze zobaczysz swój nick,
 awatar oraz przycisk wylogowania. Gra otworzy się na tym samym koncie.
 
+W wersji testowej launcher ma nowy panel konta i znajomych: okrągłe awatary,
+zielone kropki online, szare offline, wyszukiwarkę oraz informację o meczu,
+lobby lub launcherze. Lista jest wspólna z grą. Przy problemach z połączeniem
+status jest oznaczany jako sprawdzany. `npm run dist:win:test` buduje osobny
+instalator testowy w `dist-test/`, bez publikowania wydania.
+
 Launcher dopasowuje rozmiar do ekranu. W menu gry klawisz Escape pyta o zamknięcie
 gry i powrót do launchera: zielone „Nie” po lewej, czerwone „Tak” po prawej.
 Podczas meczu Escape nadal włącza pauzę.
 
 Dane lokalne pozostają w `%APPDATA%\StrikeZone2D`. Sesja konta jest szyfrowana
 przez system Windows. Hasło nie jest zapisywane. Konta i chmura korzystają
-z Supabase wskazanego w `game-source/index.html`; bez migracji bazy.
+z Supabase wskazanego w `game-source/index.html`. Migracja w `supabase/migrations/`
+dodaje opcjonalny publiczny awatar do rankingu i ustawia limity Warsztatu 10/10;
+nie zmienia kont ani zapisów gry.
 
 GitHub Actions buduje wydanie, instaluje wcześniejszą publiczną 1.1.0 i sprawdza
 aktualizację do 1.2.0, zachowanie danych, logowanie, rejestrację, profil, wspólną

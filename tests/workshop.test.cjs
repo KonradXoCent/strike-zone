@@ -45,7 +45,17 @@ test('Workshop database: authors, moderation, publication and owner enrollment',
   const versions=(await asUser(U.other,tx=>tx.query('select * from public.sz_workshop_releases where item_id=$1 order by version',[itemId]))).rows;assert.equal(versions.length,2);assert.equal(versions[0].id,mapId);assert.equal(versions[1].version,2);
  });
  await t.test('per-user pending limits block submission flooding',async()=>{
-  for(let i=0;i<5;i++)await submit(U.other,skinProject(crypto.randomUUID()));
+  for(let i=0;i<10;i++)await submit(U.other,skinProject(crypto.randomUUID()));
+  await assert.rejects(submit(U.other,skinProject(crypto.randomUUID())),/WORKSHOP_SUBMISSION_LIMIT/);
+  const pending=(await asUser(U.other,tx=>tx.query("select id from public.sz_workshop_submissions where status='pending'"))).rows;
+  assert.equal(pending.length,10);
+  await review(U.admin,pending[0].id,'rejected','Test limitu dziennego.');
+  await assert.rejects(submit(U.other,skinProject(crypto.randomUUID())),/WORKSHOP_SUBMISSION_LIMIT/);
+  // Rolling 24 hours remains a separate limit after moderation.
+  await db.query("update public.sz_workshop_submissions set created_at=now()-interval '25 hours' where id=$1",[pending[0].id]);
+  await submit(U.other,skinProject(crypto.randomUUID()));
+  // Pending submissions older than a day still count toward the queue limit.
+  await db.exec("update public.sz_workshop_submissions set created_at=now()-interval '25 hours' where author_id='"+U.other+"'");
   await assert.rejects(submit(U.other,skinProject(crypto.randomUUID())),/WORKSHOP_SUBMISSION_LIMIT/);
  });
  await t.test('only moderators can withdraw published content',async()=>{

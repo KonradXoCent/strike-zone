@@ -195,7 +195,7 @@ begin
   if new.author_id<>uid then raise exception 'WORKSHOP_NOT_OWNER' using errcode='42501'; end if;
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(uid::text,0));
   select count(*) filter(where status='pending'),count(*) filter(where created_at>now()-interval '24 hours') into pending_count,daily_count from public.sz_workshop_submissions where author_id=uid and (status='pending' or created_at>now()-interval '24 hours');
-  if pending_count>=5 or daily_count>=10 then raise exception 'WORKSHOP_SUBMISSION_LIMIT' using errcode='P0001'; end if;
+  if pending_count>=10 or daily_count>=10 then raise exception 'WORKSHOP_SUBMISSION_LIMIT' using errcode='P0001'; end if;
   if not sz_workshop_private.project_valid(new.kind,new.payload,new.kind='map') or new.project_id<>new.payload->>'id' then raise exception 'WORKSHOP_INVALID_PROJECT' using errcode='22023'; end if;
   new.author_id:=uid;new.status:='pending';new.reviewed_at:=null;new.reviewed_by:=null;new.review_note:='';new.created_at:=now();new.title:=new.payload->>'name';
   select left(regexp_replace(coalesce(name,'Gracz'),'[<>[:cntrl:]]','','g'),40) into new.author_name from public.leaderboard where user_id=uid;

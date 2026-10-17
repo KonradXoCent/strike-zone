@@ -50,7 +50,7 @@ Nie ma przycisku ani formularza kodu właściciela. Wcześniejszy jednorazowy ko
 został unieważniony w bazie. Mechanizm początkowej aktywacji pozostaje w schemacie,
 ale nie jest potrzebny do korzystania z panelu ani dostępny w interfejsie gry.
 
-Zgłoszenia mają limit 5 oczekujących i 10 wysłanych w ciągu 24 godzin na konto.
+Zgłoszenia mają limit 10 oczekujących i 10 wysłanych w ciągu 24 godzin na konto.
 Blokada transakcyjna chroni limit przed równoległym wysyłaniem. Dane projektu
 przechodzą walidację także w PostgreSQL: typy, kolory, pędzel, limity elementów,
 rozmiar danych i przejścia mapy z rozmiarem postaci. Maksymalny rozmiar to 250 KB.

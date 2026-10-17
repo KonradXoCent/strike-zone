@@ -11,12 +11,13 @@ create function auth.jwt() returns jsonb language sql stable as $$ select coales
 grant usage on schema auth to anon,authenticated;
 create table public.saves(user_id uuid primary key references auth.users(id),json jsonb,updated_at timestamptz);
 alter table public.saves enable row level security;grant select,insert,update on public.saves to authenticated;create policy saves_own on public.saves to authenticated using(user_id=(select auth.uid())) with check(user_id=(select auth.uid()));
-create table public.leaderboard(user_id uuid primary key references auth.users(id),name text);
+create table public.leaderboard(user_id uuid primary key references auth.users(id),name text,av text);
 grant select on public.leaderboard to anon,authenticated;
 insert into auth.users(id) values('${USERS.author}'),('${USERS.admin}'),('${USERS.other}');
-insert into public.leaderboard values('${USERS.author}','Autor'),('${USERS.admin}','Właściciel'),('${USERS.other}','Gracz');
+insert into public.leaderboard(user_id,name) values('${USERS.author}','Autor'),('${USERS.admin}','Właściciel'),('${USERS.other}','Gracz');
 `);await db.exec(fs.readFileSync(path.resolve(__dirname,'../../database/workshop.sql'),'utf8'));await db.query("insert into sz_workshop_private.owner_invite(token_hash,expires_at) values(sha256(convert_to($1,'UTF8')),now()+interval '7 days')",[OWNER_CODE]);
 await db.exec(fs.readFileSync(path.resolve(__dirname,'../../database/community-case.sql'),'utf8'));
+for(const file of fs.readdirSync(path.resolve(__dirname,'../../supabase/migrations')).filter(n=>n.endsWith('_launcher_friends_and_workshop_limits.sql')))await db.exec(fs.readFileSync(path.resolve(__dirname,'../../supabase/migrations',file),'utf8'));
 let queue=Promise.resolve();function asUser(uid,fn,claims={}){const run=queue.then(()=>db.transaction(async tx=>{await tx.exec('set local role '+(uid?'authenticated':'anon'));await tx.query("select set_config('request.jwt.claims',$1,true)",[JSON.stringify({sub:uid,role:uid?'authenticated':'anon',...claims})]);return fn(tx);}));queue=run.catch(()=>{});return run;}
 return{db,asUser};}
 module.exports={createWorkshopDB,USERS,OWNER_CODE,mapProject,skinProject};

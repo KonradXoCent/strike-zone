@@ -4,12 +4,16 @@ const { build, Platform, Arch } = require('electron-builder');
 const { loadConfig, providerConfig } = require('../core/config.cjs');
 require('./linux-nsis.cjs')();
 const root = path.join(__dirname, '..');
+const testBuild = process.argv.includes('--test');
+const stableVersion = require('../package.json').version;
+const version = testBuild ? stableVersion.replace(/(\d+)$/, n => Number(n) + 1) + '-test.1' : stableVersion;
+const output = testBuild ? 'dist-test' : 'dist';
 const channel = loadConfig([path.join(root, 'updates.json')]);
 const config = {
   appId: 'pl.konradxocent.strikezone.desktop', productName: 'Strike Zone 2D',
   asar: true, npmRebuild: false, electronVersion: '44.7.2',
   afterPack: require('./brand-windows.cjs'),
-  directories: { output: 'dist', buildResources: 'assets' },
+  directories: { output, buildResources: 'assets' },
   files: ['main.cjs', 'preload.cjs', 'game-preload.cjs', 'core/**', 'launcher/**',
     'assets/**', 'game/**', 'vendor/**', 'updates.json', 'package.json'],
   win: { target: 'nsis', executableName: 'StrikeZone', icon: 'assets/icon.ico',
@@ -20,14 +24,14 @@ const config = {
     uninstallDisplayName: 'Strike Zone 2D', deleteAppDataOnUninstall: false,
     installerIcon: 'assets/icon.ico', uninstallerIcon: 'assets/icon.ico',
     installerHeaderIcon: 'assets/icon.ico',
-    artifactName: 'StrikeZone-Setup-${version}.${ext}' }
+    artifactName: testBuild ? 'StrikeZone-Test-${version}.${ext}' : 'StrikeZone-Setup-${version}.${ext}' }
 };
+if (testBuild) config.extraMetadata = { version };
 if (channel.enabled) config.publish = [providerConfig(channel)];
 build({ projectDir: root, targets: Platform.WINDOWS.createTarget(['nsis'], Arch.x64),
   publish: 'never', config }).then(() => {
     const fs = require('node:fs');
-    const version = require('../package.json').version;
-    const file = path.join(root, `dist/StrikeZone-Setup-${version}.exe`);
+    const file = path.join(root, output, `StrikeZone-${testBuild ? 'Test' : 'Setup'}-${version}.exe`);
     if (!fs.existsSync(file) || fs.statSync(file).size < 1024 * 1024) {
       throw new Error('Nie powstał kompletny instalator Windows.');
     }
