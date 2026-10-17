@@ -2,6 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+require('./embed-shared.cjs').sync(true);
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'game-source/index.html'), 'utf8');
 if (!source.includes(fs.readFileSync(path.join(__dirname, 'community-case.html'), 'utf8'))) throw new Error('Embedded Community Forge module is stale.');

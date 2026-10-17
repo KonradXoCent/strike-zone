@@ -2,10 +2,10 @@
 const http = require('node:http');
 const { randomUUID } = require('node:crypto');
 const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jM5kAAAAASUVORK5CYII=';
-async function startFixture({ friends = [], profiles = [] } = {}) {
+async function startFixture({ friends = [], profiles = [], userId = randomUUID(), chatRPC = null } = {}) {
   const users = new Map(), saves = new Map(), writes = [];
   const email = 'desktop-smoke@example.test', password = 'SmokePass123!';
-  const user = { id: randomUUID(), email, aud: 'authenticated', role: 'authenticated', email_confirmed_at: new Date().toISOString(), user_metadata: { nickname: 'KonradQA' }, app_metadata: { provider: 'email' }, identities: [] };
+  const user = { id: userId, email, aud: 'authenticated', role: 'authenticated', email_confirmed_at: new Date().toISOString(), user_metadata: { nickname: 'KonradQA' }, app_metadata: { provider: 'email' }, identities: [] };
   users.set(email, user);
   saves.set(user.id, { profiles: { KonradQA: { name: 'KonradQA', av: '🥷', avimg: png, wallet: 4242, cases: 1, keys: 1, skins: [], eq: {}, kills: 0, deaths: 0, wins: 0, matches: 0 } }, cur: 'KonradQA', ts: 10 });
   function token(u) { return Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url') + '.' + Buffer.from(JSON.stringify({ sub: u.id, aud: 'authenticated', role: 'authenticated', email: u.email, exp: Math.floor(Date.now() / 1000) + 3600, iat: Math.floor(Date.now() / 1000) })).toString('base64url') + '.test-signature'; }
@@ -15,6 +15,7 @@ async function startFixture({ friends = [], profiles = [] } = {}) {
     const bearer = headers.authorization || headers.Authorization || '';
     let id; try { id = JSON.parse(Buffer.from(bearer.replace(/^Bearer /i, '').split('.')[1], 'base64url')).sub; } catch {}
     const actor = [...users.values()].find(u => u.id === id);
+    if (u.pathname.endsWith('/rpc/sz_chat') && chatRPC) return chatRPC(actor?.id, data.action, data.args).then(value => ({ status: 200, body: JSON.stringify(value), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } })).catch(error => ({ status: 400, body: JSON.stringify({ message: error.message }), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } }));
     let status = 200, value = {};
     if (method === 'OPTIONS') status = 204;
     else if (u.pathname.endsWith('/health')) value = { name: 'GoTrue', version: 'fixture' };
@@ -40,7 +41,7 @@ async function startFixture({ friends = [], profiles = [] } = {}) {
     else if (u.pathname.endsWith('/friends')) value = actor?.id === user.id ? friends : [];
     return { status, body: status === 204 ? '' : JSON.stringify(value), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'GET,POST,PATCH,DELETE,OPTIONS' } };
   }
-  const server = http.createServer((req, res) => { let body = ''; req.on('data', b => { body += b; }); req.on('end', () => { try { const result = request(req.method, req.url, body, req.headers); res.writeHead(result.status, result.headers); res.end(result.body); } catch (e) { res.writeHead(500); res.end(JSON.stringify({ message: e.message })); } }); });
+  const server = http.createServer((req, res) => { let body = ''; req.on('data', b => { body += b; }); req.on('end', async () => { try { const result = await request(req.method, req.url, body, req.headers); res.writeHead(result.status, result.headers); res.end(result.body); } catch (e) { res.writeHead(500); res.end(JSON.stringify({ message: e.message })); } }); });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   return { base: 'http://127.0.0.1:' + server.address().port, request, user, email, password, writes, saves, close: () => new Promise(resolve => server.close(resolve)) };
 }
@@ -51,7 +52,7 @@ async function connectFixture(electron, fixture) {
     net.fetch = (input, options) => { const url = String(input); return original(url.startsWith('https://mvzlqpccmjslxdajjbfw.supabase.co/') ? base + new URL(url).pathname + new URL(url).search : input, options); };
   }, fixture.base);
   await electron.context().route('https://mvzlqpccmjslxdajjbfw.supabase.co/**', async route => {
-    const req = route.request(); const result = fixture.request(req.method(), req.url(), req.postData() || '', req.headers());
+    const req = route.request(); const result = await fixture.request(req.method(), req.url(), req.postData() || '', req.headers());
     await route.fulfill(result);
   });
 }

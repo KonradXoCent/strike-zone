@@ -1,0 +1,32 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {PGlite}=require('@electric-sql/pglite');
+const a='10000000-0000-4000-8000-000000000001',b='10000000-0000-4000-8000-000000000002',c='10000000-0000-4000-8000-000000000003',d='10000000-0000-4000-8000-000000000004';
+const nonce=()=>require('node:crypto').randomUUID();
+test('persistent direct/group messages authorize participants, preserve unread and retry safely',async t=>{
+ const db=new PGlite();t.after(()=>db.close());
+ await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$ select (nullif(current_setting('request.jwt.claims',true),'')::jsonb->>'sub')::uuid $$;create function auth.jwt() returns jsonb language sql stable as $$ select coalesce(nullif(current_setting('request.jwt.claims',true),'')::jsonb,'{}'::jsonb) $$;grant usage on schema auth to anon,authenticated;create table friends(user_id uuid,friend_id uuid,name text);create table leaderboard(user_id uuid primary key,name text,av text);insert into auth.users values('${a}'),('${b}'),('${c}'),('${d}');insert into friends values('${a}','${b}','B'),('${a}','${c}','C'),('${b}','${a}','A');insert into leaderboard values('${a}','Alpha','😎'),('${b}','Beta','😎'),('${c}','Gamma','😎'),('${d}','Delta','😎');`);
+ await db.exec(fs.readFileSync(path.resolve(__dirname,'../database/social.sql'),'utf8'));
+ const as=(id,fn,claims={})=>db.transaction(async tx=>{await tx.exec('set local role '+(id?'authenticated':'anon'));await tx.query("select set_config('request.jwt.claims',$1,true)",[JSON.stringify({sub:id,...claims})]);return fn(tx);});
+ const rpc=(id,action,args={},claims)=>as(id,async tx=>(await tx.query('select public.sz_chat($1,$2::jsonb) as result',[action,JSON.stringify(args)])).rows[0].result,claims);
+ await assert.rejects(rpc(null,'list'),/permission denied/);await assert.rejects(rpc(a,'list',{}, {is_anonymous:true}),/CHAT_AUTH/);
+ await assert.rejects(rpc(a,'direct',{user:d}),/CHAT_FRIEND/);
+ const th=(await rpc(a,'direct',{user:b})).id;assert.equal((await rpc(b,'direct',{user:a})).id,th);
+ const n=nonce();const sent=await rpc(a,'send',{thread:th,body:'Hello <script>safe text</script>',nonce:n});assert.equal((await rpc(a,'send',{thread:th,body:'Hello <script>safe text</script>',nonce:n})).id,sent.id);
+ await assert.rejects(rpc(a,'send',{thread:th,body:'Different',nonce:n}),/CHAT_NONCE/);
+ await assert.rejects(rpc(c,'history',{thread:th}),/CHAT_ACCESS/);await assert.rejects(rpc(c,'send',{thread:th,body:'injection',nonce:nonce()}),/CHAT_ACCESS/);
+ assert.deepEqual(await as(c,async tx=>(await tx.query('select * from sz_chat_messages')).rows),[]);
+ await assert.rejects(as(a,tx=>tx.query('delete from sz_chat_messages')),/permission denied/);
+ assert.equal((await rpc(b,'list'))[0].unread,1);assert.equal((await rpc(a,'list'))[0].unread,0);
+ await rpc(b,'read',{thread:th,through:sent.id});assert.equal((await rpc(b,'list'))[0].unread,0);
+ await rpc(b,'read',{thread:th,through:'9223372036854775807'});await rpc(a,'send',{thread:th,body:'Offline delivery',nonce:nonce()});assert.equal((await rpc(b,'list'))[0].unread,1);
+ const gnonce=nonce(),group=(await rpc(a,'group',{title:'Team <test>',users:[b,c],nonce:gnonce})).id;assert.equal((await rpc(a,'group',{title:'Team <test>',users:[b,c],nonce:gnonce})).id,group);
+ await rpc(b,'send',{thread:group,body:'group message',nonce:nonce()});assert.equal((await rpc(c,'history',{thread:group})).messages.length,1);await assert.rejects(rpc(b,'rename',{thread:group,title:'No'}),/CHAT_OWNER/);
+ await rpc(a,'remove',{thread:group,user:c});await assert.rejects(rpc(c,'history',{thread:group}),/CHAT_ACCESS/);await rpc(a,'add',{thread:group,user:c});await rpc(a,'rename',{thread:group,title:'New title'});assert.equal((await rpc(c,'list')).find(x=>x.id===group).title,'New title');
+ await rpc(a,'leave',{thread:group});const owner=(await rpc(b,'list')).find(x=>x.id===group).owner_id;assert.notEqual(owner,a);await assert.rejects(rpc(a,'history',{thread:group}),/CHAT_ACCESS/);
+ await assert.rejects(rpc(b,'send',{thread:group,body:' '.repeat(4),nonce:nonce()}),/CHAT_BODY/);
+ await assert.rejects(rpc(b,'send',{thread:group,body:'x'.repeat(2001),nonce:nonce()}),/CHAT_BODY/);
+ // Pages use textual int8 IDs, so precision is retained above Number.MAX_SAFE_INTEGER.
+ await db.exec("alter sequence sz_chat_messages_id_seq restart with 9007199254740995");const hi=await rpc(b,'send',{thread:group,body:'high sequence',nonce:nonce()});assert.equal(hi.id,'9007199254740995');
+ for(let i=0;i<28;i++)await rpc(b,'send',{thread:group,body:'rate '+i,nonce:nonce()});await assert.rejects(rpc(b,'send',{thread:group,body:'limited',nonce:nonce()}),/CHAT_LIMIT/);
+ await db.exec("update sz_chat_messages set created_at=now()-interval '2 minutes'");for(let i=0;i<25;i++)await rpc(b,'send',{thread:group,body:'page '+i,nonce:nonce()});const page=await rpc(c,'history',{thread:group});assert.equal(page.messages.length,50);assert.equal(page.older,true);const previous=await rpc(c,'history',{thread:group,before:page.messages[0].id});assert.ok(previous.messages.length>0);assert.ok(BigInt(previous.messages.at(-1).id)<BigInt(page.messages[0].id));
+});

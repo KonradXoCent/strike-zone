@@ -26,7 +26,7 @@ async function startPresenceFixture() {
         const ch = channels.get(m.topic);
         if (ch) ch.meta = m.payload.event === 'track' ? { ...m.payload.payload, phx_ref: randomUUID() } : null;
         reply(); sync(m.topic);
-      } else reply();
+      } else if (m.event === 'broadcast') { for (const [peer, rooms] of connections) if (peer !== ws && rooms.has(m.topic)) send(peer, m.topic, 'broadcast', m.payload); reply(); } else reply();
     });
     ws.on('close', () => { const topics = [...channels.keys()]; connections.delete(ws); for (const topic of topics) sync(topic); });
   });

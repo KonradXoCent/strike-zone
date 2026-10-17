@@ -23,6 +23,9 @@ function bytes(value) {
 }
 function render(state) {
   current = state;
+  SzSettings.apply(state.preferences);
+  if (state.account?.user?.name) szLocale.protected.add(state.account.user.name);
+  for (const f of state.friends?.list || []) szLocale.protected.add(f.name);
   const update = state.update;
   const phase = update.phase;
   const account = state.account || { phase: 'checking', authenticated: false, user: null };
@@ -131,8 +134,8 @@ function renderFriends(state) {
       const avatar = document.createElement('div'); avatar.className = 'friend-avatar'; avatarContent(avatar, friend);
       const dot = document.createElement('span'); dot.className = 'presence-dot ' + status; dot.title = friendStatus(friend); dot.setAttribute('aria-label', dot.title); wrap.append(avatar, dot);
       const copy = document.createElement('div'); copy.className = 'friend-copy';
-      const name = document.createElement('strong'); name.textContent = friend.name;
-      const activity = document.createElement('small'); activity.textContent = friendStatus(friend); copy.append(name, activity); row.append(wrap, copy); content.append(row);
+      const name = document.createElement('strong'); name.textContent = friend.name; name.dataset.userContent = '';
+      const activity = document.createElement('small'); activity.textContent = friendStatus(friend); copy.append(name, activity); row.append(wrap, copy); row.tabIndex = 0; row.setAttribute('role', 'button'); row.onclick = () => window.szMessages?.direct(friend.id); row.onkeydown = e => { if (e.key === 'Enter') row.click(); }; content.append(row);
     }
   }
   root.replaceChildren(content); root.scrollTop = scroll;
@@ -183,3 +186,5 @@ $('close-dialog').onclick = $('dialog-ok').onclick = () => $('details').close();
 $('details').addEventListener('click', event => { if (event.target === $('details')) { const r = $('details').getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) $('details').close(); } });
 api.onState(render);
 api.getState().then(render).catch(() => showDialog('Uruchom aplikację ponownie', 'Nie udało się wczytać stanu launchera.'));
+SzSettings.mount();
+window.szMessages = SzChatView.mount({ command: (a, v) => api.chat(a, v), subscribe: fn => { api.onChat(fn); api.getChat().then(fn); }, getFriends: () => current?.friends?.list || [], locale: szLocale, ack: () => api.chatFocused(), notify: () => document.visibilityState === 'visible' });

@@ -1,6 +1,6 @@
 {
   "name": "strike-zone-desktop",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Strike Zone 2D — gra na Windows z launcherem i aktualizacjami",
   "author": "Konrad Xocent",
   "private": true,
@@ -20,7 +20,10 @@
     "test:launcher": "npm run prepare:game && node scripts/launcher-smoke.cjs",
     "test:community": "node scripts/community-smoke.cjs",
     "prepare:preview": "node scripts/prepare-preview.cjs",
-    "test:preview": "npm run prepare:game && node scripts/preview-smoke.cjs"
+    "test:preview": "npm run prepare:game && node scripts/preview-smoke.cjs",
+    "test:social": "npm run prepare:game && node scripts/social-smoke.cjs",
+    "test:network": "node scripts/network-smoke.cjs",
+    "check:ui": "node scripts/check-ui.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",
@@ -28,6 +31,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.10",
+    "acorn": "8.15.0",
     "electron": "44.7.2",
     "electron-builder": "26.15.3",
     "pe-library": "2.0.1",

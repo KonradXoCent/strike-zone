@@ -8,7 +8,7 @@ function resolveAsset(root, value) {
   let pathname;
   try { pathname = decodeURIComponent(url.pathname); } catch { return null; }
   if (pathname.includes('\0') || pathname.includes('\\')) return null;
-  const allowed = ['launcher/', 'assets/', 'game/', 'vendor/'];
+  const allowed = ['launcher/', 'assets/', 'game/', 'vendor/', 'shared/'];
   const relative = pathname.replace(/^\/+/, '');
   if (!allowed.some(prefix => relative.startsWith(prefix))) return null;
   const full = path.resolve(root, relative);

@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 function makePreview() {
+  require('./embed-shared.cjs').sync(true);
   let html = fs.readFileSync(path.join(root, 'game-source/index.html'), 'utf8');
   if (!html.includes(fs.readFileSync(path.join(__dirname, 'community-case.html'), 'utf8'))) throw new Error('Embedded Community Forge module is stale.');
   let sdk = fs.readFileSync(path.join(root, 'node_modules/@supabase/supabase-js/dist/umd/supabase.js'), 'utf8');

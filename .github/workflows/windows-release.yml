@@ -8,6 +8,7 @@ on:
       - '*preload.cjs'
       - 'core/**'
       - 'launcher/**'
+      - 'shared/**'
       - 'assets/**'
       - 'game-source/**'
       - 'game/*.js'
@@ -36,8 +37,13 @@ jobs:
         shell: pwsh
         run: node scripts/configure-updates.cjs --github "$env:GITHUB_REPOSITORY"
       - run: npm test
+      - run: npm run check:ui
       - name: Test launcher accounts and friends on Windows before publishing
         run: npm run test:launcher
+      - name: Test shared languages, themes and persistent chat
+        run: npm run test:social
+      - name: Test two SDK clients through lobby and running server list
+        run: npm run test:network
       - name: Build current Windows installer
         if: ${{ !startsWith(github.event.head_commit.message, 'test:') }}
         run: npm run dist:win

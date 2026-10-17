@@ -439,19 +439,19 @@
         [
           [
             700,
-            427
+            405
           ],
           [
             714,
-            427
+            405
           ],
           [
             714,
-            490
+            538
           ],
           [
             700,
-            490
+            538
           ]
         ]
       ],
@@ -751,23 +751,6 @@
           ]
         },
         {
-          "name": "Cave bottom exit to B",
-          "a": [
-            678,
-            477
-          ],
-          "b": [
-            732,
-            478
-          ],
-          "bounds": [
-            648,
-            458,
-            111,
-            66
-          ]
-        },
-        {
           "name": "Cave east side is a wall",
           "blocked": [
             707,
@@ -779,6 +762,20 @@
           "blocked": [
             707,
             482
+          ]
+        },
+        {
+          "name": "Cave B partition joins the lower masonry without a gap",
+          "blocked": [
+            707,
+            508
+          ]
+        },
+        {
+          "name": "Cave B partition remains solid at its foot",
+          "blocked": [
+            707,
+            527
           ]
         }
       ],
@@ -6410,8 +6407,8 @@
           ],
           "radius": 14,
           "labels": [
-            "RAMP \u2193 B",
-            "RAMP \u2191 A"
+            "RAMP ↓ B",
+            "RAMP ↑ A"
           ]
         },
         {
@@ -6426,8 +6423,8 @@
           ],
           "radius": 14,
           "labels": [
-            "SECRET \u2193 B",
-            "SECRET \u2191 OUTSIDE"
+            "SECRET ↓ B",
+            "SECRET ↑ OUTSIDE"
           ]
         },
         {
@@ -6442,8 +6439,8 @@
           ],
           "radius": 12,
           "labels": [
-            "VENT \u2193 B",
-            "VENT \u2191 A"
+            "VENT ↓ B",
+            "VENT ↑ A"
           ]
         }
       ]
