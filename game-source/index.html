@@ -2667,7 +2667,7 @@ function homeCharacterArt(){
  q.fillStyle='#a8c4d044';q.fillRect(150,204,66,3);q.fillStyle=ct?'#6598b8':'#c0a171';q.fillRect(160,216,47,15);q.fillStyle='#142a36';q.font='bold 9px system-ui';q.fillText(ct?'CT UNIT':'STRIKE',164,227);
  poly([[115,179],[96,191],[67,257],[77,280],[98,291],[145,239],[153,209]],cloth);poly([[254,181],[278,199],[308,255],[298,275],[269,283],[228,234],[228,208]],cloth);
  poly([[74,260],[99,253],[166,271],[168,291],[148,304],[83,282]],'#2d4351');poly([[299,252],[303,277],[236,310],[218,300],[219,279],[275,255]],'#344b59');
- q.save();q.translate(100,260);q.rotate(-.15);q.scale(2.65,2.65);const k=sceneCfg().wp||'m4',id=creatorPaintId(k)||(k==='knife'?(P().eq2?.['knife_'+(ct?'CT':'T')]||P().eq.knife):P().eq[k]);drawWeaponSprite(q,k,id?sk0(id):null,id);q.restore();
+ q.save();q.translate(100,260);q.rotate(-.15);q.scale(2.65,2.65);const k=sceneCfg().wp||'m4',id=window.szPaintFor?.(k)||(k==='knife'?(P().eq2?.['knife_'+(ct?'CT':'T')]||P().eq.knife):P().eq[k]);drawWeaponSprite(q,k,id?sk0(id):null,id);q.restore();
  for(const [x,y,a]of [[159,283,-.1],[242,277,.1]]){q.save();q.translate(x,y);q.rotate(a);q.fillStyle='#172a34';q.beginPath();q.roundRect(-17,-10,34,24,5);q.fill();q.strokeStyle='#78918b';q.lineWidth=2;q.beginPath();q.moveTo(-9,-4);q.lineTo(10,-4);q.stroke();q.restore();}
  poly([[160,152],[163,172],[185,187],[213,174],[220,146]],'#1a2b37');
  q.fillStyle='#233b49';q.strokeStyle='#142531';q.lineWidth=3;q.beginPath();q.ellipse(190,111,52,62,-.08,0,7);q.fill();q.stroke();
@@ -2794,8 +2794,8 @@ const CREATOR_BASE_MAP_COUNT=MAPN.length;
 const CREATOR_MAP_SET=mapSet,CREATOR_BOMB_MAP=isBombMap;
 mapSet=function(mode){const list=CREATOR_MAP_SET(mode);return CREATOR_TEST&&['classic','tdm','ctf'].includes(mode)?[...list,CREATOR_BASE_MAP_COUNT]:list;};
 isBombMap=function(id){return CREATOR_BOMB_MAP(id)||!!CREATOR_TEST&&id===CREATOR_BASE_MAP_COUNT;};
-function creatorMountMap(map,grid){
- const id=CREATOR_BASE_MAP_COUNT,theme=CREATOR_THEMES[map.theme];GRS[id]=grid;MAPN[id]='workshop / '+map.name;MAPS[id]=[];WINS[id]=map.windows.map(r=>r.slice());FLRS[id]=[];SITES[id]=creatorClone(map.sites);SPW[id]=creatorClone(map.spawns);LB[id]=[];SCL[id]=CREATOR_W/1000;FL[id]=theme.floor;WC[id]=theme.wall;FLG[id]=theme.floor;WCG[id]=theme.wall;BGC[id]=[theme.floor,theme.dark,theme.accent];
+function creatorMountMap(map,grid,id=CREATOR_BASE_MAP_COUNT){
+ const theme=CREATOR_THEMES[map.theme];GRS[id]=grid;MAPN[id]='workshop / '+map.name;MAPS[id]=[];WINS[id]=map.windows.map(r=>r.slice());FLRS[id]=[];SITES[id]=creatorClone(map.sites);SPW[id]=creatorClone(map.spawns);LB[id]=[];SCL[id]=CREATOR_W/1000;FL[id]=theme.floor;WC[id]=theme.wall;FLG[id]=theme.floor;WCG[id]=theme.wall;BGC[id]=[theme.floor,theme.dark,theme.accent];
  MAP_BRIEFINGS[id]={...theme,label:'WARSZTAT / LOKALNY TRENING',description:'Twój projekt mapy: '+workshopEscape(map.name)+'. Sprawdź przejścia, osłony i pozycje obu drużyn w grze z botami.',tips:['Wróć do Warsztatu, aby poprawić układ mapy.','Ten test nie zmienia statystyk konta ani stanu portfela.'],landmark:map.theme==='forest'?'temple':map.theme==='desert'?'arch':'reactor'};SCV=null;SCK='';PRESENTATION_IMAGES.clear();
 }
 function creatorTestMap(){
@@ -2803,7 +2803,7 @@ function creatorTestMap(){
  const mode=$('creator-test-mode').value,team=$('creator-test-team').value;if(!['classic','tdm','ctf'].includes(mode)||!['CT','T'].includes(team))return;
  CREATOR_TEST={owner:creatorOwner(),previous:{...sel},map:checked.map};creatorMountMap(checked.map,checked.grid);sel.map=CREATOR_BASE_MAP_COUNT;sel.mode=mode;sel.team=team;sel.comp=false;begin();
 }
-function creatorTestEnd(){if(!CREATOR_TEST)return;Object.assign(sel,CREATOR_TEST.previous);for(const a of [MAPN,MAPS,WINS,FLRS,SITES,LB,SCL,FL,WC,FLG,WCG,BGC,MAP_BRIEFINGS])a.length=CREATOR_BASE_MAP_COUNT;delete SPW[CREATOR_BASE_MAP_COUNT];delete GRS[CREATOR_BASE_MAP_COUNT];CREATOR_TEST=null;SCV=null;SCG=null;SCK='';PRESENTATION_IMAGES.clear();$('creator-test-label')?.remove();}
+function creatorTestEnd(){if(!CREATOR_TEST)return;Object.assign(sel,CREATOR_TEST.previous);for(const a of [MAPN,MAPS,WINS,FLRS,SITES,LB,SCL,FL,WC,FLG,WCG,BGC,MAP_BRIEFINGS]){delete a[CREATOR_BASE_MAP_COUNT];while(a.length>CREATOR_BASE_MAP_COUNT&&a[a.length-1]===undefined)a.pop();}delete SPW[CREATOR_BASE_MAP_COUNT];delete GRS[CREATOR_BASE_MAP_COUNT];CREATOR_TEST=null;SCV=null;SCG=null;SCK='';PRESENTATION_IMAGES.clear();$('creator-test-label')?.remove();}
 const CREATOR_BEGIN=begin0;begin0=function(){CREATOR_BEGIN();if(G&&CREATOR_TEST){G.creatorTest=true;const label=document.createElement('div');label.id='creator-test-label';label.className='creator-test-label';label.textContent='WARSZTAT · TEST Z BOTAMI · BEZ NAGRÓD';document.body.appendChild(label);}};
 const CREATOR_QUIT=quit;quit=function(){const testing=!!CREATOR_TEST;CREATOR_QUIT();if(testing){creatorTestEnd();creatorTab('maps');}};
 const CREATOR_END_GAME=endG;endG=function(title,sub,won,cash){if(!G?.creatorTest)return CREATOR_END_GAME(title,sub,won,cash);G.over=true;$('ov').style.display='flex';$('ov').innerHTML=`<b>${workshopEscape(title)}</b><div style="font-size:14px">${workshopEscape(sub)} · Test bez nagród</div><button class="pri" onclick="quit()">Wróć do Warsztatu</button>`;};
@@ -2857,6 +2857,254 @@ window.szCreatorAccountReady=function(){if(CREATOR_TEST)creatorTestEnd();CREATOR
 szNavInit();
 </script>
 
+<!-- Community submissions, moderation and published content -->
+<style>
+.cw-nav{display:contents}.cr-tabs{flex-wrap:wrap}.cw-toolbar{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:16px 0}.cw-toolbar input{min-width:150px;flex:1}.cw-toolbar select{max-width:220px}.cw-toolbar button,.cw-card button{font-size:11px;letter-spacing:0;box-shadow:none}.cw-toolbar input,.cw-toolbar select{font-size:11px}.cw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:13px}.cw-card{border:1px solid #3b4a5f;border-radius:10px;background:#111e2be8;overflow:hidden;display:flex;flex-direction:column}.cw-card>div:last-child{padding:15px;display:flex;flex-direction:column;gap:9px;flex:1}.cw-card h3{font:600 14px system-ui;margin:0}.cw-card small{font:10px/1.7 system-ui;color:#91a6bc}.cw-preview{aspect-ratio:1.85;background:radial-gradient(ellipse,#314250,#101b27);display:grid;place-items:center;overflow:hidden;position:relative}.cw-preview>span{font:9px system-ui;letter-spacing:2px;color:#7c93aa}.cw-preview img{width:100%;height:100%;object-fit:contain;position:absolute;inset:0}.cw-label{font:8px system-ui;letter-spacing:1px;color:#b7cbba;text-transform:uppercase}.cw-card .cr-actions{margin-top:auto;padding-top:10px}.cw-pill{display:inline-block;padding:5px 8px;border:1px solid #6b829766;border-radius:4px;font:9px system-ui;color:#b6c6d5;align-self:start}.cw-pill.pending{color:#edc883;border-color:#caac5c66}.cw-pill.approved{color:#a6d6b2;border-color:#6eab7c66}.cw-pill.rejected{color:#e6a5a9;border-color:#b9677766}.cw-note{font:10px/1.8 system-ui;color:#91a6bc;white-space:pre-line}.cw-empty{padding:40px 25px;border:1px dashed #526378;border-radius:10px;text-align:center;color:#9caec2;font:12px/2 system-ui}.cw-empty b{display:block;font-size:18px;color:#d5dfe7;margin-bottom:7px}.cw-status{font:10px system-ui;color:#a6b8c9}.cw-submit{margin-top:17px;border:1px solid #9b824755;background:linear-gradient(100deg,#292c28bf,#142032dc)}.cw-submit h3{color:#e7c990}.cw-submit textarea{display:block;resize:vertical;width:100%;max-width:700px;min-height:60px;margin:12px 0;font:11px/1.6 system-ui}.cw-submit p{max-width:760px}.cw-detail{max-width:900px!important;width:min(900px,96vw);text-align:left!important;max-height:92vh;overflow:auto}.cw-detail header{padding:0 0 16px;background:none;display:flex;justify-content:space-between;align-items:start}.cw-detail h2{font-size:23px;margin:5px 0}.cw-detail .cw-detail-art{background:#0d1823;border:1px solid #3b4f64;border-radius:8px;width:100%;max-height:400px;object-fit:contain}.cw-detail textarea{width:100%;resize:vertical;margin:12px 0;font:12px system-ui}.cw-detail p{font:11px/1.9 system-ui;color:#a2b4c6}.cw-detail footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:16px}.cw-reject{border-color:#b66c77!important;color:#f0a6af;background:#492d3833}.cw-code input{font:15px monospace;width:100%;text-transform:none;letter-spacing:.2px}.cw-code small{font:10px/1.8 system-ui;color:#a1b2c5}.cw-page{max-width:1250px;margin:auto}.cw-author-note{border-left:2px solid #a7727a;padding:7px 10px;background:#6a3b4320;font-size:10px;color:#d9b1b5}.cw-footer{display:flex;justify-content:center;gap:15px;margin-top:25px;align-items:center}.cw-title-row{display:flex;justify-content:space-between;align-items:center;gap:12px}.cw-page .cr-top{margin-bottom:18px}
+@media(max-width:650px){.cw-grid{grid-template-columns:1fr}.cw-toolbar{align-items:stretch}.cw-toolbar select{max-width:none}.cw-detail h2{font-size:18px}}
+</style>
+<script>
+/* Moderated community content. Only the database grants approval; clients load immutable releases. */
+const COMMUNITY_UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const COMMUNITY_MODES=['classic','tdm','ctf'];
+let COMMUNITY={owner:null,epoch:0,tab:'catalog',filter:'map',search:'',page:0,rows:[],mine:[],queue:[],admin:false,ready:false,complete:false,busy:false,message:'',error:false,cache:new Map(),pending:new Map(),outbox:new Map(),thumbnails:new Map(),mapSlots:new Map(),slotRefs:new Map(),nextSlot:CREATOR_BASE_MAP_COUNT+1,joinKey:'',joinSerial:0};
+let COMMUNITY_IO=Promise.resolve(),COMMUNITY_REFRESH=null;
+const communityAccount=()=>SBU?.id||null;
+function communityOnline(){return !!sb&&typeof sb.from==='function';}
+function communityLogin(){if(SBU)return true;toast('Zaloguj się na konto gry, aby wysyłać i wyposażać projekty.');tab('prof');return false;}
+function communityError(error){const msg=String(error?.message||error||'');const messages={WORKSHOP_LOGIN_REQUIRED:'Zaloguj się na konto gry.',WORKSHOP_ADMIN_REQUIRED:'To konto nie ma uprawnień do moderacji.',WORKSHOP_INVALID_OWNER_CODE:'Kod jest nieprawidłowy, wykorzystany lub wygasł.',WORKSHOP_INVALID_PROJECT:'Projekt nie przeszedł kontroli. Sprawdź jego wymiary, przejścia i dane skina.',WORKSHOP_SUBMISSION_LIMIT:'Limit zgłoszeń: maksymalnie 5 oczekujących i 10 wysłanych w ciągu 24 godzin.',WORKSHOP_REVIEW_NOTE_REQUIRED:'Przy odrzuceniu wpisz powód (maksymalnie 500 znaków).',WORKSHOP_ALREADY_REVIEWED:'Ktoś już rozpatrzył to zgłoszenie. Odśwież listę.',WORKSHOP_NOT_FOUND:'Nie znaleziono zgłoszenia.'};for(const [code,text]of Object.entries(messages))if(msg.includes(code))return text;if(error?.code==='23505')return 'Ten projekt już oczekuje na ocenę.';if(['PGRST205','42P01','PGRST202'].includes(error?.code))return 'Warsztat online nie jest jeszcze dostępny na tym serwerze.';return 'Nie udało się połączyć z Warsztatem. Spróbuj ponownie.';}
+function communityNotice(text,error=false){COMMUNITY.message=text;COMMUNITY.error=error;const e=$('cw-notice');if(e){e.hidden=!text;e.className='cr-message'+(error?' error':'');e.textContent=text;}else if(T==='creator')creatorNotice(text,error);}
+function communityReset(){const id=communityAccount();if(COMMUNITY.owner===id)return;COMMUNITY.owner=id;COMMUNITY.epoch++;COMMUNITY.admin=false;COMMUNITY.mine=[];COMMUNITY.queue=[];COMMUNITY.busy=false;COMMUNITY.message='';COMMUNITY.outbox.clear();COMMUNITY_REFRESH=null;$('pm').style.display='none';communityUpdateNav();}
+function communityNavHTML(active){return `<button class="${active==='catalog'?'active':''}" onclick="communityTab('catalog')">Katalog graczy</button><button class="${active==='mine'?'active':''}" onclick="communityTab('mine')">Moje zgłoszenia</button>${COMMUNITY.admin?`<button class="${active==='moderation'?'active':''}" onclick="communityTab('moderation')">Moderacja${COMMUNITY.queue.length?' · '+COMMUNITY.queue.length:''}</button>`:''}`;}
+function communityUpdateNav(){if(T!=='creator')return;const tabs=document.querySelector('.cr-tabs');if(!tabs||tabs.dataset.cloud==='page')return;tabs.querySelector('.cw-nav')?.remove();const el=document.createElement('span');el.className='cw-nav';el.innerHTML=communityNavHTML('');tabs.appendChild(el);}
+async function communityRefresh(){
+ communityReset();if(!communityOnline())return false;if(COMMUNITY_REFRESH)return COMMUNITY_REFRESH;const epoch=COMMUNITY.epoch,owner=communityAccount(),client=sb;
+ const task=Promise.resolve().then(async()=>{try{const rows=[];let complete=false;for(let offset=0;offset<10000;offset+=200){const r=await client.from('sz_workshop_catalog').select('id,kind,title,author_name,version,release_id,updated_at,weapon,model,theme').order('updated_at',{ascending:false}).range(offset,offset+199);if(r.error)throw r.error;rows.push(...r.data||[]);if((r.data||[]).length<200){complete=true;break;}}
+  let mine=[],admin=false,queue=[];if(owner){const results=await Promise.all([client.from('sz_workshop_admins').select('user_id').eq('user_id',owner).maybeSingle(),client.from('sz_workshop_submissions').select('id,project_id,kind,title,author_name,description,payload,status,review_note,created_at,reviewed_at').eq('author_id',owner).order('created_at',{ascending:false}).limit(100)]);for(const r of results)if(r.error)throw r.error;admin=!!results[0].data;mine=results[1].data||[];if(admin){const r=await client.from('sz_workshop_submissions').select('id,project_id,kind,title,author_name,description,payload,status,review_note,created_at').eq('status','pending').order('created_at',{ascending:true}).limit(200);if(r.error)throw r.error;queue=r.data||[];}}
+  if(COMMUNITY.epoch!==epoch||communityAccount()!==owner)return false;
+  COMMUNITY.rows=rows.filter(r=>COMMUNITY_UUID.test(r.id)&&COMMUNITY_UUID.test(r.release_id)&&['map','skin'].includes(r.kind)&&Number.isSafeInteger(r.version));COMMUNITY.mine=mine;COMMUNITY.queue=queue;COMMUNITY.admin=admin;COMMUNITY.ready=true;COMMUNITY.complete=complete;COMMUNITY.lastSync=Date.now();if(COMMUNITY.error){COMMUNITY.error=false;COMMUNITY.message='';}
+  if(complete){const active=new Set(COMMUNITY.rows.map(r=>r.id));let changed=false;for(const [k,ref]of Object.entries(P().communityLoadout||{}))if(!active.has(ref.item)){delete P().communityLoadout[k];changed=true;}if(changed)save();}
+  communityUpdateNav();if(T==='creator'&&document.querySelector('.cw-page'))communityRender();communityHydrateOwn();return true;
+ }catch(e){if(COMMUNITY.epoch===epoch){COMMUNITY.error=true;COMMUNITY.message=communityError(e);if(T==='creator'&&document.querySelector('.cw-page'))communityRender();}return false;}finally{if(COMMUNITY_REFRESH===task)COMMUNITY_REFRESH=null;}});COMMUNITY_REFRESH=task;return task;
+}
+async function communityRelease(id){
+ if(!COMMUNITY_UUID.test(id))throw Error('Nieprawidłowy identyfikator projektu.');if(COMMUNITY.cache.has(id))return COMMUNITY.cache.get(id);if(COMMUNITY.pending.has(id))return COMMUNITY.pending.get(id);if(!communityOnline())throw Error('Brak połączenia z Warsztatem.');
+ const client=sb;const task=COMMUNITY_IO.catch(()=>{}).then(async()=>{const r=await client.from('sz_workshop_releases').select('id,item_id,version,payload').eq('id',id).maybeSingle();if(r.error)throw r.error;if(!r.data)throw Error('Projekt nie jest zatwierdzony lub został wycofany.');const p=r.data.payload,parsed=p?.kind==='sz-map'?creatorValidatePlay(p).map:creatorParseSkin(p);const release={...r.data,payload:parsed};COMMUNITY.cache.set(id,release);return release;});
+ COMMUNITY_IO=task.catch(()=>{});COMMUNITY.pending.set(id,task);try{return await task;}finally{COMMUNITY.pending.delete(id);}
+}
+function communityOwnRef(k){const r=P().communityLoadout?.[k];if(!r||!COMMUNITY_UUID.test(r.release)||!COMMUNITY_UUID.test(r.item))return null;if(COMMUNITY.ready&&COMMUNITY.complete&&!COMMUNITY.rows.some(m=>m.id===r.item))return null;const p=COMMUNITY.cache.get(r.release);return p?.payload.kind==='sz-skin'&&p.payload.weapon===k&&p.item_id===r.item?r:null;}
+function communityOwnId(k){const ref=communityOwnRef(k);return ref?'ugc:'+ref.release:null;}
+async function communityHydrateOwn(){const epoch=COMMUNITY.epoch;for(const [k,ref]of Object.entries(P().communityLoadout||{})){if(!['knife',...GUNS].includes(k)||!COMMUNITY_UUID.test(ref?.release))continue;try{await communityRelease(ref.release);if(COMMUNITY.epoch!==epoch)return;}catch(e){}}if(COMMUNITY.epoch===epoch){VISUAL_HELD.clear();drawScene();}}
+function communityClear(k){if(!P().communityLoadout?.[k])return;delete P().communityLoadout[k];save();VISUAL_HELD.clear();drawScene();}
+function communitySubmitHTML(kind){return `<section class="cr-card cw-submit"><h3>Wyślij ${kind==='map'?'mapę':'skin'} do gry</h3><p>Prześlij bieżący projekt do sprawdzenia. Po zatwierdzeniu przez właściciela pojawi się w katalogu wszystkich graczy. Oczekujące zgłoszenie zachowuje wysłaną wersję projektu.</p><textarea id="cw-description-${kind}" maxlength="600" placeholder="Opis projektu dla osoby sprawdzającej (opcjonalnie)"></textarea><div class="cr-row"><button class="cr-primary" data-cw-submit onclick="communitySubmit('${kind}')">Wyślij do oceny</button><button onclick="communityTab('mine')">Moje zgłoszenia</button>${!SBU?'<span class="cr-note">Wymaga zalogowania na konto gry.</span>':''}</div></section>`;}
+const COMMUNITY_MAP_HTML=creatorMapHTML,COMMUNITY_SKIN_HTML=creatorSkinHTML,COMMUNITY_EDITOR_TAB=creatorTab;
+creatorMapHTML=function(){return COMMUNITY_MAP_HTML()+communitySubmitHTML('map');};creatorSkinHTML=function(){return COMMUNITY_SKIN_HTML()+communitySubmitHTML('skin');};
+creatorTab=function(kind){if(['catalog','mine','moderation'].includes(kind))return communityTab(kind);COMMUNITY_EDITOR_TAB(kind);communityUpdateNav();if(communityOnline()&&(!COMMUNITY.lastSync||Date.now()-COMMUNITY.lastSync>30000))communityRefresh();};
+async function communitySubmit(kind){
+ if(COMMUNITY.busy||!communityLogin())return;if(!communityOnline())return creatorNotice('Brak połączenia z Warsztatem.',true);let payload;try{payload=kind==='map'?creatorValidatePlay(creatorState().map).map:creatorParseSkin(creatorState().skin);}catch(e){return creatorNotice(e.message,true);}
+ const description=($('cw-description-'+kind)?.value||'').slice(0,600),owner=communityAccount(),epoch=COMMUNITY.epoch,serialized=JSON.stringify(payload),key=owner+':'+kind+':'+serialized,id=COMMUNITY.outbox.get(key)||crypto.randomUUID();COMMUNITY.outbox.set(key,id);COMMUNITY.busy=true;document.querySelectorAll('[data-cw-submit]').forEach(b=>{b.disabled=true;b.textContent='Wysyłanie…';});
+ try{const r=await sb.from('sz_workshop_submissions').insert({id,project_id:payload.id,kind,payload,description}).select('id').single();if(r.error){if(r.error.code!=='23505')throw r.error;const same=await sb.from('sz_workshop_submissions').select('id').eq('id',id).maybeSingle();if(same.error||!same.data)throw r.error;}
+  if(communityAccount()!==owner||COMMUNITY.epoch!==epoch)return;await communityRefresh();creatorNotice('Wysłano „'+payload.name+'” do oceny. Status znajdziesz w Moich zgłoszeniach.');
+ }catch(e){if(communityAccount()===owner)creatorNotice(communityError(e),true);}finally{if(communityAccount()===owner){COMMUNITY.busy=false;document.querySelectorAll('[data-cw-submit]').forEach(b=>{b.disabled=false;b.textContent='Wyślij do oceny';});}}
+}
+function communityHeader(active){return `<div class="cr-top"><div><span class="sz-eyebrow">STRIKE ZONE / WARSZTAT SPOŁECZNOŚCI</span><h1>${active==='moderation'?'Twoja decyzja. Wspólna gra.':active==='mine'?'Od pomysłu do publikacji.':'Stworzone przez graczy.'}</h1><p>${active==='moderation'?'Sprawdź projekt, przetestuj mapę i zdecyduj o publikacji.':active==='mine'?'Śledź ocenę swoich map i skinów. Po odrzuceniu popraw projekt i wyślij kolejną wersję.':'Mapy i skiny zatwierdzone przez właściciela gry. Nowe projekty trafiają tutaj po akceptacji.'}</p></div><span class="cr-tag">${COMMUNITY.admin?'PANEL WŁAŚCICIELA':'WSPÓLNY KATALOG'}</span></div><div class="cr-tabs" data-cloud="page"><button onclick="creatorTab('maps')">Edytor map</button><button onclick="creatorTab('skins')">Pracownia skinów</button>${communityNavHTML(active)}</div>`;}
+function communityTab(kind='catalog'){communityReset();if(kind==='moderation'&&!COMMUNITY.admin)kind='catalog';if(COMMUNITY.tab!==kind&&kind!=='catalog'){COMMUNITY.filter='all';COMMUNITY.page=0;}COMMUNITY.tab=kind;T='creator';hdr();communityRender();if(communityOnline())communityRefresh();}
+function communityStatus(s){return {pending:'Oczekuje na ocenę',approved:'Zatwierdzone',rejected:'Odrzucone'}[s]||s;}
+function communityRender(){
+ if(T!=='creator')return;const c=COMMUNITY,active=c.tab;if(active==='moderation'&&!c.admin)return communityTab('catalog');const all=active==='catalog'?c.rows:active==='moderation'?c.queue:c.mine;
+ const filtered=all.filter(r=>(c.filter==='all'||r.kind===c.filter)&&(r.title+' '+r.author_name).toLocaleLowerCase().includes(c.search.toLocaleLowerCase()));c.page=Math.max(0,Math.min(c.page,Math.max(0,Math.ceil(filtered.length/12)-1)));const rows=filtered.slice(c.page*12,c.page*12+12);
+ $('main').innerHTML=`<section class="cr-page cw-page">${communityHeader(active)}<div id="cw-notice" class="cr-message${c.error?' error':''}" ${c.message?'':'hidden'}>${workshopEscape(c.message)}</div><div class="cw-toolbar"><select aria-label="Rodzaj projektów" onchange="COMMUNITY.filter=this.value;COMMUNITY.page=0;communityRender()">${[['map','Mapy'],['skin','Skiny'],['all','Wszystkie']].map(([v,n])=>`<option value="${v}" ${c.filter===v?'selected':''}>${n}</option>`).join('')}</select><input id="cw-search" aria-label="Szukaj projektu" placeholder="Szukaj projektu lub autora" value="${workshopEscape(c.search)}" onchange="COMMUNITY.search=this.value;COMMUNITY.page=0;communityRender()"><button onclick="COMMUNITY.message='';communityRefresh()">Odśwież</button>${active==='catalog'?`<select id="cw-mode" aria-label="Tryb mapy"><option value="tdm">Team Deathmatch</option><option value="classic">Rozbrajanie bomby</option><option value="ctf">Capture the Flag</option></select>`:''}</div>${!communityOnline()?'<div class="cw-empty"><b>Warsztat online</b>Zaloguj się w pełnej wersji gry z połączeniem z internetem. Lokalne edytory nadal działają.</div>':!SBU&&active!=='catalog'?'<div class="cw-empty"><b>Zaloguj się na konto gry</b><button onclick="tab(\'prof\')">Przejdź do logowania</button></div>':rows.length?'<div class="cw-grid">'+rows.map(r=>communityCard(r,active)).join('')+'</div>':`<div class="cw-empty"><b>${active==='moderation'?'Brak oczekujących projektów':active==='mine'?'Nie masz jeszcze zgłoszeń':'Tu pojawią się zatwierdzone projekty'}</b>${active==='mine'?'Otwórz edytor i wybierz „Wyślij do oceny”.':'Mapy i skiny trafiają do katalogu dopiero po akceptacji właściciela.'}</div>`}<div class="cw-footer"><button ${c.page?'':'disabled'} onclick="COMMUNITY.page--;communityRender()">← Poprzednia</button><small class="cw-status">${filtered.length?c.page+1:0} / ${Math.ceil(filtered.length/12)}</small><button ${(c.page+1)*12<filtered.length?'':'disabled'} onclick="COMMUNITY.page++;communityRender()">Następna →</button></div><p class="cw-note">${active==='catalog'?'Skiny społecznościowe są darmowym wyglądem z licznikiem zabójstw. Nie trafiają do marketu, wymian, kontraktów ani upgradera. Zatwierdzone mapy możesz wybrać do gry z botami lub w swoim lobby.':'Wysyłasz kopię projektu. Jego lokalna edycja nie zmienia zgłoszenia czekającego na ocenę.'}</p>${!c.admin?'<button style="font-size:10px" onclick="communityOwnerDialog()">Mam kod właściciela</button>':''}</section>`;
+ for(const row of rows){if(active==='catalog')communityRelease(row.release_id).then(release=>communitySetThumbnail(row.release_id,release.payload)).catch(()=>{});else try{communitySetThumbnail(row.id,row.payload);}catch(e){}}
+}
+function communityCard(r,active){
+ const pub=active==='catalog',release=pub?r.release_id:r.id;
+ const weapon=r.weapon||r.payload?.weapon,model=r.model||r.payload?.model,label=r.kind==='map'?'MAPA / A + B':'SKIN / '+workshopEscape(weapon==='knife'?KNIFE_MODELS[model]||'Nóż':W[weapon]?.n||'Broń');
+ const status=pub?(r.kind==='skin'?`<small>StatTrak™ · twoje zabójstwa: ${(P().communityStat||{})[release]||0}</small>`:''):`<span class="cw-pill ${r.status}">${communityStatus(r.status)}</span>${r.review_note?`<div class="cw-author-note">${workshopEscape(r.review_note)}</div>`:''}`;
+ const actions=pub?`<button class="cr-primary" onclick="${r.kind==='map'?'communityPlay':'communityEquip'}('${release}')">${r.kind==='map'?(L?.host?'Ustaw w lobby':'Zagraj'):'Wyposaż'}</button><button onclick="communityDetails('${release}','catalog')">Podgląd</button>${COMMUNITY.admin?`<button onclick="communityWithdraw('${r.id}')">Wycofaj</button>`:''}`:`<button class="${active==='moderation'?'cr-primary':''}" onclick="communityDetails('${r.id}','${active}')">${active==='moderation'?'Sprawdź projekt':'Zobacz zgłoszenie'}</button>`;
+ return `<article class="cw-card" data-cw-card="${release}"><div class="cw-preview" data-cw-thumb="${release}"><span>${r.kind==='map'?'MAPA WARSZTATOWA':'SKIN SPOŁECZNOŚCI'}</span></div><div><span class="cw-label">${label}</span><h3>${workshopEscape(r.title)}</h3><small>Autor: ${workshopEscape(r.author_name)}${pub?' · wersja '+r.version:''}</small>${status}<div class="cr-actions">${actions}</div></div></article>`;
+}
+function communitySetThumbnail(id,payload){const e=document.querySelector('[data-cw-thumb="'+id+'"]');if(!e)return;const src=communityArt(id,payload),img=document.createElement('img');img.src=src;img.alt=payload.name;e.appendChild(img);}
+function communityArt(id,p){if(COMMUNITY.thumbnails.has(id))return COMMUNITY.thumbnails.get(id);const c=document.createElement('canvas');c.width=600;c.height=p.kind==='sz-map'?400:230;const q=c.getContext('2d');q.fillStyle='#101c29';q.fillRect(0,0,c.width,c.height);
+ if(p.kind==='sz-map'){const m=creatorParseMap(p),g=creatorMapGrid(m),t=CREATOR_THEMES[m.theme],scale=Math.min(570/CREATOR_W,370/CREATOR_H);q.save();q.translate((600-CREATOR_W*scale)/2,(400-CREATOR_H*scale)/2);q.scale(scale,scale);q.fillStyle=t.floor;q.fillRect(0,0,CREATOR_W,CREATOR_H);for(let y=0;y<g.rows;y++)for(let x=0;x<g.cols;x++){const v=g.d[y*g.cols+x];if(v){q.fillStyle=v===3?'#9ac8d7':v===2?'#b18d62':t.wall;q.fillRect(x*16,y*16,16,16);}}for(const [i,r]of m.sites.entries()){q.strokeStyle='#f0cd83';q.lineWidth=5;q.strokeRect(...r);q.fillStyle='#f0cd83';q.font='bold 40px system-ui';q.textAlign='center';q.fillText('AB'[i],r[0]+r[2]/2,r[1]+r[3]/2+12);}for(const [i,r]of m.spawns.entries()){q.strokeStyle=i?'#ebaa7b':'#83b8f5';q.lineWidth=4;q.strokeRect(...r);}q.restore();}
+ else{const s=creatorParseSkin(p);q.save();const scale=Math.min(540/94,190/45);q.translate(34,113);q.scale(scale,scale);creatorDrawPaint(q,s);q.restore();}
+ const src=c.toDataURL();COMMUNITY.thumbnails.set(id,src);return src;
+}
+async function communityDetails(id,source){
+ let row,p;try{if(source==='catalog'){row=COMMUNITY.rows.find(r=>r.release_id===id);p=(await communityRelease(id)).payload;}else{row=(source==='moderation'?COMMUNITY.queue:COMMUNITY.mine).find(r=>r.id===id);p=row?.payload;}if(!row||!p)return;const o=$('pm');o.style.display='flex';o.innerHTML=`<section class="pmb cw-detail"><header><div><small class="sz-eyebrow">${source==='moderation'?'OCENA ZGŁOSZENIA':'WARSZTAT SPOŁECZNOŚCI'}</small><h2>${workshopEscape(row.title)}</h2><small>Autor: ${workshopEscape(row.author_name)}</small></div><button onclick="pmClose()">Zamknij ×</button></header><img class="cw-detail-art" src="${communityArt(id,p)}" alt="${workshopEscape(row.title)}"><p style="white-space:pre-line">${workshopEscape(row.description||'')}</p>${source==='moderation'?'<label class="cw-note">Wiadomość dla autora (wymagana przy odrzuceniu)</label><textarea id="cw-review-note" maxlength="500" rows="3" placeholder="Co należy poprawić?"></textarea>':row.review_note?`<p>Ocena: ${workshopEscape(row.review_note)}</p>`:''}<div id="cw-review-error" class="cw-note"></div><footer>${p.kind==='sz-map'&&source!=='catalog'?`<button onclick="communityTestSubmission('${id}','${source}')">Testuj mapę z botami</button>`:''}${source==='moderation'?`<button data-cw-review class="cw-reject" onclick="communityReview('${id}','rejected')">Odrzuć</button><button data-cw-review class="cr-primary" onclick="communityReview('${id}','approved')">Zatwierdź i opublikuj</button>`:source==='catalog'?`<button class="cr-primary" onclick="pmClose();${p.kind==='sz-map'?'communityPlay':'communityEquip'}('${id}')">${p.kind==='sz-map'?'Zagraj':'Wyposaż skin'}</button>`:''}</footer></section>`;}catch(e){communityNotice(communityError(e),true);}}
+async function communityReview(id,decision){if(!COMMUNITY.admin||COMMUNITY.busy)return;const note=($('cw-review-note')?.value||'').trim();if(decision==='rejected'&&!note){$('cw-review-error').textContent='Wpisz powód odrzucenia dla autora.';return;}COMMUNITY.busy=true;const epoch=COMMUNITY.epoch;document.querySelectorAll('[data-cw-review]').forEach(b=>b.disabled=true);try{const r=await sb.rpc('sz_workshop_review',{submission:id,decision,note});if(r.error)throw r.error;if(COMMUNITY.epoch!==epoch)return;pmClose();await communityRefresh();communityNotice(decision==='approved'?'Zatwierdzono projekt. Jest już dostępny w katalogu graczy.':'Odrzucono projekt. Autor zobaczy podany powód.');}catch(e){if($('cw-review-error'))$('cw-review-error').textContent=communityError(e);else communityNotice(communityError(e),true);}finally{if(COMMUNITY.epoch===epoch){COMMUNITY.busy=false;document.querySelectorAll('[data-cw-review]').forEach(b=>b.disabled=false);}}}
+async function communityWithdraw(id){if(!COMMUNITY.admin||!confirm('Wycofać ten projekt z katalogu wszystkich graczy?'))return;try{const r=await sb.rpc('sz_workshop_withdraw',{item:id});if(r.error)throw r.error;await communityRefresh();communityNotice('Wycofano projekt z publicznego katalogu.');}catch(e){communityNotice(communityError(e),true);}}
+function communityOwnerDialog(){if(!communityLogin())return;const o=$('pm');o.style.display='flex';o.innerHTML='<section class="pmb cw-detail cw-code" style="max-width:580px!important"><h2>Panel właściciela</h2><p>Zalogowane konto otrzyma uprawnienia po jednorazowym użyciu kodu przekazanego właścicielowi gry.</p><input id="cw-owner-code" type="password" autocomplete="off" spellcheck="false" maxlength="64" placeholder="Jednorazowy kod właściciela" aria-label="Jednorazowy kod właściciela"><p id="cw-owner-result"></p><footer><button onclick="pmClose()">Anuluj</button><button id="cw-owner-claim" class="cr-primary" onclick="communityClaimOwner()">Przypisz panel do mojego konta</button></footer><small>Kodu nie zapisujemy w grze. Uprawnienia są sprawdzane w bazie przy każdej decyzji.</small></section>';}
+async function communityClaimOwner(){const code=($('cw-owner-code')?.value||'').trim().toLowerCase(),epoch=COMMUNITY.epoch;if(!/^[a-f0-9]{64}$/.test(code)){$('cw-owner-result').textContent='Wklej pełny kod właściciela.';return;}const b=$('cw-owner-claim');b.disabled=true;try{const r=await sb.rpc('sz_workshop_claim_owner',{code});if(r.error)throw r.error;if(COMMUNITY.epoch!==epoch)return;$('cw-owner-code').value='';pmClose();await communityRefresh();communityTab('moderation');communityNotice('Panel właściciela został przypisany do tego konta.');}catch(e){if($('cw-owner-result'))$('cw-owner-result').textContent=communityError(e);}finally{if(b.isConnected)b.disabled=false;}}
+</script>
+<script>
+function communityRefAt(index){return COMMUNITY.slotRefs.get(index)||null;}
+function communityRefValid(ref){return !!ref&&COMMUNITY_UUID.test(ref.item)&&COMMUNITY_UUID.test(ref.release)&&Number.isSafeInteger(ref.version)&&ref.version>0;}
+function communityRegisterMap(release){
+ if(release.payload.kind!=='sz-map')throw Error('To nie jest mapa.');if(COMMUNITY.mapSlots.has(release.id))return COMMUNITY.mapSlots.get(release.id);
+ const checked=creatorValidatePlay(release.payload),slot=COMMUNITY.nextSlot++;creatorMountMap(checked.map,checked.grid,slot);MAPN[slot]='[Warsztat] '+checked.map.name;MAP_BRIEFINGS[slot].label='MAPA WARSZTATOWA / ZATWIERDZONA';MAP_BRIEFINGS[slot].description='Mapa społeczności: '+workshopEscape(checked.map.name)+'. Zatwierdzona do wspólnego katalogu graczy.';MAP_BRIEFINGS[slot].tips=['W Warsztacie znajdziesz autora i aktualną wersję mapy.','W lobby wszyscy gracze korzystają z tej samej zatwierdzonej wersji.'];
+ const ref={item:release.item_id,release:release.id,version:release.version};COMMUNITY.mapSlots.set(release.id,slot);COMMUNITY.slotRefs.set(slot,ref);return slot;
+}
+const COMMUNITY_MAP_SET=mapSet,COMMUNITY_IS_BOMB=isBombMap;
+mapSet=function(mode){const list=COMMUNITY_MAP_SET(mode);if(!COMMUNITY_MODES.includes(mode))return list;const added=[...COMMUNITY.slotRefs].filter(([slot,ref])=>!COMMUNITY.complete||COMMUNITY.rows.some(r=>r.id===ref.item)).map(([slot])=>slot);return [...new Set([...list,...added])];};
+isBombMap=function(id){return COMMUNITY_IS_BOMB(id)||COMMUNITY.slotRefs.has(id);};
+async function communityPlay(releaseId){
+ if(COMMUNITY.busy)return;if(G)return toast('Wróć do menu przed uruchomieniem innej mapy.');if(L&&!L.host)return toast('Mapę wspólnego meczu wybiera host lobby.');COMMUNITY.busy=true;
+ try{const r=COMMUNITY.rows.find(r=>r.release_id===releaseId&&r.kind==='map');if(!r)throw Error('Projekt został wycofany.');const release=await communityRelease(releaseId),mode=$('cw-mode')?.value||'tdm';sel.map=communityRegisterMap(release);sel.mode=COMMUNITY_MODES.includes(mode)?mode:'tdm';sel.comp=false;sel.team=L?.team||sel.team||'CT';pmClose();if(L?.host){tab('play');lobUI();toast('Ustawiono mapę warsztatową. Uruchom mecz dla lobby.');}else begin();}
+ catch(e){communityNotice(e.message||communityError(e),true);}finally{COMMUNITY.busy=false;}
+}
+function communityTestSubmission(id,source){
+ if(L)return toast('Wyjdź z lobby przed testem zgłoszenia.');const row=(source==='moderation'&&COMMUNITY.admin?COMMUNITY.queue:COMMUNITY.mine).find(r=>r.id===id);if(!row||row.kind!=='map')return;
+ try{const checked=creatorValidatePlay(row.payload);CREATOR_TEST={owner:creatorOwner(),previous:{...sel},map:checked.map,communityReturn:source==='moderation'?'moderation':'mine'};creatorMountMap(checked.map,checked.grid);sel.map=CREATOR_BASE_MAP_COUNT;sel.mode='tdm';sel.team='CT';sel.comp=false;pmClose();begin();}catch(e){communityNotice(e.message,true);}
+}
+const COMMUNITY_BEGIN=begin0;begin0=function(){if(communityRefAt(sel.map))sel.comp=false;COMMUNITY_BEGIN();if(G)G.communityMapRef=communityRefAt(sel.map);};
+const COMMUNITY_QUIT=quit;quit=function(){const returnTo=CREATOR_TEST?.communityReturn;COMMUNITY_QUIT();if(returnTo)communityTab(returnTo);};
+
+async function communityEquip(releaseId){
+ if(!communityLogin()||COMMUNITY.busy)return;COMMUNITY.busy=true;const owner=communityAccount();
+ try{const row=COMMUNITY.rows.find(r=>r.release_id===releaseId&&r.kind==='skin');if(!row)throw Error('Projekt został wycofany.');const r=await communityRelease(releaseId);if(communityAccount()!==owner)return;const k=r.payload.weapon;szClearPaint(k);P().communityLoadout=P().communityLoadout||{};P().communityLoadout[k]={item:r.item_id,release:r.id,version:r.version};save();VISUAL_HELD.clear();HELD_POSES.clear();drawScene();communityNotice('Wyposażono „'+r.payload.name+'”. Skin jest widoczny także dla innych graczy z tą wersją Warsztatu.');}
+ catch(e){communityNotice(e.message||communityError(e),true);}finally{if(communityAccount()===owner)COMMUNITY.busy=false;}
+}
+function communityPaint(id){const r=typeof id==='string'&&id.startsWith('ugc:')?COMMUNITY.cache.get(id.slice(4)):null;return r&&(!COMMUNITY.ready||!COMMUNITY.complete||COMMUNITY.rows.some(m=>m.id===r.item_id))?r.payload:null;}
+const COMMUNITY_SPRITE=drawWeaponSprite,COMMUNITY_POSE=heldWeaponPose,COMMUNITY_HELD=heldSkinId,COMMUNITY_CHAR_PAINT=window.szPaintFor;
+drawWeaponSprite=function(q,k,color,id){const p=communityPaint(id);if(p?.kind==='sz-skin'&&p.weapon===k)return creatorDrawPaint(q,p);return COMMUNITY_SPRITE(q,k,color,id);};
+heldWeaponPose=function(k,id){const p=communityPaint(id);return COMMUNITY_POSE(k,p&&k==='knife'?'knife:'+creatorBaseKnife(p.model):id);};
+heldSkinId=function(player){if(player.human)return communityOwnId(player.cur)||COMMUNITY_HELD(player);const ref=player.netCos?.ugc?.[player.cur];const paint=COMMUNITY_UUID.test(ref||'')?communityPaint('ugc:'+ref):null;return paint?.kind==='sz-skin'&&paint.weapon===player.cur?'ugc:'+ref:COMMUNITY_HELD(player);};
+window.szPaintFor=k=>communityOwnId(k)||COMMUNITY_CHAR_PAINT?.(k);
+const COMMUNITY_RECORD_KILL=recordStatTrakKill;
+recordStatTrakKill=function(player,weaponName){const k=Object.keys(W).find(k=>W[k].n===weaponName),ref=player.human&&communityOwnRef(k);if(ref){if(G?.creatorTest||CREATOR_TEST)return;const p=P();p.communityStat=p.communityStat||{};p.communityStat[ref.release]=(p.communityStat[ref.release]||0)+1;save();return;}return COMMUNITY_RECORD_KILL(player,weaponName);};
+const COMMUNITY_EQ=eq,COMMUNITY_VISUAL_EQ=visualEquip,COMMUNITY_SET_LD=setLd,COMMUNITY_LOCAL_SAVE=creatorSaveSkin;
+eq=function(id){if(P().skins.includes(id))communityClear(sk(id).w);return COMMUNITY_EQ(id);};
+visualEquip=function(k,id){if(!id||P().skins.includes(id))communityClear(k);return COMMUNITY_VISUAL_EQ(k,id);};
+setLd=function(k,v){if(k.startsWith('knife'))communityClear('knife');return COMMUNITY_SET_LD(k,v);};
+creatorSaveSkin=function(equip=false){const result=COMMUNITY_LOCAL_SAVE(equip);if(equip&&result)communityClear(creatorState().skin.weapon);return result;};
+
+// Network messages carry approved release IDs, never arbitrary drawing/map payloads.
+const COMMUNITY_COSMETICS=netCosmetics,COMMUNITY_NET_SEND=netSend,COMMUNITY_NET_RECV=netRecv,COMMUNITY_HOST_RECV=hostRecv,COMMUNITY_APPLY=applySnap;
+netCosmetics=function(){const cos=COMMUNITY_COSMETICS(),ugc={};for(const k of ['knife',...GUNS]){const ref=communityOwnRef(k);if(ref)ugc[k]=ref.release;}if(Object.keys(ugc).length)cos.ugc=ugc;return cos;};
+netSend=function(message){const ref=G?.communityMapRef||communityRefAt(sel.map);if(ref&&(message.t==='start'||message.t==='snap'))message={...message,wsmap:{...ref}};return COMMUNITY_NET_SEND(message);};
+let COMMUNITY_REMOTE_BUDGET={at:0,count:0};const COMMUNITY_FAILED_RELEASES=new Map();
+function communityRemoteCos(player,cos){
+ const safe={};for(const k of ['knife',...GUNS])if(COMMUNITY_UUID.test(cos?.ugc?.[k]||''))safe[k]=cos.ugc[k];player.netCos=player.netCos||{};player.netCos.ugc=safe;
+ for(const k of new Set([player.cur,'knife'])){const id=safe[k];if(!id||COMMUNITY.cache.has(id)||COMMUNITY.pending.has(id)||(COMMUNITY_FAILED_RELEASES.get(id)||0)>Date.now())continue;if(Date.now()-COMMUNITY_REMOTE_BUDGET.at>60000)COMMUNITY_REMOTE_BUDGET={at:Date.now(),count:0};if(COMMUNITY_REMOTE_BUDGET.count++>=40)continue;communityRelease(id).then(r=>{if(r.payload.weapon!==k)COMMUNITY_FAILED_RELEASES.set(id,Date.now()+60000);}).catch(()=>COMMUNITY_FAILED_RELEASES.set(id,Date.now()+60000));}
+}
+hostRecv=function(message){COMMUNITY_HOST_RECV(message);if(message?.t==='hello'&&message.sid===NET.session&&roomPeer(message.c)&&G&&!G.client){const p=G.ps.find(p=>p.rh&&p.rid===message.c);if(p)communityRemoteCos(p,message.cos);}};
+applySnap=function(snapshot){COMMUNITY_APPLY(snapshot);if(G?.client)for(const row of snapshot.p||[]){const p=G.ps[row.i];if(p&&!p.human)communityRemoteCos(p,row.cos);}};
+async function communityJoinMap(message){
+ const ref=message.wsmap,key=message.c+':'+message.sid+':'+ref.release;if(COMMUNITY.joinKey===key)return;const serial=++COMMUNITY.joinSerial,owner=communityAccount();COMMUNITY.joinKey=key;
+ try{toast('Wczytywanie zatwierdzonej mapy warsztatowej…');const r=await communityRelease(ref.release);if(serial!==COMMUNITY.joinSerial||owner!==communityAccount()||!acceptHost(message))return;if(r.item_id!==ref.item||r.version!==ref.version||r.payload.kind!=='sz-map')throw Error('Nieprawidłowa wersja mapy.');const slot=communityRegisterMap(r);COMMUNITY_NET_RECV({...message,map:slot,comp:false});if(G?.client)G.communityMapRef={...ref};}
+ catch(e){toast('Nie udało się wczytać mapy warsztatowej. Odśwież Warsztat i dołącz ponownie.');}finally{if(COMMUNITY.joinKey===key)COMMUNITY.joinKey='';}
+}
+netRecv=function(message){
+ if(message?.t==='start'&&message.v===2&&acceptHost(message)&&(!message.to||message.to===NET.cid)){
+  if(message.wsmap){if(!communityRefValid(message.wsmap)||!COMMUNITY_MODES.includes(message.mode))return;if(G?.client&&NET.session===message.sid&&G.communityMapRef?.release===message.wsmap.release)return;return communityJoinMap(message);}
+  if(!Number.isInteger(message.map)||message.map<0||message.map>=CREATOR_BASE_MAP_COUNT)return;COMMUNITY.joinSerial++;COMMUNITY.joinKey='';
+ }
+ if(message?.t==='end'&&acceptHost(message)){COMMUNITY.joinSerial++;COMMUNITY.joinKey='';}
+ return COMMUNITY_NET_RECV(message);
+};
+// A creator test occupies slot 14; approved maps use their own slots and survive its cleanup.
+const COMMUNITY_ACCOUNT_READY=window.szCreatorAccountReady;
+window.szCreatorAccountReady=function(){COMMUNITY_ACCOUNT_READY();communityReset();if(communityOnline())communityRefresh();};
+setInterval(()=>{if(!G&&communityOnline()&&Date.now()-(COMMUNITY.lastSync||0)>60000)communityRefresh();},60000);
+addEventListener('online',()=>{if(communityOnline())communityRefresh();});
+</script>
+
+<script>
+/* Standalone browser builds use the same account isolation as the desktop client. */
+if(!window.strikeZoneDesktop){
+(()=>{
+  let loadingUser = null;
+  let loadedUser = null;
+  let pendingLoad = null;
+  const ownerKey = 'sz2-cloud-owner';
+  const readOwner = () => { try { return localStorage.getItem(ownerKey); } catch { return null; } };
+  const setOwner = id => { try { localStorage.setItem(ownerKey, id); } catch {} };
+
+  // A fresh desktop profile must read the cloud save before it is allowed to upload.
+  cloudLoad = async function () {
+    if (!sb || !SBU) {
+      clearTimeout(CL.h); loadedUser = null; CL.uid = null; CL.db = null;
+      CL.msg = sb ? 'Log in to enable cloud save.' : CL.msg;
+      if (T === 'prof') tab('prof');
+      return;
+    }
+    const userId = SBU.id;
+    if (loadingUser === userId && pendingLoad) return pendingLoad;
+    loadingUser = userId;
+    loadedUser = null;
+    clearTimeout(CL.h);
+    pendingLoad = (async () => {
+      CL.uid = userId; CL.nm = SBU.email; CL.db = 1;
+      try {
+        const result = await sb.from('saves').select('json').eq('user_id', userId).maybeSingle();
+        if (result.error) throw result.error;
+        if (!SBU || SBU.id !== userId) return;
+        const raw = result.data?.json;
+        const saved = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : null;
+        if (saved) {
+          if (!saved.profiles || typeof saved.profiles !== 'object' || !Object.keys(saved.profiles).length) {
+            throw new Error('The cloud save is invalid. Nothing was overwritten.');
+          }
+          if (readOwner() !== userId || (saved.ts || 0) > (DB.ts || 0)) {
+            // Preserve the previous local profile for recovery before changing accounts.
+            try { localStorage.setItem('sz2-before-cloud', JSON.stringify(DB)); } catch {}
+            DB = saved;
+            if (!DB.profiles[DB.cur]) DB.cur = Object.keys(DB.profiles)[0];
+            try { localStorage.setItem('sz2', JSON.stringify(DB)); } catch {}
+            CL.msg = 'Loaded your cloud save.';
+          } else CL.msg = 'Cloud save is in sync.';
+        } else if (readOwner() && readOwner() !== userId) {
+          // A new account must not inherit the other account's local inventory.
+          const name = String(SBU.user_metadata?.nickname || 'Player').replace(/[<>&"']/g, '').trim().slice(0, 14) || 'Player';
+          DB = { profiles: { [name]: mk(name) }, cur: name };
+          try { localStorage.setItem('sz2', JSON.stringify(DB)); } catch {}
+          CL.msg = 'Cloud save enabled.';
+        } else {
+          if (SBU.user_metadata?.nickname && DB.cur === 'Player' && Object.keys(DB.profiles).length === 1) {
+            const name = String(SBU.user_metadata.nickname).replace(/[<>&"']/g, '').trim().slice(0, 14) || 'Player';
+            DB.profiles[name] = { ...DB.profiles.Player, name }; if (name !== 'Player') delete DB.profiles.Player; DB.cur = name;
+          }
+          CL.msg = 'Cloud save enabled.';
+        }
+        setOwner(userId);
+        loadedUser = userId;
+        if (!saved || (DB.ts || 0) > (saved.ts || 0)) cloudPush(1);
+      } catch (error) { CL.msg = 'Cloud error: ' + (error.message || error); }
+      finally {
+        if (loadingUser === userId) { loadingUser = null; pendingLoad = null; }
+        tab(T); hdr();
+      }
+    })();
+    return pendingLoad;
+  };
+
+  async function flush() {
+    clearTimeout(CL.h);
+    try { localStorage.setItem('sz2', JSON.stringify(DB)); } catch {}
+    if (!sb || !SBU || loadedUser !== SBU.id || readOwner() !== SBU.id) return false;
+    const userId = SBU.id;
+    const value = JSON.parse(JSON.stringify(DB));
+    try {
+      const result = await sb.from('saves').upsert({ user_id: userId, json: value, updated_at: new Date().toISOString() });
+      if (result.error) throw result.error;
+      CL.msg = 'Cloud saved ' + new Date().toLocaleTimeString();
+      lbPush();
+      return true;
+    } catch (error) { CL.msg = 'Cloud save failed: ' + (error.message || error); return false; }
+  }
+  cloudPush = function (now) {
+    if (!sb || !SBU || loadedUser !== SBU.id || readOwner() !== SBU.id) return;
+    clearTimeout(CL.h);
+    CL.h = setTimeout(flush, now ? 0 : 2500);
+  };
+  window.szDesktopFlush = flush;
+  window.szDesktopCloudReady = () => !!SBU && loadedUser === SBU.id;
+
+
+  const loadBefore=cloudLoad;let notified=null;
+  cloudLoad=async function(){await loadBefore();if(!window.szDesktopCloudReady()){notified=null;communityReset();return;}if(notified!==SBU.id){notified=SBU.id;window.szGameAccountReady?.();}else communityRefresh();};
+})();
+}
+</script>
 <script>
 /* Production account lifecycle: called only after the launcher's cloud read. */
 const RELEASE_TAB=tab;

@@ -19,7 +19,8 @@ F11 przełącza pełny ekran gry. Escape w menu głównym otwiera potwierdzenie:
 i zamyka okno gry, wracając do launchera. W meczu Escape nadal włącza pauzę.
 Ctrl + Shift + L również wraca do launchera.
 
-Konta i postęp korzystają z dotychczasowego Supabase. Nie zmieniono schematu bazy.
+Konta i postęp korzystają z dotychczasowego Supabase. Dotychczasowe tabele zapisów
+pozostają bez zmian; Warsztat online ma osobne tabele zgłoszeń i publikacji.
 Dane lokalne są w `%APPDATA%\StrikeZone2D`, a sesja jest chroniona przez Windows DPAPI.
 Hasło nie jest zapisywane. Do konta, chmury i sprawdzania wersji potrzebny jest internet.
 Gra najpierw wczytuje zapis konta, zanim pozwala wysłać własny zapis do chmury.
@@ -39,12 +40,31 @@ W menu **Warsztat** są dwa lokalne edytory:
 - **Skiny:** wszystkie bronie i osiem modeli noży, trzy kolory, sześć wzorów oraz
   pędzel przycinany do powierzchni broni. Projekt można zapisać i wyposażyć lokalnie.
 
-Projekty są zapisane na urządzeniu osobno dla każdego konta; nie synchronizują się
-z chmurą. Eksport/import plików `.szmap.json` i `.szskin.json` pozwala przenieść je
-na inny komputer. Własne mapy są obecnie przeznaczone do lokalnego treningu,
-bez nagród i zmian statystyk. Własne skiny widzi ich autor; nie są przedmiotami
-rynkowymi i nie trafiają do wymian, kontraktów ani upgradera. Wybór skina
-z ekwipunku przywraca zwykłe wyposażenie.
+Szkice są zapisane lokalnie osobno dla każdego konta. Eksport/import plików
+`.szmap.json` i `.szskin.json` pozwala przenieść je na inny komputer.
+Przycisk **Wyślij do oceny** wysyła niezmienną kopię projektu. W zakładce
+**Moje zgłoszenia** autor widzi status i ewentualny powód odrzucenia.
+
+Właściciel aktywuje panel przez **Warsztat → Katalog graczy → Mam kod właściciela**.
+Jednorazowy kod jest przekazywany osobno, poza grą i repozytorium. Panel zostaje
+przypisany do zalogowanego konta, niezależnie od jego aktualnego nicku.
+W **Moderacji** można obejrzeć projekt, sprawdzić mapę z botami, zatwierdzić
+publikację lub odrzucić projekt z uzasadnieniem. Zatwierdzony projekt pojawia się
+w **Katalogu graczy** po odświeżeniu; klient sprawdza też katalog w menu co minutę.
+
+Zatwierdzone mapy działają z botami i w lobby w TDM, CTF oraz trybie bombowym.
+Mecz przesyła identyfikator zatwierdzonej wersji; każda strona pobiera tę samą
+geometrię, nawet jeśli ma mapę pod innym lokalnym numerem. Opublikowane wersje
+pozostają niezmienne, więc aktualizacja projektu nie podmienia mapy trwającego meczu.
+
+Zatwierdzone skiny są darmowymi wyglądami widocznymi dla innych graczy używających
+tej wersji klienta, z osobnym licznikiem StatTrak. Nie są przedmiotami rynkowymi:
+nie trafiają do sprzedaży, wymian, skrzynek, kontraktów ani upgradera. Wybór skina
+z ekwipunku przywraca zwykłe wyposażenie. Nieopublikowane szkice widzi tylko autor.
+Testy lokalnych map i oczekujących zgłoszeń nie przyznają nagród ani statystyk.
+
+Obsługa online wymaga klienta z tej gałęzi; wydanie instalatora nadal ma numer 1.2.0.
+Szczegóły bazy i testów: [docs/community-workshop.md](docs/community-workshop.md).
 
 ## Nowe wydania
 
@@ -64,7 +84,9 @@ Pierwsza paczka 1.0.0 spoza GitHuba miała wyłączony kanał i wymaga nowego in
 `npm run test:gameplay` sprawdza rozgrywkę, mapy i dwóch klientów w odizolowanej sieci testowej.
 `npm run test:creator` sprawdza nowe noże i zabójstwa StatTrak, nawigację przy sześciu
 rozmiarach okna, edycję myszą, zapis i wyposażanie skinów, izolację kont oraz testy
-własnych map z botami bez nagród. Oba testy Electron uruchamiaj kolejno.
+własnych map z botami bez nagród. `npm run test:community` sprawdza autora,
+moderatora i innego gracza, prawdziwe reguły PostgreSQL, publikowanie i odrzucanie,
+wspólną mapę oraz widoczność skinów. Testy Electron uruchamiaj kolejno.
 Workflow Windows instaluje prawdziwą publiczną 1.1.0 i aktualizuje ją do bieżącej wersji.
 Następnie sprawdza błędne hasło, rejestrację z potwierdzeniem e-maila i bez niego,
 odczyt nicku i awatara, tę samą sesję w grze, brak osobnych kontrolek logowania,
