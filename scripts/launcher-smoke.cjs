@@ -48,7 +48,7 @@ const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCA
     assert.equal(color, 'rgb(67, 199, 138)');
     assert.equal(await page.locator('.friend-row.offline .presence-dot').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(125, 135, 151)');
     const gamePeer = await peer(a, { n: 'AtlasQA', app: 'game', match: true, mode: 'ctf', avimg: png });
-    await page.waitForFunction(() => document.querySelector('.friend-row.online small')?.textContent === 'W grze · Capture the Flag');
+    await page.waitForFunction(() => document.querySelector('.friend-row.online small')?.textContent === 'W grze · Przejmowanie flagi');
     passed('Actual SDK presence updates avatar badges and match activity; saved avatars also work offline');
     for (const phase of ['available', 'downloading', 'downloaded', 'error']) {
       await page.evaluate(async phase => { const state = await window.strikeZone.getState(); render({ ...state, update: { ...state.update, required: true, canPlay: false, phase, progress: 42, latestVersion: '1.2.1', transferred: 4200, total: 10000, bytesPerSecond: 1000 } }); }, phase);
