@@ -3,7 +3,18 @@
   'use strict';
   if (window.strikeZoneDesktop) return;
   window.SZ_TEST_PREVIEW = true;
-  let busy = false, bannerKey = '', scheduled = false;
+  let busy = false, bannerKey = '', scheduled = false, connectionError = '', authEpoch = 0;
+  const controllers = new Set();
+  async function accountFetch(input, options = {}) {
+    const controller = new AbortController(), signal = options.signal;
+    const cancel = () => controller.abort();
+    if (signal?.aborted) cancel();
+    signal?.addEventListener('abort', cancel, {once:true});
+    const timer = setTimeout(cancel, 12000);
+    controllers.add(controller);
+    try { return await fetch(input, {...options, signal:controller.signal}); }
+    finally { clearTimeout(timer); controllers.delete(controller); signal?.removeEventListener('abort', cancel); }
+  }
   const style = document.createElement('style');
   style.textContent = `
     .preview-session{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 17px;margin-bottom:20px;border:1px solid #cda45b55;border-radius:10px;background:#1c2636;font:12px system-ui;letter-spacing:0;color:#e6edf6}
@@ -20,7 +31,7 @@
   const dialog = document.createElement('div');
   dialog.id = 'preview-account-dialog';
   dialog.hidden = true;
-  dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="preview-login-title"><small>STRIKE ZONE / WERSJA TESTOWA</small><h2 id="preview-login-title">Zaloguj się do gry</h2><p>Użyj tego samego konta co w launcherze. Wczytamy Twój profil i uprawnienia do Warsztatu.</p><form id="preview-login-form"><label for="preview-email">Adres e-mail</label><input id="preview-email" name="email" type="email" autocomplete="username" placeholder="Twój adres e-mail" required><label for="preview-password">Hasło</label><input id="preview-password" name="password" type="password" autocomplete="current-password" placeholder="Hasło do konta gry" required><button type="submit" id="preview-login-submit">Zaloguj się</button></form><div id="preview-login-message" role="status" aria-live="polite"></div><button id="preview-cloud-retry" hidden>Wczytaj konto ponownie</button><div class="preview-account-footer"><span>Logowanie w grze jest dostępne tylko w tym pliku testowym.</span><button id="preview-login-close">Zamknij</button></div></section>`;
+  dialog.innerHTML = `<section role="dialog" aria-modal="true" aria-labelledby="preview-login-title"><small>STRIKE ZONE / WERSJA TESTOWA</small><h2 id="preview-login-title">Zaloguj się do gry</h2><p>Użyj tego samego konta co w launcherze. Wczytamy Twój profil i uprawnienia do Warsztatu.</p><form id="preview-login-form"><label for="preview-email">Adres e-mail</label><input id="preview-email" name="email" type="email" autocomplete="username" placeholder="Twój adres e-mail" required><label for="preview-password">Hasło</label><input id="preview-password" name="password" type="password" autocomplete="current-password" placeholder="Hasło do konta gry" required><button type="submit" id="preview-login-submit">Zaloguj się</button></form><div id="preview-login-message" role="status" aria-live="polite"></div><button id="preview-connect-retry" hidden>Spróbuj ponownie</button><button id="preview-cloud-retry" hidden>Wczytaj konto ponownie</button><div class="preview-account-footer"><span>Logowanie w grze jest dostępne tylko w tym pliku testowym.</span><button id="preview-login-close">Zamknij</button></div></section>`;
   document.body.appendChild(dialog);
   const message = (text, error = false) => {
     const el = document.getElementById('preview-login-message');
@@ -28,8 +39,37 @@
   };
   function updateConnection() {
     document.getElementById('preview-login-submit').disabled = busy || !sb;
-    if (!busy && !sb) message('Łączenie z serwerem kont… Sprawdź połączenie z internetem.');
-    else if (!busy && document.getElementById('preview-login-message').textContent.startsWith('Łączenie')) message('');
+    if (!busy && !sb) message(connectionError || 'Nie uruchomiono konta. Wybierz „Spróbuj ponownie”.', true);
+    document.getElementById('preview-connect-retry').disabled = busy;
+    if (!sb) document.getElementById('preview-connect-retry').hidden = false;
+  }
+  function initializeAccount() {
+    if (sb) { connectionError = ''; updateConnection(); return true; }
+    try {
+      if (typeof window.supabase?.createClient !== 'function') throw new Error('SDK_UNAVAILABLE');
+      sb = window.supabase.createClient(SB_URL, SB_KEY, {
+        auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'strikezone-test-preview-v1'},
+        global:{fetch:accountFetch}, realtime:{params:{eventsPerSecond:30}}
+      });
+      sb.auth.onAuthStateChange((_event, session) => {
+        SBU = session?.user || null;
+        const epoch = ++authEpoch;
+        // Keep database calls outside the SDK's synchronous auth notification lock.
+        setTimeout(async () => {
+          if (epoch !== authEpoch) return;
+          try { await cloudLoad(); if (epoch === authEpoch && SBU && window.szDesktopCloudReady?.()) await friInit(); }
+          catch { /* The account loader keeps writes blocked and exposes retry. */ }
+          if (epoch === authEpoch) { communityReset(); scheduleBanner(); }
+        }, 0);
+      });
+      connectionError = ''; CL.msg = 'Konto gotowe do logowania.';
+      document.getElementById('preview-connect-retry').hidden = true;
+      updateConnection(); return true;
+    } catch {
+      sb = null;
+      connectionError = 'Nie udało się uruchomić biblioteki kont. Pobierz ten plik HTML i otwórz go bezpośrednio w przeglądarce, a następnie spróbuj ponownie.';
+      updateConnection(); return false;
+    }
   }
   function openAccount() {
     dialog.hidden = false;
@@ -81,6 +121,7 @@
     const form = document.getElementById('preview-login-form');
     if (!form.reportValidity()) return;
     busy = true; updateConnection(); message('Logowanie i wczytywanie Twojego konta…');
+    document.getElementById('preview-connect-retry').hidden = true;
     const password = document.getElementById('preview-password');
     try {
       const result = await sb.auth.signInWithPassword({ email: document.getElementById('preview-email').value.trim(), password: password.value });
@@ -92,7 +133,8 @@
     } catch (error) {
       password.value = '';
       const raw = String(error?.message || '');
-      message(/invalid login|invalid credentials/i.test(raw) ? 'Nieprawidłowy adres e-mail lub hasło.' : /email not confirmed/i.test(raw) ? 'Potwierdź adres e-mail konta przed zalogowaniem.' : 'Nie udało się zalogować. Sprawdź połączenie i spróbuj ponownie.', true);
+      message(/invalid login|invalid credentials/i.test(raw) ? 'Nieprawidłowy adres e-mail lub hasło.' : /email not confirmed/i.test(raw) ? 'Potwierdź adres e-mail konta przed zalogowaniem.' : /fetch|network|abort|timeout/i.test(raw) ? 'Serwer kont nie odpowiedział. Sprawdź połączenie z internetem i spróbuj ponownie. Jeśli oglądasz podgląd załącznika, pobierz HTML i otwórz go bezpośrednio w przeglądarce.' : 'Nie udało się zalogować. Spróbuj ponownie.', true);
+      document.getElementById('preview-connect-retry').hidden = false;
     } finally { busy = false; updateConnection(); scheduleBanner(); }
   }
   async function logout() {
@@ -111,6 +153,10 @@
   window.szPreviewOpenAccount = openAccount;
   document.getElementById('preview-login-form').addEventListener('submit', login);
   document.getElementById('preview-login-close').addEventListener('click', closeAccount);
+  document.getElementById('preview-connect-retry').addEventListener('click', () => {
+    if (busy) return;
+    if (initializeAccount()) { message('Możesz spróbować zalogować się ponownie.'); document.getElementById('preview-connect-retry').hidden = true; document.getElementById('preview-password').focus(); }
+  });
   document.getElementById('preview-cloud-retry').addEventListener('click', async () => {
     if (busy || !SBU) return;
     busy = true; updateConnection(); message('Wczytywanie konta…');
@@ -123,8 +169,8 @@
   communityRender = function () { oldRender(); scheduleBanner(); };
   const accountReady = window.szGameAccountReady;
   window.szGameAccountReady = function () { accountReady(); scheduleBanner(); if (SBU && !busy) dialog.hidden = true; };
-  const check = setInterval(() => { updateConnection(); if (sb) clearInterval(check); }, 300);
-  renderBanner(); updateConnection();
+  addEventListener('pagehide', () => controllers.forEach(controller => controller.abort()));
+  initializeAccount(); renderBanner(); updateConnection();
   if (document.getElementById('splash')) document.getElementById('splash').style.display = 'none';
   if (!SBU) openAccount();
 })();

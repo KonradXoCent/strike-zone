@@ -70,6 +70,9 @@ Samodzielny plik do sprawdzenia Warsztatu można zbudować poleceniem
 logowania do tego samego konta i osadzony SDK Supabase. Logowanie jest dostępne
 tylko w tym pliku testowym. `prepare:game` i publiczny instalator nie dołączają
 modułu testowego; sesję gry przekazuje launcher.
+Formularz startuje bez dodatkowego testu `/auth/v1/health`. Biblioteka jest
+osadzona w zwykłym skrypcie, więc nie wymaga zgody podglądu na skrypty `data:`.
+Żądania mają limit 12 sekund; po błędzie można ponowić logowanie.
 
 ## Nowe wydania
 
@@ -95,6 +98,8 @@ wspólną mapę oraz widoczność skinów. Testy Electron uruchamiaj kolejno.
 `npm run test:preview` sprawdza formularz i błędne hasło, wczytanie istniejącego
 zapisu, wysłanie mapy, moderację przypisaną do konta, publikację, wylogowanie
 i zmianę konta, a także brak logowania w publicznym kliencie desktopowym.
+Obejmuje też niedostępny health endpoint, ograniczenie skryptów `data:`, zerwanie
+sieci oraz żądanie, które nie odpowiada aż do przerwania po limicie czasu.
 Workflow Windows instaluje prawdziwą publiczną 1.1.0 i aktualizuje ją do bieżącej wersji.
 Następnie sprawdza błędne hasło, rejestrację z potwierdzeniem e-maila i bez niego,
 odczyt nicku i awatara, tę samą sesję w grze, brak osobnych kontrolek logowania,

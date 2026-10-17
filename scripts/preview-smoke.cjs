@@ -13,7 +13,8 @@ const accounts = [
 ];
 let completed = false;
 process.on('beforeExit', () => { if (!completed && !process.exitCode) process.exitCode = 1; });
-fs.writeFileSync(root + '/index.html', makePreview());
+// Reproduce attachment viewers that allow game scripts but block data: script URLs.
+fs.writeFileSync(root + '/index.html', makePreview().replace('<head>', '<head><meta http-equiv="Content-Security-Policy" content="script-src \'self\' \'unsafe-inline\'; connect-src *">'));
 fs.writeFileSync(root + '/package.json', JSON.stringify({ main: 'main.cjs' }));
 fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electron');app.setPath('userData',${JSON.stringify(root + '/profile')});app.whenReady().then(()=>{for(let i=0;i<3;i++)new BrowserWindow({width:1280,height:900,webPreferences:{partition:'preview-check-'+i,backgroundThrottling:false}}).loadURL('about:blank');});`);
 (async () => {
@@ -21,6 +22,7 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
   await db.query('insert into public.sz_workshop_admins(user_id) values($1)', [U.admin]);
   const app = await _electron.launch({ executablePath: require('electron'), args: [root, '--no-sandbox', '--ozone-platform=headless', '--headless', '--disable-gpu'] });
   const errors = [], saved = new Map(), tokens = new Map(), writes = [];
+  let healthChecks = 0, networkFailure = false;
   function session(account) {
     const now = Math.floor(Date.now() / 1000);
     const access_token = Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url') + '.' + Buffer.from(JSON.stringify({ sub: account.id, role: 'authenticated', aud: 'authenticated', exp: now + 3600, iat: now })).toString('base64url') + '.fixture-signature';
@@ -33,8 +35,9 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
       const request = route.request(), url = new URL(request.url()), body = request.postDataJSON(), user = tokens.get((request.headers().authorization || '').replace(/^Bearer /i, ''));
       const answer = (value, status = 200) => route.fulfill({ status, contentType: 'application/json', headers: { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'GET,POST,OPTIONS' }, body: JSON.stringify(value) });
       if (request.method() === 'OPTIONS') return answer({});
-      if (url.pathname === '/auth/v1/health') return answer({ name: 'Auth fixture' });
+      if (url.pathname === '/auth/v1/health') { healthChecks++; return answer({message:'Health probe unavailable'}, 503); }
       if (url.pathname === '/auth/v1/token') {
+        if (networkFailure) return route.abort('internetdisconnected');
         const account = accounts.find(a => a.email === body?.email);
         return account && body.password === 'fixture-password' ? answer(session(account)) : answer({ error: 'invalid_grant', error_description: 'Invalid login credentials', msg: 'Invalid login credentials' }, 400);
       }
@@ -79,8 +82,28 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
     const baseline = await author.evaluate(() => JSON.parse(JSON.stringify(DB)));
     for (const account of accounts) saved.set(account.id, { json: { ...baseline, cur: account.name, ts: 1, profiles: { [account.name]: { ...baseline.profiles[baseline.cur], name: account.name, wallet: 4321 } } } });
     assert.equal(await author.locator('#preview-account-dialog').isVisible(), true);
+    assert.equal(await author.locator('#preview-login-submit').isEnabled(), true);
+    assert.equal(healthChecks, 0, 'An unavailable health endpoint must not block signing in');
     if (process.env.STRIKEZONE_PREVIEW_SHOTS) await author.screenshot({path:path.join(process.env.STRIKEZONE_PREVIEW_SHOTS,'login-form.png')});
     assert.equal(await author.getByRole('button', { name: 'Mam kod właściciela' }).count(), 0);
+    // A fetch that never settles must still release the actual login form.
+    await author.evaluate(() => {
+      window.__previewNativeFetch = window.fetch;
+      window.fetch = (url, options) => String(url).includes('/auth/v1/token') ? new Promise((_resolve, reject) => options.signal.addEventListener('abort', () => { window.__previewAbortObserved = true; reject(new DOMException('Aborted', 'AbortError')); }, {once:true})) : window.__previewNativeFetch(url, options);
+    });
+    await author.fill('#preview-email', accounts[0].email); await author.fill('#preview-password', 'fixture-password'); await author.click('#preview-login-submit');
+    await author.waitForFunction(() => window.__previewAbortObserved && document.getElementById('preview-login-message').textContent.includes('Serwer kont nie odpowiedział'), null, {timeout:18000});
+    assert.equal(await author.locator('#preview-login-submit').isEnabled(), true);
+    await author.evaluate(() => { window.fetch = window.__previewNativeFetch; delete window.__previewNativeFetch; });
+    await author.click('#preview-connect-retry');
+    networkFailure = true;
+    await author.fill('#preview-email', accounts[0].email); await author.fill('#preview-password', 'fixture-password'); await author.click('#preview-login-submit');
+    await author.waitForFunction(() => document.getElementById('preview-login-message').textContent.includes('Serwer kont nie odpowiedział'));
+    assert.equal(await author.locator('#preview-login-submit').isEnabled(), true);
+    assert.equal(await author.locator('#preview-connect-retry').isVisible(), true);
+    assert.equal(await author.inputValue('#preview-password'), '');
+    networkFailure = false;
+    await author.click('#preview-connect-retry');
     await author.fill('#preview-email', accounts[0].email); await author.fill('#preview-password', 'wrong-fixture'); await author.click('#preview-login-submit');
     await author.waitForFunction(() => document.getElementById('preview-login-message').textContent.includes('Nieprawidłowy'));
     assert.equal(await author.inputValue('#preview-password'), '');
@@ -93,7 +116,7 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
     await author.click('[data-cw-submit]');
     await author.waitForFunction(() => COMMUNITY.mine.length === 1 && !COMMUNITY.busy);
     const id = await author.evaluate(() => COMMUNITY.mine[0].id);
-    console.log('PASS visible test login, invalid credentials, cleared password, safe existing save and map submission');
+    console.log('PASS inline SDK under a no-data CSP, no health gate, stalled-request timeout, network retry, invalid credentials, safe existing save and map submission');
     await admin.goto('file://' + root + '/index.html'); await admin.waitForFunction(() => !!sb); await signIn(admin, accounts[1]);
     assert.equal(await admin.evaluate(() => COMMUNITY.admin && COMMUNITY.tab === 'moderation'), true);
     assert.equal(await admin.getByRole('button', { name: 'Mam kod właściciela' }).count(), 0);
@@ -120,6 +143,7 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
     assert.equal(await desktop.evaluate(() => !!window.SZ_TEST_PREVIEW), false);
     assert.match(await desktop.locator('#main').innerText(), /Konto jest zarządzane w launcherze/);
     assert.equal(await desktop.getByRole('button', { name: 'Mam kod właściciela' }).count(), 0);
+    assert.equal(healthChecks, 0);
     console.log('PASS public desktop receives launcher session and has no game login or owner-code control');
     assert.deepEqual(errors, []); completed = true; console.log('PASS all test HTML login and publication checks');
   } finally { await app.close(); await db.close(); fs.rmSync(root, { recursive: true, force: true }); }

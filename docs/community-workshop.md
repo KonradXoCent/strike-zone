@@ -81,6 +81,13 @@ po próbie logowania. Publiczny klient otrzymuje sesję z launchera i nie dołą
 modułu testowego. Żaden nick, e-mail, UUID właściciela ani kod dostępu nie jest
 wpisany w kliencie jako reguła nadawania uprawnień.
 
+Start podglądu nie zależy od odpowiedzi `/auth/v1/health`: klient powstaje
+natychmiast po wykonaniu modułów. SDK jest zwykłym skryptem osadzonym w HTML,
+z jawnym fallbackiem publicPath w przypiętej paczce UMD dla opcjonalnych chunków;
+nie używa adresu skryptu `data:`. Operacje sieciowe przerywa AbortController
+po 12 sekundach. Formularz odblokowuje się po błędzie i pozwala ponowić próbę.
+Odczyty bazy w reakcji na zmianę sesji są odroczone poza callback Auth.
+
 ## Walidacja
 
 - `npm test`: 78 testów, w tym kontrola uprawnień w rzeczywistym PostgreSQL/WASM
@@ -97,6 +104,9 @@ wpisany w kliencie jako reguła nadawania uprawnień.
   zgłoszenie mapy, moderacja bez kodu, publikacja do autora i zmiana konta.
   Osobny klient desktopowy otrzymuje sesję z mostka launchera i nie pokazuje
   formularza logowania ani modułu podglądu. Test nie kontaktuje się z produkcją.
+  Dodatkowo blokuje skrypty `data:` przez CSP i zwraca błąd health endpointu;
+  brak odpowiedzi żądania Auth prowadzi do przerwania, a awaria sieci do ponowienia
+  bez przeładowania strony.
 - Live REST i gotowy samodzielny HTML: publiczny katalog odpowiada; anonim nie
   odczytuje zgłoszeń ani ról. HTML ma osadzony SDK i formularz logowania; anonimowe
   przeglądanie katalogu nie wysyła zapisów konta ani zgłoszeń.
