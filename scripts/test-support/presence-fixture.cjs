@@ -34,4 +34,11 @@ async function startPresenceFixture() {
     disconnect: () => { for (const ws of connections.keys()) ws.terminate(); },
     close: async () => { for (const ws of connections.keys()) ws.terminate(); await new Promise(resolve => server.close(resolve)); } };
 }
-module.exports = { startPresenceFixture };
+async function connectPresenceFixture(electron, endpoint, moduleFile) {
+  await electron.evaluate(({ app }, options) => {
+    const requireApp = process.getBuiltinModule('module').createRequire(app.getAppPath() + '/package.json');
+    const cls = requireApp(options.moduleFile || './core/friends.cjs').FriendsController, connect = cls.prototype.connect;
+    cls.prototype.connect = function () { this.client.realtime.endPoint = options.endpoint; return connect.call(this); };
+  }, { endpoint, moduleFile });
+}
+module.exports = { startPresenceFixture, connectPresenceFixture };

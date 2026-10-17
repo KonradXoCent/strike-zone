@@ -1,9 +1,9 @@
-# Strike Zone 2D — 1.2.0
+# Strike Zone 2D — 1.3.0
 
-Pobierz `StrikeZone-Setup-1.2.0.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
-Posiadacze wersji 1.0.1 i 1.1.0 aktualizują grę przez launcher. Gracz nie potrzebuje Node.js.
+Pobierz `StrikeZone-Setup-1.3.0.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
+Posiadacze wersji 1.0.1, 1.1.0 i 1.2.0 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
 
-Pełna lista zmian 1.2.0: [RELEASE_NOTES.md](RELEASE_NOTES.md).
+Pełna lista zmian 1.3.0: [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
 ## Konto i sterowanie
 
@@ -13,6 +13,8 @@ otwórz wiadomość, potwierdź adres i zaloguj się w launcherze.
 Launcher pokazuje nick i awatar z bieżącego profilu zapisanego w chmurze.
 Po zmianie profilu w grze widok w launcherze aktualizuje się automatycznie.
 Wylogowanie jest dostępne w launcherze. W grze nie ma osobnego logowania.
+Lista znajomych jest wspólna z grą: zielona kropka oznacza online, szara offline.
+Wyszukiwarka filtruje nicki, a aktywność rozróżnia launcher, menu, lobby i mecz.
 
 F11 przełącza pełny ekran gry. Escape w menu głównym otwiera potwierdzenie:
 „Nie” po lewej w zieleni anuluje, „Tak” po prawej w czerwieni zapisuje postęp
@@ -26,9 +28,9 @@ Hasło nie jest zapisywane. Do konta, chmury i sprawdzania wersji potrzebny jest
 Gra najpierw wczytuje zapis konta, zanim pozwala wysłać własny zapis do chmury.
 Gdy odczyt się nie powiedzie, można go ponowić bez nadpisania danych.
 
-## Funkcje w wersji testowej
+## Funkcje Warsztatu i nowe wyposażenie
 
-Na gałęzi testowej: odświeżone menu z ikonami SVG, zwarta nawigacja oraz Butterfly,
+Odświeżone menu z ikonami SVG, zwarta nawigacja oraz Butterfly,
 kilof w stylu voxel, Kukri i Stiletto. Każdy nowy model ma sześć wykończeń i warianty
 StatTrak. Dotychczasowe identyfikatory przedmiotów pozostają bez zmian.
 
@@ -71,7 +73,7 @@ Przedmioty społecznościowe nie są obecnie sprzedawane, wymieniane ani używan
 w kontraktach lub upgraderze. Nieopublikowane szkice widzi tylko autor w edytorze.
 Testy lokalnych map i oczekujących zgłoszeń nie przyznają nagród ani statystyk.
 
-Obsługa online wymaga klienta z tej gałęzi; wydanie instalatora nadal ma numer 1.2.0.
+Obsługa online jest dostępna w wydaniu 1.3.0.
 Szczegóły bazy i testów: [docs/community-workshop.md](docs/community-workshop.md).
 
 Samodzielny plik do sprawdzenia Warsztatu można zbudować poleceniem
@@ -111,7 +113,7 @@ Sprawdza także blokadę 4/5, odblokowanie po piątym projekcie, zakup, animacj�
 otwierania, wyposażenie zdobytego przedmiotu i jego odczyt po przeładowaniu.
 Obejmuje też niedostępny health endpoint, ograniczenie skryptów `data:`, zerwanie
 sieci oraz żądanie, które nie odpowiada aż do przerwania po limicie czasu.
-Workflow Windows instaluje prawdziwą publiczną 1.1.0 i aktualizuje ją do bieżącej wersji.
+Workflow Windows instaluje prawdziwą publiczną 1.2.0 i aktualizuje ją do bieżącej wersji.
 Następnie sprawdza błędne hasło, rejestrację z potwierdzeniem e-maila i bez niego,
 odczyt nicku i awatara, tę samą sesję w grze, brak osobnych kontrolek logowania,
 Escape, zapis postępu, zmiany profilu, wylogowanie oraz izolację dwóch kont.

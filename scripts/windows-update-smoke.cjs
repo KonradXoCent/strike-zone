@@ -6,14 +6,16 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 const asar = require('@electron/asar');
 const { accountChecks } = require('./test-support/account-checks.cjs');
+const { startPresenceFixture, connectPresenceFixture } = require('./test-support/presence-fixture.cjs');
 
 const root = path.join(__dirname, '..');
 const version = require('../package.json').version;
-const baseVersion = '1.1.0';
+const baseVersion = '1.2.0';
 const installDir = path.join(process.env.RUNNER_TEMP || process.env.TEMP, 'StrikeZoneUpdateSmoke');
 const installedExe = path.join(installDir, 'StrikeZone.exe');
 const report = { expectedVersion: version, bootstrapVersion: baseVersion, authenticationTest: 'Isolated Supabase HTTP fixture; no production account or database writes', startedAt: new Date().toISOString(), checks: [] };
 let electron;
+let presence;
 function passed(check) { report.checks.push(check); console.log('PASS:', check); }
 function wait(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 function installedVersion() {
@@ -95,12 +97,19 @@ async function main() {
   assert.equal(state.update.version, version); assert.equal(state.update.canPlay, true);
   assert.equal(await launcher.evaluate(() => localStorage.getItem('sz-update-smoke')), probe);
   passed('New launcher runs and preserves local data');
+  assert.equal(await launcher.locator('#friends-search').count(), 1);
+  assert.equal(await launcher.locator('#friends-list').count(), 1);
+  // Keep account/presence checks isolated from production on the installed app too.
+  presence = await startPresenceFixture();
+  await connectPresenceFixture(electron, presence.endpoint);
+  await electron.context().routeWebSocket('wss://mvzlqpccmjslxdajjbfw.supabase.co/**', ws => ws.close());
   await accountChecks(electron, launcher, passed);
   report.status = 'passed';
 }
 main().catch(error => { report.status = 'failed'; report.error = error.stack || String(error); console.error(error); process.exitCode = 1; })
   .finally(async () => {
     if (electron) await electron.close().catch(() => {});
+    if (presence) await presence.close();
     report.finishedAt = new Date().toISOString();
     fs.mkdirSync(path.join(root, 'release'), { recursive: true });
     fs.writeFileSync(path.join(root, 'release/update-smoke-report.json'), JSON.stringify(report, null, 2) + '\n');

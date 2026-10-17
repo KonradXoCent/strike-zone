@@ -5,7 +5,7 @@ const { randomUUID } = require('node:crypto');
 const fs = require('node:fs'), os = require('node:os'), path = require('node:path'), assert = require('node:assert/strict');
 const { accountChecks } = require('./test-support/account-checks.cjs');
 const { startFixture, connectFixture } = require('./test-support/supabase-fixture.cjs');
-const { startPresenceFixture } = require('./test-support/presence-fixture.cjs');
+const { startPresenceFixture, connectPresenceFixture } = require('./test-support/presence-fixture.cjs');
 const root = path.resolve(__dirname, '..'), tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sz-launcher-'));
 const screenshots = process.env.SZ_LAUNCHER_SCREENSHOTS;
 let completed = false;
@@ -15,7 +15,7 @@ const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCA
 (async () => {
   const broker = await startPresenceFixture();
   fs.writeFileSync(tmp + '/package.json', JSON.stringify({ main: 'main.cjs', version: require('../package.json').version }));
-  fs.writeFileSync(tmp + '/main.cjs', `const {app}=require('electron');app.setPath('appData',${JSON.stringify(tmp)});app.requestSingleInstanceLock=()=>true;const cls=require(${JSON.stringify(root + '/core/friends.cjs')}).FriendsController,connect=cls.prototype.connect;cls.prototype.connect=function(){this.client.realtime.endPoint=${JSON.stringify(broker.endpoint)};return connect.call(this);};require(${JSON.stringify(root + '/main.cjs')});`);
+  fs.writeFileSync(tmp + '/main.cjs', `const {app}=require('electron');app.setPath('appData',${JSON.stringify(tmp)});app.requestSingleInstanceLock=()=>true;require(${JSON.stringify(root + '/main.cjs')});`);
   if (screenshots) fs.mkdirSync(screenshots, { recursive: true });
   const app = await _electron.launch({ executablePath: require('electron'), args: [tmp, '--no-sandbox', '--ozone-platform=headless', '--headless', '--disable-gpu'] });
   let fixture; const peers = [], errors = [];
@@ -24,6 +24,7 @@ const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCA
     await app.evaluate(({ BrowserWindow }) => { const w = BrowserWindow.getAllWindows()[0]; w.setBounds({ x: 0, y: 0, width: 1020, height: 680 }); });
     await page.setViewportSize({ width: 1020, height: 680 });
     await page.waitForFunction(() => typeof window.strikeZone?.getState === 'function');
+    await connectPresenceFixture(app, broker.endpoint, root + '/core/friends.cjs');
     await app.context().routeWebSocket('wss://mvzlqpccmjslxdajjbfw.supabase.co/**', ws => ws.close());
     await accountChecks(app, page, passed, { screenshots });
     const a = randomUUID(), b = randomUUID();
