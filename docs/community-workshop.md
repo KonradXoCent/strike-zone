@@ -43,9 +43,10 @@ w nieeksponowanym schemacie, ze stałym `search_path`, jawną kontrolą `auth.ui
 i listy moderatorów. Sfałszowanie lokalnej flagi admina lub metadanych użytkownika
 nie pozwala zatwierdzić zgłoszenia. Klient używa dotychczasowego klucza publicznego.
 
-Kod właściciela ma 256 bitów losowości, jest ważny 7 dni i działa tylko raz.
-Baza przechowuje wyłącznie jego skrót. Po użyciu rola jest związana z UUID konta,
-nie z nickiem. Kod nie jest osadzany w HTML, ustawieniach, dokumentacji ani GitHubie.
+Właściciel ma już rolę przypisaną bezpośrednio do UUID wskazanego konta.
+Nie ma przycisku ani formularza kodu właściciela. Wcześniejszy jednorazowy kod
+został unieważniony w bazie. Mechanizm początkowej aktywacji pozostaje w schemacie,
+ale nie jest potrzebny do korzystania z panelu ani dostępny w interfejsie gry.
 
 Zgłoszenia mają limit 5 oczekujących i 10 wysłanych w ciągu 24 godzin na konto.
 Blokada transakcyjna chroni limit przed równoległym wysyłaniem. Dane projektu
@@ -72,17 +73,30 @@ Pierwsze zalogowanie odczytuje zapis z chmury, nawet gdy lokalny profil ma nowsz
 timestamp. Błąd odczytu blokuje wysyłanie danych, a zmiana konta nie przenosi
 ekwipunku poprzedniego użytkownika.
 
+`scripts/prepare-preview.cjs` tworzy samodzielny HTML z lokalnie osadzonym SDK
+i modułem `preview-account.js`. Formularz logowania oraz widoczny pasek sesji
+występują wyłącznie w tym pliku testowym. Po zalogowaniu właściciel przechodzi
+bezpośrednio do Moderacji, a zwykły gracz do Moich zgłoszeń. Hasło znika z pola
+po próbie logowania. Publiczny klient otrzymuje sesję z launchera i nie dołącza
+modułu testowego. Żaden nick, e-mail, UUID właściciela ani kod dostępu nie jest
+wpisany w kliencie jako reguła nadawania uprawnień.
+
 ## Walidacja
 
 - `npm test`: 78 testów, w tym kontrola uprawnień w rzeczywistym PostgreSQL/WASM
   (PGlite), nie tylko w atrapach odpowiedzi HTTP.
 - `npm run test:creator`: edytory, zapis, import/eksport, nowe noże i StatTrak.
-- `npm run test:community`: trzy odizolowane konta, aktywacja właściciela, prywatność
+- `npm run test:community`: trzy odizolowane konta, rola właściciela, prywatność
   zgłoszenia, test mapy, zatwierdzenie, odrzucenie, poprawka, publikacja do innego
   gracza, renderowanie skina i prawdziwe zabójstwo StatTrak. Dwa klienty dołączają
   do tej samej zatwierdzonej mapy pod różnymi lokalnymi numerami i widzą swoje skiny.
 - `npm run test:gameplay`: dotychczasowe 14 trybów, sieć, mapy, CTF i ekonomia.
 - `npm run maps:check`, `npm run prepare:game`: zgodność map i paczki gry.
+- `npm run test:preview`: rzeczywisty osadzony SDK, testowe odpowiedzi Auth oraz
+  REST z regułami PostgreSQL; błędne hasło, poprawne logowanie, odczyt przed zapisem,
+  zgłoszenie mapy, moderacja bez kodu, publikacja do autora i zmiana konta.
+  Osobny klient desktopowy otrzymuje sesję z mostka launchera i nie pokazuje
+  formularza logowania ani modułu podglądu. Test nie kontaktuje się z produkcją.
 - Live REST i gotowy samodzielny HTML: publiczny katalog odpowiada; anonim nie
   odczytuje zgłoszeń ani ról. HTML ma osadzony SDK i formularz logowania; anonimowe
   przeglądanie katalogu nie wysyła zapisów konta ani zgłoszeń.

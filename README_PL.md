@@ -45,9 +45,8 @@ Szkice są zapisane lokalnie osobno dla każdego konta. Eksport/import plików
 Przycisk **Wyślij do oceny** wysyła niezmienną kopię projektu. W zakładce
 **Moje zgłoszenia** autor widzi status i ewentualny powód odrzucenia.
 
-Właściciel aktywuje panel przez **Warsztat → Katalog graczy → Mam kod właściciela**.
-Jednorazowy kod jest przekazywany osobno, poza grą i repozytorium. Panel zostaje
-przypisany do zalogowanego konta, niezależnie od jego aktualnego nicku.
+Panel **Warsztat → Moderacja** pojawia się automatycznie na koncie właściciela.
+Uprawnienia są przypisane w bazie do UUID konta, niezależnie od aktualnego nicku.
 W **Moderacji** można obejrzeć projekt, sprawdzić mapę z botami, zatwierdzić
 publikację lub odrzucić projekt z uzasadnieniem. Zatwierdzony projekt pojawia się
 w **Katalogu graczy** po odświeżeniu; klient sprawdza też katalog w menu co minutę.
@@ -65,6 +64,12 @@ Testy lokalnych map i oczekujących zgłoszeń nie przyznają nagród ani statys
 
 Obsługa online wymaga klienta z tej gałęzi; wydanie instalatora nadal ma numer 1.2.0.
 Szczegóły bazy i testów: [docs/community-workshop.md](docs/community-workshop.md).
+
+Samodzielny plik do sprawdzenia Warsztatu można zbudować poleceniem
+`npm run prepare:preview -- /pełna/ścieżka/index.html`. Zawiera widoczny formularz
+logowania do tego samego konta i osadzony SDK Supabase. Logowanie jest dostępne
+tylko w tym pliku testowym. `prepare:game` i publiczny instalator nie dołączają
+modułu testowego; sesję gry przekazuje launcher.
 
 ## Nowe wydania
 
@@ -87,6 +92,9 @@ rozmiarach okna, edycję myszą, zapis i wyposażanie skinów, izolację kont or
 własnych map z botami bez nagród. `npm run test:community` sprawdza autora,
 moderatora i innego gracza, prawdziwe reguły PostgreSQL, publikowanie i odrzucanie,
 wspólną mapę oraz widoczność skinów. Testy Electron uruchamiaj kolejno.
+`npm run test:preview` sprawdza formularz i błędne hasło, wczytanie istniejącego
+zapisu, wysłanie mapy, moderację przypisaną do konta, publikację, wylogowanie
+i zmianę konta, a także brak logowania w publicznym kliencie desktopowym.
 Workflow Windows instaluje prawdziwą publiczną 1.1.0 i aktualizuje ją do bieżącej wersji.
 Następnie sprawdza błędne hasło, rejestrację z potwierdzeniem e-maila i bez niego,
 odczyt nicku i awatara, tę samą sesję w grze, brak osobnych kontrolek logowania,

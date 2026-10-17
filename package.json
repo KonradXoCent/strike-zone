@@ -16,7 +16,9 @@
     "maps:compile": "node scripts/compile-maps.cjs",
     "maps:check": "node scripts/compile-maps.cjs --check",
     "test:creator": "node scripts/creator-smoke.cjs",
-    "test:community": "node scripts/community-smoke.cjs"
+    "test:community": "node scripts/community-smoke.cjs",
+    "prepare:preview": "node scripts/prepare-preview.cjs",
+    "test:preview": "npm run prepare:game && node scripts/preview-smoke.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",
