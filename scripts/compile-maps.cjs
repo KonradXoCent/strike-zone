@@ -15,10 +15,15 @@ for(const edit of config.maps){
  if(edit.floors){d.fill(1);for(let y=0;y<C;y++)for(let x=0;x<C;x++){const px=(x+.5)*S/C,py=(y+.5)*S/C;if(edit.floors.some(p=>inside(px,py,p)))d[y*C+x]=0;}}
  else{const bits=Buffer.from(edit.baseBits,'base64');for(let i=0;i<d.length;i++)d[i]=(bits[i>>3]>>(i&7))&1;}
  for(const polygon of edit.repairs||[])for(let y=0;y<C;y++)for(let x=0;x<C;x++)if(inside((x+.5)*S/C,(y+.5)*S/C,polygon))d[y*C+x]=0;
- for(const polygon of [...(edit.walls||[]),...edit.boxes.map(b=>b.polygon)])for(let y=0;y<C;y++)for(let x=0;x<C;x++)if(inside((x+.5)*S/C,(y+.5)*S/C,polygon))d[y*C+x]=1;
+ const paint=(polygon,value)=>{for(let y=0;y<C;y++)for(let x=0;x<C;x++)if(inside((x+.5)*S/C,(y+.5)*S/C,polygon))d[y*C+x]=value;};
+ for(const polygon of edit.walls||[])paint(polygon,1);
+ for(const door of edit.doors||[])paint(door.polygon,0);
+ for(const box of edit.boxes)paint(box.polygon,1);
+ for(const {rect:[x,y,w,h]} of edit.windows||[])paint([[x,y],[x+w,y],[x+w,y+h],[x,y+h]],1);
  const bits=Buffer.alloc(Math.ceil(d.length/8));for(let i=0;i<d.length;i++)bits[i>>3]|=d[i]<<(i&7);
- m.bits=bits.toString('base64');m.revision=3;
+ m.bits=bits.toString('base64');m.revision=4;
  m.covers=edit.boxes.map(b=>({...b,polygon:b.polygon.map(p=>p.map(v=>v*scale))}));
+ m.windows=(edit.windows||[]).map(w=>({...w,rect:w.rect.map(v=>v*scale)}));
  for(const key of ['spawns','sites'])if(edit[key])m[key]=edit[key].map(r=>r.map(v=>v*scale));
  if(edit.labels)m.labels=edit.labels.map(([s,x,y])=>[s,x*scale,y*scale]);
 }
