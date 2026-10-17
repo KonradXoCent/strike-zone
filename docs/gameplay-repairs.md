@@ -30,13 +30,15 @@ Both spawns can reach both sites on all eight bomb maps. Regression checks also 
 
 The market's west doorway is now an actual opening to B. Its north window and the mid sniper window use grid type 3: actors and navigation treat the sill as solid; line of sight, fog rays, bullets and thrown grenades pass through it. Opaque walls and covers retain their previous blocking behavior. Window rectangles also feed the existing window-shot indicator. The low sill has a distinct, transparent static rendering, and the Overwatch trace uses the same sight rule.
 
+The mid window is on the west edge of the open mid area, north of connector (radar rectangle 418,446,15,45). The surrounding mid floor is restored. The previously used lower opening at 480,526 is now a solid building wall. Position-specific checks require the marked old opening to stop vision, fog rays and real gunshots, in addition to testing the new window's behavior.
+
 The two separated apartments strips are joined into one solid wall mass, with no walkable slot between them. Palace now has a connected divider and one narrow balcony exit. The compiler applies named door cuts after wall construction and retains the windows as movement barriers in the embedded mask.
 
 Runtime regression tests place actors on both sides of each window: movement blocks in both directions, both actors can see each other, fog rays continue, a real AK shot damages the target, and frag/smoke/flash/molotov trajectories cross the opening. Replacing the sill with an ordinary wall is a negative control: view, shots and fog rays block and the grenade bounces. Separate checks walk an actor through the market door and palace exit, and verify the repaired wall joins.
 
 ## Validation
 
-- `npm test`: launcher, account isolation, cloud persistence, updater, and 23 map topology checks.
+- `npm test`: launcher, account isolation, cloud persistence, updater, and 27 map topology checks.
 - `npm run prepare:game`: packages the single source file and the pinned Supabase client.
 - `npm run test:gameplay`: two isolated Electron clients using an in-memory Realtime transport; all 14 modes, authoritative movement/death/score, live TDM purchases, map/session changes, BR landing/cover, presence reconnect after channel/heartbeat failures and safe stale-channel cleanup, remote bot kill cam, fractional health, respawn cleanup, shared prices, all 14 map previews/navigation actual Mirage window collision/visibility/shooting/grenade behavior, doorway movement, and CTF capture/return cycles against stationary defenders across eight maps and 32 deterministic seeds. It never authenticates or writes to the live Supabase project.
 - The desktop account integration harness also passed existing-account login, case persistence, logout, second-account isolation and Escape behavior.
