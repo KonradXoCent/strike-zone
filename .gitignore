@@ -1,5 +1,7 @@
 node_modules/
 dist/
+dist-test/
+supabase/.temp/
 release/
 game/index.html
 game/source-sha256.txt

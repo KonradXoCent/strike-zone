@@ -1,9 +1,9 @@
-# Strike Zone 2D — 1.2.0
+# Strike Zone 2D — 1.3.0
 
-Pobierz `StrikeZone-Setup-1.2.0.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
-Posiadacze wersji 1.0.1 i 1.1.0 aktualizują grę przez launcher. Gracz nie potrzebuje Node.js.
+Pobierz `StrikeZone-Setup-1.3.0.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
+Posiadacze wersji 1.0.1, 1.1.0 i 1.2.0 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
 
-Pełna lista zmian 1.2.0: [RELEASE_NOTES.md](RELEASE_NOTES.md).
+Pełna lista zmian 1.3.0: [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
 ## Konto i sterowanie
 
@@ -13,17 +13,77 @@ otwórz wiadomość, potwierdź adres i zaloguj się w launcherze.
 Launcher pokazuje nick i awatar z bieżącego profilu zapisanego w chmurze.
 Po zmianie profilu w grze widok w launcherze aktualizuje się automatycznie.
 Wylogowanie jest dostępne w launcherze. W grze nie ma osobnego logowania.
+Lista znajomych jest wspólna z grą: zielona kropka oznacza online, szara offline.
+Wyszukiwarka filtruje nicki, a aktywność rozróżnia launcher, menu, lobby i mecz.
 
 F11 przełącza pełny ekran gry. Escape w menu głównym otwiera potwierdzenie:
 „Nie” po lewej w zieleni anuluje, „Tak” po prawej w czerwieni zapisuje postęp
 i zamyka okno gry, wracając do launchera. W meczu Escape nadal włącza pauzę.
 Ctrl + Shift + L również wraca do launchera.
 
-Konta i postęp korzystają z dotychczasowego Supabase. Nie zmieniono schematu bazy.
+Konta i postęp korzystają z dotychczasowego Supabase. Dotychczasowe tabele zapisów
+pozostają bez zmian; Warsztat online ma osobne tabele zgłoszeń i publikacji.
 Dane lokalne są w `%APPDATA%\StrikeZone2D`, a sesja jest chroniona przez Windows DPAPI.
 Hasło nie jest zapisywane. Do konta, chmury i sprawdzania wersji potrzebny jest internet.
 Gra najpierw wczytuje zapis konta, zanim pozwala wysłać własny zapis do chmury.
 Gdy odczyt się nie powiedzie, można go ponowić bez nadpisania danych.
+
+## Funkcje Warsztatu i nowe wyposażenie
+
+Odświeżone menu z ikonami SVG, zwarta nawigacja oraz Butterfly,
+kilof w stylu voxel, Kukri i Stiletto. Każdy nowy model ma sześć wykończeń i warianty
+StatTrak. Dotychczasowe identyfikatory przedmiotów pozostają bez zmian.
+
+W menu **Warsztat** są dwa lokalne edytory:
+
+- **Mapy:** ściany, skrzynie, okna, spawny CT/T i bombsite’y A/B, przesuwanie,
+  cofanie i ponawianie, trzy motywy oraz test z botami w TDM, CTF i rozbrajaniu bomby.
+  Przed testem gra sprawdza przejścia z uwzględnieniem rozmiaru postaci.
+- **Skiny:** wszystkie bronie i osiem modeli noży, trzy kolory, sześć wzorów oraz
+  pędzel przycinany do powierzchni broni. Projekt można zapisać i wysłać do oceny;
+  szkic jest podglądem edytora i nie daje darmowego wyposażenia.
+
+Szkice są zapisane lokalnie osobno dla każdego konta. Eksport/import plików
+`.szmap.json` i `.szskin.json` pozwala przenieść je na inny komputer.
+Przycisk **Wyślij do oceny** wysyła niezmienną kopię projektu. W zakładce
+**Moje zgłoszenia** autor widzi status i ewentualny powód odrzucenia.
+
+Panel **Warsztat → Moderacja** pojawia się automatycznie na koncie właściciela.
+Uprawnienia są przypisane w bazie do UUID konta, niezależnie od aktualnego nicku.
+W **Moderacji** można obejrzeć projekt, sprawdzić mapę z botami, zatwierdzić
+publikację lub odrzucić projekt z uzasadnieniem. Zatwierdzony projekt pojawia się
+w **Katalogu graczy** po odświeżeniu; klient sprawdza też katalog w menu co minutę.
+
+Zatwierdzone mapy działają z botami i w lobby w TDM, CTF oraz trybie bombowym.
+Mecz przesyła identyfikator zatwierdzonej wersji; każda strona pobiera tę samą
+geometrię, nawet jeśli ma mapę pod innym lokalnym numerem. Opublikowane wersje
+pozostają niezmienne, więc aktualizacja projektu nie podmienia mapy trwającego meczu.
+
+Zatwierdzone skiny automatycznie trafiają do **Community Forge Case**. Skrzynka ma
+osobną grafikę grafitowej kapsuły z turkusowym rdzeniem. Zakup kosztuje 2500$ z gry,
+nie wymaga klucza i odblokowuje się po 5 różnych zatwierdzonych projektach skinów.
+Aktualizacja projektu nie zwiększa licznika, a wycofany skin opuszcza pulę.
+Każdy aktywny projekt ma równą szansę; wariant StatTrak wypada z szansą 10%.
+
+Zdobyte skiny są przypisanymi do konta przedmiotami w **Ekwipunek → Weapon skins**.
+Można wyposażyć wyłącznie posiadany egzemplarz, także w przypadku nowego modelu
+noża. Katalog nie daje darmowego wyposażenia. Licznik StatTrak jest osobny dla
+każdego egzemplarza; wygląd jest widoczny w multiplayer po weryfikacji własności.
+Przedmioty społecznościowe nie są obecnie sprzedawane, wymieniane ani używane
+w kontraktach lub upgraderze. Nieopublikowane szkice widzi tylko autor w edytorze.
+Testy lokalnych map i oczekujących zgłoszeń nie przyznają nagród ani statystyk.
+
+Obsługa online jest dostępna w wydaniu 1.3.0.
+Szczegóły bazy i testów: [docs/community-workshop.md](docs/community-workshop.md).
+
+Samodzielny plik do sprawdzenia Warsztatu można zbudować poleceniem
+`npm run prepare:preview -- /pełna/ścieżka/index.html`. Zawiera widoczny formularz
+logowania do tego samego konta i osadzony SDK Supabase. Logowanie jest dostępne
+tylko w tym pliku testowym. `prepare:game` i publiczny instalator nie dołączają
+modułu testowego; sesję gry przekazuje launcher.
+Formularz startuje bez dodatkowego testu `/auth/v1/health`. Biblioteka jest
+osadzona w zwykłym skrypcie, więc nie wymaga zgody podglądu na skrypty `data:`.
+Żądania mają limit 12 sekund; po błędzie można ponowić logowanie.
 
 ## Nowe wydania
 
@@ -40,7 +100,20 @@ Pierwsza paczka 1.0.0 spoza GitHuba miała wyłączony kanał i wymaga nowego in
 ## Testy
 
 `npm test` sprawdza konta, sesje, odczyt chmury przed zapisem, rozmiar okna i aktualizator.
-Workflow Windows instaluje prawdziwą publiczną 1.1.0 i aktualizuje ją do bieżącej wersji.
+`npm run test:gameplay` sprawdza rozgrywkę, mapy i dwóch klientów w odizolowanej sieci testowej.
+`npm run test:creator` sprawdza nowe noże i zabójstwa StatTrak, nawigację przy sześciu
+rozmiarach okna, edycję myszą, zapis i brak darmowego wyposażania szkiców, izolację kont oraz testy
+własnych map z botami bez nagród. `npm run test:community` sprawdza autora,
+moderatora i innego gracza, prawdziwe reguły PostgreSQL, publikowanie i odrzucanie,
+wspólną mapę oraz widoczność skinów. Testy Electron uruchamiaj kolejno.
+`npm run test:preview` sprawdza formularz i błędne hasło, wczytanie istniejącego
+zapisu, wysłanie mapy, moderację przypisaną do konta, publikację, wylogowanie
+i zmianę konta, a także brak logowania w publicznym kliencie desktopowym.
+Sprawdza także blokadę 4/5, odblokowanie po piątym projekcie, zakup, animację
+otwierania, wyposażenie zdobytego przedmiotu i jego odczyt po przeładowaniu.
+Obejmuje też niedostępny health endpoint, ograniczenie skryptów `data:`, zerwanie
+sieci oraz żądanie, które nie odpowiada aż do przerwania po limicie czasu.
+Workflow Windows instaluje prawdziwą publiczną 1.2.0 i aktualizuje ją do bieżącej wersji.
 Następnie sprawdza błędne hasło, rejestrację z potwierdzeniem e-maila i bez niego,
 odczyt nicku i awatara, tę samą sesję w grze, brak osobnych kontrolek logowania,
 Escape, zapis postępu, zmiany profilu, wylogowanie oraz izolację dwóch kont.

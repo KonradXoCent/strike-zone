@@ -7,6 +7,7 @@ const { resolveAsset } = require('./core/protocol.cjs');
 const { loadConfig } = require('./core/config.cjs');
 const { UpdateController } = require('./core/updater.cjs');
 const { AccountController } = require('./core/account.cjs');
+const { FriendsController } = require('./core/friends.cjs');
 const { createAuthStorage } = require('./core/auth-storage.cjs');
 const { launcherBounds } = require('./core/window-size.cjs');
 
@@ -22,6 +23,7 @@ let launcher = null;
 let game = null;
 let controller = null;
 let account = null;
+let friends = null;
 let closingGame = null;
 let backend = { phase: 'checking' };
 let configError = false;
@@ -33,7 +35,8 @@ const supabaseUrl = gameSource.match(/const SB_URL='(https:\/\/[a-z0-9]+\.supaba
 const supabaseKey = gameSource.match(/SB_KEY='([^']+)'/)?.[1];
 
 function snapshot() {
-  return { update: controller.snapshot(), account: account.snapshot(), backend, configError, gameRunning: !!game };
+  const user = account.snapshot();
+  return { update: controller.snapshot(), account: user, friends: friends.snapshot(user.authenticated ? user.user.id : null), backend, configError, gameRunning: !!game };
 }
 function broadcast() {
   if (launcher && !launcher.isDestroyed()) launcher.webContents.send('launcher:state', snapshot());
@@ -87,6 +90,7 @@ async function openGame() {
       backgroundThrottling: false }
   });
   const win = game;
+  friends.setGameRunning(true);
   protectWindow(win, GAME_URL);
   win.once('ready-to-show', () => { win.maximize(); win.show(); launcher?.hide(); broadcast(); });
   win.webContents.on('before-input-event', (event, input) => {
@@ -95,7 +99,7 @@ async function openGame() {
     if (input.control && input.shift && input.key.toLowerCase() === 'l') { event.preventDefault(); closeGame(); }
   });
   win.on('close', event => { if (!win.__mayClose) { event.preventDefault(); closeGame(); } });
-  win.on('closed', () => { game = null; launcher?.show(); launcher?.focus(); broadcast(); controller.check(); });
+  win.on('closed', () => { game = null; friends.setGameRunning(false); friends.refresh(); launcher?.show(); launcher?.focus(); broadcast(); controller.check(); });
   win.loadURL(GAME_URL);
   broadcast();
   return snapshot();
@@ -131,7 +135,13 @@ else {
       global: { fetch: (url, options) => net.fetch(url, { ...options, signal: options?.signal || AbortSignal.timeout(15000) }) }
     });
     account = new AccountController(client);
-    account.on('state', broadcast);
+    friends = new FriendsController(client);
+    friends.on('state', broadcast);
+    account.on('state', () => {
+      broadcast();
+      // Auth callbacks hold the SDK lock; subscribe outside that callback.
+      setTimeout(() => friends.setAccount(account.snapshot()), 0);
+    });
     account.on('session', value => {
       if (!game || game.isDestroyed()) return;
       if (value) game.webContents.send('game:session', value);
@@ -159,6 +169,7 @@ else {
       } catch { return new Response('Not found', { status: 404 }); }
     });
     ipcMain.handle('launcher:state', event => { trusted(event, LAUNCHER_URL); return snapshot(); });
+    ipcMain.handle('launcher:friends-refresh', async event => { trusted(event, LAUNCHER_URL); await friends.refresh(); return snapshot(); });
     ipcMain.handle('launcher:play', event => { trusted(event, LAUNCHER_URL); return openGame(); });
     ipcMain.handle('launcher:login', async (event, input) => { trusted(event, LAUNCHER_URL); if (!game) await account.credentials('signin', input); return snapshot(); });
     ipcMain.handle('launcher:register', async (event, input) => { trusted(event, LAUNCHER_URL); if (!game) await account.credentials('signup', input); return snapshot(); });
@@ -177,4 +188,5 @@ else {
     setInterval(() => { if (!game && launcher?.isVisible()) controller.check(); }, 120000).unref();
   }).catch(() => { app.exit(1); });
   app.on('window-all-closed', () => app.quit());
+  app.on('before-quit', () => friends?.dispose());
 }

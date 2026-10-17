@@ -79,7 +79,7 @@ class AccountController extends EventEmitter {
       if (this.session?.user.id !== user.id) return;
       if (profile) this.updateProfile(profile);
       else {
-        const fallback = await this.client.from('leaderboard').select('name,av').eq('user_id', user.id).maybeSingle();
+        const fallback = await this.client.from('leaderboard').select('name,av,avimg').eq('user_id', user.id).maybeSingle();
         if (fallback.data && this.session?.user.id === user.id) this.updateProfile(fallback.data);
       }
     } catch { /* Auth remains usable; the game retries its own cloud read before any write. */ }

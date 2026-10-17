@@ -2,7 +2,7 @@
 const http = require('node:http');
 const { randomUUID } = require('node:crypto');
 const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jM5kAAAAASUVORK5CYII=';
-async function startFixture() {
+async function startFixture({ friends = [], profiles = [] } = {}) {
   const users = new Map(), saves = new Map(), writes = [];
   const email = 'desktop-smoke@example.test', password = 'SmokePass123!';
   const user = { id: randomUUID(), email, aud: 'authenticated', role: 'authenticated', email_confirmed_at: new Date().toISOString(), user_metadata: { nickname: 'KonradQA' }, app_metadata: { provider: 'email' }, identities: [] };
@@ -36,8 +36,8 @@ async function startFixture() {
       if (!actor) { status = 401; value = { message: 'No session' }; }
       else if (method === 'GET') value = saves.has(actor.id) ? { json: saves.get(actor.id) } : null;
       else { saves.set(actor.id, data.json); writes.push(data); status = 201; }
-    } else if (u.pathname.endsWith('/leaderboard')) value = method === 'GET' ? null : {};
-    else if (u.pathname.endsWith('/friends')) value = [];
+    } else if (u.pathname.endsWith('/leaderboard')) value = method === 'GET' ? (u.searchParams.has('user_id') && u.searchParams.get('user_id').startsWith('in.') ? profiles : null) : {};
+    else if (u.pathname.endsWith('/friends')) value = actor?.id === user.id ? friends : [];
     return { status, body: status === 204 ? '' : JSON.stringify(value), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'GET,POST,PATCH,DELETE,OPTIONS' } };
   }
   const server = http.createServer((req, res) => { let body = ''; req.on('data', b => { body += b; }); req.on('end', () => { try { const result = request(req.method, req.url, body, req.headers); res.writeHead(result.status, result.headers); res.end(result.body); } catch (e) { res.writeHead(500); res.end(JSON.stringify({ message: e.message })); } }); });
