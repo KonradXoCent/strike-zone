@@ -18,6 +18,7 @@
     "maps:check": "node scripts/compile-maps.cjs --check",
     "test:creator": "node scripts/creator-smoke.cjs",
     "test:launcher": "npm run prepare:game && node scripts/launcher-smoke.cjs",
+    "test:friends": "npm run prepare:game && node scripts/friends-smoke.cjs",
     "test:community": "node scripts/community-smoke.cjs",
     "prepare:preview": "node scripts/prepare-preview.cjs",
     "test:preview": "npm run prepare:game && node scripts/preview-smoke.cjs",

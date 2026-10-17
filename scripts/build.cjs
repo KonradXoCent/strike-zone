@@ -6,7 +6,9 @@ require('./linux-nsis.cjs')();
 const root = path.join(__dirname, '..');
 const testBuild = process.argv.includes('--test');
 const stableVersion = require('../package.json').version;
-const version = testBuild ? stableVersion + '-test.1' : stableVersion;
+const testRevision = process.argv.find(arg => arg.startsWith('--test-revision='))?.split('=')[1] || '1';
+if (!/^[1-9]\d{0,3}$/.test(testRevision)) throw new Error('Nieprawidłowy numer wersji testowej.');
+const version = testBuild ? stableVersion + '-test.' + testRevision : stableVersion;
 const output = testBuild ? 'dist-test' : 'dist';
 const channel = loadConfig([path.join(root, 'updates.json')]);
 const config = {

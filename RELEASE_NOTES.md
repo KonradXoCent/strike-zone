@@ -1,5 +1,7 @@
 Strike Zone 2D 1.4.0 — wersja testowa
 
+- Panel znajomych w grze: ustawione zdjęcia zamiast emoji, nick i status Offline / Online / W Meczu (In Match). Zdjęcia zapisanych profili są widoczne również offline.
+- Po kliknięciu znajomego przycisk Trade obok Usuń / Delete. Wysyłanie, przyjmowanie i potwierdzanie wymiany wymagają aktywnego połączenia obu graczy; rozłączenie przed wysłaniem blokuje zaproszenie.
 - Wspólny wybór języka PL/EN dla launchera i gry, z flagami. Zmiana działa także podczas uruchomionej gry i jest zapamiętywana.
 - Ustawienia launchera oraz motywy Nocny, Leśny i Piaskowy z osobnymi tłami.
 - Trwałe wiadomości prywatne i grupy do 16 osób, historia, wiadomości dla osób offline, liczniki nieprzeczytanych i powiadomienia w launcherze oraz grze. Właściciel grupy zarządza uczestnikami i nazwą.
@@ -7,10 +9,12 @@ Strike Zone 2D 1.4.0 — wersja testowa
 - Serwery: twórca zachowuje rolę hosta po kliknięciu własnego serwera. Tworzenie czeka na zapis wpisu; komunikat zgłasza nieudaną publikację. Dołączenie do trwającego meczu używa tej samej sesji i symulacji hosta.
 - Naprawiony błąd zatrzymujący grę klienta niosącego bombę. Postęp podkładania jest synchronizowany, a ekran oczekiwania chroni przed rysowaniem niepełnego stanu meczu.
 
-Wersja testowa: StrikeZone-Test-1.4.0-test.1.exe. Kanał stabilny pozostaje przy 1.3.0 do publikacji wydania 1.4.0.
+Wersja testowa: StrikeZone-Test-1.4.0-test.2.exe. Kanał stabilny pozostaje przy 1.3.0 do publikacji wydania 1.4.0.
 
 English
 
+- In-game friends show uploaded profile pictures, nicknames and Offline / Online / In Match status, including saved pictures for offline players.
+- Click a friend for Trade beside Delete. Sending, accepting and confirming trades require both players online; disconnecting before invitation delivery blocks it.
 - Shared PL/EN launcher and game language preferences, applied immediately and remembered.
 - Launcher settings with Night, Forest and Sand themes and distinct background artwork.
 - Persistent direct messages and groups of up to 16 members, offline delivery, history, unread badges and in-app notifications in both windows. Group owners manage members and titles.

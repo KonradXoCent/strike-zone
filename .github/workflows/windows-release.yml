@@ -40,6 +40,8 @@ jobs:
       - run: npm run check:ui
       - name: Test launcher accounts and friends on Windows before publishing
         run: npm run test:launcher
+      - name: Test in-game avatars, presence and online-only trade invitations
+        run: npm run test:friends
       - name: Test shared languages, themes and persistent chat
         run: npm run test:social
       - name: Test two SDK clients through lobby and running server list

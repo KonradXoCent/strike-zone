@@ -102,6 +102,14 @@ Rozbrajanie bomby|Bomb defusal
 Wyścig zbrojeń|Arms race
 Sprawdzanie statusu…|Checking status…
 W grze|In game
+W Meczu|In Match
+Poczekaj na sprawdzenie połączenia.|Wait for the connection check.
+Znajomy musi być online, aby otrzymać zaproszenie do wymiany.|Your friend must be online to receive a trade invitation.
+Wyślij zaproszenie do wymiany|Send a trade invitation
+Wysłano zaproszenie do wymiany|Trade invitation sent
+Nie udało się wysłać zaproszenia do wymiany. Spróbuj ponownie.|Could not send the trade invitation. Try again.
+Brak znajomych — dodaj ich w zakładce Znajomi.|No friends yet — add them in the Friends tab.
+zaprasza do lobby|invites you to a lobby
 mecz|match
 W launcherze|In launcher
 W menu gry|In game menu
