@@ -66,7 +66,7 @@
     return pendingLoad;
   };
 
-  async function flush() {
+  async function flushAccount() {
     clearTimeout(CL.h);
     try { localStorage.setItem('sz2', JSON.stringify(DB)); } catch {}
     if (!sb || !SBU || loadedUser !== SBU.id || readOwner() !== SBU.id) return false;
@@ -80,7 +80,14 @@
       return true;
     } catch (error) { CL.msg = 'Cloud save failed: ' + (error.message || error); return false; }
   }
+  async function flush() {
+    if(window.szCloudEconomyLocked?.())return false;
+    window.szCloudPending=window.szCloudPending||new Set();
+    const task=flushAccount();window.szCloudPending.add(task);
+    try{return await task;}finally{window.szCloudPending.delete(task);}
+  }
   cloudPush = function (now) {
+    if(window.szCloudEconomyLocked?.())return;
     if (!sb || !SBU || loadedUser !== SBU.id || readOwner() !== SBU.id) return;
     clearTimeout(CL.h);
     CL.h = setTimeout(flush, now ? 0 : 2500);

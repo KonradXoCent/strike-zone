@@ -24,10 +24,12 @@ Projekt: `mvzlqpccmjslxdajjbfw`. Wdrożono migracje:
 
 - `20261017172626 community_workshop`
 - `20261017173831 community_workshop_limits`
+- `20261017184015 community_forge_case`
 
-`database/workshop.sql` opisuje aktualny schemat dla nowej instalacji. Nie należy
+`database/workshop.sql` oraz `database/community-case.sql` opisują schemat dla nowej instalacji. Nie należy
 uruchamiać całego pliku ponownie na już skonfigurowanym projekcie. Istniejące
-`saves`, `friends`, `leaderboard` i `servers` nie zostały zmienione.
+`saves`, `friends`, `leaderboard` i `servers` zachowują schemat. Zakup skrzynki
+aktualizuje wyłącznie portfel bieżącego profilu w istniejącym zapisie konta.
 
 | Obiekt | Dostęp klienta |
 | --- | --- |
@@ -61,12 +63,39 @@ z zatwierdzonego katalogu, a nie dowolny payload przesłany przez hosta.
 Poprzednie zatwierdzone wersje są dostępne podczas trwających na nich meczów.
 Nowe mapy warsztatowe są nierankingowe i obsługują TDM, CTF oraz rozbrajanie bomby.
 
-Skin społecznościowy jest osobnym wyglądem, poza `P().skins` i wyceną przedmiotów.
-Wyposażenie oraz licznik zabójstw zapisują się w zwykłym zapisie konta.
-Przez sieć przesyłane są tylko identyfikatory zatwierdzonych wydań; rysunki są
-pobierane i walidowane po stronie odbiorcy. Lokalny szkic nie staje się przez to
-publiczny. Wyposażenie skina z ekwipunku lub lokalnego szkicu usuwa poprzedni
-wygląd społecznościowy dla tej broni.
+Zatwierdzone skiny trafiają do Community Forge Case. Minimum zakupu to 5 różnych
+aktywnych projektów skinów; rewizje, oczekujące zgłoszenia i mapy nie zwiększają
+licznika. Cena to 2500$ z gry, bez klucza. Pula jest dynamiczna, obejmuje najnowszą
+zatwierdzoną wersję każdego projektu, z równą szansą na każdy projekt i 10% szans
+na StatTrak. Już kupioną skrzynkę można otworzyć przy mniejszej niepustej puli;
+przy pustej puli pozostaje w posiadaniu gracza.
+
+`database/community-case.sql` dodaje tabele `sz_workshop_cases` i
+`sz_workshop_owned_skins`. Obie mają RLS i wyłącznie odczyt własnych rekordów;
+klient nie może dopisać sobie skrzynki, podmienić nagrody ani nadać StatTrak.
+Zakup działa przez publiczne RPC `security_invoker` z prywatną implementacją.
+Sprawdza konto, próg, bieżący profil, timestamp i stan portfela; blokuje zapis
+konta i atomowo odejmuje cenę oraz tworzy skrzynkę. UUID żądania jest kluczem
+idempotencji. Ponowienie nie pobiera ceny drugi raz. Klient kończy wcześniejsze
+zapisy chmury, wysyła aktualny zapis i wstrzymuje kolejne na czas operacji.
+
+Otwieranie blokuje wiersz posiadanej skrzynki. Nagroda jest losowana w bazie,
+ma osobny UUID i kopię niezmiennego zatwierdzonego projektu. Kolejne otwarcie tej
+samej skrzynki zwraca ten sam egzemplarz. Ponowienie animacji nie daje kolejnego
+przedmiotu ani statystyki otwarcia. Nagrody są widoczne w osobnej kolekcji skinów
+społecznościowych w zakładce Weapon skins i nie są częścią ekonomii sprzedaży,
+wymian, kontraktów czy upgradera.
+
+Wyposażenie wymaga własnego egzemplarza odczytanego z bazy; stare darmowe wpisy
+loadoutu nie działają. Dotyczy to także własnych szkiców: można je oglądać
+w edytorze, zapisywać i zgłaszać, lecz nie zakładać bez zdobycia przedmiotu.
+StatTrak liczy zabójstwa osobno dla UUID egzemplarza i zapisuje licznik wraz
+z kontem. Zwykłe warianty nie naliczają StatTrak. Przez sieć wysyłane są UUID
+przedmiotu oraz wydania; odbiorca weryfikuje pojedynczy egzemplarz przez RPC
+`sz_workshop_skin_proof`, porównuje właściciela z uczestnikiem lobby i pobiera
+zatwierdzone wydanie. Pełne ekwipunki pozostają prywatne. Cache i budżet 40 nowych
+weryfikacji na minutę ograniczają liczbę odczytów. Wycofany projekt nie może być
+wyposażony, ale zdobyty egzemplarz pozostaje w kolekcji.
 
 Samodzielny HTML ma tę samą ochronę odczytu konta przed zapisem co klient desktopowy.
 Pierwsze zalogowanie odczytuje zapis z chmury, nawet gdy lokalny profil ma nowszy
@@ -90,7 +119,7 @@ Odczyty bazy w reakcji na zmianę sesji są odroczone poza callback Auth.
 
 ## Walidacja
 
-- `npm test`: 78 testów, w tym kontrola uprawnień w rzeczywistym PostgreSQL/WASM
+- `npm test`: 88 testów, w tym kontrola uprawnień w rzeczywistym PostgreSQL/WASM
   (PGlite), nie tylko w atrapach odpowiedzi HTTP.
 - `npm run test:creator`: edytory, zapis, import/eksport, nowe noże i StatTrak.
 - `npm run test:community`: trzy odizolowane konta, rola właściciela, prywatność
@@ -106,7 +135,8 @@ Odczyty bazy w reakcji na zmianę sesji są odroczone poza callback Auth.
   formularza logowania ani modułu podglądu. Test nie kontaktuje się z produkcją.
   Dodatkowo blokuje skrypty `data:` przez CSP i zwraca błąd health endpointu;
   brak odpowiedzi żądania Auth prowadzi do przerwania, a awaria sieci do ponowienia
-  bez przeładowania strony.
+  bez przeładowania strony. Obejmuje próg 4/5 i 5/5, zakup z portfela, animację,
+  własny egzemplarz, wyposażenie oraz odczyt po przeładowaniu.
 - Live REST i gotowy samodzielny HTML: publiczny katalog odpowiada; anonim nie
   odczytuje zgłoszeń ani ról. HTML ma osadzony SDK i formularz logowania; anonimowe
   przeglądanie katalogu nie wysyła zapisów konta ani zgłoszeń.

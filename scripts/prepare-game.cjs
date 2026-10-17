@@ -4,6 +4,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'game-source/index.html'), 'utf8');
+if (!source.includes(fs.readFileSync(path.join(__dirname, 'community-case.html'), 'utf8'))) throw new Error('Embedded Community Forge module is stale.');
 const sdk = path.join(root, 'node_modules/@supabase/supabase-js/dist/umd/supabase.js');
 if (!fs.existsSync(sdk)) throw new Error('Brak zależności. Uruchom najpierw npm ci.');
 const tag = /<script\s+src="https:\/\/cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js@2\.45\.4\/dist\/umd\/supabase\.min\.js"><\/script>/;

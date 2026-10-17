@@ -81,3 +81,8 @@ test('standalone HTML also reads the existing account before any upload',async()
 test('standalone HTML blocks writes after a failed initial account read',async()=>{
   const f=fixture({code:browserIntegration,failure:true});await f.run('cloudLoad()');await f.run('window.szDesktopFlush()');f.run('cloudPush(1)');assert.equal(f.writes.length,0);assert.equal(f.timers.size,0);
 });
+for(const [name,code]of [['desktop',integration],['standalone',browserIntegration]])test(name+' pauses cloud writes during a server wallet transaction and tracks pending saves',async()=>{
+ const f=fixture({code,saved:{profiles:{Existing:{name:'Existing',wallet:4321}},cur:'Existing',ts:1}});await f.run('cloudLoad()');
+ f.run('window.szCloudEconomyLocked=()=>true');assert.equal(await f.run('window.szDesktopFlush()'),false);f.run('cloudPush(1)');assert.equal(f.writes.length,0);assert.equal(f.timers.size,0);
+ f.run('window.szCloudEconomyLocked=()=>false');const pending=f.run('window.szDesktopFlush()');assert.equal(f.run('window.szCloudPending.size'),1);assert.equal(await pending,true);assert.equal(f.run('window.szCloudPending.size'),0);assert.equal(f.writes.length,1);
+});

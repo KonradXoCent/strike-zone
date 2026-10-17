@@ -4,6 +4,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 function makePreview() {
   let html = fs.readFileSync(path.join(root, 'game-source/index.html'), 'utf8');
+  if (!html.includes(fs.readFileSync(path.join(__dirname, 'community-case.html'), 'utf8'))) throw new Error('Embedded Community Forge module is stale.');
   let sdk = fs.readFileSync(path.join(root, 'node_modules/@supabase/supabase-js/dist/umd/supabase.js'), 'utf8');
   const license = fs.readFileSync(path.join(root, 'node_modules/@supabase/supabase-js/LICENSE'), 'utf8');
   const tag = '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>';

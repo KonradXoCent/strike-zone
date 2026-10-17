@@ -1,7 +1,7 @@
-const TABLES=new Set(['sz_workshop_admins','sz_workshop_submissions','sz_workshop_catalog','sz_workshop_releases','sz_workshop_items']);
+const TABLES=new Set(['sz_workshop_admins','sz_workshop_submissions','sz_workshop_catalog','sz_workshop_releases','sz_workshop_items','sz_workshop_cases','sz_workshop_owned_skins']);
 const ident=value=>{if(!/^[a-z_]+$/.test(value))throw Error('Bad test identifier');return '"'+value+'"';};
 async function requestWorkshopDB(asUser,uid,req){try{return await asUser(uid,async tx=>{
- if(req.rpc){const names={sz_workshop_claim_owner:['code'],sz_workshop_review:['submission','decision','note'],sz_workshop_withdraw:['item']},params=names[req.rpc];if(!params)throw Error('Bad RPC');const r=await tx.query(`select public.${ident(req.rpc)}(${params.map((_,i)=>'$'+(i+1)).join(',')}) as value`,params.map(p=>req.args[p]));return{data:r.rows[0].value,error:null};}
+ if(req.rpc){const names={sz_workshop_claim_owner:['code'],sz_workshop_review:['submission','decision','note'],sz_workshop_withdraw:['item'],sz_workshop_case_buy:['request_id','profile_name','expected_ts'],sz_workshop_case_open:['case_id'],sz_workshop_skin_proof:['instance_id']},params=names[req.rpc];if(!params)throw Error('Bad RPC');const r=await tx.query(`select public.${ident(req.rpc)}(${params.map((_,i)=>'$'+(i+1)).join(',')}) as value`,params.map(p=>req.args[p]));return{data:r.rows[0].value,error:null};}
  if(!TABLES.has(req.table))return{data:[],error:null};const values=[],param=v=>{values.push(v);return'$'+values.length;};let sql;
  const selection=req.select==='*'?'*':req.select.split(',').map(ident).join(',');
  if(req.insert){const keys=Object.keys(req.insert);sql=`insert into public.${ident(req.table)}(${keys.map(ident).join(',')}) values(${keys.map(k=>param(req.insert[k])).join(',')}) returning ${selection}`;}

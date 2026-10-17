@@ -38,7 +38,8 @@ W menu **Warsztat** są dwa lokalne edytory:
   cofanie i ponawianie, trzy motywy oraz test z botami w TDM, CTF i rozbrajaniu bomby.
   Przed testem gra sprawdza przejścia z uwzględnieniem rozmiaru postaci.
 - **Skiny:** wszystkie bronie i osiem modeli noży, trzy kolory, sześć wzorów oraz
-  pędzel przycinany do powierzchni broni. Projekt można zapisać i wyposażyć lokalnie.
+  pędzel przycinany do powierzchni broni. Projekt można zapisać i wysłać do oceny;
+  szkic jest podglądem edytora i nie daje darmowego wyposażenia.
 
 Szkice są zapisane lokalnie osobno dla każdego konta. Eksport/import plików
 `.szmap.json` i `.szskin.json` pozwala przenieść je na inny komputer.
@@ -56,10 +57,18 @@ Mecz przesyła identyfikator zatwierdzonej wersji; każda strona pobiera tę sam
 geometrię, nawet jeśli ma mapę pod innym lokalnym numerem. Opublikowane wersje
 pozostają niezmienne, więc aktualizacja projektu nie podmienia mapy trwającego meczu.
 
-Zatwierdzone skiny są darmowymi wyglądami widocznymi dla innych graczy używających
-tej wersji klienta, z osobnym licznikiem StatTrak. Nie są przedmiotami rynkowymi:
-nie trafiają do sprzedaży, wymian, skrzynek, kontraktów ani upgradera. Wybór skina
-z ekwipunku przywraca zwykłe wyposażenie. Nieopublikowane szkice widzi tylko autor.
+Zatwierdzone skiny automatycznie trafiają do **Community Forge Case**. Skrzynka ma
+osobną grafikę grafitowej kapsuły z turkusowym rdzeniem. Zakup kosztuje 2500$ z gry,
+nie wymaga klucza i odblokowuje się po 5 różnych zatwierdzonych projektach skinów.
+Aktualizacja projektu nie zwiększa licznika, a wycofany skin opuszcza pulę.
+Każdy aktywny projekt ma równą szansę; wariant StatTrak wypada z szansą 10%.
+
+Zdobyte skiny są przypisanymi do konta przedmiotami w **Ekwipunek → Weapon skins**.
+Można wyposażyć wyłącznie posiadany egzemplarz, także w przypadku nowego modelu
+noża. Katalog nie daje darmowego wyposażenia. Licznik StatTrak jest osobny dla
+każdego egzemplarza; wygląd jest widoczny w multiplayer po weryfikacji własności.
+Przedmioty społecznościowe nie są obecnie sprzedawane, wymieniane ani używane
+w kontraktach lub upgraderze. Nieopublikowane szkice widzi tylko autor w edytorze.
 Testy lokalnych map i oczekujących zgłoszeń nie przyznają nagród ani statystyk.
 
 Obsługa online wymaga klienta z tej gałęzi; wydanie instalatora nadal ma numer 1.2.0.
@@ -91,13 +100,15 @@ Pierwsza paczka 1.0.0 spoza GitHuba miała wyłączony kanał i wymaga nowego in
 `npm test` sprawdza konta, sesje, odczyt chmury przed zapisem, rozmiar okna i aktualizator.
 `npm run test:gameplay` sprawdza rozgrywkę, mapy i dwóch klientów w odizolowanej sieci testowej.
 `npm run test:creator` sprawdza nowe noże i zabójstwa StatTrak, nawigację przy sześciu
-rozmiarach okna, edycję myszą, zapis i wyposażanie skinów, izolację kont oraz testy
+rozmiarach okna, edycję myszą, zapis i brak darmowego wyposażania szkiców, izolację kont oraz testy
 własnych map z botami bez nagród. `npm run test:community` sprawdza autora,
 moderatora i innego gracza, prawdziwe reguły PostgreSQL, publikowanie i odrzucanie,
 wspólną mapę oraz widoczność skinów. Testy Electron uruchamiaj kolejno.
 `npm run test:preview` sprawdza formularz i błędne hasło, wczytanie istniejącego
 zapisu, wysłanie mapy, moderację przypisaną do konta, publikację, wylogowanie
 i zmianę konta, a także brak logowania w publicznym kliencie desktopowym.
+Sprawdza także blokadę 4/5, odblokowanie po piątym projekcie, zakup, animację
+otwierania, wyposażenie zdobytego przedmiotu i jego odczyt po przeładowaniu.
 Obejmuje też niedostępny health endpoint, ograniczenie skryptów `data:`, zerwanie
 sieci oraz żądanie, które nie odpowiada aż do przerwania po limicie czasu.
 Workflow Windows instaluje prawdziwą publiczną 1.1.0 i aktualizuje ją do bieżącej wersji.

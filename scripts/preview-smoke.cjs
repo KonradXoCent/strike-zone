@@ -2,7 +2,7 @@
 const { _electron } = require('playwright-core');
 const fs = require('node:fs'), path = require('node:path'), os = require('node:os'), assert = require('node:assert/strict');
 const { makePreview } = require('./prepare-preview.cjs');
-const { createWorkshopDB, USERS: U } = require('./test-support/workshop-db.cjs');
+const { createWorkshopDB, USERS: U, skinProject } = require('./test-support/workshop-db.cjs');
 const { requestWorkshopDB } = require('./test-support/workshop-browser.cjs');
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'sz-preview-login-'));
 const repo = path.resolve(__dirname, '..');
@@ -44,8 +44,8 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
       if (url.pathname === '/auth/v1/user') return answer(session(user).user);
       if (url.pathname === '/auth/v1/logout') return answer({});
       if (url.pathname === '/rest/v1/saves') {
-        if (request.method() === 'POST') { assert.equal(body.user_id, user.id); saved.set(user.id, { json: body.json }); writes.push(user.id); return answer(null, 201); }
-        return answer(user && saved.has(user.id) ? [saved.get(user.id)] : []);
+        if (request.method() === 'POST') { assert.equal(body.user_id, user.id); saved.set(user.id, { json: body.json });await db.query('insert into public.saves(user_id,json) values($1,$2) on conflict(user_id) do update set json=excluded.json',[user.id,body.json]); writes.push(user.id); return answer(null, 201); }
+        return answer(user ? (await db.query('select json from public.saves where user_id=$1',[user.id])).rows : []);
       }
       if (url.pathname.startsWith('/rest/v1/rpc/')) {
         const result = await requestWorkshopDB(asUser, user?.id || null, { rpc: url.pathname.split('/').pop(), args: body });
@@ -80,7 +80,7 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
     await author.goto('file://' + root + '/index.html');
     await author.waitForFunction(() => !!sb && !!window.SZ_TEST_PREVIEW);
     const baseline = await author.evaluate(() => JSON.parse(JSON.stringify(DB)));
-    for (const account of accounts) saved.set(account.id, { json: { ...baseline, cur: account.name, ts: 1, profiles: { [account.name]: { ...baseline.profiles[baseline.cur], name: account.name, wallet: 4321 } } } });
+    for (const account of accounts) {const json={...baseline,cur:account.name,ts:1,profiles:{[account.name]:{...baseline.profiles[baseline.cur],name:account.name,wallet:4321}}};saved.set(account.id,{json});await db.query('insert into public.saves(user_id,json) values($1,$2)',[account.id,json]);}
     assert.equal(await author.locator('#preview-account-dialog').isVisible(), true);
     assert.equal(await author.locator('#preview-login-submit').isEnabled(), true);
     assert.equal(healthChecks, 0, 'An unavailable health endpoint must not block signing in');
@@ -127,12 +127,43 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
     assert.equal(await author.evaluate(() => COMMUNITY.mine[0].status), 'approved');
     console.log('PASS account-assigned moderation without code and approval visible to the author');
     if (process.env.STRIKEZONE_PREVIEW_SHOTS) { await admin.screenshot({ path: path.join(process.env.STRIKEZONE_PREVIEW_SHOTS, 'logged-in-moderation.png') }); }
+    // Four approved projects cannot be bought; the fifth unlocks the real UI.
+    async function publishSkin(n){const p=skinProject(require('node:crypto').randomUUID());p.name='Forge test '+n;p.colors=['#37cbb6','#845ddd','#cfedec'];const q=await asUser(U.author,tx=>tx.query("insert into public.sz_workshop_submissions(kind,project_id,payload) values('skin',$1,$2) returning id",[p.id,p]));await asUser(U.admin,tx=>tx.query("select public.sz_workshop_review($1,'approved','')",[q.rows[0].id]));}
+    for(let n=0;n<4;n++)await publishSkin(n);
+    await author.evaluate(async()=>{await communityRefresh();tab('shop');});
+    assert.equal(await author.locator('[data-forge-buy]').isDisabled(),true);
+    await author.evaluate(async()=>{await communityEquip(COMMUNITY.rows.find(r=>r.kind==='skin').release_id);if(communityOwnId('knife'))throw Error('Unowned skin equipped');});
+    await publishSkin(4);await author.evaluate(()=>communityRefresh());
+    assert.equal(await author.locator('[data-forge-buy]').isEnabled(),true);
+    if(process.env.STRIKEZONE_PREVIEW_SHOTS)await author.screenshot({path:path.join(process.env.STRIKEZONE_PREVIEW_SHOTS,'forge-shop.png')});
+    const walletBefore=await author.evaluate(()=>P().wallet);
+    await author.click('[data-forge-buy]');
+    await author.waitForFunction(()=>FORGE.cases.length===1&&!FORGE.busy);
+    assert.equal(await author.evaluate(()=>P().wallet),walletBefore-2500);
+    await author.evaluate(()=>{INV='w';tab('inv');});await author.click('[data-forge-open]');
+    await author.waitForFunction(()=>!!CASE_PRESENTATION&&!FORGE.busy);
+    assert.equal(await author.evaluate(()=>FORGE.owned.length),1);
+    await author.locator('.case-dismiss').click();
+    if(process.env.STRIKEZONE_PREVIEW_SHOTS)await author.screenshot({path:path.join(process.env.STRIKEZONE_PREVIEW_SHOTS,'forge-reveal.png')});
+    await author.locator('.case-continue').click();
+    assert.equal(await author.locator('[data-forge-equip]').count(),1);
+    await author.locator('[data-forge-equip]').click();
+    await author.waitForFunction(()=>!!communityOwnId('knife')&&!COMMUNITY.busy);
+    if(process.env.STRIKEZONE_PREVIEW_SHOTS)await author.screenshot({path:path.join(process.env.STRIKEZONE_PREVIEW_SHOTS,'forge-owned.png')});
+    const instance=await author.evaluate(()=>P().communityLoadout.knife.owned);
+    assert.equal(await author.evaluate(id=>FORGE.owned.some(o=>o.id===id),instance),true);
+    await author.evaluate(()=>window.szDesktopFlush());await author.reload();
+    await author.waitForFunction(()=>FORGE.ready&&FORGE.owned.length===1&&!!communityOwnId('knife'));
+    assert.equal(await author.evaluate(()=>P().wallet),walletBefore-2500);
+    assert.equal(await author.evaluate(()=>P().communityLoadout.knife.owned),instance);
+    console.log('PASS 4/5 lock, fifth approval, paid case purchase, centered reel, owned inventory, equip and reload');
     await author.click('[data-preview-action=logout]');
     await author.waitForFunction(() => !SBU && !COMMUNITY.admin && !COMMUNITY.mine.length);
     await author.click('[data-preview-action=login]'); await signIn(author, accounts[2]);
     assert.equal(await author.evaluate(() => P().name), accounts[2].name);
     assert.equal(await author.evaluate(() => COMMUNITY.mine.length), 0);
     assert.equal(await author.evaluate(() => COMMUNITY.admin), false);
+    assert.equal(await author.evaluate(()=>FORGE.owned.length),0);
     console.log('PASS logout and a second account have separate profiles and no inherited moderation');
     const desktopSession = session(accounts[1]);
     await desktop.addInitScript(tokens => { window.strikeZoneDesktop = { session: async () => tokens, onSession() {}, profile: async () => {}, launcher: async () => {}, fullscreen: async () => {} }; }, { access_token: desktopSession.access_token, refresh_token: desktopSession.refresh_token });
