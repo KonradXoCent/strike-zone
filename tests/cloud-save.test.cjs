@@ -6,7 +6,7 @@ const vm = require('node:vm');
 const path = require('node:path');
 const integration = fs.readFileSync(path.join(__dirname, '../game/desktop.js'), 'utf8');
 const sourceHTML=fs.readFileSync(path.join(__dirname,'../game-source/index.html'),'utf8');
-const browserIntegration=sourceHTML.match(/<script>\n\/\* Standalone browser builds[\s\S]*?<\/script>/)[0].replace(/^<script>|<\/script>$/g,'');
+const browserIntegration=sourceHTML.match(/<script>\r?\n\/\* Standalone browser builds[\s\S]*?<\/script>/)[0].replace(/^<script>|<\/script>$/g,'');
 function fixture({ saved = null, owner = null, userId = 'user-a', failure = false, code = integration } = {}) {
   const storage = new Map(owner ? [['sz2-cloud-owner', owner]] : []);
   const writes = [], timers = new Map();
