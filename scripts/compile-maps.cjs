@@ -24,6 +24,7 @@ for(const edit of config.maps){
  m.bits=bits.toString('base64');m.revision=4;
  m.covers=edit.boxes.map(b=>({...b,polygon:b.polygon.map(p=>p.map(v=>v*scale))}));
  m.windows=(edit.windows||[]).map(w=>({...w,rect:w.rect.map(v=>v*scale)}));
+ m.links=(edit.links||[]).map(l=>({...l,a:l.a.map(v=>v*scale),b:l.b.map(v=>v*scale),radius:l.radius*scale}));
  for(const key of ['spawns','sites'])if(edit[key])m[key]=edit[key].map(r=>r.map(v=>v*scale));
  if(edit.labels)m.labels=edit.labels.map(([s,x,y])=>[s,x*scale,y*scale]);
 }
