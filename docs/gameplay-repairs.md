@@ -16,11 +16,19 @@ Dust II, Ancient, Mirage, Inferno, Overpass and Nuke have new collision masks; A
 
 The seven current-map floor plans were traced from the extracted game-depot radar files in [MurkyYT/cs2-map-icons](https://github.com/MurkyYT/cs2-map-icons/tree/main/images/radars), with metadata from its [radar overview configurations](https://github.com/MurkyYT/cs2-map-icons/tree/main/data/radar_info). The game contains compact collision data, not those radar textures. Doorways, stairs and gray site floors are reconstructed for a 2D collision model. Aztec is an authored approximation of the classic ruins, bridge and water routes. Nuke's lower B site is translated into a separate area connected by ramp/secret routes. These are playable 2D adaptations, not exact 3D CS2 collision maps.
 
-Spawn positions were moved away from the sites. All eight bomb maps have walkable routes from both spawns to both sites. Testing verifies reachability; competitive balance still needs matches with human teams.
+### Review corrections: passages and physical cover
+
+Mirage and Overpass now use explicit polygon floor plans rather than color-derived floor classification. Mirage has a continuous wall between apartments and short, the west apartment balcony exit, the distinct B-short arch entrance, a ramp-to-A opening, palace pillars, and physical site cover including the van, bench, default/triple/firebox stacks and ticket booth. Overpass restores connector stairs and the monster approach, puts B around its actual pillar/platform, and separates toilets, water and the long route with retaining walls.
+
+Dust II, Ancient, Inferno and Anubis retain their traced perimeter masks with explicit reconstruction of gray site/stair floor patches and named cover from their radars. Nuke has an explicit upper floor plan with lobby/hut divisions, ramp and silos; its lower floor remains shifted below the upper level. Classic Aztec retains its authored footprint and gains stone cover. This is a closer 2D adaptation, **not an exact copy of every CS2 wall, prop, elevation or collision surface**. The source radars are overview images, not full collision meshes. Overlapping levels, jump-only windows, climbable props, curved surfaces and the classic Aztec reference still differ.
+
+`maps/topology.json` records editable floor/wall polygons, named wood/metal/stone/vehicle covers, spawn/site coordinates, checks and baseline masks for maps receiving local repairs. `npm run maps:compile` deterministically embeds all geometry and cover into `game-source/index.html`; no extra asset is needed at runtime. `npm run maps:check` rejects stale embedded data. Covers share the same collision/navigation mask as their rendered silhouette. Their artwork is drawn into the existing static map cache, not reconstructed every frame. The grid resolution and world size remain 192×192 and 2400×2400.
+
+Both spawns can reach both sites on all eight bomb maps. Regression checks also require local passage paths around the marked areas and a solid apartments/short divider; a long detour across the entire map cannot satisfy those passage tests. Competitive balance and fidelity of every remaining prop still need human playtesting.
 
 ## Validation
 
-- `npm test`: launcher, account isolation, cloud persistence and updater unit tests.
+- `npm test`: launcher, account isolation, cloud persistence, updater, and 16 map topology checks.
 - `npm run prepare:game`: packages the single source file and the pinned Supabase client.
 - `npm run test:gameplay`: two isolated Electron clients using an in-memory Realtime transport; all 14 modes, authoritative movement/death/score, live TDM purchases, map/session changes, BR landing/cover, presence reconnect after channel/heartbeat failures and safe stale-channel cleanup, remote bot kill cam, fractional health, respawn cleanup, shared prices, all 14 map previews/navigation and CTF capture/return cycles against stationary defenders across eight maps and 32 deterministic seeds. It never authenticates or writes to the live Supabase project.
 - The desktop account integration harness also passed existing-account login, case persistence, logout, second-account isolation and Escape behavior.
