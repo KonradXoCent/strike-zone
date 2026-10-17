@@ -11,7 +11,7 @@ function gh(args, options = {}) { return execFileSync('gh', args, { cwd: root, s
 let exists = false;
 try { gh(['release', 'view', tag, '--repo', repo], { stdio: 'ignore' }); exists = true; } catch {}
 if (!exists) gh(['release', 'create', tag, '--repo', repo, '--draft', '--target', process.env.GITHUB_SHA,
-  '--title', 'Strike Zone 2D ' + version + ' — konto w launcherze', '--notes-file', 'RELEASE_NOTES.md']);
+  '--title', 'Strike Zone 2D ' + version + ' — nowe modele i wyposażenie', '--notes-file', 'RELEASE_NOTES.md']);
 const names = [`StrikeZone-Setup-${version}.exe`, `StrikeZone-Setup-${version}.exe.blockmap`, 'latest.yml'];
 for (const name of names) {
   const file = path.join(root, 'release', name);

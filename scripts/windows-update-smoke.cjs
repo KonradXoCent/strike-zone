@@ -9,7 +9,7 @@ const { accountChecks } = require('./test-support/account-checks.cjs');
 
 const root = path.join(__dirname, '..');
 const version = require('../package.json').version;
-const baseVersion = '1.0.1';
+const baseVersion = '1.1.0';
 const installDir = path.join(process.env.RUNNER_TEMP || process.env.TEMP, 'StrikeZoneUpdateSmoke');
 const installedExe = path.join(installDir, 'StrikeZone.exe');
 const report = { expectedVersion: version, bootstrapVersion: baseVersion, authenticationTest: 'Isolated Supabase HTTP fixture; no production account or database writes', startedAt: new Date().toISOString(), checks: [] };

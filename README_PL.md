@@ -1,7 +1,9 @@
-# Strike Zone 2D — 1.1.0
+# Strike Zone 2D — 1.2.0
 
-Pobierz `StrikeZone-Setup-1.1.0.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
-Posiadacze wersji 1.0.1 aktualizują grę przez launcher. Gracz nie potrzebuje Node.js.
+Pobierz `StrikeZone-Setup-1.2.0.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
+Posiadacze wersji 1.0.1 i 1.1.0 aktualizują grę przez launcher. Gracz nie potrzebuje Node.js.
+
+Pełna lista zmian 1.2.0: [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
 ## Konto i sterowanie
 
@@ -38,7 +40,7 @@ Pierwsza paczka 1.0.0 spoza GitHuba miała wyłączony kanał i wymaga nowego in
 ## Testy
 
 `npm test` sprawdza konta, sesje, odczyt chmury przed zapisem, rozmiar okna i aktualizator.
-Workflow Windows instaluje prawdziwą publiczną 1.0.1 i aktualizuje ją do bieżącej wersji.
+Workflow Windows instaluje prawdziwą publiczną 1.1.0 i aktualizuje ją do bieżącej wersji.
 Następnie sprawdza błędne hasło, rejestrację z potwierdzeniem e-maila i bez niego,
 odczyt nicku i awatara, tę samą sesję w grze, brak osobnych kontrolek logowania,
 Escape, zapis postępu, zmiany profilu, wylogowanie oraz izolację dwóch kont.

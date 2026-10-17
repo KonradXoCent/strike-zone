@@ -27,6 +27,7 @@
       if (!SBU) return;
       await cloudLoad();
       if (!window.szDesktopCloudReady()) throw new Error(CL.msg);
+      window.szGameAccountReady?.();
       await friInit(); hdr(); tab(T); overlay.hidden = true;
     } catch {
       overlay.querySelector('h2').textContent = 'Nie udało się wczytać konta';
