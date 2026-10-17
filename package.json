@@ -14,7 +14,8 @@
     "release": "node scripts/release.cjs",
     "test:gameplay": "node scripts/gameplay-smoke.cjs",
     "maps:compile": "node scripts/compile-maps.cjs",
-    "maps:check": "node scripts/compile-maps.cjs --check"
+    "maps:check": "node scripts/compile-maps.cjs --check",
+    "test:creator": "node scripts/creator-smoke.cjs"
   },
   "dependencies": {
     "electron-updater": "6.8.9",

@@ -25,6 +25,27 @@ Hasło nie jest zapisywane. Do konta, chmury i sprawdzania wersji potrzebny jest
 Gra najpierw wczytuje zapis konta, zanim pozwala wysłać własny zapis do chmury.
 Gdy odczyt się nie powiedzie, można go ponowić bez nadpisania danych.
 
+## Funkcje w wersji testowej
+
+Na gałęzi testowej: odświeżone menu z ikonami SVG, zwarta nawigacja oraz Butterfly,
+kilof w stylu voxel, Kukri i Stiletto. Każdy nowy model ma sześć wykończeń i warianty
+StatTrak. Dotychczasowe identyfikatory przedmiotów pozostają bez zmian.
+
+W menu **Warsztat** są dwa lokalne edytory:
+
+- **Mapy:** ściany, skrzynie, okna, spawny CT/T i bombsite’y A/B, przesuwanie,
+  cofanie i ponawianie, trzy motywy oraz test z botami w TDM, CTF i rozbrajaniu bomby.
+  Przed testem gra sprawdza przejścia z uwzględnieniem rozmiaru postaci.
+- **Skiny:** wszystkie bronie i osiem modeli noży, trzy kolory, sześć wzorów oraz
+  pędzel przycinany do powierzchni broni. Projekt można zapisać i wyposażyć lokalnie.
+
+Projekty są zapisane na urządzeniu osobno dla każdego konta; nie synchronizują się
+z chmurą. Eksport/import plików `.szmap.json` i `.szskin.json` pozwala przenieść je
+na inny komputer. Własne mapy są obecnie przeznaczone do lokalnego treningu,
+bez nagród i zmian statystyk. Własne skiny widzi ich autor; nie są przedmiotami
+rynkowymi i nie trafiają do wymian, kontraktów ani upgradera. Wybór skina
+z ekwipunku przywraca zwykłe wyposażenie.
+
 ## Nowe wydania
 
 1. Podmień `game-source/index.html`, jeśli zmienia się gra.
@@ -40,6 +61,10 @@ Pierwsza paczka 1.0.0 spoza GitHuba miała wyłączony kanał i wymaga nowego in
 ## Testy
 
 `npm test` sprawdza konta, sesje, odczyt chmury przed zapisem, rozmiar okna i aktualizator.
+`npm run test:gameplay` sprawdza rozgrywkę, mapy i dwóch klientów w odizolowanej sieci testowej.
+`npm run test:creator` sprawdza nowe noże i zabójstwa StatTrak, nawigację przy sześciu
+rozmiarach okna, edycję myszą, zapis i wyposażanie skinów, izolację kont oraz testy
+własnych map z botami bez nagród. Oba testy Electron uruchamiaj kolejno.
 Workflow Windows instaluje prawdziwą publiczną 1.1.0 i aktualizuje ją do bieżącej wersji.
 Następnie sprawdza błędne hasło, rejestrację z potwierdzeniem e-maila i bez niego,
 odczyt nicku i awatara, tę samą sesję w grze, brak osobnych kontrolek logowania,
