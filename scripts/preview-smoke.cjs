@@ -166,7 +166,7 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
     assert.equal(await author.evaluate(()=>FORGE.owned.length),0);
     console.log('PASS logout and a second account have separate profiles and no inherited moderation');
     const desktopSession = session(accounts[1]);
-    await desktop.addInitScript(tokens => { window.strikeZoneDesktop = { session: async () => tokens, onSession() {}, profile: async () => {}, launcher: async () => {}, fullscreen: async () => {} }; }, { access_token: desktopSession.access_token, refresh_token: desktopSession.refresh_token });
+    await desktop.addInitScript(tokens => { window.strikeZoneDesktop = { getChat: async () => ({uid:null,threads:[],unread:0}), onChat() {}, getFriends: async () => ({list:[]}), onFriends() {}, getPreferences: async () => ({language:'pl',theme:'night'}), onPreferences() {}, session: async () => tokens, onSession() {}, profile: async () => {}, launcher: async () => {}, fullscreen: async () => {} }; }, { access_token: desktopSession.access_token, refresh_token: desktopSession.refresh_token });
     await desktop.goto('file://' + path.join(repo, 'game/index.html'));
     await desktop.waitForFunction(() => window.szDesktopCloudReady?.() && COMMUNITY.admin && document.getElementById('desktop-account-loading').hidden);
     await desktop.evaluate(() => { document.getElementById('splash').style.display = 'none'; tab('prof'); });
