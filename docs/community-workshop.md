@@ -28,6 +28,7 @@ Projekt: `mvzlqpccmjslxdajjbfw`. Wdrożono migracje:
 - `20261017184015 community_forge_case`
 - `20261018105926 workshop_map_engagement_owner_limits`
 - `20261018110220 workshop_map_session_access`
+- `20261018225130 workshop_moderation_versions_and_bot_reviews`
 
 `database/workshop.sql` oraz `database/community-case.sql` opisują schemat dla nowej instalacji. Nie należy
 uruchamiać całego pliku ponownie na już skonfigurowanym projekcie. Istniejące

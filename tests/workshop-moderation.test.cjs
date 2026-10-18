@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),{randomUU
 const {createWorkshopDB,USERS:U,mapProject,skinProject}=require('../scripts/test-support/workshop-db.cjs');
 test('the generated moderation migration matches its tested canonical SQL',()=>{
  const fs=require('node:fs'),path=require('node:path'),root=path.resolve(__dirname,'..');
- assert.equal(fs.readFileSync(root+'/supabase/migrations/20261018214128_workshop_moderation_versions_and_bot_reviews.sql','utf8'),fs.readFileSync(root+'/database/workshop-moderation.sql','utf8'));
+ assert.equal(fs.readFileSync(root+'/supabase/migrations/20261018225130_workshop_moderation_versions_and_bot_reviews.sql','utf8'),fs.readFileSync(root+'/database/workshop-moderation.sql','utf8'));
 });
 test('Workshop owner controls, pinned versions, bot reviews and future case drops',async t=>{
  const{db,asUser}=await createWorkshopDB();t.after(()=>db.close());await db.query('insert into public.sz_workshop_admins(user_id) values($1)',[U.admin]);
