@@ -1,9 +1,21 @@
-# Strike Zone 2D — 1.3.0
+# Strike Zone 2D — 1.4.0
 
-Pobierz `StrikeZone-Setup-1.3.0.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
-Posiadacze wersji 1.0.1, 1.1.0 i 1.2.0 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
+Pobierz `StrikeZone-Setup-1.4.0.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
+Posiadacze wersji 1.0.1, 1.1.0, 1.2.0 i 1.3.0 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
 
-Pełna lista zmian 1.3.0: [RELEASE_NOTES.md](RELEASE_NOTES.md).
+Pełna lista zmian 1.4.0: [RELEASE_NOTES.md](RELEASE_NOTES.md).
+
+## Język, motywy i rozmowy
+
+W ustawieniach launchera wybierz PL lub EN. Zapamiętany wybór jest wspólny z grą
+i działa także przy otwartym oknie gry. Motywy launchera: Nocny, Leśny i Piaskowy.
+Wiadomości prywatne oraz grupy do 16 osób zachowują historię, trafiają również do
+osób offline i pokazują liczniki nieprzeczytanych oraz powiadomienia w obu oknach.
+Właściciel grupy zarządza jej nazwą i uczestnikami.
+
+Znajomi w grze pokazują ustawione zdjęcie, nick oraz Offline / Online / W Meczu.
+Po kliknięciu znajomego przycisk Trade pozwala wysłać zaproszenie do wymiany.
+Wysyłanie, przyjmowanie i potwierdzanie wymaga aktywnego połączenia obu graczy.
 
 ## Konto i sterowanie
 
@@ -54,10 +66,24 @@ W **Moderacji** można obejrzeć projekt, sprawdzić mapę z botami, zatwierdzi�
 publikację lub odrzucić projekt z uzasadnieniem. Zatwierdzony projekt pojawia się
 w **Katalogu graczy** po odświeżeniu; klient sprawdza też katalog w menu co minutę.
 
-Zatwierdzone mapy działają z botami i w lobby w TDM, CTF oraz trybie bombowym.
+Każda mapa zapisuje tryb autora: TDM, CTF albo rozbrajanie bomby. Zatwierdzona mapa
+działa z botami i w lobby we własnym trybie; starsze projekty bez trybu używają TDM.
 Mecz przesyła identyfikator zatwierdzonej wersji; każda strona pobiera tę samą
 geometrię, nawet jeśli ma mapę pod innym lokalnym numerem. Opublikowane wersje
 pozostają niezmienne, więc aktualizacja projektu nie podmienia mapy trwającego meczu.
+
+Mapy mają publiczne liczniki zagrań i polubień. Zalogowane konto może polubić mapę
+raz lub cofnąć polubienie. Zagranie liczy się po minucie aktywnej gry; lobby liczy
+jeden mecz hosta. Liczniki rozpoczynają się z tą aktualizacją.
+
+Automatyczny awans do głównej puli własnego trybu domyślnie wymaga 50 zagrań
+i 10 polubień, z jednym miejscem na tryb. Właściciel ustawia progi, liczbę miejsc
+i włączenie automatycznego awansu w **Moderacja → Awans map do głównej puli**.
+Wycofanie mapy usuwa ją z puli; rewizja w tym samym trybie zachowuje popularność,
+a zmiana trybu rozpoczyna nowe liczniki. Mapy społecznościowe pozostają nierankingowe.
+
+Właściciel Warsztatu nie ma limitu wysłanych ani oczekujących zgłoszeń map i skinów.
+Pozostali gracze mogą mieć do 10 oczekujących i wysłać 10 w ciągu 24 godzin.
 
 Zatwierdzone skiny automatycznie trafiają do **Community Forge Case**. Skrzynka ma
 osobną grafikę grafitowej kapsuły z turkusowym rdzeniem. Zakup kosztuje 2500$ z gry,
@@ -73,7 +99,7 @@ Przedmioty społecznościowe nie są obecnie sprzedawane, wymieniane ani używan
 w kontraktach lub upgraderze. Nieopublikowane szkice widzi tylko autor w edytorze.
 Testy lokalnych map i oczekujących zgłoszeń nie przyznają nagród ani statystyk.
 
-Obsługa online jest dostępna w wydaniu 1.3.0.
+Obsługa online jest dostępna od wydania 1.3.0.
 Szczegóły bazy i testów: [docs/community-workshop.md](docs/community-workshop.md).
 
 Samodzielny plik do sprawdzenia Warsztatu można zbudować poleceniem

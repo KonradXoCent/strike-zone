@@ -1,4 +1,4 @@
-Strike Zone 2D 1.4.0 — wersja testowa
+Strike Zone 2D 1.4.0 — Warsztat, czat i wspólna gra
 
 - Właściciel Warsztatu może wysyłać mapy i skiny bez limitu 10 oczekujących / 10 dziennie; pozostali gracze zachowują te limity.
 - Mapy zapisują tryb autora (TDM, CTF lub rozbrajanie bomby). Zatwierdzone mapy działają z botami i w lobby.
@@ -13,7 +13,9 @@ Strike Zone 2D 1.4.0 — wersja testowa
 - Serwery: twórca zachowuje rolę hosta po kliknięciu własnego serwera. Tworzenie czeka na zapis wpisu; komunikat zgłasza nieudaną publikację. Dołączenie do trwającego meczu używa tej samej sesji i symulacji hosta.
 - Naprawiony błąd zatrzymujący grę klienta niosącego bombę. Postęp podkładania jest synchronizowany, a ekran oczekiwania chroni przed rysowaniem niepełnego stanu meczu.
 
-Wersja testowa: StrikeZone-Test-1.4.0-test.3.exe. Kanał stabilny pozostaje przy 1.3.0 do publikacji wydania 1.4.0.
+Publiczne wydanie 1.4.0 aktualizuje grę i launcher razem. W dotychczasowym launcherze pobierz aktualizację, a następnie wybierz instalację i ponowne uruchomienie. Konto, ekwipunek i dane lokalne są zachowane.
+Nowa instalacja: StrikeZone-Setup-1.4.0.exe. Posiadacze wersji z aktywnym kanałem aktualizacji nie potrzebują nowego instalatora.
+W publicznej grze logowanie odbywa się w launcherze; formularz logowania z testowego pliku HTML nie jest dołączany.
 
 English
 
@@ -28,6 +30,9 @@ English
 - Ancient's marked Cave/B wall now joins the lower masonry, with spawn-to-site routes preserved.
 - Hosted-server entry retains the owner's host role and supports joining an ongoing shared simulation. Publication errors are reported.
 - Fixed remote bomb-carrier rendering and synchronized planting progress. The waiting screen handles incomplete initial snapshots.
+
+Stable release 1.4.0 updates both the launcher and the game through the existing update channel. Download the update, then install and restart. Accounts, inventories and local data are preserved.
+New installation: StrikeZone-Setup-1.4.0.exe. The public game uses the launcher session and does not include the test HTML login form.
 
 
 ---
