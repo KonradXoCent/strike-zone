@@ -28,6 +28,13 @@ z jednym miejscem na tryb. Właściciel ustawia progi w Moderacji i ma nielimito
 zgłoszenia map oraz skinów. Pozostali gracze zachowują limit 10 oczekujących
 i 10 wysłanych w ciągu 24 godzin.
 
+W przygotowywanej aktualizacji Moderacja pozwala również od razu zatwierdzić mapę
+i dodać ją do głównej puli jej trybu bez progów społeczności. Właściciel może
+wyłączać mapy z puli, podmieniać przypięte wersje oraz wycofywać skiny ze skrzynki
+bez odbierania zdobytych egzemplarzy. Boty uczestniczące w meczu losowo oceniają
+mapy, a ich statystyki są podpisane osobno. `npm run test:moderation` sprawdza ten
+przepływ w grze, a `npm run test:locale` kontroluje 70 ekranów PL/EN.
+
 Nowe modele i skiny noży, widoczne rękawiczki, Kill Cam, kontrakty, upgrader,
 ulepszony Overwatch i Battle Royale oraz nowe animacje skrzynek i ekrany map.
 Szczegóły: [RELEASE_NOTES.md](RELEASE_NOTES.md).

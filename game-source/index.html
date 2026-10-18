@@ -1364,7 +1364,7 @@ function contractRender(){
     <div class="w-machine-top"><span>KONTRAKT WYMIANY</span><b>${picks.length}<small> / 10</small></b></div>
     <div class="w-slots">${Array.from({length:10},(_,i)=>{const id=picks[i];return `<button class="w-slot ${id?'filled':''}" style="--rarity:${id?RCol[sk(id).r]:'#394151'}" onclick="contractRemove(${i})" ${locked||!id?'disabled':''} aria-label="${id?'Usuń '+workshopName(id):'Puste miejsce '+(i+1)}">${id?`<img src="${skinImg(id,160,70)}" alt="${workshopName(id)}"><span>${workshopEscape(sk(id).n)}</span><i>×</i>`:`<b>+</b><span>${String(i+1).padStart(2,'0')}</span>`}</button>`;}).join('')}</div>
     <div class="w-contract-bottom"><div class="w-contract-next"><span class="w-tier-dot" style="background:${RCol[s.tier]}"></span>${RC[s.tier]}<b>→</b><span class="w-tier-dot" style="background:${RCol[s.tier+1]}"></span><strong style="color:${RCol[s.tier+1]}">${RC[s.tier+1]}</strong></div><button class="w-primary" onclick="contractExecute()" ${locked||picks.length!==10?'disabled':''}>${s.busy?'Wymiana…':'Wymień 10 → 1'}</button></div>
-    <p class="w-rule">10 wybranych egzemplarzy zostanie zużytych. Każdy z ${pool.length} skinów następnej jakości ma taką samą szansę. 10 skinów StatTrak™ daje nagrodę StatTrak™; mieszany kontrakt daje zwykły skin.</p>
+    <p class="w-rule">${szLocale.format('10 wybranych egzemplarzy zostanie zużytych. Każdy z {count} skinów następnej jakości ma taką samą szansę. 10 skinów StatTrak™ daje nagrodę StatTrak™; mieszany kontrakt daje zwykły skin.',{count:pool.length})}</p>
   </section>
   ${result?workshopResultHTML(result):''}
   <section class="w-library ${s.busy?'w-locked':''}"><div class="w-section-title"><div><h2>Twoje skiny · ${RC[s.tier]}</h2><span>${owned.reduce((n,id)=>n+counts.get(id),0)} egzemplarzy · kliknij, aby dodać</span></div><button onclick="contractFill()" ${locked?'disabled':''}>Dobierz do 10</button></div><div class="w-item-grid">${owned.map(id=>workshopItemCard(id,{count:counts.get(id),picked:picks.filter(x=>x===id).length,selected:picks.includes(id),disabled:locked||picks.filter(x=>x===id).length>=counts.get(id)})).join('')||'<p class="w-empty">Brak skinów tej jakości. Otwórz skrzynki lub odwiedź rynek.</p>'}</div></section>`;
@@ -1411,7 +1411,7 @@ function upgradeRender(){
   ${result?workshopResultHTML(result):''}
   <div class="w-browse ${s.busy?'w-locked':''}">
     <section class="w-library"><div class="w-section-title"><div><h2>Twój ekwipunek</h2><span>${[...counts.values()].reduce((a,b)=>a+b,0)} skinów broni i noży</span></div></div><input class="w-search" type=search placeholder="Szukaj w ekwipunku…" value="${workshopEscape(s.search)}" aria-label="Szukaj w ekwipunku" data-search-key="search" oninput="upgradeSearch('search',this)" ${locked?'disabled':''}><div class="w-item-grid w-scroll-grid">${owned.map(id=>workshopItemCard(id,{count:counts.get(id),selected:input===id,disabled:locked,action:'upgradeInput'})).join('')||'<p class="w-empty">Brak pasujących skinów. Zmień wyszukiwanie lub zdobądź skiny w skrzynkach.</p>'}</div></section>
-    <section class="w-library"><div class="w-section-title"><div><h2>Skórki do zdobycia</h2><span>${targets.length} celów · wyższa wartość</span></div><select aria-label="Minimalny mnożnik wartości" onchange="upgradeFilter('factor',+this.value)" ${locked?'disabled':''}>${[1,2,5,10].map(n=>`<option value=${n} ${s.factor===n?'selected':''}>Od ×${n}</option>`).join('')}</select></div><div class="w-target-filters"><input class="w-search" type=search placeholder="Szukaj celu…" value="${workshopEscape(s.targetSearch)}" aria-label="Szukaj skina docelowego" data-search-key="targetSearch" oninput="upgradeSearch('targetSearch',this)" ${locked?'disabled':''}><select aria-label="Rodzaj skina" onchange="upgradeFilter('targetKind',this.value)" ${locked?'disabled':''}>${[['all','Wszystkie'],['guns','Bronie'],['knife','Noże'],['st','StatTrak™']].map(([k,n])=>`<option value="${k}" ${s.targetKind===k?'selected':''}>${n}</option>`).join('')}</select></div><select class="w-rarity-filter" aria-label="Jakość celu" onchange="upgradeFilter('targetRarity',+this.value)" ${locked?'disabled':''}><option value=-1>Wszystkie jakości</option>${RC.map((name,r)=>`<option value=${r} ${s.targetRarity===r?'selected':''}>${name}</option>`).join('')}</select><div class="w-item-grid w-scroll-grid">${page.map(id=>workshopItemCard(id,{selected:target===id,disabled:locked,action:'upgradeTarget'})).join('')||`<p class="w-empty">${input?'Brak celów dla tych filtrów. Zmień mnożnik, jakość lub nazwę.':'Najpierw wybierz skin ze swojego ekwipunku.'}</p>`}</div><div class="w-pagination"><button onclick="upgradePage(-1)" ${locked||s.page===0?'disabled':''}>←</button><span>${s.page+1} / ${pages}</span><button onclick="upgradePage(1)" ${locked||s.page>=pages-1?'disabled':''}>→</button></div></section>
+    <section class="w-library"><div class="w-section-title"><div><h2>Skórki do zdobycia</h2><span>${targets.length} celów · wyższa wartość</span></div><select aria-label="Minimalny mnożnik wartości" onchange="upgradeFilter('factor',+this.value)" ${locked?'disabled':''}>${[1,2,5,10].map(n=>`<option value=${n} ${s.factor===n?'selected':''}>Minimum ×${n}</option>`).join('')}</select></div><div class="w-target-filters"><input class="w-search" type=search placeholder="Szukaj celu…" value="${workshopEscape(s.targetSearch)}" aria-label="Szukaj skina docelowego" data-search-key="targetSearch" oninput="upgradeSearch('targetSearch',this)" ${locked?'disabled':''}><select aria-label="Rodzaj skina" onchange="upgradeFilter('targetKind',this.value)" ${locked?'disabled':''}>${[['all','Wszystkie'],['guns','Bronie'],['knife','Noże'],['st','StatTrak™']].map(([k,n])=>`<option value="${k}" ${s.targetKind===k?'selected':''}>${n}</option>`).join('')}</select></div><select class="w-rarity-filter" aria-label="Jakość celu" onchange="upgradeFilter('targetRarity',+this.value)" ${locked?'disabled':''}><option value=-1>Wszystkie jakości</option>${RC.map((name,r)=>`<option value=${r} ${s.targetRarity===r?'selected':''}>${name}</option>`).join('')}</select><div class="w-item-grid w-scroll-grid">${page.map(id=>workshopItemCard(id,{selected:target===id,disabled:locked,action:'upgradeTarget'})).join('')||`<p class="w-empty">${input?'Brak celów dla tych filtrów. Zmień mnożnik, jakość lub nazwę.':'Najpierw wybierz skin ze swojego ekwipunku.'}</p>`}</div><div class="w-pagination"><button onclick="upgradePage(-1)" ${locked||s.page===0?'disabled':''}>←</button><span>${s.page+1} / ${pages}</span><button onclick="upgradePage(1)" ${locked||s.page>=pages-1?'disabled':''}>→</button></div></section>
   </div>`;
 }
 function workshopResultHTML(t){
@@ -2910,7 +2910,7 @@ function communityNavHTML(active){return `<button class="${active==='catalog'?'a
 function communityUpdateNav(){if(T!=='creator')return;const tabs=document.querySelector('.cr-tabs');if(!tabs||tabs.dataset.cloud==='page')return;tabs.querySelector('.cw-nav')?.remove();const el=document.createElement('span');el.className='cw-nav';el.innerHTML=communityNavHTML('');tabs.appendChild(el);}
 async function communityRefresh(){
  communityReset();if(!communityOnline())return false;if(COMMUNITY_REFRESH)return COMMUNITY_REFRESH;const epoch=COMMUNITY.epoch,owner=communityAccount(),client=sb;
- const task=Promise.resolve().then(async()=>{try{const rows=[];let complete=false;for(let offset=0;offset<10000;offset+=200){const r=await client.from('sz_workshop_catalog').select('id,kind,title,author_name,version,release_id,updated_at,weapon,model,theme,mode,plays,likes,featured,promoted_at').order('updated_at',{ascending:false}).range(offset,offset+199);if(r.error)throw r.error;rows.push(...r.data||[]);if((r.data||[]).length<200){complete=true;break;}}
+ const task=Promise.resolve().then(async()=>{try{const rows=[];let complete=false;for(let offset=0;offset<10000;offset+=200){const r=await client.from('sz_workshop_catalog').select('*').order('updated_at',{ascending:false}).range(offset,offset+199);if(r.error)throw r.error;rows.push(...r.data||[]);if((r.data||[]).length<200){complete=true;break;}}
   let mine=[],admin=false,queue=[];if(owner){const results=await Promise.all([client.from('sz_workshop_admins').select('user_id').eq('user_id',owner).maybeSingle(),client.from('sz_workshop_submissions').select('id,project_id,kind,title,author_name,description,payload,status,review_note,created_at,reviewed_at').eq('author_id',owner).order('created_at',{ascending:false}).limit(100)]);for(const r of results)if(r.error)throw r.error;admin=!!results[0].data;mine=results[1].data||[];if(admin){const r=await client.from('sz_workshop_submissions').select('id,project_id,kind,title,author_name,description,payload,status,review_note,created_at').eq('status','pending').order('created_at',{ascending:true}).limit(200);if(r.error)throw r.error;queue=r.data||[];}}
   if(COMMUNITY.epoch!==epoch||communityAccount()!==owner)return false;
   COMMUNITY.rows=rows.filter(r=>COMMUNITY_UUID.test(r.id)&&COMMUNITY_UUID.test(r.release_id)&&['map','skin'].includes(r.kind)&&Number.isSafeInteger(r.version));COMMUNITY.mine=mine;COMMUNITY.queue=queue;COMMUNITY.admin=admin;COMMUNITY.ready=true;COMMUNITY.complete=complete;COMMUNITY.lastSync=Date.now();if(COMMUNITY.error){COMMUNITY.error=false;COMMUNITY.message='';}
@@ -2950,8 +2950,8 @@ function communityRender(){
 function communityCard(r,active){
  const pub=active==='catalog',release=pub?r.release_id:r.id;
  const weapon=r.weapon||r.payload?.weapon,model=r.model||r.payload?.model,label=r.kind==='map'?'MAPA WARSZTATOWA':'SKIN / '+workshopEscape(weapon==='knife'?KNIFE_MODELS[model]||'Nóż':W[weapon]?.n||'Broń');
- const status=pub?(r.kind==='skin'?'<small>Projekt w Community Forge Case</small>':''):`<span class="cw-pill ${r.status}">${communityStatus(r.status)}</span>${r.review_note?`<div class="cw-author-note">${workshopEscape(r.review_note)}</div>`:''}`;
- const actions=pub?`<button class="cr-primary" onclick="${r.kind==='map'?'communityPlay':'forgeCatalogAction'}('${release}')">${r.kind==='map'?(L?.host?'Ustaw w lobby':'Zagraj'):'Skrzynka społeczności'}</button><button onclick="communityDetails('${release}','catalog')">Podgląd</button>${COMMUNITY.admin?`<button onclick="communityWithdraw('${r.id}')">Wycofaj</button>`:''}`:`<button class="${active==='moderation'?'cr-primary':''}" onclick="communityDetails('${r.id}','${active}')">${active==='moderation'?'Sprawdź projekt':'Zobacz zgłoszenie'}</button>`;
+ const status=pub?(r.kind==='skin'?(r.case_enabled===false?'<small>Skin wycofany ze skrzynki</small>':'<small>Projekt w Community Forge Case</small>'):''):`<span class="cw-pill ${r.status}">${communityStatus(r.status)}</span>${r.review_note?`<div class="cw-author-note" data-user-content>${workshopEscape(r.review_note)}</div>`:''}`;
+ const actions=pub?`<button class="cr-primary" onclick="${r.kind==='map'?'communityPlay':'forgeCatalogAction'}('${release}')">${r.kind==='map'?(L?.host?'Ustaw w lobby':'Zagraj'):'Skrzynka społeczności'}</button><button onclick="communityDetails('${release}','catalog')">Podgląd</button>${COMMUNITY.admin?`<button onclick="communityWithdraw('${r.id}')">Wycofaj publikację</button>`:''}`:`<button class="${active==='moderation'?'cr-primary':''}" onclick="communityDetails('${r.id}','${active}')">${active==='moderation'?'Sprawdź projekt':'Zobacz zgłoszenie'}</button>`;
  return `<article class="cw-card" data-cw-card="${release}"><div class="cw-preview" data-cw-thumb="${release}"><span>${r.kind==='map'?'MAPA WARSZTATOWA':'SKIN SPOŁECZNOŚCI'}</span></div><div><span class="cw-label">${label}</span><h3 data-user-content>${workshopEscape(r.title)}</h3><small>Autor: <span data-user-content>${workshopEscape(r.author_name)}</span>${pub?' · wersja '+r.version:''}</small>${status}${pub&&r.kind==='map'?(window.SzWorkshopMaps?.card(r)||''):''}<div class="cr-actions">${actions}</div></div></article>`;
 }
 function communitySetThumbnail(id,payload){const e=document.querySelector('[data-cw-thumb="'+id+'"]');if(!e)return;const src=communityArt(id,payload),img=document.createElement('img');img.src=src;img.alt=payload.name;e.appendChild(img);}
@@ -2961,8 +2961,8 @@ function communityArt(id,p){if(COMMUNITY.thumbnails.has(id))return COMMUNITY.thu
  const src=c.toDataURL();COMMUNITY.thumbnails.set(id,src);return src;
 }
 async function communityDetails(id,source){
- let row,p;try{if(source==='catalog'){row=COMMUNITY.rows.find(r=>r.release_id===id);p=(await communityRelease(id)).payload;}else{row=(source==='moderation'?COMMUNITY.queue:COMMUNITY.mine).find(r=>r.id===id);p=row?.payload;}if(!row||!p)return;const o=$('pm');o.style.display='flex';o.innerHTML=`<section class="pmb cw-detail"><header><div><small class="sz-eyebrow">${source==='moderation'?'OCENA ZGŁOSZENIA':'WARSZTAT SPOŁECZNOŚCI'}</small><h2 data-user-content>${workshopEscape(row.title)}</h2><small>Autor: <span data-user-content>${workshopEscape(row.author_name)}</span></small></div><button onclick="pmClose()">Zamknij ×</button></header><img class="cw-detail-art" src="${communityArt(id,p)}" alt="${workshopEscape(row.title)}"><p style="white-space:pre-line">${workshopEscape(row.description||'')}</p>${source==='moderation'?'<label class="cw-note">Wiadomość dla autora (wymagana przy odrzuceniu)</label><textarea id="cw-review-note" maxlength="500" rows="3" placeholder="Co należy poprawić?"></textarea>':row.review_note?`<p>Ocena: ${workshopEscape(row.review_note)}</p>`:''}<div id="cw-review-error" class="cw-note"></div><footer>${p.kind==='sz-map'&&source!=='catalog'?`<button onclick="communityTestSubmission('${id}','${source}')">Testuj mapę z botami</button>`:''}${source==='moderation'?`<button data-cw-review class="cw-reject" onclick="communityReview('${id}','rejected')">Odrzuć</button><button data-cw-review class="cr-primary" onclick="communityReview('${id}','approved')">Zatwierdź i opublikuj</button>`:source==='catalog'?`<button class="cr-primary" onclick="pmClose();${p.kind==='sz-map'?'communityPlay':'forgeCatalogAction'}('${id}')">${p.kind==='sz-map'?'Zagraj':'Skrzynka społeczności'}</button>`:''}</footer></section>`;}catch(e){communityNotice(communityError(e),true);}}
-async function communityReview(id,decision){if(!COMMUNITY.admin||COMMUNITY.busy)return;const note=($('cw-review-note')?.value||'').trim();if(decision==='rejected'&&!note){$('cw-review-error').textContent='Wpisz powód odrzucenia dla autora.';return;}COMMUNITY.busy=true;const epoch=COMMUNITY.epoch;document.querySelectorAll('[data-cw-review]').forEach(b=>b.disabled=true);try{const r=await sb.rpc('sz_workshop_review',{submission:id,decision,note});if(r.error)throw r.error;if(COMMUNITY.epoch!==epoch)return;pmClose();await communityRefresh();communityNotice(decision==='approved'?'Zatwierdzono projekt. Jest już dostępny w katalogu graczy.':'Odrzucono projekt. Autor zobaczy podany powód.');}catch(e){if($('cw-review-error'))$('cw-review-error').textContent=communityError(e);else communityNotice(communityError(e),true);}finally{if(COMMUNITY.epoch===epoch){COMMUNITY.busy=false;document.querySelectorAll('[data-cw-review]').forEach(b=>b.disabled=false);}}}
+ let row,p;try{if(source==='catalog'){row=COMMUNITY.rows.find(r=>r.release_id===id);p=(await communityRelease(id)).payload;}else{row=(source==='moderation'?COMMUNITY.queue:COMMUNITY.mine).find(r=>r.id===id);p=row?.payload;}if(!row||!p)return;const o=$('pm');o.style.display='flex';o.innerHTML=`<section class="pmb cw-detail"><header><div><small class="sz-eyebrow">${source==='moderation'?'OCENA ZGŁOSZENIA':'WARSZTAT SPOŁECZNOŚCI'}</small><h2 data-user-content>${workshopEscape(row.title)}</h2><small>Autor: <span data-user-content>${workshopEscape(row.author_name)}</span></small></div><button onclick="pmClose()">Zamknij ×</button></header><img class="cw-detail-art" src="${communityArt(id,p)}" alt="${workshopEscape(row.title)}"><p style="white-space:pre-line" data-user-content>${workshopEscape(row.description||'')}</p>${source==='moderation'?'<label class="cw-note">Wiadomość dla autora (wymagana przy odrzuceniu)</label><textarea id="cw-review-note" maxlength="500" rows="3" placeholder="Co należy poprawić?"></textarea>':row.review_note?`<p>Ocena: ${workshopEscape(row.review_note)}</p>`:''}<div id="cw-review-error" class="cw-note"></div><footer>${p.kind==='sz-map'&&source!=='catalog'?`<button onclick="communityTestSubmission('${id}','${source}')">Testuj mapę z botami</button>`:''}${source==='moderation'?`<button data-cw-review class="cw-reject" onclick="communityReview('${id}','rejected')">Odrzuć</button><button data-cw-review class="cr-primary" onclick="communityReview('${id}','approved')">Zatwierdź i opublikuj</button>`:source==='catalog'?`<button class="cr-primary" onclick="pmClose();${p.kind==='sz-map'?'communityPlay':'forgeCatalogAction'}('${id}')">${p.kind==='sz-map'?'Zagraj':'Skrzynka społeczności'}</button>`:''}</footer></section>`;}catch(e){communityNotice(communityError(e),true);}}
+async function communityReview(id,decision){if(!COMMUNITY.admin||COMMUNITY.busy)return;const note=($('cw-review-note')?.value||'').trim();if(decision==='rejected'&&!note){$('cw-review-error').textContent='Wpisz powód odrzucenia dla autora.';return;}COMMUNITY.busy=true;const epoch=COMMUNITY.epoch;document.querySelectorAll('[data-cw-review]').forEach(b=>b.disabled=true);try{const r=await sb.rpc('sz_workshop_review',{submission:id,decision,note});if(r.error)throw r.error;if(COMMUNITY.epoch!==epoch)return;pmClose();await communityRefresh();communityNotice(decision==='approved'?'Zatwierdzono projekt. Jest już dostępny w katalogu graczy.':'Odrzucono projekt. Autor zobaczy podany powód.');}catch(e){if($('cw-review-error'))$('cw-review-error').textContent=communityError(e);else communityNotice(communityError(e),true);}finally{if(COMMUNITY.epoch===epoch){COMMUNITY.busy=false;if(T==='creator'&&document.querySelector('.cw-page'))communityRender();document.querySelectorAll('[data-cw-review]').forEach(b=>b.disabled=false);}}}
 async function communityWithdraw(id){if(!COMMUNITY.admin||!confirm('Wycofać ten projekt z katalogu wszystkich graczy?'))return;try{const r=await sb.rpc('sz_workshop_withdraw',{item:id});if(r.error)throw r.error;await communityRefresh();communityNotice('Wycofano projekt z publicznego katalogu.');}catch(e){communityNotice(communityError(e),true);}}
 </script>
 <script>
@@ -2974,11 +2974,11 @@ function communityRegisterMap(release){
  const ref={item:release.item_id,release:release.id,version:release.version,mode:checked.map.mode};COMMUNITY.mapSlots.set(release.id,slot);COMMUNITY.slotRefs.set(slot,ref);return slot;
 }
 const COMMUNITY_MAP_SET=mapSet,COMMUNITY_IS_BOMB=isBombMap;
-mapSet=function(mode){const list=COMMUNITY_MAP_SET(mode);if(!COMMUNITY_MODES.includes(mode))return list;const added=[...COMMUNITY.slotRefs].filter(([slot,ref])=>ref.mode===mode&&(!COMMUNITY.complete||COMMUNITY.rows.some(r=>r.id===ref.item))&&(slot===sel.map||COMMUNITY.rows.some(r=>r.id===ref.item&&r.release_id===ref.release&&r.featured))).map(([slot])=>slot);return [...new Set([...list,...added])];};
+mapSet=function(mode){const list=COMMUNITY_MAP_SET(mode);if(!COMMUNITY_MODES.includes(mode))return list;const added=[...COMMUNITY.slotRefs].filter(([slot,ref])=>ref.mode===mode&&(!COMMUNITY.complete||COMMUNITY.rows.some(r=>r.id===ref.item))&&((slot===sel.map&&((!!G&&!G.over)||COMMUNITY.explicitSelection===ref.release))||COMMUNITY.rows.some(r=>r.id===ref.item&&r.release_id===ref.release&&r.featured))).map(([slot])=>slot);return [...new Set([...list,...added])];};
 isBombMap=function(id){return COMMUNITY_IS_BOMB(id)||COMMUNITY.slotRefs.has(id);};
 async function communityPlay(releaseId){
  if(COMMUNITY.busy)return;if(G)return toast('Wróć do menu przed uruchomieniem innej mapy.');if(L&&!L.host)return toast('Mapę wspólnego meczu wybiera host lobby.');COMMUNITY.busy=true;
- try{const r=COMMUNITY.rows.find(r=>r.release_id===releaseId&&r.kind==='map');if(!r)throw Error('Projekt został wycofany.');const release=await communityRelease(releaseId),mode=release.payload.mode||'tdm';sel.map=communityRegisterMap(release);sel.mode=COMMUNITY_MODES.includes(mode)?mode:'tdm';sel.comp=false;sel.team=L?.team||sel.team||'CT';pmClose();if(L?.host){tab('play');lobUI();toast('Ustawiono mapę warsztatową. Uruchom mecz dla lobby.');}else begin();}
+ try{const r=COMMUNITY.rows.find(r=>r.release_id===releaseId&&r.kind==='map');if(!r)throw Error('Projekt został wycofany.');const release=await communityRelease(releaseId),mode=release.payload.mode||'tdm';COMMUNITY.explicitSelection=releaseId;sel.map=communityRegisterMap(release);sel.mode=COMMUNITY_MODES.includes(mode)?mode:'tdm';sel.comp=false;sel.team=L?.team||sel.team||'CT';pmClose();if(L?.host){tab('play');lobUI();toast('Ustawiono mapę warsztatową. Uruchom mecz dla lobby.');}else begin();}
  catch(e){communityNotice(e.message||communityError(e),true);}finally{COMMUNITY.busy=false;}
 }
 function communityTestSubmission(id,source){
@@ -3049,7 +3049,7 @@ let FORGE={owner:null,epoch:0,owned:[],cases:[],ready:false,loading:null,busy:fa
 CS.communityforge={n:'Community Forge Case',cost:FORGE_PRICE,kc:0,pool:[],w:[0,0,100,0,0]};
 window.szCloudEconomyLocked=()=>FORGE.locked||FORGE.uncertain;
 function forgeReset(){const uid=communityAccount();if(FORGE.owner===uid)return;FORGE.owner=uid;FORGE.epoch++;FORGE.owned=[];FORGE.cases=[];FORGE.ready=false;FORGE.loading=null;FORGE.message='';FORGE.proofs.clear();}
-function forgePool(){return COMMUNITY.rows.filter(r=>r.kind==='skin');}
+function forgePool(){return COMMUNITY.rows.filter(r=>r.kind==='skin'&&r.case_enabled!==false);}
 function forgeOwnedActive(o){return COMMUNITY.rows.some(r=>r.id===o.item_id&&r.kind==='skin');}
 async function forgeLoad(){
  forgeReset();if(!sb||!SBU)return;if(FORGE.loading)return FORGE.loading;const owner=FORGE.owner,epoch=FORGE.epoch;
@@ -3066,7 +3066,7 @@ function forgeError(e){const m=String(e?.message||e||'');for(const[k,v]of Object
 function forgeArt(w=380,h=250){const c=document.createElement('canvas');c.width=w;c.height=h;const q=c.getContext('2d');q.scale(w/380,h/250);q.fillStyle='#07182366';q.beginPath();q.ellipse(185,222,142,17,0,0,7);q.fill();const g=q.createLinearGradient(70,50,290,210);g.addColorStop(0,'#395a73');g.addColorStop(.5,'#172d42');g.addColorStop(1,'#324464');visualPoly(q,[[61,72],[93,44],[280,44],[319,76],[304,201],[274,220],[101,220],[65,199]],g,'#67c2c7',3);visualPoly(q,[[70,81],[108,62],[267,62],[308,83],[292,188],[266,203],[108,203],[78,185]],'#101e2b','#6490a1',1);q.strokeStyle='#3e777d';q.lineWidth=1;for(let x=94;x<300;x+=22){q.beginPath();q.moveTo(x,85);q.lineTo(x-10,185);q.stroke();}for(const x of[72,285])visualRect(q,x,98,20,65,'#151b2c','#b48eff',2);q.shadowColor='#56ead8';q.shadowBlur=15;visualPoly(q,[[190,74],[230,98],[230,145],[190,168],[150,145],[150,98]],'#183b46','#75ead8',3);q.fillStyle='#a7fff1';q.font='bold 41px system-ui';q.textAlign='center';q.fillText('F',190,139);q.shadowBlur=0;q.font='bold 10px system-ui';q.fillStyle='#9de3e5';q.fillText('COMMUNITY / FORGE',190,189);q.fillStyle='#c9b2ff';for(const x of[108,263])q.fillRect(x,47,8,9);return c.toDataURL();}
 function forgeSkinArt(p,w=320,h=144){const c=document.createElement('canvas');c.width=w;c.height=h;const q=c.getContext('2d'),s=Math.min((w-24)/108,(h-14)/63);q.translate(w/2-40*s,h/2);q.scale(s,s);creatorDrawPaint(q,p);return c.toDataURL();}
 function forgeCard(){const count=forgePool().length,can=count>=FORGE_MIN&&!!SBU&&FORGE.ready&&!FORGE.busy&&!FORGE.uncertain,owned=FORGE.cases.filter(c=>!c.opened_at).length;return `<section class="forge-section" id="forge-shop"><div class="forge-case"><img src="${forgeArt()}" alt="Community Forge — grafitowa kapsuła z turkusowym rdzeniem"><div><small>STWORZONE PRZEZ GRACZY / ZATWIERDZONE PRZEZ WŁAŚCICIELA</small><h2>Community Forge Case</h2><p>Oryginalne projekty broni i noży. Każde otwarcie daje jeden własny przedmiot; 10% szans na wariant StatTrak™. Bez dodatkowego klucza.</p><div class="forge-progress"><b>${count} / ${FORGE_MIN} skinów</b><i><b style="width:${Math.min(100,count/FORGE_MIN*100)}%"></b></i><span>${count>=FORGE_MIN?'Odblokowana':'W przygotowaniu'}</span></div><button data-forge-buy class="forge-primary" ${can?'':'disabled'} onclick="forgeBuy()">Kup skrzynkę · $${FORGE_PRICE}</button><button onclick="forgeContents()">Zawartość i szanse</button><button onclick="communityRefresh()">Odśwież</button>${owned?`<button data-forge-open ${FORGE.busy||!count?'disabled':''} onclick="forgeOpen()">Otwórz posiadaną · ${owned}</button>`:''}<p class="forge-note">${count<FORGE_MIN?'Zakup będzie możliwy, gdy właściciel zatwierdzi co najmniej 5 różnych projektów.':`Każdy z ${count} projektów ma taką samą szansę: ${(100/count).toLocaleString('pl-PL',{maximumFractionDigits:2})}%.`}</p>${FORGE.message?`<p class="forge-error" role="status">${workshopEscape(FORGE.message)}</p>`:''}${FORGE.uncertain?'<button onclick="forgeBuy()">Sprawdź niedokończony zakup</button>':''}</div></div></section>`;}
-function forgeInventory(){return `<section class="forge-section forge-owned" id="forge-owned"><h3>Skiny ze skrzynki społeczności · ${FORGE.owned.length}</h3><p class="forge-note">To przedmioty przypisane do konta, zdobyte przez otwieranie skrzynek. Sam podgląd projektu nie daje prawa do jego wyposażenia.</p><div class="forge-owned-grid">${FORGE.owned.map(o=>{const p=o.payload,active=forgeOwnedActive(o),eq=P().communityLoadout?.[p.weapon]?.owned===o.id;return `<article class="forge-skin"><img src="${forgeSkinArt(p)}" alt="${workshopEscape(p.name)}"><div><small>${workshopEscape(p.weapon==='knife'?KNIFE_MODELS[p.model]:W[p.weapon].n)}</small><b>${workshopEscape(p.name)}</b><small>Autor: ${workshopEscape(o.author_name)}</small>${o.stattrak?`<small class="forge-stat">StatTrak™ · ${(P().communityStat||{})[o.id]||0} zabójstw</small>`:'<small>Zwykły wariant</small>'}<button data-forge-equip="${o.id}" ${active&&!FORGE.busy?'':'disabled'} onclick="forgeEquip('${o.id}')">${!active?'Wycofany z gry':eq?'Wyposażono':'Wyposaż'}</button></div></article>`;}).join('')||'<p class="forge-note">Nie masz jeszcze skinów społeczności. Znajdziesz je w Community Forge Case.</p>'}</div></section>`;}
+function forgeInventory(){return `<section class="forge-section forge-owned" id="forge-owned"><h3>Skiny ze skrzynki społeczności · ${FORGE.owned.length}</h3><p class="forge-note">To przedmioty przypisane do konta, zdobyte przez otwieranie skrzynek. Sam podgląd projektu nie daje prawa do jego wyposażenia.</p><div class="forge-owned-grid">${FORGE.owned.map(o=>{const p=o.payload,active=forgeOwnedActive(o),eq=P().communityLoadout?.[p.weapon]?.owned===o.id;return `<article class="forge-skin"><img src="${forgeSkinArt(p)}" alt="${workshopEscape(p.name)}"><div><small>${workshopEscape(p.weapon==='knife'?KNIFE_MODELS[p.model]:W[p.weapon].n)}</small><b data-user-content>${workshopEscape(p.name)}</b><small>Autor: <span data-user-content>${workshopEscape(o.author_name)}</span></small>${o.stattrak?`<small class="forge-stat">StatTrak™ · ${(P().communityStat||{})[o.id]||0} zabójstw</small>`:'<small>Zwykły wariant</small>'}<button data-forge-equip="${o.id}" ${active&&!FORGE.busy?'':'disabled'} onclick="forgeEquip('${o.id}')">${!active?'Wycofany z gry':eq?'Wyposażono':'Wyposaż'}</button></div></article>`;}).join('')||'<p class="forge-note">Nie masz jeszcze skinów społeczności. Znajdziesz je w Community Forge Case.</p>'}</div></section>`;}
 function forgeMount(){if(T!=='shop'&&!(T==='inv'&&INV==='w'))return;const m=$('main');if(!m)return;let slot=$('forge-area');if(!slot){slot=document.createElement('div');slot.id='forge-area';m.prepend(slot);}slot.innerHTML=forgeCard()+(T==='inv'?forgeInventory():'');}
 const FORGE_TAB=tab,FORGE_INV=invTabs;
 tab=function(t){const r=FORGE_TAB(t);forgeMount();return r;};invTabs=function(){const r=FORGE_INV();forgeMount();return r;};
@@ -3096,6 +3096,7 @@ caseRollVisual=function(id){if(id==='communityforge'){const pool=forgePool().fil
 caseImg=function(id,w,h){return id==='communityforge'?forgeArt(w,h):FORGE_IMG(id,w,h);};
 async function forgeRemoteProof(id){const cached=FORGE.proofs.get(id);if(cached&&cached.until>Date.now())return cached.job;if(Date.now()-COMMUNITY_REMOTE_BUDGET.at>60000)COMMUNITY_REMOTE_BUDGET={at:Date.now(),count:0};if(COMMUNITY_REMOTE_BUDGET.count++>=40)return null;if(FORGE.proofs.size>250)FORGE.proofs.clear();const job=sb.rpc('sz_workshop_skin_proof',{instance_id:id}).then(r=>r.error?null:r.data);FORGE.proofs.set(id,{job,until:Date.now()+60000});return job;}
 </script>
+
 
 <script>
 /* Standalone browser builds use the same account isolation as the desktop client. */
@@ -3274,6 +3275,11 @@ mkServer=async function(){sel.mode=$('sm').value;sel.map=+$('sp').value;if(!mapS
 
 </style>
 <style>
+.wm-owner-actions{display:flex;flex-direction:column;gap:7px;padding:10px 0;border-top:1px solid #b7c7d51a}.wm-owner-actions>div{display:flex;flex-wrap:wrap;gap:6px}.wm-owner-actions button{font:10px/1.5 system-ui;padding:7px 9px;letter-spacing:0;box-shadow:none;text-transform:none}.wm-owner-actions small{font:10px/1.7 system-ui;color:#9faec1}.wm-owner-actions .wm-add-pool{background:#296450;color:#d7ffeb;border-color:#3e9a75}.wm-owner-actions [data-wm-rule=excluded],.wm-owner-actions [data-wm-enabled="0"]{border-color:#a57564;color:#e7bb9d}.wm-review-counts{font:10px/1.8 system-ui;color:#97aec0}.wm-excluded{font:9px/1.5 system-ui;color:#dfb99a;border-left:2px solid #c68f69;padding-left:7px}.wm-library{margin:16px 0 24px!important}.wm-library>header{display:flex;justify-content:space-between;gap:15px;padding:0 0 12px;background:none;border-bottom:1px solid #ffffff14}.wm-library h3{margin:0;font:600 16px system-ui}.wm-library p{font:11px/1.8 system-ui;color:#9caec1}.wm-library-tools{display:flex;flex-wrap:wrap;gap:9px;margin:13px 0}.wm-library-tools input{min-width:120px;flex:1}.wm-library-tools select{max-width:210px}.wm-library-list{display:grid;gap:9px}.wm-library-list>article{display:grid;grid-template-columns:minmax(140px,1fr) minmax(180px,1.5fr);gap:18px;padding:14px;background:#101d2bcc;border:1px solid #76879b26;border-radius:8px}.wm-library-list b{display:block;font:600 13px/1.5 system-ui;overflow-wrap:anywhere}.wm-library-list small{display:block;font:10px/1.8 system-ui;color:#99aec0}.wm-library-list .wm-owner-actions{border:0;padding:0}.wm-membership{font:10px/1.7 system-ui;color:#d2bc86}.wm-library>footer{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:16px;font:11px system-ui}.wm-library>footer button{font:11px system-ui}.cw-detail .wm-approve-pool{white-space:normal}.cw-card .wm-map-counts span{gap:4px}
+@media(max-width:750px){.wm-library-list>article{grid-template-columns:1fr;gap:10px}.wm-library-tools select{max-width:none}}
+
+</style>
+<style>
 /* The hub is scoped so combat, cases, trading and other modals retain their UI. */
 .hub-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 .hub-pass,.hub-lobby,.hub-dialog,.hub-inventory-toolbar,.hub-empty{font-family:system-ui,Arial,sans-serif;letter-spacing:0;color:#dce5ec}
@@ -3337,6 +3343,87 @@ mkServer=async function(){sel.mode=$('sm').value;sel.map=+$('sp').value;if(!mapS
 </style>
 <script>
 (function(root){const pairs=`
+Nowe opcje moderacji oczekują na wdrożenie aktualizacji.|The new moderation options are waiting for the update to be deployed.
+NOWY MODEL|NEW MODEL
+Kilof|Pickaxe
+Overwatch i Battle Royale|Overwatch and Battle Royale
+WASD · Mysz · B Sklep · 4 granaty · Esc menu|WASD · Mouse · B Shop · 4 grenades · Esc menu
+NOWE W ARSENALE|NEW IN THE ARSENAL
+Kolory, wzory i pędzel|Colors, patterns and a brush
+Bronie, noże i mapy|Weapons, knives and maps
+Noże i skiny|Knives and skins
+LOKALNE PROJEKTY|LOCAL PROJECTS
+Projekt mapy|Map project
+Podgląd tylko w edytorze|Editor preview only
+Zapisany projekt możesz wysłać do oceny. Zatwierdzone skiny trafiają do skrzynki społeczności; sam szkic nie daje przedmiotu ani nowego modelu noża.|Submit a saved design for review. Approved skins enter the Community Forge Case; a draft does not grant an item or a new knife model.
+Kolor pędzla|Brush color
+Jednolity|Solid
+Pasy|Stripes
+Moro|Camo
+Piksele|Pixels
+Baza|Base
+Akcent|Accent
+Detale|Details
+Oczekuje na ocenę|Pending review
+Wiadomość dla autora (wymagana przy odrzuceniu)|Message for the author (required when rejecting)
+OCENA ZGŁOSZENIA|SUBMISSION REVIEW
+Testuj mapę z botami|Test map with bots
+Zatwierdź i opublikuj|Approve and publish
+Otwórz edytor i wybierz „Wyślij do oceny”.|Open the editor and select “Submit for review”.
+Nie masz jeszcze muzyki MVP. Zestawy znajdziesz w MVP Music Box.|You have no MVP music kits yet. Find them in the MVP Music Box.
+Najnowsze|Newest
+Skrzynie:|Crates:
+Zagraj na mapie|Play this map
+NAGRODY DZISIAJ|REWARDS TODAY
+ocen|reviews
+egzemplarz|copy
+egzemplarze|copies
+egzemplarzy|copies
+okien|windows
+SKIN DO ZDOBYCIA|TARGET SKIN
+10 wybranych egzemplarzy zostanie zużytych. Każdy z {count} skinów następnej jakości ma taką samą szansę. 10 skinów StatTrak™ daje nagrodę StatTrak™; mieszany kontrakt daje zwykły skin.|The 10 selected items will be consumed. Each of the {count} skins of the next rarity has the same chance. Ten StatTrak™ skins grant a StatTrak™ reward; a mixed contract grants a regular skin.
+Szansa = wartość twojego skina ÷ wartość celu × 90%. Wartości pochodzą z rynku w grze. Przy sukcesie dostajesz wybrany cel; przy porażce tracisz wejściowy skin.|Chance = your skin value ÷ target value × 90%. Values come from the in-game market. Success grants the chosen target; failure consumes your input skin.
+Wycofaj|Withdraw
+Wycofaj publikację|Withdraw publication
+Skin wycofany ze skrzynki|Skin removed from the case
+Wyłączona z głównej puli|Excluded from the main pool
+Zastąp nową wersją|Replace with the new version
+Dodaj do głównej puli|Add to the main pool
+Wyłącz z głównej puli|Remove from the main pool
+Zablokuj automatyczny awans|Block automatic promotion
+Przywróć awans społeczności|Restore community promotion
+Najnowsza zatwierdzona wersja:|Latest approved version:
+W puli:|In the pool:
+Przywróć do skrzynki|Restore to the case
+Wycofaj ze skrzynki|Remove from the case
+Podgląd nowej wersji|Preview the new version
+Opublikowane projekty|Published projects
+Zarządzaj główną pulą map i zawartością skrzynki społeczności.|Manage the main map pool and the Community Forge Case.
+Rodzaj projektu|Project type
+Mapy i skiny|Maps and skins
+Tylko w Warsztacie|Workshop only
+W skrzynce społeczności|In the Community Forge Case
+Brak pasujących projektów.|No matching projects.
+Poprzednia|Previous
+Następna|Next
+Gracze:|Players:
+Boty:|Bots:
+Ręczne dodanie omija progi społeczności. Wyłączenie z puli zachowuje mapę w Warsztacie.|Manual addition bypasses community thresholds. Removing a map from the main pool keeps it in the Workshop.
+Wycofanie ze skrzynki blokuje przyszłe dropy. Zdobyte skiny i StatTrak pozostają u graczy.|Removing a skin from the case stops future drops. Players keep their earned skins and StatTrak counts.
+Ręczne dodanie działa także przy wyłączonym automatycznym awansie. Mapy dodane ręcznie zajmują miejsca przed mapami z rankingu.|Manual addition also works when automatic promotion is off. Manually added maps take slots before ranked maps.
+Po minucie gry uczestniczące boty testują mapę. Każdy ma 35% szansy na polubienie; ocena jest losowana tylko raz. Ich zagrania i oceny widać osobno i liczą się do awansu.|After one minute of gameplay, participating bots review the map. Each has a 35% chance of liking it, rolled only once. Their plays and likes are shown separately and count toward promotion.
+Zatwierdź i dodaj do głównej puli|Approve and add to the main pool
+Pojawiła się nowsza wersja projektu. Odśwież listę i wybierz ją ponownie.|A newer project version is available. Refresh the list and select it again.
+Zatwierdzono mapę i dodano ją do głównej puli jej trybu.|Map approved and added to the main pool for its mode.
+Przywrócono skin do skrzynki społeczności.|Skin restored to the Community Forge Case.
+Wycofano skin ze skrzynki. Zdobyte egzemplarze pozostają u graczy.|Skin removed from the case. Players keep their earned copies.
+Dodano wybraną wersję mapy do głównej puli jej trybu.|The selected map version was added to the main pool for its mode.
+Wyłączono mapę z głównej puli. Nadal można grać w nią z Warsztatu.|Map removed from the main pool. It can still be played from the Workshop.
+Przywrócono awans mapy według zasad społeczności.|Community-based map promotion restored.
+Nóż motylkowy|Butterfly Knife
+Nóż kukri|Kukri Knife
+Nóż Stiletto|Stiletto Knife
+Nóż klasyczny|Classic Knife
 Widok|View
 Oddal widok|Zoom out
 Przybliż widok|Zoom in
@@ -4866,6 +4953,7 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   const escape=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
   const patterns={};for(const lang of ['pl','en']){const source=pairs.map(p=>p[lang==='en'?0:1]).filter(Boolean).filter(s=>s.length>=3).sort((a,b)=>b.length-a.length);patterns[lang]=new RegExp('(?<![\\p{L}\\p{N}_])(?:'+[...new Set(source)].map(escape).join('|')+')(?![\\p{L}\\p{N}_])','giu');}
   api.t=function(value){if(typeof value!=='string'||!value.trim()||api.protected.has(value.trim())||value.length>6000||/^(data:|https?:|[A-Za-z0-9+/]{80})/.test(value))return value;const memo=cache[api.language];if(memo.has(value))return memo.get(value);const text=value.trim(),map=maps[api.language],exact=map.get(text.toLocaleLowerCase('pl'));let out=exact||text.replace(patterns[api.language],s=>map.get(s.toLocaleLowerCase('pl'))||s);if(!exact&&out===text&&/[\p{L}]{3}/u.test(text)&&api.unknown.size<3000)api.unknown.add(text);if(text===text.toUpperCase()&&/[\p{L}]/u.test(text))out=out.toUpperCase();const result=value.replace(text,out);if(memo.size>6000)memo.clear();memo.set(value,result);return result;};
+  api.format=function(template,values={}){return api.t(template).replace(/\{([a-zA-Z][a-zA-Z0-9_]*)\}/g,(whole,key)=>Object.hasOwn(values,key)?String(values[key]):whole);};
   let observer,scan;const originals=new WeakMap(),attrs=new WeakMap();
   api.set=function(lang){api.language=lang==='en'?'en':'pl';if(scan){document.documentElement.lang=api.language;scan(document.body);observer?.takeRecords();document.dispatchEvent(new CustomEvent('sz-language',{detail:api.language}));}return api.language;};
   api.mount=function(){
@@ -5051,7 +5139,7 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
    sessions. The renderer never grants owner rights or writes popularity totals. */
 (function(){'use strict';
  const defaults={enabled:true,min_plays:50,min_likes:10,slots_per_mode:1};
- const state={owner:null,epoch:0,liked:new Set(),policy:{...defaults},busy:new Set(),mode:'all',sort:'popular',runs:new Set()};
+ const state={owner:null,epoch:0,liked:new Set(),policy:{...defaults},busy:new Set(),mode:'all',sort:'popular',runs:new Set(),moderationVersion:0};
  const t=s=>szLocale.t(s),esc=workshopEscape,number=n=>Math.max(0,Number(n)||0).toLocaleString(szLocale.language==='en'?'en-US':'pl-PL');
  const modeName=mode=>t(({tdm:'Team Deathmatch',classic:'Rozbrajanie bomby',ctf:'Capture the Flag'})[mode]||'Team Deathmatch');
  function noun(value,type){const n=Number(value)||0;if(szLocale.language==='en')return type==='plays'?(n===1?'play':'plays'):(n===1?'like':'likes');const form=n===1?0:n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?1:2;return(type==='plays'?['zagranie','zagrania','zagrań']:['polubienie','polubienia','polubień'])[form];}
@@ -5063,7 +5151,7 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
  async function sync(){
   account();if(syncing)return syncing;const epoch=state.epoch,ticket=++sequence;
   const task=(async()=>{try{const data=await rpc('state');if(epoch!==state.epoch||ticket!==sequence)return;
-   if(validPolicy(data?.policy))state.policy=data.policy;
+   if(validPolicy(data?.policy))state.policy=data.policy;state.moderationVersion=Number(data?.moderation_version)||0;
    state.liked=new Set((data?.liked||[]).filter(id=>COMMUNITY_UUID.test(id)));
    for(const row of COMMUNITY.rows.filter(r=>r.kind==='map'&&r.featured)){
     try{const release=await communityRelease(row.release_id);if(epoch!==state.epoch||ticket!==sequence)return;communityRegisterMap(release);}catch{/* A failed download leaves the built-in map pool available. */}
@@ -5079,7 +5167,8 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   return out.slice().sort((a,b)=>score(b)-score(a)||String(a.id).localeCompare(String(b.id)));
  }
  function card(row){account();const liked=state.liked.has(row.id),p=state.policy;
-  return `<div class="wm-map-data"><span class="wm-map-mode">${esc(modeName(row.mode))}</span><div class="wm-map-counts"><span><b>${number(row.plays)}</b><span data-no-translate>${noun(row.plays,'plays')}</span></span><span>${heart}<b>${number(row.likes)}</b><span data-no-translate>${noun(row.likes,'likes')}</span></span></div>${row.featured?`<span class="wm-featured">${esc(t('W głównej puli'))}</span>`:p.enabled?`<small>${esc(t('Próg awansu:'))} <span data-no-translate>${number(p.min_plays)} ${noun(p.min_plays,'plays')} · ${number(p.min_likes)} ${noun(p.min_likes,'likes')}</span></small>`:''}<button type="button" class="wm-like ${liked?'liked':''}" data-workshop-like="${row.id}" aria-pressed="${liked}" ${!SBU||state.busy.has(row.id)?'disabled':''} title="${esc(t(SBU?'Jedno polubienie na konto. Możesz je cofnąć.':'Zaloguj się, aby polubić mapę.'))}">${heart}${esc(t(liked?'Lubisz to':'Polub mapę'))}</button></div>`;
+  const counts=(plays,likes)=>`${number(plays)} ${noun(plays,'plays')} · ${number(likes)} ${noun(likes,'likes')}`;
+  return `<div class="wm-map-data" data-no-translate><span class="wm-map-mode">${esc(modeName(row.mode))}</span><div class="wm-map-counts"><span><b>${number(row.plays)}</b><span>${noun(row.plays,'plays')}</span></span><span>${heart}<b>${number(row.likes)}</b><span>${noun(row.likes,'likes')}</span></span></div><small class="wm-review-counts">${esc(t('Gracze:'))} ${counts(row.player_plays??row.plays,row.player_likes??row.likes)}<br>${esc(t('Boty:'))} ${counts(row.bot_plays,row.bot_likes)}</small>${row.featured?`<span class="wm-featured">${esc(t('W głównej puli'))} · v${row.version}</span>`:row.pool_rule==='excluded'?`<span class="wm-excluded">${esc(t('Wyłączona z głównej puli'))}</span>`:p.enabled?`<small>${esc(t('Próg awansu:'))} <span>${number(p.min_plays)} ${noun(p.min_plays,'plays')} · ${number(p.min_likes)} ${noun(p.min_likes,'likes')}</span></small>`:''}<button type="button" class="wm-like ${liked?'liked':''}" data-workshop-like="${row.id}" aria-pressed="${liked}" ${!SBU||state.busy.has(row.id)?'disabled':''} title="${esc(t(SBU?'Jedno polubienie na konto. Możesz je cofnąć.':'Zaloguj się, aby polubić mapę.'))}">${heart}${esc(t(liked?'Lubisz to':'Polub mapę'))}</button></div>`;
  }
  function settingsHTML(){const p=state.policy;return `<section class="cr-card wm-policy"><h3>${esc(t('Awans map do głównej puli'))}</h3><p>${esc(t('Najpopularniejsze zatwierdzone mapy awansują do puli swojego trybu po osiągnięciu obu progów.'))}</p><form data-workshop-policy><label class="wm-check"><input name="enabled" type="checkbox" ${p.enabled?'checked':''}>${esc(t('Automatyczny awans'))}</label><div class="wm-policy-fields"><label>${esc(t('Minimum zagrań'))}<input name="min_plays" type="number" min="1" max="1000000" step="1" value="${p.min_plays}" required></label><label>${esc(t('Minimum polubień'))}<input name="min_likes" type="number" min="1" max="1000000" step="1" value="${p.min_likes}" required></label><label>${esc(t('Map w puli na tryb'))}<input name="slots_per_mode" type="number" min="1" max="5" step="1" value="${p.slots_per_mode}" required></label><button class="cr-primary" type="submit">${esc(t('Zapisz zasady awansu'))}</button></div></form><p>${esc(t('Ranking łączy polubienia i zagrania względem ustawionych progów. Wycofana mapa wypada z puli.'))}</p></section>`;}
  function limitHints(){for(const e of document.querySelectorAll('[data-workshop-limit]'))e.textContent=t(COMMUNITY.admin?'Konto właściciela: bez limitu zgłoszeń map i skinów.':'Limit zgłoszeń: 10 oczekujących i 10 wysłanych w ciągu 24 godzin.');}
@@ -5099,21 +5188,62 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   catch{communityNotice(t('Nie udało się zapisać zasad awansu. Sprawdź wartości i połączenie.'),true);button.disabled=false;}
  });
  function makeRun(g){account();const ref=g?.communityMapRef;if(!g||!SBU||g.client||g.creatorTest||CREATOR_TEST||!ref)return;
-  const run={id:crypto.randomUUID(),uid:SBU.id,epoch:state.epoch,release:ref.release,mode:sel.mode,seconds:0,started:false,busy:false,done:false,retryAt:0};g.workshopRun=run;state.runs.add(run);progress(run);
+  const bots=Math.min(10,g.ps.filter(p=>!p.human&&!p.rh&&!p.rid).length);
+  const run={id:crypto.randomUUID(),uid:SBU.id,epoch:state.epoch,release:ref.release,mode:sel.mode,bots,seconds:0,started:false,busy:false,done:false,retryAt:0};g.workshopRun=run;state.runs.add(run);progress(run);
  }
  async function progress(run){account();if(run.done||run.busy||run.uid!==state.owner||run.epoch!==state.epoch||Date.now()<run.retryAt)return;run.busy=true;
   try{
-   if(!run.started){const r=await rpc('start',{session:run.id,release:run.release,mode:run.mode});if(run.epoch!==state.epoch)return;run.started=true;if(r?.counted)run.done=true;}
-   if(!run.done&&run.seconds>=60){const r=await rpc('finish',{session:run.id});if(run.epoch!==state.epoch)return;if(r?.retry_after)run.retryAt=Date.now()+Math.max(1,r.retry_after)*1000+150;else{run.done=true;if(r?.counted)communityRefresh();}}
+   if(!run.started){const r=await rpc('start',{session:run.id,release:run.release,mode:run.mode,bots:run.bots});if(run.epoch!==state.epoch)return;run.started=true;if(r?.counted)run.done=true;}
+   if(!run.done&&run.seconds>=60){const r=await rpc('finish',{session:run.id});if(run.epoch!==state.epoch)return;if(r?.retry_after)run.retryAt=Date.now()+Math.max(1,r.retry_after)*1000+150;else{run.done=true;run.botReview={plays:r?.bot_plays||0,likes:r?.bot_likes||0};if(r?.counted)communityRefresh();}}
   }catch{run.retryAt=Date.now()+10000;}finally{run.busy=false;if(run.done)state.runs.delete(run);}
  }
  const begin=begin0;begin0=function(){begin();if(G)makeRun(G);};
  const update=upd;upd=function(dt){const g=G,run=g?.workshopRun;if(run&&!g.paused&&!g.over&&!g.intro)run.seconds+=Math.max(0,Math.min(Number(dt)||0,.25));return update(dt);};
- const end=endG;endG=function(...args){if(G?.workshopRun)progress(G.workshopRun);return end(...args);};
- const leave=quit;quit=function(){const run=G?.workshopRun;if(run){if(run.seconds>=60)progress(run);else{run.done=true;state.runs.delete(run);}}return leave();};
+ const end=endG;endG=function(...args){if(G?.workshopRun)progress(G.workshopRun);COMMUNITY.explicitSelection=null;return end(...args);};
+ const leave=quit;quit=function(){const run=G?.workshopRun;if(run){if(run.seconds>=60)progress(run);else{run.done=true;state.runs.delete(run);}}COMMUNITY.explicitSelection=null;return leave();};
  setInterval(()=>{account();for(const run of state.runs)progress(run);},1000);
  document.addEventListener('sz-language',()=>{if(T==='creator'&&document.querySelector('.cw-page'))communityRender();else limitHints();});
- window.SzWorkshopMaps={card,filter,filtersHTML};
+ window.SzWorkshopMaps={card,filter,filtersHTML,moderationReady:()=>state.moderationVersion>=1};
+})();
+
+</script>
+<script>
+/* Membership is changed by owner-only database actions. Removing a drop never
+   revokes a skin already earned; map pool slots refer to immutable releases. */
+(function(){'use strict';
+ const t=s=>szLocale.t(s),esc=workshopEscape,state={kind:'all',query:'',page:0},ready=()=>!!window.SzWorkshopMaps?.moderationReady();
+ const mode=id=>t(({classic:'Rozbrajanie bomby',ctf:'Capture the Flag',tdm:'Team Deathmatch'})[id]||'Team Deathmatch');
+ const fold=s=>String(s||'').normalize('NFKD').replace(/\p{M}/gu,'').toLowerCase();
+ function controls(row){if(!COMMUNITY.admin||!ready())return'';const newest=row.latest_release_id||row.release_id,version=row.latest_version||row.version,disabled=COMMUNITY.busy?'disabled':'';
+  const button=(rule,label,extra='')=>`<button type="button" data-wm-action="pool" data-wm-item="${row.id}" data-wm-rule="${rule}" data-wm-release="${newest}" ${disabled} ${extra}>${esc(t(label))}</button>`;
+  return `<div class="wm-owner-actions" data-no-translate><small>${esc(t('Najnowsza zatwierdzona wersja:'))} v${version}${row.featured?' · '+esc(t('W puli:'))+' v'+row.version:''}</small><div>${row.kind==='map'?`${!row.featured||row.release_id!==newest?button('manual',row.featured?'Zastąp nową wersją':'Dodaj do głównej puli','class="wm-add-pool"'):''}${row.featured?button('excluded','Wyłącz z głównej puli'):row.pool_rule!=='excluded'?button('excluded','Zablokuj automatyczny awans'):''}${row.pool_rule!=='auto'?button('auto','Przywróć awans społeczności'):''}`:`<button type="button" data-wm-action="case_pool" data-wm-item="${row.id}" data-wm-enabled="${row.case_enabled===false?'1':'0'}" ${disabled}>${esc(t(row.case_enabled===false?'Przywróć do skrzynki':'Wycofaj ze skrzynki'))}</button>`}${row.kind==='map'&&newest!==row.release_id?`<button type="button" data-wm-preview="${newest}">${esc(t('Podgląd nowej wersji'))}</button>`:''}</div></div>`;
+ }
+ function libraryHTML(){if(!ready())return `<section class="cr-card wm-library" data-workshop-library data-no-translate><h3>${esc(t('Opublikowane projekty'))}</h3><p>${esc(t('Nowe opcje moderacji oczekują na wdrożenie aktualizacji.'))}</p></section>`;const rows=COMMUNITY.rows.filter(r=>(state.kind==='all'||r.kind===state.kind)&&(!state.query||fold(r.title+' '+r.author_name).includes(fold(state.query))));state.page=Math.max(0,Math.min(state.page,Math.max(0,Math.ceil(rows.length/8)-1)));
+  return `<section class="cr-card wm-library" data-workshop-library data-no-translate><header><div><h3>${esc(t('Opublikowane projekty'))}</h3><p>${esc(t('Zarządzaj główną pulą map i zawartością skrzynki społeczności.'))}</p></div><span>${rows.length}</span></header><div class="wm-library-tools"><input type="search" data-wm-search aria-label="${esc(t('Szukaj projektu lub autora'))}" placeholder="${esc(t('Szukaj projektu lub autora'))}" value="${esc(state.query)}"><select data-wm-kind aria-label="${esc(t('Rodzaj projektu'))}">${[['all','Mapy i skiny'],['map','Mapy'],['skin','Skiny']].map(([id,label])=>`<option value="${id}" ${id===state.kind?'selected':''}>${esc(t(label))}</option>`).join('')}</select></div><div class="wm-library-list">${rows.slice(state.page*8,state.page*8+8).map(r=>`<article data-wm-published="${r.id}"><div><b data-user-content>${esc(r.title)}</b><small><span data-user-content>${esc(r.author_name)}</span> · ${r.kind==='map'?esc(mode(r.mode)):esc(t('Skin'))} · ${esc(t('Wersja'))} ${r.version}</small><span class="wm-membership">${esc(t(r.kind==='map'?(r.featured?'W głównej puli':r.pool_rule==='excluded'?'Wyłączona z głównej puli':'Tylko w Warsztacie'):(r.case_enabled===false?'Skin wycofany ze skrzynki':'W skrzynce społeczności')))}</span></div>${controls(r)}</article>`).join('')||`<p>${esc(t('Brak pasujących projektów.'))}</p>`}</div><footer><button type="button" data-wm-page="-1" ${state.page?'':'disabled'}>${esc(t('Poprzednia'))}</button><span>${rows.length?state.page+1:0} / ${Math.ceil(rows.length/8)}</span><button type="button" data-wm-page="1" ${(state.page+1)*8<rows.length?'':'disabled'}>${esc(t('Następna'))}</button></footer><p>${esc(t('Ręczne dodanie omija progi społeczności. Wyłączenie z puli zachowuje mapę w Warsztacie.'))}</p><p>${esc(t('Wycofanie ze skrzynki blokuje przyszłe dropy. Zdobyte skiny i StatTrak pozostają u graczy.'))}</p></section>`;
+ }
+ function renderLibrary(){const root=document.querySelector('[data-workshop-library]');if(!root)return;const active=document.activeElement?.matches('[data-wm-search]'),position=active?document.activeElement.selectionStart:null;root.outerHTML=libraryHTML();if(active){const input=document.querySelector('[data-wm-search]');input.focus({preventScroll:true});try{input.setSelectionRange(position,position);}catch{}}}
+ const render=communityRender;communityRender=function(){render();if(COMMUNITY.admin&&COMMUNITY.tab==='moderation'&&document.querySelector('.cw-page')){document.querySelector('.wm-policy')?.insertAdjacentHTML('afterend',libraryHTML());document.querySelector('.wm-policy')?.insertAdjacentHTML('beforeend',`<p data-no-translate>${esc(t('Ręczne dodanie działa także przy wyłączonym automatycznym awansie. Mapy dodane ręcznie zajmują miejsca przed mapami z rankingu.'))}</p>`);}if(ready()&&COMMUNITY.tab==='catalog')document.querySelector('.cw-page')?.insertAdjacentHTML('beforeend',`<p class="cw-note" data-no-translate>${esc(t('Po minucie gry uczestniczące boty testują mapę. Każdy ma 35% szansy na polubienie; ocena jest losowana tylko raz. Ich zagrania i oceny widać osobno i liczą się do awansu.'))}</p>`);};
+ const card=communityCard;communityCard=function(row,active){const html=card(row,active);return active==='catalog'&&COMMUNITY.admin?html.replace('<div class="cr-actions">',controls(row)+'<div class="cr-actions">'):html;};
+ const details=communityDetails;communityDetails=async function(id,source){await details(id,source);const row=COMMUNITY.queue.find(r=>r.id===id),footer=document.querySelector('.cw-detail footer');if(source==='moderation'&&COMMUNITY.admin&&ready()&&row?.kind==='map'&&footer){const b=document.createElement('button');b.type='button';b.className='cr-primary wm-approve-pool';b.dataset.workshopApprovePool=id;b.dataset.cwReview='';b.dataset.noTranslate='';b.textContent=t('Zatwierdź i dodaj do głównej puli');footer.append(b);}};
+ function failure(error){if(String(error?.message||'').includes('WORKSHOP_VERSION_CHANGED'))return t('Pojawiła się nowsza wersja projektu. Odśwież listę i wybierz ją ponownie.');return t(communityError(error));}
+ async function run(action,args,message){if(!COMMUNITY.admin||!ready()||COMMUNITY.busy)return;const epoch=COMMUNITY.epoch,owner=communityAccount();COMMUNITY.busy=true;document.querySelectorAll('[data-wm-action],[data-workshop-approve-pool]').forEach(b=>b.disabled=true);
+  try{const r=await sb.rpc('sz_workshop_map',{action,args});if(r.error)throw r.error;if(epoch!==COMMUNITY.epoch||owner!==communityAccount())return;pmClose();await communityRefresh();communityNotice(t(message));}
+  catch(error){if(epoch===COMMUNITY.epoch){const e=$('cw-review-error');if(e)e.textContent=failure(error);else communityNotice(failure(error),true);}}
+  finally{if(epoch===COMMUNITY.epoch){COMMUNITY.busy=false;if(T==='creator'&&document.querySelector('.cw-page'))communityRender();document.querySelectorAll('[data-wm-action],[data-workshop-approve-pool]').forEach(b=>b.disabled=false);}}
+ }
+ async function preview(id){if(!COMMUNITY.admin)return;const row=COMMUNITY.rows.find(r=>r.latest_release_id===id);if(!row)return;try{const release=await communityRelease(id),p=release.payload;if(!COMMUNITY.admin)return;$('pm').style.display='flex';$('pm').innerHTML=`<section class="pmb cw-detail" data-no-translate><header><div><small>${esc(t('Najnowsza zatwierdzona wersja:'))} v${release.version}</small><h2 data-user-content>${esc(p.name)}</h2></div><button onclick="pmClose()">${esc(t('Zamknij'))}</button></header><img class="cw-detail-art" src="${communityArt(id,p)}" alt="${esc(p.name)}"><p>${esc(mode(p.mode))}</p><footer>${controls(row)}</footer></section>`;}catch(error){communityNotice(failure(error),true);}}
+ document.addEventListener('click',e=>{const b=e.target.closest('[data-wm-action],[data-workshop-approve-pool],[data-wm-page],[data-wm-preview]');if(!b||b.disabled)return;
+  if(b.dataset.wmPage){state.page+=Number(b.dataset.wmPage);renderLibrary();return;}
+  if(b.dataset.wmPreview){preview(b.dataset.wmPreview);return;}
+  if(b.dataset.workshopApprovePool){run('approve_pool',{submission:b.dataset.workshopApprovePool,note:($('cw-review-note')?.value||'').trim()},'Zatwierdzono mapę i dodano ją do głównej puli jej trybu.');return;}
+  const row=COMMUNITY.rows.find(r=>r.id===b.dataset.wmItem);if(!row)return;
+  if(b.dataset.wmAction==='case_pool'){const enabled=b.dataset.wmEnabled==='1';run('case_pool',{item:row.id,enabled},enabled?'Przywrócono skin do skrzynki społeczności.':'Wycofano skin ze skrzynki. Zdobyte egzemplarze pozostają u graczy.');}
+  else{const rule=b.dataset.wmRule;run('pool',{item:row.id,rule,release:b.dataset.wmRelease,expected_latest:row.latest_release_id||row.release_id},rule==='manual'?'Dodano wybraną wersję mapy do głównej puli jej trybu.':rule==='excluded'?'Wyłączono mapę z głównej puli. Nadal można grać w nią z Warsztatu.':'Przywrócono awans mapy według zasad społeczności.');}
+ });
+ document.addEventListener('input',e=>{if(e.target.matches('[data-wm-search]')){state.query=e.target.value;state.page=0;renderLibrary();}});
+ document.addEventListener('change',e=>{if(e.target.matches('[data-wm-kind]')){state.kind=e.target.value;state.page=0;renderLibrary();}});
+ document.addEventListener('sz-language',()=>{for(const b of document.querySelectorAll('[data-workshop-approve-pool]'))b.textContent=t('Zatwierdź i dodaj do głównej puli');});
+ window.SzWorkshopModeration={controls,preview};
 })();
 
 </script>

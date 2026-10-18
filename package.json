@@ -28,7 +28,9 @@
     "test:preview": "npm run prepare:game && node scripts/preview-smoke.cjs",
     "test:social": "npm run prepare:game && node scripts/social-smoke.cjs",
     "test:network": "node scripts/network-smoke.cjs",
-    "check:ui": "node scripts/check-ui.cjs"
+    "check:ui": "node scripts/check-ui.cjs",
+    "test:moderation": "npm run prepare:game && node scripts/moderation-smoke.cjs",
+    "test:locale": "npm run prepare:game && node scripts/locale-smoke.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",

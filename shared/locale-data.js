@@ -1,4 +1,85 @@
 (function(root){const pairs=`
+Nowe opcje moderacji oczekują na wdrożenie aktualizacji.|The new moderation options are waiting for the update to be deployed.
+NOWY MODEL|NEW MODEL
+Kilof|Pickaxe
+Overwatch i Battle Royale|Overwatch and Battle Royale
+WASD · Mysz · B Sklep · 4 granaty · Esc menu|WASD · Mouse · B Shop · 4 grenades · Esc menu
+NOWE W ARSENALE|NEW IN THE ARSENAL
+Kolory, wzory i pędzel|Colors, patterns and a brush
+Bronie, noże i mapy|Weapons, knives and maps
+Noże i skiny|Knives and skins
+LOKALNE PROJEKTY|LOCAL PROJECTS
+Projekt mapy|Map project
+Podgląd tylko w edytorze|Editor preview only
+Zapisany projekt możesz wysłać do oceny. Zatwierdzone skiny trafiają do skrzynki społeczności; sam szkic nie daje przedmiotu ani nowego modelu noża.|Submit a saved design for review. Approved skins enter the Community Forge Case; a draft does not grant an item or a new knife model.
+Kolor pędzla|Brush color
+Jednolity|Solid
+Pasy|Stripes
+Moro|Camo
+Piksele|Pixels
+Baza|Base
+Akcent|Accent
+Detale|Details
+Oczekuje na ocenę|Pending review
+Wiadomość dla autora (wymagana przy odrzuceniu)|Message for the author (required when rejecting)
+OCENA ZGŁOSZENIA|SUBMISSION REVIEW
+Testuj mapę z botami|Test map with bots
+Zatwierdź i opublikuj|Approve and publish
+Otwórz edytor i wybierz „Wyślij do oceny”.|Open the editor and select “Submit for review”.
+Nie masz jeszcze muzyki MVP. Zestawy znajdziesz w MVP Music Box.|You have no MVP music kits yet. Find them in the MVP Music Box.
+Najnowsze|Newest
+Skrzynie:|Crates:
+Zagraj na mapie|Play this map
+NAGRODY DZISIAJ|REWARDS TODAY
+ocen|reviews
+egzemplarz|copy
+egzemplarze|copies
+egzemplarzy|copies
+okien|windows
+SKIN DO ZDOBYCIA|TARGET SKIN
+10 wybranych egzemplarzy zostanie zużytych. Każdy z {count} skinów następnej jakości ma taką samą szansę. 10 skinów StatTrak™ daje nagrodę StatTrak™; mieszany kontrakt daje zwykły skin.|The 10 selected items will be consumed. Each of the {count} skins of the next rarity has the same chance. Ten StatTrak™ skins grant a StatTrak™ reward; a mixed contract grants a regular skin.
+Szansa = wartość twojego skina ÷ wartość celu × 90%. Wartości pochodzą z rynku w grze. Przy sukcesie dostajesz wybrany cel; przy porażce tracisz wejściowy skin.|Chance = your skin value ÷ target value × 90%. Values come from the in-game market. Success grants the chosen target; failure consumes your input skin.
+Wycofaj|Withdraw
+Wycofaj publikację|Withdraw publication
+Skin wycofany ze skrzynki|Skin removed from the case
+Wyłączona z głównej puli|Excluded from the main pool
+Zastąp nową wersją|Replace with the new version
+Dodaj do głównej puli|Add to the main pool
+Wyłącz z głównej puli|Remove from the main pool
+Zablokuj automatyczny awans|Block automatic promotion
+Przywróć awans społeczności|Restore community promotion
+Najnowsza zatwierdzona wersja:|Latest approved version:
+W puli:|In the pool:
+Przywróć do skrzynki|Restore to the case
+Wycofaj ze skrzynki|Remove from the case
+Podgląd nowej wersji|Preview the new version
+Opublikowane projekty|Published projects
+Zarządzaj główną pulą map i zawartością skrzynki społeczności.|Manage the main map pool and the Community Forge Case.
+Rodzaj projektu|Project type
+Mapy i skiny|Maps and skins
+Tylko w Warsztacie|Workshop only
+W skrzynce społeczności|In the Community Forge Case
+Brak pasujących projektów.|No matching projects.
+Poprzednia|Previous
+Następna|Next
+Gracze:|Players:
+Boty:|Bots:
+Ręczne dodanie omija progi społeczności. Wyłączenie z puli zachowuje mapę w Warsztacie.|Manual addition bypasses community thresholds. Removing a map from the main pool keeps it in the Workshop.
+Wycofanie ze skrzynki blokuje przyszłe dropy. Zdobyte skiny i StatTrak pozostają u graczy.|Removing a skin from the case stops future drops. Players keep their earned skins and StatTrak counts.
+Ręczne dodanie działa także przy wyłączonym automatycznym awansie. Mapy dodane ręcznie zajmują miejsca przed mapami z rankingu.|Manual addition also works when automatic promotion is off. Manually added maps take slots before ranked maps.
+Po minucie gry uczestniczące boty testują mapę. Każdy ma 35% szansy na polubienie; ocena jest losowana tylko raz. Ich zagrania i oceny widać osobno i liczą się do awansu.|After one minute of gameplay, participating bots review the map. Each has a 35% chance of liking it, rolled only once. Their plays and likes are shown separately and count toward promotion.
+Zatwierdź i dodaj do głównej puli|Approve and add to the main pool
+Pojawiła się nowsza wersja projektu. Odśwież listę i wybierz ją ponownie.|A newer project version is available. Refresh the list and select it again.
+Zatwierdzono mapę i dodano ją do głównej puli jej trybu.|Map approved and added to the main pool for its mode.
+Przywrócono skin do skrzynki społeczności.|Skin restored to the Community Forge Case.
+Wycofano skin ze skrzynki. Zdobyte egzemplarze pozostają u graczy.|Skin removed from the case. Players keep their earned copies.
+Dodano wybraną wersję mapy do głównej puli jej trybu.|The selected map version was added to the main pool for its mode.
+Wyłączono mapę z głównej puli. Nadal można grać w nią z Warsztatu.|Map removed from the main pool. It can still be played from the Workshop.
+Przywrócono awans mapy według zasad społeczności.|Community-based map promotion restored.
+Nóż motylkowy|Butterfly Knife
+Nóż kukri|Kukri Knife
+Nóż Stiletto|Stiletto Knife
+Nóż klasyczny|Classic Knife
 Widok|View
 Oddal widok|Zoom out
 Przybliż widok|Zoom in

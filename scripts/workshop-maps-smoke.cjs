@@ -34,7 +34,7 @@ let complete=false;process.on('beforeExit',()=>{if(!complete&&!process.exitCode)
     const seconds=G.workshopRun.seconds,players=G.ps.length,slot=sel.map,routes=SITES[slot].map(r=>{const a=SPW[slot][0];return findPath(a[0]+a[2]/2,a[1]+a[3]/2,r[0]+r[2]/2,r[1]+r[3]/2).length;});draw();return{mode,moved,players,seconds,routes};
    },map.mode);
    assert.ok(report.moved>=2,JSON.stringify(report));assert.ok(report.players>1);assert.ok(report.seconds>=60);assert.ok(report.routes.every(n=>n>1));botReport.push(report);
-   await player.waitForFunction(()=>G?.workshopRun?.done);assert.equal((await db.query('select plays from public.sz_workshop_map_stats where item_id=$1',[map.item])).rows[0].plays,1);
+   await player.waitForFunction(()=>G?.workshopRun?.done);const counters=(await db.query('select plays,bot_plays,bot_likes from public.sz_workshop_map_stats where item_id=$1',[map.item])).rows[0];assert.equal(counters.plays,1);assert.equal(counters.bot_plays,report.players-1);assert.ok(counters.bot_likes>=0&&counters.bot_likes<=counters.bot_plays);assert.deepEqual(await player.evaluate(()=>G.workshopRun.botReview),{plays:counters.bot_plays,likes:counters.bot_likes});
    await player.evaluate(()=>quit());await player.evaluate(()=>communityTab('catalog'));await player.evaluate(()=>communityRefresh());
    const card=player.locator('[data-cw-card="'+map.release+'"]');await card.locator('[data-workshop-like]').click();await card.locator('[data-workshop-like][aria-pressed=true]:enabled').waitFor();
    await player.waitForFunction(id=>COMMUNITY.rows.find(r=>r.id===id)?.featured,map.item);
@@ -43,8 +43,8 @@ let complete=false;process.on('beforeExit',()=>{if(!complete&&!process.exitCode)
   }
   console.log('PASS published maps have moving bots and reachable objectives in TDM, CTF and bomb mode',JSON.stringify(botReport));
   console.log('PASS active gameplay reaches the server counter and likes promote each map only into its authored mode');
-  await player.evaluate(()=>szLocale.set('en'));await player.locator('[data-workshop-mode]').selectOption('ctf');assert.equal(await player.locator('.cw-card').count(),1);assert.equal(await player.locator('.wm-featured').innerText(),'In the main pool');assert.equal(await player.locator('.wm-like').innerText(),'Liked');
-  await player.locator('.wm-like').click();await player.locator('.wm-like[aria-pressed=false]:enabled').waitFor();assert.equal(await player.locator('.wm-featured').count(),0);
+  await player.evaluate(()=>szLocale.set('en'));await player.locator('[data-workshop-mode]').selectOption('ctf');assert.equal(await player.locator('.cw-card').count(),1);assert.match(await player.locator('.wm-featured').innerText(),/^In the main pool · v/);assert.equal(await player.locator('.wm-like').innerText(),'Liked');
+  await player.locator('.wm-like').click();await player.locator('.wm-like[aria-pressed=false]:enabled').waitFor();const botLikes=(await db.query("select bot_likes from public.sz_workshop_map_stats where item_id=$1",[maps.find(m=>m.mode==='ctf').item])).rows[0].bot_likes;assert.equal(await player.locator('.wm-featured').count(),botLikes>=1?1:0);
   await player.evaluate(()=>szLocale.set('pl'));assert.equal(await player.locator('.wm-like').innerText(),'Polub mapę');await player.locator('[data-workshop-mode]').selectOption('all');
   await player.evaluate(()=>szLocale.set('en'));await player.waitForTimeout(80);const polish=await player.evaluate(()=>{const w=document.createTreeWalker($('main'),NodeFilter.SHOW_TEXT),out=[];let n;while(n=w.nextNode())if(/[ąćęłńóśźż]/i.test(n.data)&&!n.parentElement.closest('[data-user-content]'))out.push(n.data);return out;});assert.deepEqual(polish,[]);
   if(process.env.SZ_MAPS_SCREENSHOTS){fs.mkdirSync(process.env.SZ_MAPS_SCREENSHOTS,{recursive:true});await player.screenshot({path:process.env.SZ_MAPS_SCREENSHOTS+'/catalog-en.png'});await owner.screenshot({path:process.env.SZ_MAPS_SCREENSHOTS+'/promotion-pl.png'});}

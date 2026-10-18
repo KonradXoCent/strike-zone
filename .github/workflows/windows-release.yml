@@ -46,6 +46,10 @@ jobs:
         run: npm run test:hub
       - name: Test community map bots, counters, likes and promotion
         run: npm run test:workshop-maps
+      - name: Test Workshop pool overrides, version replacement and case membership
+        run: npm run test:moderation
+      - name: Audit Polish and English interface screens
+        run: npm run test:locale
       - name: Test editor zoom, painting and gameplay pointer lock
         run: npm run test:controls
       - name: Test cached map materials, geometry and render cost

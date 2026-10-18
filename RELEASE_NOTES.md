@@ -1,4 +1,10 @@
-W przygotowaniu — tekstury map, zoom malowania i sterowanie myszą
+W przygotowaniu — moderacja Warsztatu, tekstury map i sterowanie
+
+- Moderacja: „Zatwierdź i dodaj do głównej puli” oraz ręczne dodawanie opublikowanych map bez progów społeczności, także przy wyłączonym automatycznym awansie.
+- Wyłączanie map z głównej puli z zachowaniem Warsztatu. Osobne przywracanie awansu, podgląd nowej wersji i podmiana starego wydania na nowe bez testów społeczności. Zwykła akceptacja aktualizacji zachowuje stare wydanie w puli do decyzji właściciela.
+- Testy map przez uczestniczące boty po minucie rozgrywki; każdy ma 35% szansy polubienia, losowanej raz. Podpisane oddzielnie statystyki botów i graczy liczą się do automatycznego awansu.
+- Wycofywanie i przywracanie skinów w Community Forge Case. Licznik pięciu projektów uwzględnia tylko aktywne dropy; zdobyte skiny, wyposażenie i StatTrak pozostają dostępne.
+- Poprawione pełne tłumaczenia PL/EN w Warsztacie, moderacji, edytorach, ekwipunku, kontraktach, upgraderze i prezentacji nowości. Audyt interfejsu obejmuje 70 ekranów w obu językach.
 
 - Oryginalne tekstury ścian, podłoża i skrzyń w stylistyce strzelanek oglądanych z góry: piaskowiec, tynk, cegła, kamień z mchem, beton, metal i drewno.
 - Osobne materiały dla wszystkich 14 map oraz trzech motywów map Warsztatu. Szersze powierzchnie ścian, krawędzie i delikatne cienie poprawiają odczytanie kształtu przeszkód.
@@ -10,6 +16,12 @@ W przygotowaniu — tekstury map, zoom malowania i sterowanie myszą
 - Przechwytywanie myszy podczas gry: widoczny jest własny celownik, a kursor pozostaje w oknie. Escape, zakupy, okna rozmów i utrata fokusu zwalniają mysz i zerują wciśnięte sterowanie. W ustawieniach można wyłączyć przechwytywanie.
 
 English
+
+- Owner moderation can approve and add a map immediately, or add an approved map to its authored mode, bypassing community thresholds even with automatic promotion disabled.
+- Remove maps from the main pool while keeping Workshop play. Preview and replace pinned versions explicitly; ordinary approval keeps the previous live release until the owner replaces it.
+- Participating bots review a map after a minute of gameplay, each with a one-time 35% like chance. Bot and human counters are shown separately and both count toward automatic promotion.
+- Remove or restore designs in the Community Forge Case without revoking earned skins, equipment or StatTrak. Only enabled designs count toward the five-design purchase gate.
+- Corrected complete PL/EN interface phrases across the Workshop, moderation, editors, inventory, contracts, upgrader and features; 70 screens are checked in both languages.
 
 - Original top-down wall, floor and crate materials, with map-specific sandstone, plaster, brick, mossy stone, concrete, metal and wood.
 - All 14 built-in maps and all three Workshop themes use the new appearance. Wall caps, bevels and subtle contact shadows are baked into the existing map cache.
