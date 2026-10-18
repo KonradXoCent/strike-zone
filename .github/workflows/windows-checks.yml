@@ -22,6 +22,7 @@ jobs:
       - run: npm run check:ui
       - run: npm run test:launcher
       - run: npm run test:friends
+      - run: npm run test:hub
       - run: npm run test:workshop-maps
       - run: npm run test:social
       - run: npm run test:network

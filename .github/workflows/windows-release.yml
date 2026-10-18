@@ -42,6 +42,8 @@ jobs:
         run: npm run test:launcher
       - name: Test in-game avatars, presence and online-only trade invitations
         run: npm run test:friends
+      - name: Test inventory filters, pass, lobby and game selectors
+        run: npm run test:hub
       - name: Test community map bots, counters, likes and promotion
         run: npm run test:workshop-maps
       - name: Test shared languages, themes and persistent chat

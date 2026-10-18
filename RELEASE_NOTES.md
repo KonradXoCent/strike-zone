@@ -1,3 +1,20 @@
+W przygotowaniu — ekwipunek, przepustka i wspólna gra
+
+- Wyszukiwanie skinów po nazwie skina lub broni, również z pominięciem polskich znaków. Filtry: noże, pistolety, pistolety maszynowe, karabiny, snajperki, strzelby i ciężkie karabiny. Wszystkie osiem modeli noży, StatTrak i posiadane skiny społeczności korzystają z tych samych filtrów.
+- Nowy wygląd przepustki: postęp XP, bieżący poziom, nagrody podzielone na sześć zakresów, status odebrania, misje dnia i kalendarz codziennych nagród.
+- Nowe lobby: osobne tworzenie i dołączanie kodem, kopiowanie kodu, listy drużyn, zdjęcia profili, oznaczenie hosta, podgląd mapy i ustawienia meczu.
+- Osobne ikony SVG dla 15 trybów oraz podglądy rzeczywistych układów map w głosowaniu. Poprawiono opis Ancient.
+- Pełne polskie nagłówki „Wybierz tryb gry” i „Głosuj na mapę”, zgodne wersje angielskie oraz dostosowanie okien wyboru do mniejszych ekranów.
+
+English
+
+- Search owned skins by skin or weapon name, with accent-insensitive matching. Weapon filters include every knife model in one Knives category, StatTrak and owned community skins.
+- Redesigned battle pass with XP progress, paged reward tiers, claim states, daily missions and a seven-day reward calendar.
+- Redesigned multiplayer lobby with create/join panels, a copyable code, teams, profile pictures, host controls and a map preview.
+- Distinct SVG icons for all 15 modes, actual map-layout previews and the corrected Ancient description. Full Polish/English selection headings and responsive dialogs.
+
+---
+
 Strike Zone 2D 1.4.1 — wspólne logo tarczy Z
 
 - Ta sama złota tarcza z literą Z w launcherze, panelu uruchamiania, menu gry oraz na ekranach startowym i wczytywania map.

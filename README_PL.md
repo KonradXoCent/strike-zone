@@ -23,6 +23,22 @@ Znajomi w grze pokazują ustawione zdjęcie, nick oraz Offline / Online / W Mecz
 Po kliknięciu znajomego przycisk Trade pozwala wysłać zaproszenie do wymiany.
 Wysyłanie, przyjmowanie i potwierdzanie wymaga aktywnego połączenia obu graczy.
 
+## Ekwipunek i ekrany gry — przygotowana aktualizacja
+
+W zakładce skinów wyszukasz nazwę skina lub broni i wybierzesz typ wyposażenia.
+Wszystkie osiem modeli noży ma wspólną kategorię **Noże**. Wyszukiwanie obejmuje
+posiadane skiny społeczności i StatTrak, toleruje wielkość liter oraz brak polskich
+znaków i zachowuje filtry po założeniu albo sprzedaży przedmiotu.
+
+Przepustka pokazuje postęp, nagrody w zakresach po dziesięć poziomów, misje i serię
+codziennych nagród. Lobby ma drużyny, kod zaproszenia, podgląd mapy i kontrolki
+hosta. Wybór trybów ma osobne ikony SVG, a głosowanie pokazuje aktualne układy map.
+Pełne nagłówki są tłumaczone razem, bez mieszania polskich i angielskich słów.
+Moduł `shared/game-hub.js` zmienia widoki; korzysta z dotychczasowej logiki nagród,
+wyposażania, sprzedaży i sieci. `npm run test:hub` sprawdza te działania oraz
+rozmiary okien. Po zmianie współdzielonych plików odśwież osadzenie poleceniem
+`node scripts/embed-shared.cjs`.
+
 ## Konto i sterowanie
 
 Zaloguj się w launcherze tym samym e-mailem i hasłem co w przeglądarkowej wersji gry.
