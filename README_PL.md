@@ -1,9 +1,15 @@
-# Strike Zone 2D — 1.4.0
+# Strike Zone 2D — 1.4.1
 
-Pobierz `StrikeZone-Setup-1.4.0.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
-Posiadacze wersji 1.0.1, 1.1.0, 1.2.0 i 1.3.0 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
+Pobierz `StrikeZone-Setup-1.4.1.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
+Posiadacze wersji 1.0.1, 1.1.0, 1.2.0, 1.3.0 i 1.4.0 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
 
-Pełna lista zmian 1.4.0: [RELEASE_NOTES.md](RELEASE_NOTES.md).
+Pełna lista zmian 1.4.1: [RELEASE_NOTES.md](RELEASE_NOTES.md).
+
+Wersja 1.4.1 ujednolica logo launchera, menu, ekranów startowych oraz ikon aplikacji
+i instalatora: złota tarcza z literą Z na przezroczystym tle. `assets/icon.png` jest
+wspólnym źródłem dla interfejsu i osadzonego HTML, a `assets/icon.ico` zawiera siedem
+rozmiarów ikon Windows (16–256 px). Po zmianie obrazu uruchom
+`node scripts/embed-shared.cjs`; przygotowanie gry sprawdza zgodność logo.
 
 ## Język, motywy i rozmowy
 

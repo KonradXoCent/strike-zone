@@ -1,0 +1,5 @@
+/* The embedded game and desktop assets share assets/icon.png. */
+.sz-brand{display:inline-block;width:32px;height:36px;flex-shrink:0;background-image:var(--sz-brand-image);background-size:contain;background-position:center;background-repeat:no-repeat;vertical-align:middle;font-style:normal}
+.logo>.sz-brand{width:58px;height:64px;margin-right:12px}
+.map-loading-brand{display:flex;align-items:center}
+.map-loading-brand>.sz-brand{width:27px;height:30px;margin-right:9px}
