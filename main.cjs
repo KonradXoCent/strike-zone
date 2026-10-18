@@ -8,6 +8,8 @@ const { loadConfig } = require('./core/config.cjs');
 const { UpdateController } = require('./core/updater.cjs');
 const { AccountController } = require('./core/account.cjs');
 const { FriendsController } = require('./core/friends.cjs');
+const { Controller: SocialController } = require('./shared/social.js');
+const { preferences } = require('./core/preferences.cjs');
 const { createAuthStorage } = require('./core/auth-storage.cjs');
 const { launcherBounds } = require('./core/window-size.cjs');
 
@@ -24,6 +26,8 @@ let game = null;
 let controller = null;
 let account = null;
 let friends = null;
+let social = null;
+let prefs = null;
 let closingGame = null;
 let backend = { phase: 'checking' };
 let configError = false;
@@ -36,7 +40,7 @@ const supabaseKey = gameSource.match(/SB_KEY='([^']+)'/)?.[1];
 
 function snapshot() {
   const user = account.snapshot();
-  return { update: controller.snapshot(), account: user, friends: friends.snapshot(user.authenticated ? user.user.id : null), backend, configError, gameRunning: !!game };
+  return { update: controller.snapshot(), account: user, friends: friends.snapshot(user.authenticated ? user.user.id : null), preferences: prefs.get(), backend, configError, gameRunning: !!game };
 }
 function broadcast() {
   if (launcher && !launcher.isDestroyed()) launcher.webContents.send('launcher:state', snapshot());
@@ -136,11 +140,16 @@ else {
     });
     account = new AccountController(client);
     friends = new FriendsController(client);
+    prefs = preferences(path.join(app.getPath('userData'), 'desktop-preferences.json'));
+    social = new SocialController(client);
+    const toBoth = (channel, value) => { for (const win of [launcher, game]) if (win && !win.isDestroyed()) win.webContents.send(channel, value); };
+    social.subscribe(value => toBoth('social:state', value));
+    friends.on('state', () => { const user = account.snapshot(); toBoth('friends:state', friends.snapshot(user.authenticated ? user.user.id : null)); });
     friends.on('state', broadcast);
     account.on('state', () => {
       broadcast();
       // Auth callbacks hold the SDK lock; subscribe outside that callback.
-      setTimeout(() => friends.setAccount(account.snapshot()), 0);
+      setTimeout(() => { friends.setAccount(account.snapshot()); social.setAccount(account.snapshot()); }, 0);
     });
     account.on('session', value => {
       if (!game || game.isDestroyed()) return;
@@ -183,10 +192,18 @@ else {
     ipcMain.handle('game:fullscreen', event => { trusted(event, GAME_URL); game.setFullScreen(!game.isFullScreen()); });
     ipcMain.handle('game:session', event => { trusted(event, GAME_URL); return account.gameSession(); });
     ipcMain.handle('game:profile', (event, profile) => { trusted(event, GAME_URL); if (profile && typeof profile === 'object') account.updateProfile(profile); });
+    for (const [prefix, url] of [['launcher', LAUNCHER_URL], ['game', GAME_URL]]) {
+      ipcMain.handle(prefix + ':preferences', event => { trusted(event, url); return prefs.get(); });
+      ipcMain.handle(prefix + ':preferences-set', (event, value) => { trusted(event, url); const next = prefs.set(value); toBoth('preferences:state', next); broadcast(); return next; });
+      ipcMain.handle(prefix + ':chat-state', event => { trusted(event, url); return social.snapshot(); });
+      ipcMain.handle(prefix + ':chat', (event, action, args) => { trusted(event, url); return social.command(action, args); });
+      ipcMain.handle(prefix + ':chat-focused', event => { trusted(event, url); return (url === GAME_URL ? game : launcher)?.isFocused() === true; });
+      ipcMain.handle(prefix + ':friends', event => { trusted(event, url); const user = account.snapshot(); return friends.snapshot(user.authenticated ? user.user.id : null); });
+    }
     createLauncher();
     account.init();
     setInterval(() => { if (!game && launcher?.isVisible()) controller.check(); }, 120000).unref();
   }).catch(() => { app.exit(1); });
   app.on('window-all-closed', () => app.quit());
-  app.on('before-quit', () => friends?.dispose());
+  app.on('before-quit', () => { friends?.dispose(); social?.dispose(); });
 }

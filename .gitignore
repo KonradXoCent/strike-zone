@@ -8,3 +8,5 @@ game/source-sha256.txt
 vendor/
 *.log
 .DS_Store
+/network-report.json
+/locale-report.json*

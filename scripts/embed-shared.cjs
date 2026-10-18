@@ -1,0 +1,6 @@
+// Preserve the one-file browser build while sharing the same tested desktop UI.
+const fs=require('node:fs'),path=require('node:path'),root=path.resolve(__dirname,'..');
+function block(){return '<!-- SZ SHARED UI START -->\n'+['settings.css','social.css','game-friends.css','workshop-maps.css'].map(n=>'<style>\n'+fs.readFileSync(path.join(root,'shared',n),'utf8')+'\n</style>').join('\n')+'\n'+['locale-data.js','locale.js','social.js','social-view.js','settings.js','game-friends.js','workshop-maps.js','game-integration.js'].map(n=>'<script>\n'+fs.readFileSync(path.join(root,'shared',n),'utf8').replace(/<\/script/gi,'<\\/script')+'\n</script>').join('\n')+'\n<!-- SZ SHARED UI END -->';}
+function sync(check=false){const file=path.join(root,'game-source/index.html'),source=fs.readFileSync(file,'utf8'),value=block();if(check){if(!source.includes(value))throw new Error('Embedded shared UI is stale; run node scripts/embed-shared.cjs');return;}const next=source.includes('<!-- SZ SHARED UI START -->')?source.replace(/<!-- SZ SHARED UI START -->[\s\S]*?<!-- SZ SHARED UI END -->/,()=>value):source.replace('</body>',()=>value+'\n</body>');fs.writeFileSync(file,next);}
+if(require.main===module)sync(process.argv.includes('--check'));
+module.exports={sync};

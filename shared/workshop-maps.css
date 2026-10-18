@@ -1,0 +1,12 @@
+.wm-map-data{display:grid;gap:10px;padding:13px 0 3px;border-top:1px solid #b4ccd51c}
+.wm-map-mode{font-size:10px;color:#9eb6c8}.wm-map-counts{display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:#9db2c3;font-size:10px}
+.wm-map-counts>span{display:flex;align-items:center;gap:4px}.wm-map-counts b{color:#d9e7f0;font-weight:650}
+.wm-map-data svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.6;flex-shrink:0}
+.wm-featured{justify-self:start;font-size:9px;letter-spacing:.5px;border:1px solid #d9ba6d66;border-radius:5px;background:#aa85391c;color:#edcc8c;padding:5px 8px}
+.cw-card .wm-like{display:flex;align-items:center;justify-content:center;gap:8px;border-color:#62788a80;padding:9px 12px;text-transform:none;letter-spacing:0}
+.cw-card .wm-like.liked{border-color:#b8799070;background:#71445830;color:#edacbf}.wm-like.liked svg{fill:#edacbf}
+.wm-policy{margin-bottom:18px;background:linear-gradient(125deg,#243134d9,#182738);border:1px solid #6e929660}
+.wm-policy h3{color:#c2ded9;font-size:15px}.wm-policy p{color:#9eb4c3;font-size:11px;line-height:1.7;max-width:700px}
+.wm-policy-fields{display:flex;align-items:end;gap:12px;flex-wrap:wrap}.wm-policy-fields label{display:grid;gap:7px;flex:1;min-width:130px;color:#abc0cf;font-size:11px}
+.wm-policy-fields input{width:100%;max-width:200px}.wm-policy-fields button{margin:0;min-height:37px;flex:1;white-space:nowrap;font-size:11px;letter-spacing:0}
+.wm-check{display:flex;align-items:center;gap:8px;font-size:12px;margin:12px 0 18px;color:#c3d8dd}.wm-check input{margin:0;accent-color:#8acbb7}

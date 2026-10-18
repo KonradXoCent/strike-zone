@@ -4,8 +4,21 @@ Gra na Windows z launcherem, kontem Supabase i obowiązkowymi aktualizacjami.
 
 **[Pobierz aktualne wydanie](https://github.com/KonradXoCent/strike-zone/releases/latest)**
 
-Wersja **1.3.0**: zainstaluj `StrikeZone-Setup-1.3.0.exe` lub zaktualizuj wersję
-1.0.1, 1.1.0 lub 1.2.0 przez launcher — razem z samym launcherem.
+Wersja **1.4.0**: zainstaluj `StrikeZone-Setup-1.4.0.exe` lub zaktualizuj wersję
+1.0.1, 1.1.0, 1.2.0 lub 1.3.0 przez launcher — razem z samym launcherem.
+
+Nowości 1.4.0: wspólny język PL/EN, motywy Nocny / Leśny / Piaskowy,
+prywatne wiadomości i grupy do 16 osób, historia dla osób offline oraz
+powiadomienia w launcherze i grze. Znajomi mają zdjęcia, nicki, status i przycisk
+Trade; wymiana wymaga aktywnego połączenia obu graczy. Poprawiono też wspólne
+mecze lobby, serwery i synchronizację bomby.
+
+Mapy Warsztatu zapisują tryb autora i działają z botami oraz w lobby.
+Mają liczniki zagrań i odwracalne polubienia. Popularne mapy trafiają automatycznie
+do głównej puli własnego trybu; domyślnie wymagają 50 zagrań i 10 polubień,
+z jednym miejscem na tryb. Właściciel ustawia progi w Moderacji i ma nielimitowane
+zgłoszenia map oraz skinów. Pozostali gracze zachowują limit 10 oczekujących
+i 10 wysłanych w ciągu 24 godzin.
 
 Nowe modele i skiny noży, widoczne rękawiczki, Kill Cam, kontrakty, upgrader,
 ulepszony Overwatch i Battle Royale oraz nowe animacje skrzynek i ekrany map.
@@ -27,12 +40,13 @@ Podczas meczu Escape nadal włącza pauzę.
 
 Dane lokalne pozostają w `%APPDATA%\StrikeZone2D`. Sesja konta jest szyfrowana
 przez system Windows. Hasło nie jest zapisywane. Konta i chmura korzystają
-z Supabase wskazanego w `game-source/index.html`. Migracja w `supabase/migrations/`
-dodaje opcjonalny publiczny awatar do rankingu i ustawia limity Warsztatu 10/10;
-nie zmienia kont ani zapisów gry.
+z Supabase wskazanego w `game-source/index.html`. Migracje w `supabase/migrations/`
+dodają publiczne awatary, Warsztat i wiadomości, bez zastępowania istniejących kont
+ani zapisów gry. Szczegóły: [docs/community-workshop.md](docs/community-workshop.md)
+i [docs/settings-chat-network.md](docs/settings-chat-network.md).
 
 GitHub Actions buduje wydanie, instaluje wcześniejszą publiczną 1.2.0 i sprawdza
-aktualizację do 1.3.0, zachowanie danych, logowanie, rejestrację, profil, wspólną
+aktualizację do 1.4.0, zachowanie danych, logowanie, rejestrację, profil, wspólną
 sesję gry oraz wyjście przez Escape. Raport `update-smoke-report.json` jest
 w wydaniu. Testy kont używają odizolowanych odpowiedzi HTTP, bez zmian prawdziwych kont.
 

@@ -6,7 +6,9 @@ require('./linux-nsis.cjs')();
 const root = path.join(__dirname, '..');
 const testBuild = process.argv.includes('--test');
 const stableVersion = require('../package.json').version;
-const version = testBuild ? stableVersion.replace(/(\d+)$/, n => Number(n) + 1) + '-test.1' : stableVersion;
+const testRevision = process.argv.find(arg => arg.startsWith('--test-revision='))?.split('=')[1] || '1';
+if (!/^[1-9]\d{0,3}$/.test(testRevision)) throw new Error('Nieprawidłowy numer wersji testowej.');
+const version = testBuild ? stableVersion + '-test.' + testRevision : stableVersion;
 const output = testBuild ? 'dist-test' : 'dist';
 const channel = loadConfig([path.join(root, 'updates.json')]);
 const config = {
@@ -14,7 +16,7 @@ const config = {
   asar: true, npmRebuild: false, electronVersion: '44.7.2',
   afterPack: require('./brand-windows.cjs'),
   directories: { output, buildResources: 'assets' },
-  files: ['main.cjs', 'preload.cjs', 'game-preload.cjs', 'core/**', 'launcher/**',
+  files: ['main.cjs', 'preload.cjs', 'game-preload.cjs', 'core/**', 'launcher/**', 'shared/**',
     'assets/**', 'game/**', 'vendor/**', 'updates.json', 'package.json'],
   win: { target: 'nsis', executableName: 'StrikeZone', icon: 'assets/icon.ico',
     signAndEditExecutable: process.platform === 'win32' },

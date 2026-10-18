@@ -25,6 +25,8 @@ Projekt: `mvzlqpccmjslxdajjbfw`. Wdrożono migracje:
 - `20261017172626 community_workshop`
 - `20261017173831 community_workshop_limits`
 - `20261017184015 community_forge_case`
+- `20261018105926 workshop_map_engagement_owner_limits`
+- `20261018110220 workshop_map_session_access`
 
 `database/workshop.sql` oraz `database/community-case.sql` opisują schemat dla nowej instalacji. Nie należy
 uruchamiać całego pliku ponownie na już skonfigurowanym projekcie. Istniejące
@@ -50,7 +52,10 @@ Nie ma przycisku ani formularza kodu właściciela. Wcześniejszy jednorazowy ko
 został unieważniony w bazie. Mechanizm początkowej aktywacji pozostaje w schemacie,
 ale nie jest potrzebny do korzystania z panelu ani dostępny w interfejsie gry.
 
-Zgłoszenia mają limit 10 oczekujących i 10 wysłanych w ciągu 24 godzin na konto.
+Zwykłe konta mają limit 10 oczekujących i 10 wysłanych w ciągu 24 godzin.
+Konta z rolą w serwerowej tabeli `sz_workshop_admins` są zwolnione z obu limitów
+dla map i skinów. Pozostają kontrole danych oraz pojedyncze oczekujące zgłoszenie
+danej wersji projektu. Nazwa profilu, e-mail i metadane użytkownika nie nadają tej ulgi.
 Blokada transakcyjna chroni limit przed równoległym wysyłaniem. Dane projektu
 przechodzą walidację także w PostgreSQL: typy, kolory, pędzel, limity elementów,
 rozmiar danych i przejścia mapy z rozmiarem postaci. Maksymalny rozmiar to 250 KB.
@@ -62,6 +67,40 @@ ale przez sieć identyfikowane są po UUID wydania. Dołączający gracz pobiera
 z zatwierdzonego katalogu, a nie dowolny payload przesłany przez hosta.
 Poprzednie zatwierdzone wersje są dostępne podczas trwających na nich meczów.
 Nowe mapy warsztatowe są nierankingowe i obsługują TDM, CTF oraz rozbrajanie bomby.
+
+`database/workshop-maps.sql` wprowadza tryb projektu, statystyki, polubienia i awans.
+Autor wybiera tryb w edytorze; zapis, eksport, zgłoszenie i wydanie zachowują tę wartość.
+Stare projekty bez pola `mode` są mapami TDM. Boty wypełniają wolne miejsca również
+na zatwierdzonych mapach. Po wejściu z lobby tryb jest sprawdzany z zatwierdzonym
+wydaniem, a mapa jest identyfikowana UUID wydania, niezależnie od lokalnego slotu.
+
+Zagranie nalicza się po 60 sekundach aktywnych aktualizacji gry oraz co najmniej
+60 sekundach zmierzonych przez serwer od rejestracji sesji. Lokalny trening szkicu,
+podgląd moderacji, pauza, wstęp i samo otwarcie karty nie naliczają zagrań. W lobby
+nalicza host, dzięki czemu klienci nie dublują jednego meczu. UUID sesji zapewnia
+idempotencję; na konto i mapę nalicza się najwyżej jedno zagranie co 5 minut.
+Historia sesji jest prywatna, a klient nie może ustawić jej czasu ani liczników.
+
+Każde zalogowane konto może polubić mapę raz i cofnąć polubienie. Para mapa/konto
+jest unikalna. Publiczne są tylko sumy; odczyt konkretnych polubień obejmuje własne
+konto. Zapisy przechodzą przez `sz_workshop_map`, publiczny RPC `security_invoker`
+z prywatną implementacją sprawdzającą konto i aktywne zatwierdzone wydanie.
+Wszystkie nowe tabele mają RLS, bez bezpośrednich zapisów klienta.
+
+Domyślny próg to 50 zagrań i 10 polubień, jedno miejsce na tryb. W Moderacji właściciel
+może ustawić oba progi (1–1 000 000), miejsca na tryb (1–5) i włączyć lub wyłączyć
+automatyczny awans. Oba progi są wymagane. Wśród uprawnionych map ranking sumuje
+`likes * min_plays + plays * min_likes`, a remisy rozstrzyga liczba polubień, zagrań
+i UUID. Krótka blokada transakcyjna chroni licznik i wybór puli podczas równoległych
+żądań. Przeliczenie następuje po zagraniach, polubieniach, publikacji, wycofaniu
+lub zmianie zasad; nie wymaga crona ani kolejnego instalatora po awansie mapy.
+
+Klient pobiera awansowane wydania i dodaje je tylko do puli ich trybu. Ręczne
+uruchomienie nieawansowanej mapy z katalogu pozostaje możliwe. Rankingowe statystyki
+oficjalnych map nie obejmują Warsztatu. Wycofanie usuwa mapę z puli. Rewizja w tym
+samym trybie zachowuje liczniki; zmiana trybu zeruje je i usuwa dotychczasowe
+polubienia, aby popularność TDM nie awansowała mapy do CTF. Liczniki zaczynają się
+od tej aktualizacji; wcześniejszych zagrań nie odtwarza się z zapisów kont.
 
 Zatwierdzone skiny trafiają do Community Forge Case. Minimum zakupu to 5 różnych
 aktywnych projektów skinów; rewizje, oczekujące zgłoszenia i mapy nie zwiększają
