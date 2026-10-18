@@ -4,8 +4,13 @@ Gra na Windows z launcherem, kontem Supabase i obowiązkowymi aktualizacjami.
 
 **[Pobierz aktualne wydanie](https://github.com/KonradXoCent/strike-zone/releases/latest)**
 
-Wersja **1.4.1**: zainstaluj `StrikeZone-Setup-1.4.1.exe` lub zaktualizuj wersję
-1.0.1, 1.1.0, 1.2.0, 1.3.0 lub 1.4.0 przez launcher — razem z samym launcherem.
+Wersja **1.5.0**: zainstaluj `StrikeZone-Setup-1.5.0.exe` lub zaktualizuj wersję
+1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0 lub 1.4.1 przez launcher — razem z samym launcherem.
+
+Nowości 1.5.0: wyszukiwanie skinów i filtry typów broni, ze wszystkimi modelami
+noży w jednej kategorii. Odświeżona przepustka, lobby z drużynami i kodem
+zaproszenia, osobne ikony trybów, podglądy układów map oraz pełne tłumaczenia
+nagłówków wyboru trybu i głosowania PL/EN.
 
 Wersja 1.4.1 wprowadza wspólne logo złotej tarczy Z w launcherze, grze i ikonach
 Windows. Wszystkie warianty korzystają z tego samego obrazu na przezroczystym tle.
@@ -49,7 +54,7 @@ ani zapisów gry. Szczegóły: [docs/community-workshop.md](docs/community-works
 i [docs/settings-chat-network.md](docs/settings-chat-network.md).
 
 GitHub Actions buduje wydanie, instaluje wcześniejszą publiczną 1.2.0 i sprawdza
-aktualizację do 1.4.1, zachowanie danych, logowanie, rejestrację, profil, wspólną
+aktualizację do 1.5.0, zachowanie danych, logowanie, rejestrację, profil, wspólną
 sesję gry oraz wyjście przez Escape. Raport `update-smoke-report.json` jest
 w wydaniu. Testy kont używają odizolowanych odpowiedzi HTTP, bez zmian prawdziwych kont.
 

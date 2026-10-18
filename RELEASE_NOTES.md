@@ -1,4 +1,4 @@
-W przygotowaniu — ekwipunek, przepustka i wspólna gra
+Strike Zone 2D 1.5.0 — ekwipunek, przepustka i nowe lobby
 
 - Wyszukiwanie skinów po nazwie skina lub broni, również z pominięciem polskich znaków. Filtry: noże, pistolety, pistolety maszynowe, karabiny, snajperki, strzelby i ciężkie karabiny. Wszystkie osiem modeli noży, StatTrak i posiadane skiny społeczności korzystają z tych samych filtrów.
 - Nowy wygląd przepustki: postęp XP, bieżący poziom, nagrody podzielone na sześć zakresów, status odebrania, misje dnia i kalendarz codziennych nagród.
@@ -6,12 +6,18 @@ W przygotowaniu — ekwipunek, przepustka i wspólna gra
 - Osobne ikony SVG dla 15 trybów oraz podglądy rzeczywistych układów map w głosowaniu. Poprawiono opis Ancient.
 - Pełne polskie nagłówki „Wybierz tryb gry” i „Głosuj na mapę”, zgodne wersje angielskie oraz dostosowanie okien wyboru do mniejszych ekranów.
 
+W dotychczasowym launcherze pobierz aktualizację 1.5.0, a następnie wybierz instalację i ponowne uruchomienie. Launcher i gra aktualizują się razem; konto, ekwipunek i dane lokalne pozostają zachowane. Nowa instalacja: StrikeZone-Setup-1.5.0.exe.
+Logowanie w publicznej grze nadal obsługuje launcher. Formularz z testowego pliku HTML nie jest częścią publicznego wydania.
+
 English
 
 - Search owned skins by skin or weapon name, with accent-insensitive matching. Weapon filters include every knife model in one Knives category, StatTrak and owned community skins.
 - Redesigned battle pass with XP progress, paged reward tiers, claim states, daily missions and a seven-day reward calendar.
 - Redesigned multiplayer lobby with create/join panels, a copyable code, teams, profile pictures, host controls and a map preview.
 - Distinct SVG icons for all 15 modes, actual map-layout previews and the corrected Ancient description. Full Polish/English selection headings and responsive dialogs.
+
+Download update 1.5.0 in the existing launcher, then install and restart. The launcher and game update together, preserving accounts, inventories and local data. New installation: StrikeZone-Setup-1.5.0.exe.
+The public game uses the launcher account session; the test HTML login form is not included.
 
 ---
 
