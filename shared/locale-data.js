@@ -1,4 +1,105 @@
 (function(root){const pairs=`
+Wybierz tryb gry|Select game mode
+Ty|You
+Strzelby|Shotguns
+Cztery nowe noże|Four new knives
+Prestiż|Prestige
+Dzień|Day
+Głosuj na mapę|Vote for the map
+Boty też głosują|Bots vote too
+Wszystkie typy|All types
+Pistolety maszynowe|Submachine guns
+Ciężkie karabiny|Machine guns
+Szukaj skina lub broni|Search skins or weapons
+Szukaj skina lub broni…|Search skins or weapons…
+Typ broni|Weapon type
+Wyniki:|Results:
+Brak pasujących skinów|No matching skins
+Zmień nazwę lub typ broni, aby zobaczyć inne przedmioty.|Change the name or weapon type to see other items.
+Wyczyść filtry|Clear filters
+Skrzynka i klucz|Case and key
+TWÓJ POSTĘP W GRZE|YOUR PROGRESS IN GAME
+Graj, wykonuj misje i odbieraj nagrody za kolejne poziomy.|Play, complete missions and claim rewards for each level.
+Postęp poziomu|Level progress
+Osiągnięto najwyższy poziom|Maximum level reached
+Do następnego poziomu:|To the next level:
+odebrano|claimed
+do odebrania|ready to claim
+Nagroda finałowa|Final reward
+Następna nagroda|Next reward
+60 POZIOMÓW DO ODKRYCIA|60 LEVELS TO DISCOVER
+Ścieżka nagród|Reward track
+Bieżący poziom|Current level
+Zakres poziomów|Level range
+Odbierz nagrodę|Claim reward
+Zablokowane|Locked
+WRACAJ PO WIĘCEJ|COME BACK FOR MORE
+Codzienna nagroda|Daily reward
+Seria:|Streak:
+Twoja nagroda|Your reward
+Odbierz dzienną nagrodę|Claim daily reward
+Odebrano dzisiaj|Claimed today
+DODATKOWE XP I PIENIĄDZE|EXTRA XP AND CASH
+Misje dnia|Daily missions
+Eliminuj przeciwników|Eliminate opponents
+Wygrywaj rundy|Win rounds
+Podkładaj lub rozbrajaj bombę|Plant or defuse the bomb
+Rozgrywaj mecze|Complete matches
+Zaliczone|Completed
+W trakcie|In progress
+GRAJ ZE ZNAJOMYMI|PLAY WITH FRIENDS
+Zbierz drużynę i ruszajcie do wspólnego meczu.|Gather your team and join a match together.
+Twoje lobby|Your lobby
+Utwórz pokój, wybierz mapę i zaproś znajomych kodem.|Create a room, choose a map and invite friends with a code.
+Masz już kod?|Already have a code?
+Wpisz kod od znajomego i dołącz do jego drużyny.|Enter your friend's code and join their team.
+Kod lobby|Lobby code
+KOD LOBBY|LOBBY CODE
+Boty uzupełniają wolne miejsca. Wszyscy gracze dołączają do wspólnego meczu.|Bots fill empty slots. Everyone joins the same match.
+Miejsce dla graczy i botów|Room for players and bots
+GOTOWI NA WSPÓLNY MECZ|READY TO PLAY TOGETHER
+Gracze:|Players:
+Wolne miejsca uzupełnią boty|Bots will fill empty slots
+Kod zaproszenia|Invitation code
+Kopiuj kod lobby|Copy lobby code
+Gracze w lobby|Players in the lobby
+Tryb gry|Game mode
+Oczekiwanie na rozpoczęcie meczu przez hosta…|Waiting for the host to start the match…
+Opuść lobby|Leave lobby
+Zaproś znajomego online|Invite an online friend
+Skopiowano|Copied
+Zaznacz i skopiuj kod|Select and copy the code
+ZAGRAJ PO SWOJEMU|PLAY YOUR WAY
+W następnym kroku wybierzesz mapę.|You will choose a map next.
+Wybierz ulubiony styl rozgrywki.|Choose your favourite play style.
+Tryb rankingowy|Ranked mode
+Taktyka|Tactical
+Drużynowo|Team play
+Kooperacja|Cooperative
+Przetrwanie|Survival
+5 na 5 · MR12. Zdobywaj punkty SR i rozwijaj rangę.|5 versus 5 · MR12. Earn SR points and improve your rank.
+Podkładaj lub rozbrajaj bombę w meczu 5 na 5.|Plant or defuse the bomb in a 5 versus 5 match.
+Odbij bombsite i rozbrój podłożoną bombę.|Retake the site and defuse the planted bomb.
+Każdy na każdego. Szybkie odrodzenia.|Free for all. Fast respawns.
+Pojedynki na dystans. Tylko karabiny snajperskie.|Long range duels. Sniper rifles only.
+Ćwicz celność z Desert Eagle.|Practice your aim with the Desert Eagle.
+Szybkie starcia wyłącznie na pistolety.|Fast fights with pistols only.
+Bliski dystans i siła strzelb.|Close quarters and shotgun power.
+Bliskie starcia. Wyłącznie noże.|Close combat. Knives only.
+Zabierz flagę wroga i dostarcz ją do swojej bazy.|Capture the enemy flag and bring it to your base.
+Wyląduj, zbierz wyposażenie i przetrwaj kurczącą się strefę.|Land, gather equipment and survive the shrinking zone.
+Pierwsza drużyna z 200 zabójstwami wygrywa.|The first team to 200 kills wins.
+Zagraj ze znajomymi. Boty uzupełnią wolne miejsca.|Play with friends. Bots fill empty slots.
+Przetrwaj atak lub zarażaj przeciwników.|Survive the attack or infect opponents.
+Awansuj przez kolejne bronie. Zakończ wyścig nożem.|Advance through the weapons. Finish the race with a knife.
+Wybierz arenę. Boty również biorą udział w głosowaniu.|Choose an arena. Bots take part in the vote too.
+Mapa stworzona przez społeczność.|A map created by the community.
+Podgląd mapy|Map preview
+Twój wybór|Your choice
+zagłosował na|voted for
+głos|vote
+głosy|votes
+głosów|votes
 Gracz|Player
 MAPA WARSZTATOWA|WORKSHOP MAP
 Szukaj projektu lub autora|Search project or author

@@ -1,9 +1,9 @@
-# Strike Zone 2D — 1.4.1
+# Strike Zone 2D — 1.5.0
 
-Pobierz `StrikeZone-Setup-1.4.1.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
-Posiadacze wersji 1.0.1, 1.1.0, 1.2.0, 1.3.0 i 1.4.0 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
+Pobierz `StrikeZone-Setup-1.5.0.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
+Posiadacze wersji 1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0 i 1.4.1 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
 
-Pełna lista zmian 1.4.1: [RELEASE_NOTES.md](RELEASE_NOTES.md).
+Pełna lista zmian 1.5.0: [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
 Wersja 1.4.1 ujednolica logo launchera, menu, ekranów startowych oraz ikon aplikacji
 i instalatora: złota tarcza z literą Z na przezroczystym tle. `assets/icon.png` jest
@@ -22,6 +22,22 @@ Właściciel grupy zarządza jej nazwą i uczestnikami.
 Znajomi w grze pokazują ustawione zdjęcie, nick oraz Offline / Online / W Meczu.
 Po kliknięciu znajomego przycisk Trade pozwala wysłać zaproszenie do wymiany.
 Wysyłanie, przyjmowanie i potwierdzanie wymaga aktywnego połączenia obu graczy.
+
+## Ekwipunek i ekrany gry — nowości 1.5.0
+
+W zakładce skinów wyszukasz nazwę skina lub broni i wybierzesz typ wyposażenia.
+Wszystkie osiem modeli noży ma wspólną kategorię **Noże**. Wyszukiwanie obejmuje
+posiadane skiny społeczności i StatTrak, toleruje wielkość liter oraz brak polskich
+znaków i zachowuje filtry po założeniu albo sprzedaży przedmiotu.
+
+Przepustka pokazuje postęp, nagrody w zakresach po dziesięć poziomów, misje i serię
+codziennych nagród. Lobby ma drużyny, kod zaproszenia, podgląd mapy i kontrolki
+hosta. Wybór trybów ma osobne ikony SVG, a głosowanie pokazuje aktualne układy map.
+Pełne nagłówki są tłumaczone razem, bez mieszania polskich i angielskich słów.
+Moduł `shared/game-hub.js` zmienia widoki; korzysta z dotychczasowej logiki nagród,
+wyposażania, sprzedaży i sieci. `npm run test:hub` sprawdza te działania oraz
+rozmiary okien. Po zmianie współdzielonych plików odśwież osadzenie poleceniem
+`node scripts/embed-shared.cjs`.
 
 ## Konto i sterowanie
 
