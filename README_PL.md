@@ -57,6 +57,12 @@ Wylogowanie jest dostępne w launcherze. W grze nie ma osobnego logowania.
 Lista znajomych jest wspólna z grą: zielona kropka oznacza online, szara offline.
 Wyszukiwarka filtruje nicki, a aktywność rozróżnia launcher, menu, lobby i mecz.
 
+W przygotowanej wersji testowej pierwsze kliknięcie na pole gry przechwytuje mysz.
+Widać celownik ustawiony w grze, a mysz pozostaje w jej oknie. Escape otwiera
+pauzę i zwalnia mysz. Zakupy (B), mapa BR i okna rozmów także zwalniają kursor.
+Po powrocie kliknij pole gry lub przycisk wznowienia. Przechwytywanie można
+wyłączyć w ustawieniach gry lub pauzy w sekcji **Sterowanie myszą**.
+
 F11 przełącza pełny ekran gry. Escape w menu głównym otwiera potwierdzenie:
 „Nie” po lewej w zieleni anuluje, „Tak” po prawej w czerwieni zapisuje postęp
 i zamyka okno gry, wracając do launchera. W meczu Escape nadal włącza pauzę.
@@ -74,6 +80,12 @@ Gdy odczyt się nie powiedzie, można go ponowić bez nadpisania danych.
 Odświeżone menu z ikonami SVG, zwarta nawigacja oraz Butterfly,
 kilof w stylu voxel, Kukri i Stiletto. Każdy nowy model ma sześć wykończeń i warianty
 StatTrak. Dotychczasowe identyfikatory przedmiotów pozostają bez zmian.
+
+W edytorze skinów użyj przycisków − / + albo kółka, aby zmienić zoom w zakresie
+50–400%. Kółko powiększa wskazany fragment. Model przesuniesz środkowym
+przyciskiem myszy, przez Spacja + przeciągnięcie lub przyciskiem **Przesuwanie**
+na pasku widoku. **Reset widoku** wraca do 100%. Widok nie zmienia zapisanego
+projektu ani szerokości i położenia pociągnięć pędzla.
 
 W menu **Warsztat** są dwa lokalne edytory:
 

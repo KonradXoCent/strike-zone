@@ -1,4 +1,16 @@
 (function(root){const pairs=`
+Widok|View
+Oddal widok|Zoom out
+Przybliż widok|Zoom in
+Reset widoku|Reset view
+Przesuwanie|Pan
+Kółko: zoom · Spacja + przeciągnij lub środkowy przycisk: przesuń|Wheel: zoom · Space + drag or middle mouse button: pan
+Sterowanie myszą|Mouse controls
+Przechwytuj mysz podczas gry|Capture the mouse during gameplay
+Kursor pozostaje w oknie gry. Escape otwiera menu i zwalnia mysz; zakupy i rozmowy również ją zwalniają.|The cursor stays inside the game window. Escape opens the menu and releases the mouse; the shop and chats release it too.
+Kliknij, aby przechwycić mysz|Click to capture the mouse
+Mysz nie została przechwycona. Kliknij, aby spróbować ponownie.|The mouse could not be captured. Click to try again.
+Escape — menu i zwolnienie myszy|Escape — menu and release mouse
 Wygląd map|Map appearance
 Materiały ścian, podłoża i skrzyń oraz delikatne cienie.|Wall, floor and crate materials with subtle shadows.
 Szczegółowość|Detail level

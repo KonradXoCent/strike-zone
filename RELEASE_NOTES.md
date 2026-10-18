@@ -1,4 +1,4 @@
-W przygotowaniu — tekstury i cieniowanie map
+W przygotowaniu — tekstury map, zoom malowania i sterowanie myszą
 
 - Oryginalne tekstury ścian, podłoża i skrzyń w stylistyce strzelanek oglądanych z góry: piaskowiec, tynk, cegła, kamień z mchem, beton, metal i drewno.
 - Osobne materiały dla wszystkich 14 map oraz trzech motywów map Warsztatu. Szersze powierzchnie ścian, krawędzie i delikatne cienie poprawiają odczytanie kształtu przeszkód.
@@ -6,12 +6,18 @@ W przygotowaniu — tekstury i cieniowanie map
 - W ustawieniach gry i pauzy wybór „Tekstury i cieniowanie” albo „Uproszczony wygląd”, z zapamiętywaniem i tłumaczeniem PL/EN.
 - Układy map i działanie przejść, okien, schodów oraz botów pozostają zgodne z istniejącymi danymi.
 
+- Edytor skinów: zoom 50–400% przyciskami i kółkiem, powiększanie wokół kursora, przesuwanie modelu oraz reset widoku. Malowanie i cofanie zachowują prawidłowe współrzędne.
+- Przechwytywanie myszy podczas gry: widoczny jest własny celownik, a kursor pozostaje w oknie. Escape, zakupy, okna rozmów i utrata fokusu zwalniają mysz i zerują wciśnięte sterowanie. W ustawieniach można wyłączyć przechwytywanie.
+
 English
 
 - Original top-down wall, floor and crate materials, with map-specific sandstone, plaster, brick, mossy stone, concrete, metal and wood.
 - All 14 built-in maps and all three Workshop themes use the new appearance. Wall caps, bevels and subtle contact shadows are baked into the existing map cache.
 - No extra full-map layer or per-frame texture generation; materials need no external downloads. Main and pause settings offer persistent Textures and shading / Simple appearance in PL/EN.
 - Existing collision, navigation, passages, windows, stairs, sites and spawns are preserved.
+
+- Skin editor: 50–400% button/wheel zoom around the pointer, pan and reset, with unchanged model-space brush data and undo.
+- Gameplay mouse capture keeps the OS cursor inside the game and displays the configured reticle. Escape, shop, chats and focus loss release capture and clear held input. Capture can be disabled in settings.
 
 ---
 

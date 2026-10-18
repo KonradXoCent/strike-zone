@@ -364,7 +364,7 @@ let FOG=true;const FG=document.createElement('canvas');FG.width=1000;FG.height=6
 function rayDist(x,y,a,mx){const dx=Math.cos(a),dy=Math.sin(a);let best=mx;if(GR){let dd=0;while(dd<mx){if(sol(x+dx*dd,y+dy*dd,false))break;dd+=6}best=Math.min(mx,dd)}for(const w of walls){let t0=0,t1=best;if(Math.abs(dx)<1e-9){if(x<w[0]||x>w[0]+w[2])continue}else{let a1=(w[0]-x)/dx,a2=(w[0]+w[2]-x)/dx;if(a1>a2){const q=a1;a1=a2;a2=q}t0=Math.max(t0,a1);t1=Math.min(t1,a2)}if(Math.abs(dy)<1e-9){if(y<w[1]||y>w[1]+w[3])continue}else{let b1=(w[1]-y)/dy,b2=(w[1]+w[3]-y)/dy;if(b1>b2){const q=b1;b1=b2;b2=q}t0=Math.max(t0,b1);t1=Math.min(t1,b2)}if(t0<=t1&&t0>0&&t0<best)best=t0}
 if(G&&G.sm)G.sm.forEach(s=>{const ox=x-s.x,oy=y-s.y,b=ox*dx+oy*dy,c=ox*ox+oy*oy-s.r*s.r;if(c<0){best=Math.min(best,60);return}const d=b*b-c;if(d>=0){const t=-b-Math.sqrt(d);if(t>0&&t<best)best=t}});return best}
 function drawFog(g,me){if(!FOG)return;const R0=FOGR(),K=4,sx=(me.x-cam.x)/K,sy=(me.y-cam.y)/K,fw=FG.width,fh=FG.height;fgx.globalCompositeOperation='source-over';fgx.clearRect(0,0,fw,fh);fgx.fillStyle='rgba(6,8,12,.86)';fgx.fillRect(0,0,fw,fh);fgx.globalCompositeOperation='destination-out';fgx.beginPath();const N=90;for(let i=0;i<=N;i++){const a=i/N*6.2832,d=rayDist(me.x,me.y,a,R0),x=sx+Math.cos(a)*d/K,y=sy+Math.sin(a)*d/K;if(i)fgx.lineTo(x,y);else fgx.moveTo(x,y)}fgx.closePath();const gr=fgx.createRadialGradient(sx,sy,18,sx,sy,R0/K);gr.addColorStop(0,'rgba(0,0,0,1)');gr.addColorStop(1,'rgba(0,0,0,.3)');fgx.fillStyle=gr;fgx.fill();cx.imageSmoothingEnabled=true;cx.drawImage(FG,0,0,fw,fh,0,0,VW,640)}
-let VW=1000;function fit(){VW=Math.max(320,Math.round(640*innerWidth/Math.max(1,innerHeight)));cv.width=VW;cv.height=640;FG.width=Math.ceil(VW/4);FG.height=160;cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px'}addEventListener('resize',fit);
+let VW=1000;function fit(){VW=Math.max(320,Math.round(640*innerWidth/Math.max(1,innerHeight)));cv.width=VW;cv.height=640;FG.width=Math.ceil(VW/4);FG.height=160;cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px'}addEventListener('resize',()=>fit());
 function drawDecor(g){if(!g.dec||g.dm!=sel.map){g.dm=sel.map;g.dec=[];let n=0,tr=0;while(n<260&&tr++<3000){const x=Math.random()*WW,y=Math.random()*WH;if(hitW(x,y))continue;g.dec.push({x,y,r:6+Math.random()*26,t:n%9==0?1:n%23==0?2:0});n++}}g.dec.forEach(d=>{if(d.t==0){cx.fillStyle='rgba(0,0,0,.07)';cx.beginPath();cx.ellipse(d.x,d.y,d.r,d.r*.6,0,0,7);cx.fill()}else if(d.t==1){cx.fillStyle=(sel.map==4||sel.map==6)?'#3f6b3a':'#00000030';cx.beginPath();cx.arc(d.x,d.y,5+d.r/4,0,7);cx.fill()}else{cx.fillStyle='#6a3a2c';cx.beginPath();cx.arc(d.x,d.y,9,0,7);cx.fill();cx.strokeStyle='#2b1a14';cx.lineWidth=2;cx.stroke()}})}
 const MI=['💣','🔁','☠️','🎯','🔫','🔫','💥','🔪','🚩','🪂','🏁','🤝','🧟','🔫'],MD=['5v5 bomb defusal, MR12, ranked','Retake a planted site, random sides','Free-for-all with respawns','AWP, SSG 08, G3SG1, SCAR-20 only','Desert Eagle only','Pistols only','Shotguns only','Knives only','Steal the enemy flag','16 players, storm, loot crates','5v5 respawns, first team to 200 kills','Play with friends on one team — bots fill empty slots','Infect or survive: classes, walls, mines','Teams level up their weapon — knife kill at the end wins'],MAD=['Dust Yard: long A, mid doors, B tunnels','Office: halls and rooms','Mirage: palace, apartments, mid','Inferno: banana and apartments','Overpass: park and canals','Nuke: industrial yard','Storm Island: forest island with houses','Frost Peaks: snowy cliffs and cabins','Metro City: shops, banks and streets','Dead Mall: shops and wide halls','Outbreak Lab: corridors and labs','Rotten Village: houses and fences'];let MV=null;
 function pmClose(){$('pm').style.display='none';if(MV){MV.on=0;clearInterval(MV.iv);MV=null}}
@@ -778,7 +778,7 @@ addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=1;if((e.key=='Tab'||e.k
  if(e.key=='r'&&W[m.cur].mag)m.rl=1.5;
  if(e.key=='1'&&m.pri)m.cur=m.pri;if(e.key=='2'&&m.sec)m.cur=m.sec;if(e.key=='3')m.cur='knife';if('123'.includes(e.key))m.nd=null;if(e.key=='4'&&m.alive){const o=Object.keys(GP).filter(k=>m.g[k]),i=o.indexOf(m.nd);m.nd=i<0?o[0]||null:o[i+1]||null}});
 addEventListener('keyup',e=>keys[e.key.toLowerCase()]=0);
-cv.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect();mouse.x=(e.clientX-r.left)*VW/r.width;mouse.y=(e.clientY-r.top)*640/r.height});
+cv.addEventListener('mousemove',e=>{if(document.pointerLockElement===cv)return;const r=cv.getBoundingClientRect();mouse.x=(e.clientX-r.left)*VW/r.width;mouse.y=(e.clientY-r.top)*640/r.height});
 cv.addEventListener('contextmenu',e=>e.preventDefault());cv.addEventListener('mousedown',e=>{if(e.button==2){mouse.r=1;return}mouse.d=1;const m=G&&G.me;if(m&&!m.alive)specNext(1);if(m&&m.nd&&m.alive&&m.g[m.nd]&&G.ph=='live'){const k=m.nd;m.g[k]=0;m.nd=null;mouse.d=0;throwG(m,mouse.x/VIEW_ZOOM+cam.x,mouse.y/VIEW_ZOOM+cam.y,k)}});addEventListener('mouseup',e=>{if(e.button==2)mouse.r=0;else mouse.d=0});
 function mv(p,dx,dy){p.wk=(p.wk||0)+Math.abs(dx)+Math.abs(dy);if(p.wk>42){p.wk=0;snd('step',p.x,p.y)}p.x+=dx;if(hitW(p.x,p.y))p.x-=dx;p.y+=dy;if(hitW(p.x,p.y))p.y-=dy;p.x=Math.max(R,Math.min(WW-R,p.x));p.y=Math.max(R,Math.min(WH-R,p.y))}
 function col(p){if(!p.human){const id=botSkin(p,p.cur);return id?sk(id).c:'#ffd37a'}const id=eqOf(p,p.cur);return id?sk(id).c:'#ffd37a'}
@@ -2878,7 +2878,7 @@ function creatorDrawSkin(){const c=$('creator-skin');if(!c)return;const q=c.getC
 function creatorBindSkin(){const c=$('creator-skin'),s=creatorState();let stroke=null;const point=e=>{const r=c.getBoundingClientRect(),t=creatorSkinTransform();return [Math.round(((e.clientX-r.left)/r.width*c.width-t.x)/t.scale*4)/4,Math.round(((e.clientY-r.top)/r.height*c.height-t.y)/t.scale*4)/4];};const valid=p=>p.every(n=>n>=-32&&n<=120);
  c.onpointerdown=e=>{if(!s.brush||e.button!==0)return;if(s.skin.strokes.length>=80){creatorNotice('Limit 80 pociągnięć pędzla. Cofnij część rysunku lub zacznij nowy projekt.',true);return;}const p=point(e);if(!valid(p))return;e.preventDefault();c.setPointerCapture(e.pointerId);stroke={color:s.brushColor,size:s.brushSize,points:[p]};s.skin.strokes.push(stroke);s.dirty=true;creatorDrawSkin();};
  c.onpointermove=e=>{if(!stroke)return;const p=point(e),old=stroke.points.at(-1);if(valid(p)&&Math.hypot(p[0]-old[0],p[1]-old[1])>.35){if(stroke.points.length<120)stroke.points.push(p);else stroke.points[119]=p;creatorDrawSkin();}};
- c.onpointerup=e=>{stroke=null;if(c.hasPointerCapture(e.pointerId))c.releasePointerCapture(e.pointerId);};c.onpointercancel=()=>{stroke=null;};creatorDrawSkin();}
+ c.onpointerup=e=>{stroke=null;if(c.hasPointerCapture(e.pointerId))c.releasePointerCapture(e.pointerId);};c.onpointercancel=c.onlostpointercapture=()=>{stroke=null;};creatorDrawSkin();}
 function creatorUndoStroke(){const s=creatorState();s.skin.strokes.pop();s.dirty=true;creatorDrawSkin();}
 function creatorClearStrokes(){const s=creatorState();s.skin.strokes=[];s.dirty=true;creatorDrawSkin();}
 function creatorSaveSkin(equip=false){equip=false;try{const s=creatorState(),p=creatorParseSkin(s.skin),store=creatorClone(s.store),index=store.skins.findIndex(q=>q.id===p.id);if(index<0&&store.skins.length>=48)throw Error('Możesz zapisać 48 skinów. Wyeksportuj i usuń jeden projekt, aby zrobić miejsce.');if(index<0)store.skins.push(p);else store.skins[index]=p;for(const k of Object.keys(store.loadout))if(store.loadout[k]===p.id&&k!==p.weapon)delete store.loadout[k];if(equip)store.loadout[p.weapon]=p.id;creatorCommit(store);s.skin=p;s.dirty=false;creatorTab('skins');creatorNotice(equip?'Zapisano i wyposażono własny projekt. Będzie widoczny dla ciebie podczas gry.':'Zapisano projekt skina „'+p.name+'”.');return true;}catch(e){creatorNotice(e.message,true);return false;}}
@@ -3327,8 +3327,28 @@ mkServer=async function(){sel.mode=$('sm').value;sel.map=+$('sp').value;if(!mapS
 @media(prefers-reduced-motion:reduce){.hub-progress>i,.hub-vote-progress>i,.hub-map-art>img,.hub-mode-card{transition:none}}
 
 </style>
+<style>
+.sz-skin-view{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:7px;padding:12px 14px;border-bottom:1px solid #ffffff10;background:#111c2bc9;position:relative;z-index:1;font:11px system-ui;color:#9bb0ca}
+.sz-skin-view>span{margin-right:auto}.sz-skin-view button{min-width:31px;min-height:30px;padding:5px 10px;font:12px system-ui}.sz-skin-view button[aria-pressed=true]{color:#172131;background:#e6bb61;border-color:#e6bb61}.sz-skin-view output{min-width:43px;text-align:center;font-variant-numeric:tabular-nums;color:#e9eff8}.sz-skin-view-help{margin:0!important;padding:0 18px 15px!important;font:10px/1.7 system-ui!important;color:#8fa7c0!important}.cr-skin-stage:has(.sz-skin-view):before{display:none}.cr-skin-stage canvas.sz-skin-pan{cursor:grab}.cr-skin-stage canvas.sz-skin-drag{cursor:grabbing}
+#cv.sz-game-aim{cursor:none}
+#sz-mouse-capture{position:absolute;left:50%;bottom:76px;transform:translateX(-50%);z-index:5;max-width:calc(100% - 32px);padding:10px 17px;border:1px solid #d5b77766;background:#101923ed;box-shadow:0 5px 22px #0006;border-radius:7px;font:12px/1.5 system-ui;color:#f0dcac;text-align:center;cursor:pointer}#sz-mouse-capture[hidden]{display:none}#sz-mouse-capture small{display:block;color:#aebcc8;font-size:10px}
+[data-pointer-settings] p{font:12px/1.7 system-ui;color:#9aafbf}[data-pointer-settings] label{font:12px system-ui}
+
+</style>
 <script>
 (function(root){const pairs=`
+Widok|View
+Oddal widok|Zoom out
+Przybliż widok|Zoom in
+Reset widoku|Reset view
+Przesuwanie|Pan
+Kółko: zoom · Spacja + przeciągnij lub środkowy przycisk: przesuń|Wheel: zoom · Space + drag or middle mouse button: pan
+Sterowanie myszą|Mouse controls
+Przechwytuj mysz podczas gry|Capture the mouse during gameplay
+Kursor pozostaje w oknie gry. Escape otwiera menu i zwalnia mysz; zakupy i rozmowy również ją zwalniają.|The cursor stays inside the game window. Escape opens the menu and releases the mouse; the shop and chats release it too.
+Kliknij, aby przechwycić mysz|Click to capture the mouse
+Mysz nie została przechwycona. Kliknij, aby spróbować ponownie.|The mouse could not be captured. Click to try again.
+Escape — menu i zwolnienie myszy|Escape — menu and release mouse
 Wygląd map|Map appearance
 Materiały ścian, podłoża i skrzyń oraz delikatne cienie.|Wall, floor and crate materials with subtle shadows.
 Szczegółowość|Detail level
@@ -5321,6 +5341,95 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
  window.szMessages=view;
  setInterval(protect,1000);protect();
 })();
+
+</script>
+<script>
+/* Editor view only. Zoom and pan never become part of a published skin. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else{root.SzSkinView=api;api.mount(root);}})(globalThis,function(){
+ 'use strict';
+ const MIN=.5,MAX=4,clamp=n=>Math.max(MIN,Math.min(MAX,Number(n)||1));
+ function transform(base,width,height,view){const zoom=clamp(view.zoom);return{scale:base.scale*zoom,x:width/2+(base.x-width/2)*zoom+view.x,y:height/2+(base.y-height/2)*zoom+view.y};}
+ function zoomAt(view,next,anchor,width,height){next=clamp(next);const ratio=next/clamp(view.zoom);return{...view,zoom:next,x:anchor.x-width/2-(anchor.x-width/2-view.x)*ratio,y:anchor.y-height/2-(anchor.y-height/2-view.y)*ratio};}
+ function mount(root){
+  const views=new WeakMap(),t=s=>root.szLocale?.t(s)||s;let refreshLanguage=null;
+  document.addEventListener('sz-language',()=>refreshLanguage?.());
+  function view(){const state=creatorState();if(!views.has(state))views.set(state,{zoom:1,x:0,y:0,panMode:false});return views.get(state);}
+  const original={transform:creatorSkinTransform,bind:creatorBindSkin};
+  creatorSkinTransform=function(){const c=$('creator-skin');return transform(original.transform(),c.width,c.height,view());};
+  function update(){const c=$('creator-skin');if(!c)return;const v=view(),bar=c.closest('.cr-skin-stage').querySelector('[data-skin-view]');
+   if(bar){bar.querySelector('output').value=Math.round(v.zoom*100)+'%';bar.querySelector('[data-skin-zoom="out"]').disabled=v.zoom<=MIN;bar.querySelector('[data-skin-zoom="in"]').disabled=v.zoom>=MAX;const pan=bar.querySelector('[data-skin-pan]');pan.setAttribute('aria-pressed',String(v.panMode));c.classList.toggle('sz-skin-pan',v.panMode);}
+   creatorDrawSkin();
+  }
+  function setZoom(value,anchor){const c=$('creator-skin');if(!c)return;Object.assign(view(),zoomAt(view(),value,anchor||{x:c.width/2,y:c.height/2},c.width,c.height));update();}
+  function reset(){Object.assign(view(),{zoom:1,x:0,y:0});update();}
+  creatorBindSkin=function(){original.bind();const c=$('creator-skin'),stage=c.closest('.cr-skin-stage');c.tabIndex=0;let pan=null,space=false,paintPointer=null;
+   const bar=document.createElement('div');bar.className='sz-skin-view';bar.dataset.skinView='';bar.dataset.noTranslate='';
+   function labels(){bar.innerHTML='<span>'+t('Widok')+'</span><button type="button" data-skin-zoom="out" aria-label="'+t('Oddal widok')+'">−</button><output aria-live="polite">100%</output><button type="button" data-skin-zoom="in" aria-label="'+t('Przybliż widok')+'">+</button><button type="button" data-skin-reset>'+t('Reset widoku')+'</button><button type="button" data-skin-pan aria-pressed="false">'+t('Przesuwanie')+'</button>';
+    bar.querySelector('[data-skin-zoom="out"]').onclick=()=>setZoom(view().zoom/1.25);bar.querySelector('[data-skin-zoom="in"]').onclick=()=>setZoom(view().zoom*1.25);bar.querySelector('[data-skin-reset]').onclick=reset;bar.querySelector('[data-skin-pan]').onclick=()=>{view().panMode=!view().panMode;update();};update();
+   }
+   stage.prepend(bar);const help=document.createElement('p');help.className='sz-skin-view-help';help.dataset.noTranslate='';stage.append(help);
+   const local=e=>{const r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*c.width/r.width,y:(e.clientY-r.top)*c.height/r.height};};
+   c.addEventListener('wheel',e=>{e.preventDefault();if(pan||paintPointer!==null)return;const delta=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?c.clientHeight:1);setZoom(view().zoom*Math.exp(-Math.max(-100,Math.min(100,delta))*.0025),local(e));},{passive:false});
+   c.addEventListener('keydown',e=>{if(e.code==='Space'){space=true;e.preventDefault();}if(e.key==='+'||e.key==='='){e.preventDefault();setZoom(view().zoom*1.25);}if(e.key==='-'){e.preventDefault();setZoom(view().zoom/1.25);}if(e.key==='0'){e.preventDefault();reset();}});
+   c.addEventListener('keyup',e=>{if(e.code==='Space'){space=false;e.preventDefault();}});
+   c.addEventListener('pointerdown',e=>{c.focus({preventScroll:true});if(e.button!==1&&!(e.button===0&&(space||view().panMode))){if(e.button===0&&creatorState().brush)paintPointer=e.pointerId;return;}e.preventDefault();e.stopImmediatePropagation();const point=local(e),v=view();pan={id:e.pointerId,point,x:v.x,y:v.y};c.setPointerCapture(e.pointerId);c.classList.add('sz-skin-drag');},true);
+   c.addEventListener('pointermove',e=>{if(!pan||pan.id!==e.pointerId)return;e.preventDefault();e.stopImmediatePropagation();const point=local(e),v=view();v.x=pan.x+point.x-pan.point.x;v.y=pan.y+point.y-pan.point.y;update();},true);
+   function end(e){if(pan&&(!e||pan.id===e.pointerId)){const id=pan.id;pan=null;c.classList.remove('sz-skin-drag');if(c.hasPointerCapture(id))c.releasePointerCapture(id);}paintPointer=null;space=false;}
+   c.addEventListener('pointerup',end,true);c.addEventListener('pointercancel',end,true);c.addEventListener('lostpointercapture',()=>{pan=null;paintPointer=null;c.classList.remove('sz-skin-drag');});c.addEventListener('blur',()=>{end();c.onpointercancel?.();});
+   function language(){labels();help.textContent=t('Kółko: zoom · Spacja + przeciągnij lub środkowy przycisk: przesuń');}
+   language();refreshLanguage=()=>{if(c.isConnected)language();};
+  };
+  Object.assign(root.SzSkinView,{view,setZoom,reset});
+ }
+ return{MIN,MAX,clamp,transform,zoomAt,mount};
+});
+
+</script>
+<script>
+/* Keep the game's moving reticle, using relative movement while the OS cursor is locked. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else{root.SzGameInput=api;api.mount(root);}})(globalThis,function(){
+ 'use strict';
+ function move(point,dx,dy,width,height,rect){const finite=n=>Number.isFinite(n)?n:0;return{x:Math.max(0,Math.min(width,finite(point.x)+finite(dx)*width/Math.max(1,rect.width))),y:Math.max(0,Math.min(height,finite(point.y)+finite(dy)*height/Math.max(1,rect.height)))};}
+ function mount(root){
+  const t=s=>root.szLocale?.t(s)||s,canvas=$('cv'),game=$('game');let pending=false,failed=false,wasLocked=false,expectedExit=false,requestId=0,timeout,gestureTimer,gesture='',escapeUntil=0,rect=canvas.getBoundingClientRect();
+  const enabled=()=>ST_().pointerLock!==0,locked=()=>document.pointerLockElement===canvas;
+  const visible=id=>{const e=$(id);return !!e&&!e.hidden&&e.style.display!==''&&e.style.display!=='none';};
+  function playable(){return !!G&&!game.hidden&&!G.paused&&!G.intro&&!G.over&&!visible('buy')&&!visible('ov')&&!visible('pm')&&!root.document.querySelector('dialog[open]')&&!document.querySelector('#br-map:not([hidden])');}
+  function clear(){keys={};mouse.d=mouse.r=0;if(G?.client)netSend({t:'in',k:{w:false,a:false,s:false,d:false,e:false},an:G.me.a||0,nd:G.me.nd||null,f:false});}
+  function release(){requestId++;pending=false;clearTimeout(timeout);if(locked()&&!expectedExit){expectedExit=true;document.exitPointerLock?.();}clear();}
+  const hint=document.createElement('button');hint.id='sz-mouse-capture';hint.type='button';hint.hidden=true;hint.dataset.noTranslate='';game.append(hint);
+  function sync(){const active=playable();if((locked()||pending)&&(!active||!enabled()))release();canvas.classList.toggle('sz-game-aim',active);const hidden=!active||!enabled()||locked();if(hint.hidden!==hidden)hint.hidden=hidden;const text=failed?t('Mysz nie została przechwycona. Kliknij, aby spróbować ponownie.'):t('Kliknij, aby przechwycić mysz');if(hint.dataset.text!==text){hint.dataset.text=text;hint.replaceChildren(document.createTextNode(text),Object.assign(document.createElement('small'),{textContent:t('Escape — menu i zwolnienie myszy')}));}}
+  function reject(id){if(id!==requestId)return;pending=false;failed=true;clearTimeout(timeout);sync();}
+  function request(){if(!playable()||!enabled()||locked()||pending)return;clear();rect=canvas.getBoundingClientRect();pending=true;failed=false;const id=++requestId;try{if(!canvas.requestPointerLock){reject(id);return;}const result=canvas.requestPointerLock();if(result&&typeof result.catch==='function')result.catch(()=>reject(id));timeout=setTimeout(()=>{if(!locked())reject(id);},2000);}catch{reject(id);}sync();}
+  hint.onclick=request;
+  document.addEventListener('pointerlockchange',()=>{const now=locked(),lost=wasLocked&&!now,intentional=expectedExit;wasLocked=now;expectedExit=false;pending=false;clearTimeout(timeout);
+   if(now){failed=false;rect=canvas.getBoundingClientRect();if(!playable()||!enabled())release();}
+   else if(lost){clear();if(!intentional&&playable()){escapeUntil=performance.now()+300;togglePause();}}sync();
+  });
+  document.addEventListener('pointerlockerror',()=>reject(requestId));
+  canvas.addEventListener('mousedown',e=>{if(!playable()){clear();e.stopImmediatePropagation();return;}if(enabled()&&!locked()&&!failed){if(e.button===0)request();e.preventDefault();e.stopImmediatePropagation();}},true);
+  document.addEventListener('mousemove',e=>{if(!locked())return;const next=move(mouse,e.movementX,e.movementY,VW,640,rect);mouse.x=next.x;mouse.y=next.y;});
+  // Target handlers keep working in forms; gameplay's window handlers never see typing.
+  document.addEventListener('keydown',e=>{if(!G)return;const form=e.target.closest?.('input,textarea,select,[contenteditable="true"],dialog');if(form||(e.key!=='Escape'&&!playable()&&e.key.toLowerCase()!=='b')){clear();e.stopPropagation();}});
+  function markGesture(kind){gesture=kind;clearTimeout(gestureTimer);gestureTimer=setTimeout(()=>gesture='',0);}
+  addEventListener('keydown',e=>{markGesture('key');if(e.key==='Escape'&&(locked()||performance.now()<escapeUntil)){e.preventDefault();e.stopImmediatePropagation();escapeUntil=performance.now()+300;if(locked()&&playable())togglePause();release();sync();}},true);
+  addEventListener('keyup',e=>{if(e.key==='Escape')escapeUntil=0;},true);
+  addEventListener('click',()=>markGesture('click'),true);
+  function wrap(name,fn){const old=root[name];if(typeof old==='function')root[name]=function(...args){return fn(old,this,args);};}
+  for(const name of['togglePause','skipIntro','showBuy','brToggleMap'])wrap(name,(old,self,args)=>{const before=playable(),result=old.apply(self,args);sync();if(!before&&playable()&&gesture&&(name!=='togglePause'||gesture==='click'))request();return result;});
+  for(const name of['begin0','beginClient'])wrap(name,(old,self,args)=>{failed=false;const result=old.apply(self,args);sync();return result;});
+  wrap('quit',(old,self,args)=>{release();const result=old.apply(self,args);sync();return result;});
+  wrap('fit',(old,self,args)=>{const width=VW,result=old.apply(self,args);mouse.x=Math.max(0,Math.min(VW,mouse.x*VW/Math.max(1,width)));mouse.y=Math.max(0,Math.min(640,mouse.y));rect=canvas.getBoundingClientRect();return result;});
+  function blur(){release();if(playable())togglePause();sync();}addEventListener('blur',blur);document.addEventListener('visibilitychange',()=>{if(document.hidden)blur();});
+  const observer=new MutationObserver(sync),observed=new WeakSet();function watch(e){if(!e||observed.has(e))return;observed.add(e);observer.observe(e,{subtree:true,attributes:true,attributeFilter:['hidden','style','open']});}
+  watch(game);watch($('pm'));watch($('br-map'));document.querySelectorAll('dialog').forEach(watch);new MutationObserver(records=>{for(const r of records)for(const n of r.addedNodes)if(n.nodeType===1){if(n.matches('dialog'))watch(n);n.querySelectorAll('dialog').forEach(watch);}sync();}).observe(document.body,{childList:true});
+  const oldSettings=setTab;function settings(target){if(target.querySelector('[data-pointer-settings]'))return;const panel=document.createElement('section');panel.className='box';panel.dataset.pointerSettings='';panel.dataset.noTranslate='';panel.innerHTML='<h3>'+t('Sterowanie myszą')+'</h3><label><input type="checkbox" data-pointer-lock '+(enabled()?'checked':'')+'> '+t('Przechwytuj mysz podczas gry')+'</label><p>'+t('Kursor pozostaje w oknie gry. Escape otwiera menu i zwalnia mysz; zakupy i rozmowy również ją zwalniają.')+'</p>';panel.querySelector('input').onchange=e=>root.SzGameInput.setEnabled(e.target.checked);target.append(panel);}
+  setTab=function(mm){const result=oldSettings(mm);settings(mm?.nodeType?mm:$('main'));return result;};
+  document.addEventListener('sz-language',()=>{for(const panel of document.querySelectorAll('[data-pointer-settings]')){const target=panel.parentElement;panel.remove();settings(target);}hint.dataset.text='';sync();});
+  Object.assign(root.SzGameInput,{enabled,locked,playable,request,release,sync,setEnabled(value){ST_().pointerLock=value?1:0;failed=false;save();sync();for(const el of document.querySelectorAll('[data-pointer-lock]'))el.checked=!!value;}});sync();
+ }
+ return{move,mount};
+});
 
 </script>
 <!-- SZ SHARED UI END -->
