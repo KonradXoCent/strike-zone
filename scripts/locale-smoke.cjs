@@ -31,7 +31,7 @@ fs.writeFileSync(tmp+'/package.json',JSON.stringify({main:'main.cjs'}));fs.write
  const plWords=/[ąćęłńóśźż]|\b(?:granaty|nowy|kilof|wycofaj|jednolity|pasy|moro|piksele|baza|akcent|detale|projekt|lokalne|arsenale|dzisiaj|ocen|okien|egzemplarzy|skrzynie|najnowsze|edytor|masz|zestawy|mapy|mapa|skiny|gracze|boty|zatwierdzone|zatwierdzona|autor|wersja|przedmioty|odrzucone|ekwipunek|anuluj|zapisz|usuń|szukaj|brak|tryb|graj|polub|skrzynki|oczekuje|nazwa|dostępne|wymagana|kupno|cena|pancerz|wybierz|testuj|podgląd)\b/iu;
  const enPhrases=/\b(?:Save settings|Main menu|Sign in|Loading map|Leave match|Open case|Search skins|Battle pass|Close window|Buy menu|Your team|Game mode|Log out|Capture the mouse)\b/i;
  const findings=snapshots.flatMap(s=>s.text.filter(text=>s.language==='en'?plWords.test(text):enPhrases.test(text)).map(text=>({language:s.language,screen:s.name,text})));
- fs.writeFileSync(process.env.SZ_LOCALE_REPORT||'/tmp/sz-locale-report.json',JSON.stringify({snapshots,findings,errors},null,2));
+ const reportPath=process.env.SZ_LOCALE_REPORT||path.join(os.tmpdir(),'sz-locale-report.json');fs.mkdirSync(path.dirname(reportPath),{recursive:true});fs.writeFileSync(reportPath,JSON.stringify({snapshots,findings,errors},null,2));
  if(process.env.SZ_LOCALE_DISCOVERY){console.log(JSON.stringify(findings,null,2));console.log('Captured '+snapshots.length+' screens');}else{assert.deepEqual(findings,[],'Mixed interface translations');assert.deepEqual(errors,[]);console.log('PASS '+snapshots.length+' PL/EN screen audits: menu, inventory, Workshop, moderation, editor, arsenal, mode choice, pause and every shop category');}
  completed=true;
  }finally{await app?.close();await db.close();fs.rmSync(tmp,{recursive:true,force:true});}
