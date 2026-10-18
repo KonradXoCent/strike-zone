@@ -1,5 +1,9 @@
 Strike Zone 2D 1.4.0 — wersja testowa
 
+- Właściciel Warsztatu może wysyłać mapy i skiny bez limitu 10 oczekujących / 10 dziennie; pozostali gracze zachowują te limity.
+- Mapy zapisują tryb autora (TDM, CTF lub rozbrajanie bomby). Zatwierdzone mapy działają z botami i w lobby.
+- Liczniki zagrań, jedno odwracalne polubienie na konto, filtry trybu i sortowanie popularności. Zagranie liczy się po minucie aktywnej gry; lobby liczy jeden mecz hosta. Ponowne wejście nie nabija licznika.
+- Automatyczny awans map do głównej puli ich trybu. Domyślnie 50 zagrań i 10 polubień, jedno miejsce na tryb. Właściciel ustawia progi i liczbę miejsc w Moderacji. Zmiana trybu zatwierdzonej rewizji rozpoczyna nowe liczniki.
 - Panel znajomych w grze: ustawione zdjęcia zamiast emoji, nick i status Offline / Online / W Meczu (In Match). Zdjęcia zapisanych profili są widoczne również offline.
 - Po kliknięciu znajomego przycisk Trade obok Usuń / Delete. Wysyłanie, przyjmowanie i potwierdzanie wymiany wymagają aktywnego połączenia obu graczy; rozłączenie przed wysłaniem blokuje zaproszenie.
 - Wspólny wybór języka PL/EN dla launchera i gry, z flagami. Zmiana działa także podczas uruchomionej gry i jest zapamiętywana.
@@ -9,10 +13,13 @@ Strike Zone 2D 1.4.0 — wersja testowa
 - Serwery: twórca zachowuje rolę hosta po kliknięciu własnego serwera. Tworzenie czeka na zapis wpisu; komunikat zgłasza nieudaną publikację. Dołączenie do trwającego meczu używa tej samej sesji i symulacji hosta.
 - Naprawiony błąd zatrzymujący grę klienta niosącego bombę. Postęp podkładania jest synchronizowany, a ekran oczekiwania chroni przed rysowaniem niepełnego stanu meczu.
 
-Wersja testowa: StrikeZone-Test-1.4.0-test.2.exe. Kanał stabilny pozostaje przy 1.3.0 do publikacji wydania 1.4.0.
+Wersja testowa: StrikeZone-Test-1.4.0-test.3.exe. Kanał stabilny pozostaje przy 1.3.0 do publikacji wydania 1.4.0.
 
 English
 
+- Workshop owners have unlimited map/skin submissions; regular accounts retain both quotas.
+- Authored map modes, bots/lobby support, server-counted plays, unique reversible likes and popularity filters.
+- Automatic mode-specific promotion with owner-configurable thresholds and slots. Defaults: 50 plays, 10 likes and one slot per mode. Revisions that change mode reset popularity.
 - In-game friends show uploaded profile pictures, nicknames and Offline / Online / In Match status, including saved pictures for offline players.
 - Click a friend for Trade beside Delete. Sending, accepting and confirming trades require both players online; disconnecting before invitation delivery blocks it.
 - Shared PL/EN launcher and game language preferences, applied immediately and remembered.

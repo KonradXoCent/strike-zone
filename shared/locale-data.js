@@ -1,5 +1,39 @@
 (function(root){const pairs=`
 Gracz|Player
+MAPA WARSZTATOWA|WORKSHOP MAP
+Szukaj projektu lub autora|Search project or author
+Tryb mapy|Map mode
+Następna →|Next →
+← Poprzednia|← Previous
+Boty wypełniają wolne miejsca. Zagranie nalicza się po minucie aktywnej gry, najwyżej raz na gracza i mapę co 5 minut. W lobby liczy się mecz hosta.|Bots fill empty slots. A play counts after one minute of active gameplay, at most once per player and map every 5 minutes. Lobbies count the host's match.
+Nieobsługiwany tryb mapy.|Unsupported map mode.
+Test jest treningiem lokalnym, bez nagród i zmian statystyk konta. Po zatwierdzeniu mapa będzie dostępna z botami i w lobby w wybranym tutaj trybie.|This is local practice with no rewards or account stat changes. Once approved, the map can be played with bots and in lobbies in the selected mode.
+Wszystkie tryby|All modes
+Sortowanie map|Sort maps
+Popularne|Popular
+Najwięcej zagrań|Most played
+Najwięcej polubień|Most liked
+zagrań|plays
+polubień|likes
+W głównej puli|In the main pool
+Próg awansu:|Promotion threshold:
+Jedno polubienie na konto. Możesz je cofnąć.|One like per account. You can remove it.
+Zaloguj się, aby polubić mapę.|Log in to like this map.
+Lubisz to|Liked
+Polub mapę|Like map
+Awans map do głównej puli|Promote maps to the main pool
+Najpopularniejsze zatwierdzone mapy awansują do puli swojego trybu po osiągnięciu obu progów.|The most popular approved maps enter their mode's pool once both thresholds are met.
+Automatyczny awans|Automatic promotion
+Minimum zagrań|Minimum plays
+Minimum polubień|Minimum likes
+Map w puli na tryb|Pool maps per mode
+Zapisz zasady awansu|Save promotion rules
+Ranking łączy polubienia i zagrania względem ustawionych progów. Wycofana mapa wypada z puli.|The ranking combines likes and plays relative to your thresholds. Withdrawn maps leave the pool.
+Konto właściciela: bez limitu zgłoszeń map i skinów.|Owner account: unlimited map and skin submissions.
+Limit zgłoszeń: 10 oczekujących i 10 wysłanych w ciągu 24 godzin.|Submission limit: 10 pending and 10 sent within 24 hours.
+Nie udało się zapisać polubienia. Spróbuj ponownie.|Could not save your like. Try again.
+Zapisano zasady awansu map.|Map promotion rules saved.
+Nie udało się zapisać zasad awansu. Sprawdź wartości i połączenie.|Could not save promotion rules. Check your values and connection.
 Graj|Play
 GRAJ|PLAY
 Zaloguj się|Log in
