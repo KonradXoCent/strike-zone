@@ -48,6 +48,8 @@ jobs:
         run: npm run test:workshop-maps
       - name: Test Workshop pool overrides, version replacement and case membership
         run: npm run test:moderation
+      - name: Test Workshop submissions, shared lobbies and skin ownership
+        run: npm run test:community
       - name: Audit Polish and English interface screens
         run: npm run test:locale
       - name: Test editor zoom, painting and gameplay pointer lock
