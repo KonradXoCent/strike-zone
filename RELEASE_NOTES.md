@@ -1,3 +1,21 @@
+Strike Zone 2D 1.4.1 — wspólne logo tarczy Z
+
+- Ta sama złota tarcza z literą Z w launcherze, panelu uruchamiania, menu gry oraz na ekranach startowym i wczytywania map.
+- Nowe ikony aplikacji, okien, pulpitu, paska zadań, instalatora i deinstalatora. Pliki PNG oraz ikony Windows mają przezroczyste tło i rozmiary dopasowane do małych ikon.
+- Logo jest osadzone także w samodzielnym HTML gry. Kompilacja sprawdza, czy znak w grze odpowiada ikonie aplikacji.
+
+Aktualizacja obejmuje launcher i grę przez dotychczasowy kanał. Pobierz ją, a następnie wybierz instalację i ponowne uruchomienie. Nowa instalacja: StrikeZone-Setup-1.4.1.exe.
+
+English
+
+- The same gold Z shield now appears in the launcher, launch panel, game menu, startup and map loading screens.
+- Updated application, window, desktop, taskbar, installer and uninstaller icons with transparent backgrounds and multiple Windows icon sizes.
+- The standalone game HTML embeds the same logo; packaging verifies that its image matches the application icon.
+
+Download and install the update through the existing launcher. New installation: StrikeZone-Setup-1.4.1.exe.
+
+---
+
 Strike Zone 2D 1.4.0 — Warsztat, czat i wspólna gra
 
 - Właściciel Warsztatu może wysyłać mapy i skiny bez limitu 10 oczekujących / 10 dziennie; pozostali gracze zachowują te limity.
