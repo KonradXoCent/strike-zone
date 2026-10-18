@@ -1,4 +1,9 @@
 (function(root){const pairs=`
+Wygląd map|Map appearance
+Materiały ścian, podłoża i skrzyń oraz delikatne cienie.|Wall, floor and crate materials with subtle shadows.
+Szczegółowość|Detail level
+Tekstury i cieniowanie|Textures and shading
+Uproszczony wygląd|Simple appearance
 Wybierz tryb gry|Select game mode
 Ty|You
 Strzelby|Shotguns

@@ -20,6 +20,7 @@
     "test:launcher": "npm run prepare:game && node scripts/launcher-smoke.cjs",
     "test:friends": "npm run prepare:game && node scripts/friends-smoke.cjs",
     "test:hub": "npm run prepare:game && node scripts/hub-smoke.cjs",
+    "test:materials": "npm run prepare:game && node scripts/materials-smoke.cjs",
     "test:workshop-maps": "npm run prepare:game && node scripts/workshop-maps-smoke.cjs",
     "test:community": "node scripts/community-smoke.cjs",
     "prepare:preview": "node scripts/prepare-preview.cjs",

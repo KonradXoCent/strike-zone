@@ -46,6 +46,8 @@ jobs:
         run: npm run test:hub
       - name: Test community map bots, counters, likes and promotion
         run: npm run test:workshop-maps
+      - name: Test cached map materials, geometry and render cost
+        run: npm run test:materials
       - name: Test shared languages, themes and persistent chat
         run: npm run test:social
       - name: Test two SDK clients through lobby and running server list

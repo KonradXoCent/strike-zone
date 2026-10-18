@@ -13,6 +13,13 @@ rozmiarów ikon Windows (16–256 px). Po zmianie obrazu uruchom
 
 ## Język, motywy i rozmowy
 
+Przygotowana wersja testowa dodaje materiały i cieniowanie map. W ustawieniach
+gry albo pauzy wybierz **Wygląd map → Tekstury i cieniowanie** lub
+**Uproszczony wygląd**. Rysowanie korzysta z dotychczasowego obrazu mapy,
+bez dodatkowej warstwy całej mapy i generowania tekstur w kolejnych klatkach.
+Szczegóły oraz sposób porównania kosztu renderowania:
+[docs/map-materials.md](docs/map-materials.md).
+
 W ustawieniach launchera wybierz PL lub EN. Zapamiętany wybór jest wspólny z grą
 i działa także przy otwartym oknie gry. Motywy launchera: Nocny, Leśny i Piaskowy.
 Wiadomości prywatne oraz grupy do 16 osób zachowują historię, trafiają również do

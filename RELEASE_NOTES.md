@@ -1,3 +1,20 @@
+W przygotowaniu — tekstury i cieniowanie map
+
+- Oryginalne tekstury ścian, podłoża i skrzyń w stylistyce strzelanek oglądanych z góry: piaskowiec, tynk, cegła, kamień z mchem, beton, metal i drewno.
+- Osobne materiały dla wszystkich 14 map oraz trzech motywów map Warsztatu. Szersze powierzchnie ścian, krawędzie i delikatne cienie poprawiają odczytanie kształtu przeszkód.
+- Szczegóły są przygotowywane w dotychczasowej warstwie mapy. Kolejne klatki korzystają z gotowego obrazu; dodatkowe tekstury nie wymagają pobierania plików.
+- W ustawieniach gry i pauzy wybór „Tekstury i cieniowanie” albo „Uproszczony wygląd”, z zapamiętywaniem i tłumaczeniem PL/EN.
+- Układy map i działanie przejść, okien, schodów oraz botów pozostają zgodne z istniejącymi danymi.
+
+English
+
+- Original top-down wall, floor and crate materials, with map-specific sandstone, plaster, brick, mossy stone, concrete, metal and wood.
+- All 14 built-in maps and all three Workshop themes use the new appearance. Wall caps, bevels and subtle contact shadows are baked into the existing map cache.
+- No extra full-map layer or per-frame texture generation; materials need no external downloads. Main and pause settings offer persistent Textures and shading / Simple appearance in PL/EN.
+- Existing collision, navigation, passages, windows, stairs, sites and spawns are preserved.
+
+---
+
 Strike Zone 2D 1.5.0 — ekwipunek, przepustka i nowe lobby
 
 - Wyszukiwanie skinów po nazwie skina lub broni, również z pominięciem polskich znaków. Filtry: noże, pistolety, pistolety maszynowe, karabiny, snajperki, strzelby i ciężkie karabiny. Wszystkie osiem modeli noży, StatTrak i posiadane skiny społeczności korzystają z tych samych filtrów.
