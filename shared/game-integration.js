@@ -2,6 +2,8 @@
    authentication in the launcher; previews retain their separate test sign-in. */
 (function(){'use strict';
  SzSettings.mount();
+ // Static map labels are baked in the selected language; rebuild once on a change.
+ document.addEventListener('sz-language',()=>{SCV=null;SCG=null;SCK='';});
  const api=window.strikeZoneDesktop;let control,unsubscribe,uid=null,friends=[],view;
  function protect(){const set=szLocale.protected;set.clear();try{set.add(P().name);for(const p of G?.ps||[])for(const s of [p.rname,p.name])if(s)set.add(s);for(const f of FR?.list||[])if(f.name)set.add(f.name);for(const f of F||[])if(f.n)set.add(f.n);for(const r of COMMUNITY?.rows||[])for(const s of [r.title,r.author_name])if(s)set.add(s);for(const r of COMMUNITY?.cache?.values()||[])if(r.payload?.name)set.add(r.payload.name);}catch{}}
  const options=setTab;setTab=function(mm){options(mm);const target=mm?.nodeType?mm:$('main'),box=document.createElement('section');box.className='sz-language-box';SzSettings.choices(box);target.prepend(box);};

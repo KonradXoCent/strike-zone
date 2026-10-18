@@ -9,3 +9,14 @@ test('complete Workshop labels and dynamic contract descriptions translate witho
  assert.match(l.format(template,{count:0}),/Each of the 0 skins/);assert.match(l.format(template,{count:'Mapa gracza'}),/Each of the Mapa gracza skins/);
  l.set('pl');assert.equal(l.t('Remove from the main pool'),'Wyłącz z głównej puli');assert.equal(l.format(template,{count:3}),template.replace('{count}','3'));
 });
+test('Workshop map labels translate the game prefix and preserve the entire authored title',()=>{
+ const l=create('en'),title='Warsztat Zapisz Północ <img src=x onerror=alert(1)>';
+ assert.equal(l.mapName('[Warsztat] '+title),'[Workshop] '+title);assert.equal(l.t('[Warsztat] '+title),'[Workshop] '+title);assert.equal(l.mapName('workshop / '+title),'Workshop / '+title);
+ const html=l.mapNameHTML('[Warsztat] '+title);assert.match(html,/data-map-label=/);assert.ok(html.includes('[Workshop] '));assert.ok(html.includes('data-user-content'));assert.ok(html.includes('&lt;img'));assert.ok(!html.includes('<img'));
+ l.set('pl');assert.equal(l.mapName('[Workshop] '+title),'[Warsztat] '+title);assert.equal(l.mapName('Workshop / '+title),'Warsztat / '+title);assert.equal(l.mapName('Mirage'),'Mirage');assert.equal(l.t('Strike Zone 2D'),'Strike Zone 2D');
+});
+test('language auditing includes object values and nested tips and detects mixed text without diacritics',()=>{
+ const{interfaceStrings,polishRemainder}=require('../scripts/test-support/locale-audit.cjs');const strings=interfaceStrings("const map={description:'Opis mapy',tips:['Dym',{text:'Przejście'}],nested:{label:'Warsztat'}};");
+ for(const s of['Opis mapy','Dym','Przejście','Warsztat'])assert.ok(strings.includes(s),s);
+ assert.equal(polishRemainder('Desert dziedziniec and tunele'),true);assert.equal(polishRemainder('Workshop maps and legitimate bombsite shots'),false);
+});
