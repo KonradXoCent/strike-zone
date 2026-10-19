@@ -12,6 +12,7 @@
  }
  function effect(kind,p){G.hns.phEffects.push({kind,x:p.x,y:p.y,left:.45});G.hns.phEffects=G.hns.phEffects.slice(-16);}
  function canSee(a,b,skip){if(G.ph==='buy'&&seeker(a)||distance(a,b)>H.SIGHT||!los(a,b))return false;const angle=Math.atan2(b.y-a.y,b.x-a.x),max=distance(a,b)-D.radius(b.form||b.propForm)-2;return !ensure().objects.some(o=>o!==skip&&o!==b&&D.ray(a,angle,o,max)!==null);}
+ function canRender(viewer,target,skip){return !seeker(G.me)||canSee(viewer,target,skip);}
  function nearest(p,aim){const w=ensure(),list=w.objects.filter(o=>distance(p,o)<112&&canSee(p,o,o));if(!list.length)return null;return list.sort((a,b)=>(aim&&distance(aim,a)<42?distance(aim,a):distance(p,a)+50)-(aim&&distance(aim,b)<42?distance(aim,b):distance(p,b)+50))[0];}
  function transform(p,object){if(!active()||G.client||G.paused||!p.alive||seeker(p)||G.ph==='end'||p.propMorph>0)return false;const w=ensure();if(!w.objects.includes(object)||distance(p,object)>112||!canSee(p,object,object))return false;const old=p.propForm;p.propForm=object.form;if(occupied(p,p.x,p.y)){p.propForm=old;if(p.human)toast(t('Za mało miejsca na ten przedmiot.'));return false;}p.propAngle=object.a;p.propMorph=3;p.propLocked=true;effect('morph',p);return true;}
  function reload(p){if(!seeker(p)||p.rl>0||(p.ammo[p.cur]||0)>=12)return;p.rl=1.4;}
@@ -75,9 +76,9 @@
   CACHE.set(form,c);return c;
  }
  function drawObject(o){const image=sprite(o.form);if(!image)return;cx.save();cx.translate(o.x,o.y);cx.rotate(o.a||0);cx.drawImage(image,-24,-24,48,48);cx.restore();}
- function drawWorld(viewer){const world=ensure();for(const o of world.objects)if(canSee(viewer,o,o))drawObject(o);if(G.me.alive&&!seeker(G.me)){const source=nearest(G.me,{x:mouse.x/VIEW_ZOOM+cam.x,y:mouse.y/VIEW_ZOOM+cam.y});if(source&&canSee(viewer,source,source)){cx.strokeStyle='#a6e8d480';cx.lineWidth=1.2;cx.setLineDash([3,4]);cx.beginPath();cx.arc(source.x,source.y,D.radius(source.form)+5,0,7);cx.stroke();cx.setLineDash([]);}}
-  for(const q of G.tr){if(Math.min(distance(viewer,{x:q.x,y:q.y}),distance(viewer,{x:q.x2,y:q.y2}))>H.SIGHT||!los(viewer,{x:q.x,y:q.y})&&!los(viewer,{x:q.x2,y:q.y2}))continue;cx.strokeStyle=q.c;cx.lineWidth=1.5;cx.beginPath();cx.moveTo(q.x,q.y);cx.lineTo(q.x2,q.y2);cx.stroke();}
-  for(const q of G.hns.phEffects||[])if(distance(viewer,q)<H.SIGHT&&los(viewer,q)){cx.strokeStyle=q.kind==='morph'?'#8df4d2':q.kind==='hit'?'#ebc083':'#d77d6f';cx.globalAlpha=Math.max(0,q.left/.45);cx.lineWidth=2;cx.beginPath();cx.arc(q.x,q.y,13+(1-q.left/.45)*20,0,7);cx.stroke();cx.globalAlpha=1;}
+ function drawWorld(viewer){const world=ensure();for(const o of world.objects)if(canRender(viewer,o,o))drawObject(o);if(G.me.alive&&!seeker(G.me)){const source=nearest(G.me,{x:mouse.x/VIEW_ZOOM+cam.x,y:mouse.y/VIEW_ZOOM+cam.y});if(source&&canSee(viewer,source,source)){cx.strokeStyle='#a6e8d480';cx.lineWidth=1.2;cx.setLineDash([3,4]);cx.beginPath();cx.arc(source.x,source.y,D.radius(source.form)+5,0,7);cx.stroke();cx.setLineDash([]);}}
+  for(const q of G.tr){if(seeker(G.me)&&(Math.min(distance(viewer,{x:q.x,y:q.y}),distance(viewer,{x:q.x2,y:q.y2}))>H.SIGHT||!los(viewer,{x:q.x,y:q.y})&&!los(viewer,{x:q.x2,y:q.y2})))continue;cx.strokeStyle=q.c;cx.lineWidth=1.5;cx.beginPath();cx.moveTo(q.x,q.y);cx.lineTo(q.x2,q.y2);cx.stroke();}
+  for(const q of G.hns.phEffects||[])if(canRender(viewer,q)){cx.strokeStyle=q.kind==='morph'?'#8df4d2':q.kind==='hit'?'#ebc083':'#d77d6f';cx.globalAlpha=Math.max(0,q.left/.45);cx.lineWidth=2;cx.beginPath();cx.arc(q.x,q.y,13+(1-q.left/.45)*20,0,7);cx.stroke();cx.globalAlpha=1;}
  }
  function drawActor(p){if(seeker(p))return false;drawObject({form:p.propForm,x:p.x,y:p.y,a:p.propAngle});if(p.team===G.me.team){cx.fillStyle='#a6e9d6';cx.textAlign='center';cx.font='11px system-ui';H.literal(cx,p===G.me?t('Ty'):nm(p),p.x,p.y-radius(p)-8);}return true;}
  function fitText(value,x,y,width){let size=12;cx.font=size+'px system-ui';while(size>9&&cx.measureText(value).width>width)cx.font=(--size)+'px system-ui';cx.fillText(value,x,y);}
@@ -89,5 +90,5 @@
  function clientTick(dt){G.tr=G.tr.filter(q=>(q.t-=dt)>0);for(const p of G.ps){p.propMorph=Math.max(0,(p.propMorph||0)-dt);afterPlayer(p);}}
  const originalMove=mv;mv=function(p,dx,dy){return active()&&G.propWorld?move(p,dx,dy):originalMove(p,dx,dy);};
  MODES.push(['prophunt','Prop Hunt']);MI.push('◇');MD.push('Become scenery, blend in and survive the hunters');SLOTS.prophunt=10;
- root.SzPropHunt={active,ensure,initRound,input,tickPlayer,afterPlayer,tickWorld,bot,shoot,speed,canSee,drawWorld,drawActor,drawHUD,clientTick,serialize,restore,transform,nearest,observe,move,occupied,sprite,constants:{RANGE,DAMAGE,PENALTY}};
+ root.SzPropHunt={active,ensure,initRound,input,tickPlayer,afterPlayer,tickWorld,bot,shoot,speed,canSee,canRender,drawWorld,drawActor,drawHUD,clientTick,serialize,restore,transform,nearest,observe,move,occupied,sprite,constants:{RANGE,DAMAGE,PENALTY}};
 })(globalThis);

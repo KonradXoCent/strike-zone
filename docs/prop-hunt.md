@@ -27,10 +27,16 @@ costs 5 HP; shooting a wall or missing does not. If every hunter runs out of
 health, the hiders win. Shopping, grenades, contact catches, combat Kill Cam
 and firearm damage from other systems are disabled in this mode.
 
+Hiding players have no visibility fog: scenery and actors remain visible through
+walls and beyond the hunter sight radius within the camera view. Hunter
+visibility and bot perception still use line of sight.
+
 Movement uses a conservative circular clearance around the actual form.
 Shots intersect the form's rotated rectangle, circle or ellipse. Walls and
-intervening props block shots. A deterministic set of solid scenery objects
-is checked for connected navigation with the largest form before placement;
+intervening props block shots. Per-arena storage rows, pavilion decorations and room furniture are authored
+against specific wall faces, with a two-pixel visual gap. Solid scenery uses its
+oriented sides for movement collision. The complete layout is checked for
+connected navigation with the largest form before placement;
 the normal arena grids and Workshop allocation are not modified.
 
 ## Bots and multiplayer
