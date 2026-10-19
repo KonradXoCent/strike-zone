@@ -23,7 +23,15 @@ jobs:
       - run: npm run test:launcher
       - run: npm run test:friends
       - run: npm run test:hub
+      - run: npm run test:controls
+      - run: npm run test:materials
       - run: npm run test:workshop-maps
+      - name: Test Workshop pool overrides, version replacement and case membership
+        run: npm run test:moderation
+      - name: Test Workshop submissions, shared lobbies and skin ownership
+        run: npm run test:community
+      - name: Audit Polish and English interface screens
+        run: npm run test:locale
       - run: npm run test:social
       - run: npm run test:network
       - run: npm run test:gameplay

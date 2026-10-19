@@ -1,9 +1,9 @@
-# Strike Zone 2D — 1.5.0
+# Strike Zone 2D — 1.5.1
 
-Pobierz `StrikeZone-Setup-1.5.0.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
-Posiadacze wersji 1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0 i 1.4.1 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
+Pobierz `StrikeZone-Setup-1.5.1.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
+Posiadacze wersji 1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0, 1.4.1 i 1.5.0 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
 
-Pełna lista zmian 1.5.0: [RELEASE_NOTES.md](RELEASE_NOTES.md).
+Pełna lista zmian 1.5.1: [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
 Wersja 1.4.1 ujednolica logo launchera, menu, ekranów startowych oraz ikon aplikacji
 i instalatora: złota tarcza z literą Z na przezroczystym tle. `assets/icon.png` jest
@@ -12,6 +12,13 @@ rozmiarów ikon Windows (16–256 px). Po zmianie obrazu uruchom
 `node scripts/embed-shared.cjs`; przygotowanie gry sprawdza zgodność logo.
 
 ## Język, motywy i rozmowy
+
+Wersja 1.5.1 dodaje materiały i cieniowanie map. W ustawieniach
+gry albo pauzy wybierz **Wygląd map → Tekstury i cieniowanie** lub
+**Uproszczony wygląd**. Rysowanie korzysta z dotychczasowego obrazu mapy,
+bez dodatkowej warstwy całej mapy i generowania tekstur w kolejnych klatkach.
+Szczegóły oraz sposób porównania kosztu renderowania:
+[docs/map-materials.md](docs/map-materials.md).
 
 W ustawieniach launchera wybierz PL lub EN. Zapamiętany wybór jest wspólny z grą
 i działa także przy otwartym oknie gry. Motywy launchera: Nocny, Leśny i Piaskowy.
@@ -50,6 +57,12 @@ Wylogowanie jest dostępne w launcherze. W grze nie ma osobnego logowania.
 Lista znajomych jest wspólna z grą: zielona kropka oznacza online, szara offline.
 Wyszukiwarka filtruje nicki, a aktywność rozróżnia launcher, menu, lobby i mecz.
 
+Pierwsze kliknięcie na pole gry przechwytuje mysz.
+Widać celownik ustawiony w grze, a mysz pozostaje w jej oknie. Escape otwiera
+pauzę i zwalnia mysz. Zakupy (B), mapa BR i okna rozmów także zwalniają kursor.
+Po powrocie kliknij pole gry lub przycisk wznowienia. Przechwytywanie można
+wyłączyć w ustawieniach gry lub pauzy w sekcji **Sterowanie myszą**.
+
 F11 przełącza pełny ekran gry. Escape w menu głównym otwiera potwierdzenie:
 „Nie” po lewej w zieleni anuluje, „Tak” po prawej w czerwieni zapisuje postęp
 i zamyka okno gry, wracając do launchera. W meczu Escape nadal włącza pauzę.
@@ -67,6 +80,12 @@ Gdy odczyt się nie powiedzie, można go ponowić bez nadpisania danych.
 Odświeżone menu z ikonami SVG, zwarta nawigacja oraz Butterfly,
 kilof w stylu voxel, Kukri i Stiletto. Każdy nowy model ma sześć wykończeń i warianty
 StatTrak. Dotychczasowe identyfikatory przedmiotów pozostają bez zmian.
+
+W edytorze skinów użyj przycisków − / + albo kółka, aby zmienić zoom w zakresie
+50–400%. Kółko powiększa wskazany fragment. Model przesuniesz środkowym
+przyciskiem myszy, przez Spacja + przeciągnięcie lub przyciskiem **Przesuwanie**
+na pasku widoku. **Reset widoku** wraca do 100%. Widok nie zmienia zapisanego
+projektu ani szerokości i położenia pociągnięć pędzla.
 
 W menu **Warsztat** są dwa lokalne edytory:
 
@@ -135,6 +154,9 @@ osadzona w zwykłym skrypcie, więc nie wymaga zgody podglądu na skrypty `data:
 
 ## Nowe wydania
 
+Mniejsze aktualizacje zwiększają ostatni człon numeru: **1.5.1 → 1.5.2 → 1.5.3**.
+Numer 1.6.0 wymaga osobnej decyzji właściciela o większym wydaniu.
+
 1. Podmień `game-source/index.html`, jeśli zmienia się gra.
 2. Zwiększ numer wersji w `package.json` i `package-lock.json`.
 3. Uruchom `npm ci`, `npm test` i `npm run prepare:game`.
@@ -161,7 +183,7 @@ Sprawdza także blokadę 4/5, odblokowanie po piątym projekcie, zakup, animacj�
 otwierania, wyposażenie zdobytego przedmiotu i jego odczyt po przeładowaniu.
 Obejmuje też niedostępny health endpoint, ograniczenie skryptów `data:`, zerwanie
 sieci oraz żądanie, które nie odpowiada aż do przerwania po limicie czasu.
-Workflow Windows instaluje prawdziwą publiczną 1.2.0 i aktualizuje ją do bieżącej wersji.
+Workflow Windows instaluje prawdziwą publiczną 1.5.0 i aktualizuje ją do bieżącej wersji.
 Następnie sprawdza błędne hasło, rejestrację z potwierdzeniem e-maila i bez niego,
 odczyt nicku i awatara, tę samą sesję w grze, brak osobnych kontrolek logowania,
 Escape, zapis postępu, zmiany profilu, wylogowanie oraz izolację dwóch kont.

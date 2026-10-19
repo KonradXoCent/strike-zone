@@ -205,7 +205,7 @@ function setAv(a){const p=P();p.av=a;delete p.avimg;save();tab('prof')}const cv=
 const wallAt=(x,y)=>{if(sol(x,y,false))return true;if(!WG)return walls.some(w=>x>w[0]&&x<w[0]+w[2]&&y>w[1]&&y<w[1]+w[3]);const c=(x/64)|0,r=(y/64)|0;if(c>=0&&r>=0&&c<WGC&&r<WGR){const L=WG[r*WGC+c];if(L)for(let i=0;i<L.length;i++){const w=L[i];if(x>w[0]&&x<w[0]+w[2]&&y>w[1]&&y<w[1]+w[3])return true}}for(let i=SN;i<walls.length;i++){const w=walls[i];if(x>w[0]&&x<w[0]+w[2]&&y>w[1]&&y<w[1]+w[3])return true}return false};
 const hitW=(x,y)=>(GR&&(sol(x-R,y-R)||sol(x+R,y-R)||sol(x-R,y+R)||sol(x+R,y+R)||sol(x,y-R)||sol(x,y+R)||sol(x-R,y)||sol(x+R,y)))||[walls,wins].some(a=>a.some(w=>x+R>w[0]&&x-R<w[0]+w[2]&&y+R>w[1]&&y-R<w[1]+w[3]));
 function los(a,b){const d=Math.hypot(b.x-a.x,b.y-a.y),n=d/8|0;for(let i=1;i<n;i++){const x=a.x+(b.x-a.x)*i/n,y=a.y+(b.y-a.y)*i/n;if(wallAt(x,y)||(G&&G.sm&&G.sm.some(s=>Math.hypot(x-s.x,y-s.y)<s.r)))return false}return true}
-const RK=['Silver 1','Silver 2','Silver 3','Silver 4','Silver 5','Silver 6','Gold Nova 1','Gold Nova 2','Gold Nova 3','Gold Nova 4','Master Guardian 1','Master Guardian 2','Master Guardian Elite','Distinguished Master Guardian','Legendary Eagle','Legendary Eagle Master','Supreme Master First Class','The Global Elite'],rank=p=>(p.cw||0)<3?'Unranked ('+(p.cw||0)+'/3 competitive wins)':RK[Math.min(17,Math.floor((p.sr||0)/80))]+' ('+(p.sr||0)+' SR)',esc=s=>String(s||'?').replace(/[<>&]/g,'');
+const RK=['Silver 1','Silver 2','Silver 3','Silver 4','Silver 5','Silver 6','Gold Nova 1','Gold Nova 2','Gold Nova 3','Gold Nova 4','Master Guardian 1','Master Guardian 2','Master Guardian Elite','Distinguished Master Guardian','Legendary Eagle','Legendary Eagle Master','Supreme Master First Class','The Global Elite'],rank=p=>(p.cw||0)<3?(globalThis.szLocale?.format('Niesklasyfikowany ({wins}/3 zwycięstw rankingowych)',{wins:p.cw||0})||'Unranked ('+(p.cw||0)+'/3 competitive wins)'):RK[Math.min(17,Math.floor((p.sr||0)/80))]+' ('+(p.sr||0)+' SR)',esc=s=>String(s||'?').replace(/[<>&]/g,'');
 const GI={frag:'💣',smoke:'☁️',flash:'⚡',molo:'🔥'},GC={frag:'#8f8',smoke:'#ccc',flash:'#fff',molo:'#f93'},GP={frag:300,smoke:300,flash:200,molo:400},GT={frag:1.6,smoke:1.2,flash:1.1,molo:1};
 function giveG(p,k){if(G&&G.client&&p===G.me){netSend({t:'nade_buy',k});return}if(p.g[k]||p.money<GP[k])return;p.money-=GP[k];p.g[k]=1;(p.bl=p.bl||[]).push({k,c:GP[k],kind:'g'})}
 function boom(q){q.dead=1;const g=G;snd(q.type,q.x,q.y);if(q.type=='frag'){g.sm.forEach(s=>{const rr=s.r0||s.r;if(Math.hypot(s.x-q.x,s.y-q.y)<rr+60){s.r0=rr;s.r=0;s.cl=3.5}});g.tr.push({x:q.x,y:q.y,x2:q.x,y2:q.y,c:'#f80',t:.3,r:90});g.ps.forEach(e=>{const d=Math.hypot(e.x-q.x,e.y-q.y);if(e.alive&&d<90&&los(q,e))dmg(e,100*(1-d/90)+10,q.by,'Frag')})}else if(q.type=='smoke')g.sm.push({x:q.x,y:q.y,r:85,t:14});else if(q.type=='flash')g.ps.forEach(e=>{const d=Math.hypot(e.x-q.x,e.y-q.y);if(e.alive&&d<500&&los(q,e)){const ang=Math.atan2(q.y-e.y,q.x-e.x),df=Math.abs(Math.atan2(Math.sin(ang-e.a),Math.cos(ang-e.a))),fc=df<1.2?1:.35;e.fl=Math.max(e.fl||0,Math.min(2.4,(2.2*(1-d/500)+.3)*fc))}});else if(!g.sm.some(s=>Math.hypot(s.x-q.x,s.y-q.y)<s.r))g.fi.push({x:q.x,y:q.y,r:70,t:8,by:q.by})}
@@ -349,9 +349,9 @@ async function srvInit(){if(SV.init)return;SV.init=1;SV.bots=genBots();try{if(ty
 function srvTab(){srvInit();srvRender()}
 function srvSel(i){SV.sel=i;srvRender()}
 function srvRender(){const m=$('main');if(!m||T!='srv')return;const now=Date.now(),all=[...(SV.ps||[]).filter(s=>now-s.ts<45000).map(s=>({...s,bot:0})),...(SV.bots||[])];SV.list=all;const d=all[SV.sel],mn=k=>(MODES.find(x=>x[0]==k)||[0,k])[1];
-m.innerHTML=`<div class=box><h3>Create a server</h3>Name <input id=sn maxlength=24 value="${esc(P().name)}'s server"> Mode <select id=sm>${MODES.map(x=>`<option value=${x[0]}>${x[1]}</option>`).join('')}</select> Map <select id=sp>${MAPN.map((n,i)=>`<option value=${i}>${n}</option>`).join('')}</select> <button class=pri onclick=mkServer()>Create</button> <span style="color:#f5a524">${esc(SV.msg||LM)}</span></div>
-<div class=box><h3>Community servers (${all.length})</h3><table class=st><tr><th>Server</th><th>Mode</th><th>Map</th><th>Players</th><th>Status</th><th>Ping</th><th></th></tr>${all.map((s,i)=>`<tr class="r ${SV.sel===i?'sl':''}" onclick=srvSel(${i})><td>${esc(s.name)} ${s.bot?'🤖':'👤'}</td><td>${mn(s.mode)}</td><td>${MAPN[s.map]}</td><td>${s.humans+s.bots}/${s.slots}</td><td>${esc(stat(s))}</td><td>${s.ping||'-'}</td><td><button onclick=joinSrv(${i})>Join</button></td></tr>`).join('')}</table></div>
-${d?`<div class=box><h3>${esc(d.name)}</h3>Type: ${d.bot?'Bot server':'Player server (host '+esc(d.host)+')'}<br>Mode: <b>${mn(d.mode)}</b> · Map: <b>${MAPN[d.map]}</b><br>Status: <b>${esc(stat(d))}</b><br>Players: <b>${d.humans}</b> human(s) + <b>${d.bots}</b> bot(s) = ${d.humans+d.bots}/${d.slots}${d.bot?'':'<br>Lobby code: <b>'+esc(d.code)+'</b>'}<br><br><button class=pri onclick=joinSrv(${SV.sel})>Join server</button></div>`:''}`}
+m.innerHTML=`<div class=box><h3>Create a server</h3>Name <input id=sn maxlength=24 value="${esc(P().name)}'s server"> Mode <select id=sm>${MODES.map(x=>`<option value=${x[0]}>${x[1]}</option>`).join('')}</select> Map <select id=sp>${MAPN.map((n,i)=>`<option value=${i} data-map-label="${workshopEscape(n)}" data-no-translate>${workshopEscape(szLocale.mapName(n))}</option>`).join('')}</select> <button class=pri onclick=mkServer()>Create</button> <span style="color:#f5a524">${esc(SV.msg||LM)}</span></div>
+<div class=box><h3>Community servers (${all.length})</h3><table class=st><tr><th>Server</th><th>Mode</th><th>Map</th><th>Players</th><th>Status</th><th>Ping</th><th></th></tr>${all.map((s,i)=>`<tr class="r ${SV.sel===i?'sl':''}" onclick=srvSel(${i})><td><span data-user-content>${esc(s.name)}</span> ${s.bot?'🤖':'👤'}</td><td>${mn(s.mode)}</td><td>${szLocale.mapNameHTML(MAPN[s.map])}</td><td>${s.humans+s.bots}/${s.slots}</td><td>${esc(stat(s))}</td><td>${s.ping||'-'}</td><td><button onclick=joinSrv(${i})>Join</button></td></tr>`).join('')}</table></div>
+${d?`<div class=box><h3 data-user-content>${esc(d.name)}</h3>Type: ${d.bot?'Bot server':'Player server (host '+esc(d.host)+')'}<br>Mode: <b>${mn(d.mode)}</b> · Map: <b>${szLocale.mapNameHTML(MAPN[d.map])}</b><br>Status: <b>${esc(stat(d))}</b><br>Players: <b>${d.humans}</b> human(s) + <b>${d.bots}</b> bot(s) = ${d.humans+d.bots}/${d.slots}${d.bot?'':'<br>Lobby code: <b>'+esc(d.code)+'</b>'}<br><br><button class=pri onclick=joinSrv(${SV.sel})>Join server</button></div>`:''}`}
 async function joinSrv(i){const s=(SV.list||[])[i];if(!s)return;if(s.bot){sel.mode=s.mode;sel.map=s.map;start();return}await mkLobby(s.code);if(L)tab('play');else{SV.msg=LM;srvRender()}}
 async function mkServer(){sel.mode=$('sm').value;sel.map=+$('sp').value;if(!mapSet(sel.mode).includes(sel.map))sel.map=mapSet(sel.mode)[0];SV.name=($('sn').value||'My server').replace(/[<>&]/g,'').slice(0,24);await mkLobby();if(!L)return;SV.own='s'+Math.random().toString(36).slice(2,9);pubSrv();SV.msg=SV.db?'Server created — code '+L.code:'Lobby created (code '+L.code+'), but the public list needs database access';tab('srv')}
 function pubSrv(){if(!SV.own||!SV.db||!L||!L.host)return;const hu=Math.max(1,LR&&LR.peers?LR.peers().length:1),md=sel.mode||'classic';SV.db.collection('servers').doc(SV.own).set({name:SV.name,host:P().name,mode:md,map:sel.map,code:L.code,humans:hu,bots:Math.max(0,SLOTS[md]-hu),slots:SLOTS[md],st:G?(G.over?'Match finished':md=='classic'?'Round '+Math.min(24,(G.rn||0)+1)+'/24 · CT '+G.sc.CT+':'+G.sc.T+' T':md=='retake'?'Round '+Math.min(10,(G.rn||0)+1)+'/10':'Time left '+Math.max(0,G.t|0)+'s'):'In lobby',ts:Date.now(),ping:20}).catch(()=>{})}
@@ -364,7 +364,7 @@ let FOG=true;const FG=document.createElement('canvas');FG.width=1000;FG.height=6
 function rayDist(x,y,a,mx){const dx=Math.cos(a),dy=Math.sin(a);let best=mx;if(GR){let dd=0;while(dd<mx){if(sol(x+dx*dd,y+dy*dd,false))break;dd+=6}best=Math.min(mx,dd)}for(const w of walls){let t0=0,t1=best;if(Math.abs(dx)<1e-9){if(x<w[0]||x>w[0]+w[2])continue}else{let a1=(w[0]-x)/dx,a2=(w[0]+w[2]-x)/dx;if(a1>a2){const q=a1;a1=a2;a2=q}t0=Math.max(t0,a1);t1=Math.min(t1,a2)}if(Math.abs(dy)<1e-9){if(y<w[1]||y>w[1]+w[3])continue}else{let b1=(w[1]-y)/dy,b2=(w[1]+w[3]-y)/dy;if(b1>b2){const q=b1;b1=b2;b2=q}t0=Math.max(t0,b1);t1=Math.min(t1,b2)}if(t0<=t1&&t0>0&&t0<best)best=t0}
 if(G&&G.sm)G.sm.forEach(s=>{const ox=x-s.x,oy=y-s.y,b=ox*dx+oy*dy,c=ox*ox+oy*oy-s.r*s.r;if(c<0){best=Math.min(best,60);return}const d=b*b-c;if(d>=0){const t=-b-Math.sqrt(d);if(t>0&&t<best)best=t}});return best}
 function drawFog(g,me){if(!FOG)return;const R0=FOGR(),K=4,sx=(me.x-cam.x)/K,sy=(me.y-cam.y)/K,fw=FG.width,fh=FG.height;fgx.globalCompositeOperation='source-over';fgx.clearRect(0,0,fw,fh);fgx.fillStyle='rgba(6,8,12,.86)';fgx.fillRect(0,0,fw,fh);fgx.globalCompositeOperation='destination-out';fgx.beginPath();const N=90;for(let i=0;i<=N;i++){const a=i/N*6.2832,d=rayDist(me.x,me.y,a,R0),x=sx+Math.cos(a)*d/K,y=sy+Math.sin(a)*d/K;if(i)fgx.lineTo(x,y);else fgx.moveTo(x,y)}fgx.closePath();const gr=fgx.createRadialGradient(sx,sy,18,sx,sy,R0/K);gr.addColorStop(0,'rgba(0,0,0,1)');gr.addColorStop(1,'rgba(0,0,0,.3)');fgx.fillStyle=gr;fgx.fill();cx.imageSmoothingEnabled=true;cx.drawImage(FG,0,0,fw,fh,0,0,VW,640)}
-let VW=1000;function fit(){VW=Math.max(320,Math.round(640*innerWidth/Math.max(1,innerHeight)));cv.width=VW;cv.height=640;FG.width=Math.ceil(VW/4);FG.height=160;cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px'}addEventListener('resize',fit);
+let VW=1000;function fit(){VW=Math.max(320,Math.round(640*innerWidth/Math.max(1,innerHeight)));cv.width=VW;cv.height=640;FG.width=Math.ceil(VW/4);FG.height=160;cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px'}addEventListener('resize',()=>fit());
 function drawDecor(g){if(!g.dec||g.dm!=sel.map){g.dm=sel.map;g.dec=[];let n=0,tr=0;while(n<260&&tr++<3000){const x=Math.random()*WW,y=Math.random()*WH;if(hitW(x,y))continue;g.dec.push({x,y,r:6+Math.random()*26,t:n%9==0?1:n%23==0?2:0});n++}}g.dec.forEach(d=>{if(d.t==0){cx.fillStyle='rgba(0,0,0,.07)';cx.beginPath();cx.ellipse(d.x,d.y,d.r,d.r*.6,0,0,7);cx.fill()}else if(d.t==1){cx.fillStyle=(sel.map==4||sel.map==6)?'#3f6b3a':'#00000030';cx.beginPath();cx.arc(d.x,d.y,5+d.r/4,0,7);cx.fill()}else{cx.fillStyle='#6a3a2c';cx.beginPath();cx.arc(d.x,d.y,9,0,7);cx.fill();cx.strokeStyle='#2b1a14';cx.lineWidth=2;cx.stroke()}})}
 const MI=['💣','🔁','☠️','🎯','🔫','🔫','💥','🔪','🚩','🪂','🏁','🤝','🧟','🔫'],MD=['5v5 bomb defusal, MR12, ranked','Retake a planted site, random sides','Free-for-all with respawns','AWP, SSG 08, G3SG1, SCAR-20 only','Desert Eagle only','Pistols only','Shotguns only','Knives only','Steal the enemy flag','16 players, storm, loot crates','5v5 respawns, first team to 200 kills','Play with friends on one team — bots fill empty slots','Infect or survive: classes, walls, mines','Teams level up their weapon — knife kill at the end wins'],MAD=['Dust Yard: long A, mid doors, B tunnels','Office: halls and rooms','Mirage: palace, apartments, mid','Inferno: banana and apartments','Overpass: park and canals','Nuke: industrial yard','Storm Island: forest island with houses','Frost Peaks: snowy cliffs and cabins','Metro City: shops, banks and streets','Dead Mall: shops and wide halls','Outbreak Lab: corridors and labs','Rotten Village: houses and fences'];let MV=null;
 function pmClose(){$('pm').style.display='none';if(MV){MV.on=0;clearInterval(MV.iv);MV=null}}
@@ -372,7 +372,7 @@ function playFlow(){const o=$('pm');o.style.display='flex';o.innerHTML=`<div cla
 function pickMode(i,rk){sel.mode=MODES[i][0];sel.comp=!!rk;const ml=mapSet(sel.mode);MV={t:12,v:ml.map(()=>0),ml,mine:null,on:1};const nb=sel.mode=='coop'?0:Math.max(1,(SLOTS[sel.mode]||10)-1);for(let n=0;n<nb;n++)setTimeout(()=>{if(MV&&MV.on){{const i=Math.random()*MV.ml.length|0;MV.v[i]++;(MV.log=MV.log||[]).push(botName()+' voted '+MAPN[MV.ml[i]]);mvUI()}}},300+Math.random()*5000);MV.iv=setInterval(()=>{if(!MV)return;MV.t--;if(MV.t<=0)mvEnd();else mvUI()},1000);mvUI()}
 function mvVote(i){if(!MV||!MV.on)return;if(MV.mine!=null)MV.v[MV.mine]--;MV.mine=i;MV.v[i]++;mvUI()}
 function mvUI(){if(!MV)return;$('pm').innerHTML=`<div class=pmb><h2>VOTE FOR THE MAP — ${MV.t}s</h2><div style="color:#9aa6b8;margin-bottom:12px">${(MODES.find(x=>x[0]==sel.mode)||[0,''])[1]} · bots vote too</div><div style="font-size:13px;color:#9aa6b8;min-height:80px;margin-bottom:8px">${(MV.log||[]).slice(-5).join('<br>')}</div><div class="mg mgr">${MV.ml.map((mi,i)=>`<div class="mc ${MV.mine===i?'on':''}" onclick=mvVote(${i})><div class=mi>🗺️</div><b>${MAPN[mi]}</b><small>${MAD[mi]}</small><b style="color:#f5a524">${MV.v[i]} votes</b></div>`).join('')}</div></div>`}
-function mvEnd(){const m=Math.max(...MV.v),c=MV.v.map((v,i)=>v==m?i:-1).filter(i=>i>=0),w=c[Math.random()*c.length|0];clearInterval(MV.iv);MV.on=0;$('pm').innerHTML=`<div class=pmb><h2>MAP: ${MAPN[MV.ml[w]].toUpperCase()}</h2></div>`;const mm=MV.ml[w];setTimeout(()=>{MV=null;sel.map=mm;$('pm').style.display='none';if(sel.mode=='coop'&&L&&L.host)lobStart();else start()},1200)}
+function mvEnd(){const m=Math.max(...MV.v),c=MV.v.map((v,i)=>v==m?i:-1).filter(i=>i>=0),w=c[Math.random()*c.length|0];clearInterval(MV.iv);MV.on=0;$('pm').innerHTML=`<div class=pmb><h2>MAP: ${szLocale.mapNameHTML(MAPN[MV.ml[w]])}</h2></div>`;const mm=MV.ml[w];setTimeout(()=>{MV=null;sel.map=mm;$('pm').style.display='none';if(sel.mode=='coop'&&L&&L.host)lobStart();else start()},1200)}
 Object.assign(WM,{ak:[[-6,8,3.5,2],[8,30,3.2,0],[10,17,4.2,1],[16,29,5,2],[30,41,1.6,1],[39,41,3,1],[14,19,2.2,1,5],[0,8,1.6,1,-3.5]],m4:[[-5,8,3.5,1],[8,28,3.6,0],[12,20,4.2,1],[28,38,2,1],[38,46,3,1],[12,17,2,1,5],[-5,0,5,1]],awp:[[-8,8,3.6,2],[8,40,3.4,0],[40,56,1.6,1],[16,30,6,1],[18,28,3,3],[50,56,3.5,1],[12,16,2,1,5]],glock:[[5,10,3.4,1],[8,23,3.4,0],[8,14,1.6,1,3.5]],usp:[[5,10,3.4,1],[8,23,3.4,0],[23,35,2.4,1],[8,14,1.6,1,3.5]],deagle:[[5,11,4.2,1],[8,27,4.6,3],[8,20,2.2,1,5]],mp9:[[3,8,3,1],[6,22,3.6,0],[10,13,5,1],[22,26,1.8,1],[10,15,2.2,1,5]],ump:[[-3,6,3.2,1],[4,27,4.2,0],[12,17,5.8,1],[27,32,1.8,1],[14,19,2.4,1,5]],nova:[[-3,8,3.2,2],[8,38,2.6,1],[14,26,4.6,0],[8,34,1.8,1,-4]],knife:[[5,13,2.6,1],[13,30,2.4,0],[13,26,1,3,-2.4]],p250:[[5,10,3.4,1],[8,21,3.6,3]]});
 const ACH=[['fb','🩸','First Blood','Get your first kill',p=>p.kills>=1],['s100','💀','Slayer','Get 100 kills',p=>p.kills>=100],['s500','☠️','Centurion','Get 500 kills',p=>p.kills>=500],['w1','🏆','Winner','Win a match',p=>p.wins>=1],['w10','🥇','Champion','Win 10 matches',p=>p.wins>=10],['m10','🎖️','Veteran','Play 10 matches',p=>p.matches>=10],['bomb','💣','Bomb Specialist','Plant or defuse 10 bombs',p=>(p.ac||{}).bomb>=10],['mvp','⭐','MVP','Be round MVP 10 times',p=>(p.ac||{}).mvp>=10],['case','📦','Case Opener','Open 10 cases',p=>(p.ac||{}).cases>=10],['coll','🎨','Collector','Own 10 skins',p=>p.skins.length>=10],['rich','💰','Rich','Hold $5000',p=>p.wallet>=5000],['bp','🎫','Pass Hero','Reach Battle Pass level 10',p=>p.bp&&p.bp.xp>=900],['flag','🚩','Flag Runner','Capture 5 flags',p=>(p.ac||{}).flags>=5],['br','🪂','Victory Royale','Win a Battle Royale',p=>(p.ac||{}).win_br>=1],['tdm','🏁','Team Player','Win a Team Deathmatch',p=>(p.ac||{}).win_tdm>=1],['rk','🏅','Ranked','Get your competitive rank',p=>(p.cw||0)>=3],['gn','📈','Gold Nova','Reach Gold Nova 1',p=>(p.sr||0)>=480],['ge','👑','Global Elite','Reach The Global Elite',p=>(p.sr||0)>=1360]];
 const RA=['S1','S2','S3','S4','S5','S6','GN1','GN2','GN3','GN4','MG1','MG2','MGE','DMG','LE','LEM','SMFC','GE'],lvlOf=p=>1+Math.floor(((p.kills||0)*5+(p.matches||0)*40+(p.wins||0)*60)/200),plv=q=>q.human?lvlOf(P()):(q.blv=q.blv||1+(q.bri||0)*3+(Math.random()*8|0)),prk=q=>{const i=q.human?((P().cw||0)<3?-1:Math.min(17,Math.floor((P().sr||0)/80))):(q.unr?-1:(q.bri||0));return i<0?'Unranked':RA[i]};
@@ -704,7 +704,7 @@ else if(BT=='nade')h=Object.keys(GP).map(k=>tile('<div class=bi2>'+GI[k]+'</div>
 else if(BT=='refund'){const L=m.bl||[];h=L.length?L.map((x,i)=>tile('<div class=bi2>\u21a9</div>',W[x.k]?W[x.k].n:x.k,x.c,'refund',false,'refundIdx('+i+')')).join(''):'<div style="padding:20px;color:#9aa6b8">Nothing bought this round yet.</div>'}
 else h=GUNS.filter(k=>W[k].cost&&(!W[k].t||W[k].t==m.team||MODE()=='dm'||MODE()=='zombie')&&wcat(k)==BT).map(k=>tile('<img src="'+wpnImg(k)+'">',W[k].n,W[k].cost,'DMG '+W[k].dmg+(W[k].pel>1?'x'+W[k].pel:''),m.money<W[k].cost||m.pri==k||m.sec==k,"buy(G.me,'"+k+"')","askTeam('"+k+"')")).join('');
 const rq=(G.rq||[]).map((r,i)=>[r,i]).filter(a=>G.el<a[0].u);
-b.style.display='flex';b.innerHTML=`<div class=bhead><b>BUY MENU</b><span>${G.ph=='buy'?'\u23f1 '+Math.ceil(G.t)+'s':''}</span><b class=bmoney>$${m.money}</b></div>${rq.map(a=>`<div class=breq>${esc(nm(a[0].from))} asks you to buy ${W[a[0].k].n} ($${W[a[0].k].cost}) <button class=pri onclick="acceptReq(${a[1]})">Accept</button></div>`).join('')}<div class=bbody><div class=bcats>${BC.filter(c=>c[0]!='class'||MODE()=='zombie').map(c=>`<button ${c[0]==BT?'class=pri':''} onclick="BT='${c[0]}';showBuy()">${c[1]}</button>`).join('')}</div><div class=bgrid>${h}</div></div><small>B closes \u00b7 ASK = a teammate buys it for you \u00b7 Refund: items bought this round \u00b7 Loadout: ${m.pri?W[m.pri].n:'\u2014'} / ${m.sec?W[m.sec].n:'\u2014'} \u00b7 \ud83d\udee1${m.armor|0}</small>`}
+b.style.display='flex';b.innerHTML=`<div class=bhead><b>BUY MENU</b><span>${G.ph=='buy'?'\u23f1 '+Math.ceil(G.t)+'s':''}</span><b class=bmoney>$${m.money}</b></div>${rq.map(a=>`<div class=breq>${esc(nm(a[0].from))} asks you to buy ${W[a[0].k].n} ($${W[a[0].k].cost}) <button class=pri onclick="acceptReq(${a[1]})">Accept</button></div>`).join('')}<div class=bbody><div class=bcats>${BC.filter(c=>c[0]!='class'||MODE()=='zombie').map(c=>`<button ${c[0]==BT?'class=pri':''} onclick="BT='${c[0]}';showBuy()">${c[1]}</button>`).join('')}</div><div class=bgrid>${h}</div></div><small>B closes \u00b7 ASK = a teammate buys it for you \u00b7 Refund: items bought this round \u00b7 Loadout: <span data-user-content>${m.pri?W[m.pri].n:'\u2014'} / ${m.sec?W[m.sec].n:'\u2014'}</span> \u00b7 \ud83d\udee1${m.armor|0}</small>`}
 const MK=[{n:'Neon Pulse',c:'#7a5cff',r:0,bpm:132,w:'sawtooth',m:[0,3,7,10,12,10,7,3],b:[0,-5],root:0},{n:'Desert Run',c:'#d9a54a',r:0,bpm:112,w:'triangle',m:[0,2,3,7,8,7,3,2],b:[0,-2],root:-2},{n:'Bomb Squad',c:'#ff5a3a',r:1,bpm:140,w:'square',m:[0,0,7,0,10,0,7,5],b:[0,-7],root:-5},{n:'Retro Arcade',c:'#2fd1a6',r:1,bpm:150,w:'square',m:[0,4,7,12,7,4,0,4],b:[0,0,5,5],root:2},{n:'Midnight Siren',c:'#5c8cff',r:2,bpm:100,w:'sine',m:[0,7,12,15,12,7,3,7],b:[0,-4],root:-4},{n:'Bass Cannon',c:'#ff4fd8',r:2,bpm:124,w:'sawtooth',m:[0,0,12,0,10,0,7,0],b:[0,-12],root:-12},{n:'Golden Hour',c:'#ffcc33',r:3,bpm:108,w:'triangle',m:[0,4,7,11,14,11,7,4],b:[0,5,7,5],root:3},{n:'Dragon Fire',c:'#e0194d',r:3,bpm:144,w:'sawtooth',m:[0,1,5,7,8,7,5,1],b:[0,-1],root:-1}];
 BL.push(...MK.map((k,i)=>({id:'m:'+i,n:k.n+' (music kit)',c:k.c,r:k.r})));CI.push('music');CS.music={n:'MVP Music Box',br:1,mus:1,only:'m',cost:700,kc:450,w:[50,30,15,5,0]};CCOL.music='#7a5cff';
 let FPSV=60,PING=null;
@@ -778,7 +778,7 @@ addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=1;if((e.key=='Tab'||e.k
  if(e.key=='r'&&W[m.cur].mag)m.rl=1.5;
  if(e.key=='1'&&m.pri)m.cur=m.pri;if(e.key=='2'&&m.sec)m.cur=m.sec;if(e.key=='3')m.cur='knife';if('123'.includes(e.key))m.nd=null;if(e.key=='4'&&m.alive){const o=Object.keys(GP).filter(k=>m.g[k]),i=o.indexOf(m.nd);m.nd=i<0?o[0]||null:o[i+1]||null}});
 addEventListener('keyup',e=>keys[e.key.toLowerCase()]=0);
-cv.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect();mouse.x=(e.clientX-r.left)*VW/r.width;mouse.y=(e.clientY-r.top)*640/r.height});
+cv.addEventListener('mousemove',e=>{if(document.pointerLockElement===cv)return;const r=cv.getBoundingClientRect();mouse.x=(e.clientX-r.left)*VW/r.width;mouse.y=(e.clientY-r.top)*640/r.height});
 cv.addEventListener('contextmenu',e=>e.preventDefault());cv.addEventListener('mousedown',e=>{if(e.button==2){mouse.r=1;return}mouse.d=1;const m=G&&G.me;if(m&&!m.alive)specNext(1);if(m&&m.nd&&m.alive&&m.g[m.nd]&&G.ph=='live'){const k=m.nd;m.g[k]=0;m.nd=null;mouse.d=0;throwG(m,mouse.x/VIEW_ZOOM+cam.x,mouse.y/VIEW_ZOOM+cam.y,k)}});addEventListener('mouseup',e=>{if(e.button==2)mouse.r=0;else mouse.d=0});
 function mv(p,dx,dy){p.wk=(p.wk||0)+Math.abs(dx)+Math.abs(dy);if(p.wk>42){p.wk=0;snd('step',p.x,p.y)}p.x+=dx;if(hitW(p.x,p.y))p.x-=dx;p.y+=dy;if(hitW(p.x,p.y))p.y-=dy;p.x=Math.max(R,Math.min(WW-R,p.x));p.y=Math.max(R,Math.min(WH-R,p.y))}
 function col(p){if(!p.human){const id=botSkin(p,p.cur);return id?sk(id).c:'#ffd37a'}const id=eqOf(p,p.cur);return id?sk(id).c:'#ffd37a'}
@@ -1364,7 +1364,7 @@ function contractRender(){
     <div class="w-machine-top"><span>KONTRAKT WYMIANY</span><b>${picks.length}<small> / 10</small></b></div>
     <div class="w-slots">${Array.from({length:10},(_,i)=>{const id=picks[i];return `<button class="w-slot ${id?'filled':''}" style="--rarity:${id?RCol[sk(id).r]:'#394151'}" onclick="contractRemove(${i})" ${locked||!id?'disabled':''} aria-label="${id?'Usuń '+workshopName(id):'Puste miejsce '+(i+1)}">${id?`<img src="${skinImg(id,160,70)}" alt="${workshopName(id)}"><span>${workshopEscape(sk(id).n)}</span><i>×</i>`:`<b>+</b><span>${String(i+1).padStart(2,'0')}</span>`}</button>`;}).join('')}</div>
     <div class="w-contract-bottom"><div class="w-contract-next"><span class="w-tier-dot" style="background:${RCol[s.tier]}"></span>${RC[s.tier]}<b>→</b><span class="w-tier-dot" style="background:${RCol[s.tier+1]}"></span><strong style="color:${RCol[s.tier+1]}">${RC[s.tier+1]}</strong></div><button class="w-primary" onclick="contractExecute()" ${locked||picks.length!==10?'disabled':''}>${s.busy?'Wymiana…':'Wymień 10 → 1'}</button></div>
-    <p class="w-rule">10 wybranych egzemplarzy zostanie zużytych. Każdy z ${pool.length} skinów następnej jakości ma taką samą szansę. 10 skinów StatTrak™ daje nagrodę StatTrak™; mieszany kontrakt daje zwykły skin.</p>
+    <p class="w-rule">${szLocale.format('10 wybranych egzemplarzy zostanie zużytych. Każdy z {count} skinów następnej jakości ma taką samą szansę. 10 skinów StatTrak™ daje nagrodę StatTrak™; mieszany kontrakt daje zwykły skin.',{count:pool.length})}</p>
   </section>
   ${result?workshopResultHTML(result):''}
   <section class="w-library ${s.busy?'w-locked':''}"><div class="w-section-title"><div><h2>Twoje skiny · ${RC[s.tier]}</h2><span>${owned.reduce((n,id)=>n+counts.get(id),0)} egzemplarzy · kliknij, aby dodać</span></div><button onclick="contractFill()" ${locked?'disabled':''}>Dobierz do 10</button></div><div class="w-item-grid">${owned.map(id=>workshopItemCard(id,{count:counts.get(id),picked:picks.filter(x=>x===id).length,selected:picks.includes(id),disabled:locked||picks.filter(x=>x===id).length>=counts.get(id)})).join('')||'<p class="w-empty">Brak skinów tej jakości. Otwórz skrzynki lub odwiedź rynek.</p>'}</div></section>`;
@@ -1411,7 +1411,7 @@ function upgradeRender(){
   ${result?workshopResultHTML(result):''}
   <div class="w-browse ${s.busy?'w-locked':''}">
     <section class="w-library"><div class="w-section-title"><div><h2>Twój ekwipunek</h2><span>${[...counts.values()].reduce((a,b)=>a+b,0)} skinów broni i noży</span></div></div><input class="w-search" type=search placeholder="Szukaj w ekwipunku…" value="${workshopEscape(s.search)}" aria-label="Szukaj w ekwipunku" data-search-key="search" oninput="upgradeSearch('search',this)" ${locked?'disabled':''}><div class="w-item-grid w-scroll-grid">${owned.map(id=>workshopItemCard(id,{count:counts.get(id),selected:input===id,disabled:locked,action:'upgradeInput'})).join('')||'<p class="w-empty">Brak pasujących skinów. Zmień wyszukiwanie lub zdobądź skiny w skrzynkach.</p>'}</div></section>
-    <section class="w-library"><div class="w-section-title"><div><h2>Skórki do zdobycia</h2><span>${targets.length} celów · wyższa wartość</span></div><select aria-label="Minimalny mnożnik wartości" onchange="upgradeFilter('factor',+this.value)" ${locked?'disabled':''}>${[1,2,5,10].map(n=>`<option value=${n} ${s.factor===n?'selected':''}>Od ×${n}</option>`).join('')}</select></div><div class="w-target-filters"><input class="w-search" type=search placeholder="Szukaj celu…" value="${workshopEscape(s.targetSearch)}" aria-label="Szukaj skina docelowego" data-search-key="targetSearch" oninput="upgradeSearch('targetSearch',this)" ${locked?'disabled':''}><select aria-label="Rodzaj skina" onchange="upgradeFilter('targetKind',this.value)" ${locked?'disabled':''}>${[['all','Wszystkie'],['guns','Bronie'],['knife','Noże'],['st','StatTrak™']].map(([k,n])=>`<option value="${k}" ${s.targetKind===k?'selected':''}>${n}</option>`).join('')}</select></div><select class="w-rarity-filter" aria-label="Jakość celu" onchange="upgradeFilter('targetRarity',+this.value)" ${locked?'disabled':''}><option value=-1>Wszystkie jakości</option>${RC.map((name,r)=>`<option value=${r} ${s.targetRarity===r?'selected':''}>${name}</option>`).join('')}</select><div class="w-item-grid w-scroll-grid">${page.map(id=>workshopItemCard(id,{selected:target===id,disabled:locked,action:'upgradeTarget'})).join('')||`<p class="w-empty">${input?'Brak celów dla tych filtrów. Zmień mnożnik, jakość lub nazwę.':'Najpierw wybierz skin ze swojego ekwipunku.'}</p>`}</div><div class="w-pagination"><button onclick="upgradePage(-1)" ${locked||s.page===0?'disabled':''}>←</button><span>${s.page+1} / ${pages}</span><button onclick="upgradePage(1)" ${locked||s.page>=pages-1?'disabled':''}>→</button></div></section>
+    <section class="w-library"><div class="w-section-title"><div><h2>Skórki do zdobycia</h2><span>${targets.length} celów · wyższa wartość</span></div><select aria-label="Minimalny mnożnik wartości" onchange="upgradeFilter('factor',+this.value)" ${locked?'disabled':''}>${[1,2,5,10].map(n=>`<option value=${n} ${s.factor===n?'selected':''}>Minimum ×${n}</option>`).join('')}</select></div><div class="w-target-filters"><input class="w-search" type=search placeholder="Szukaj celu…" value="${workshopEscape(s.targetSearch)}" aria-label="Szukaj skina docelowego" data-search-key="targetSearch" oninput="upgradeSearch('targetSearch',this)" ${locked?'disabled':''}><select aria-label="Rodzaj skina" onchange="upgradeFilter('targetKind',this.value)" ${locked?'disabled':''}>${[['all','Wszystkie'],['guns','Bronie'],['knife','Noże'],['st','StatTrak™']].map(([k,n])=>`<option value="${k}" ${s.targetKind===k?'selected':''}>${n}</option>`).join('')}</select></div><select class="w-rarity-filter" aria-label="Jakość celu" onchange="upgradeFilter('targetRarity',+this.value)" ${locked?'disabled':''}><option value=-1>Wszystkie jakości</option>${RC.map((name,r)=>`<option value=${r} ${s.targetRarity===r?'selected':''}>${name}</option>`).join('')}</select><div class="w-item-grid w-scroll-grid">${page.map(id=>workshopItemCard(id,{selected:target===id,disabled:locked,action:'upgradeTarget'})).join('')||`<p class="w-empty">${input?'Brak celów dla tych filtrów. Zmień mnożnik, jakość lub nazwę.':'Najpierw wybierz skin ze swojego ekwipunku.'}</p>`}</div><div class="w-pagination"><button onclick="upgradePage(-1)" ${locked||s.page===0?'disabled':''}>←</button><span>${s.page+1} / ${pages}</span><button onclick="upgradePage(1)" ${locked||s.page>=pages-1?'disabled':''}>→</button></div></section>
   </div>`;
 }
 function workshopResultHTML(t){
@@ -1473,7 +1473,7 @@ function killcamSync(){
   const live=k.killer.alive&&combatLife(k.killer).id===k.killerLife;
   if(live){k.focus.x=k.killer.x;k.focus.y=k.killer.y;}
   killcamElement.querySelector('.kc-state').textContent=live?'Kamera śledzi zabójcę':'Zabójca został wyeliminowany';
-  killcamElement.querySelector('.kc-time').textContent=k.left.toFixed(1).replace('.',',')+' s';
+  killcamElement.querySelector('.kc-time').textContent=k.left.toLocaleString(szLocale.language==='en'?'en-US':'pl-PL',{minimumFractionDigits:1,maximumFractionDigits:1})+' s';
   killcamElement.querySelector('.kc-progress i').style.width=Math.max(0,k.left/KILLCAM_SECONDS*100)+'%';
 }
 const COMBAT_SPECTATE=specTarget,COMBAT_SPEC_NEXT=specNext;
@@ -1766,7 +1766,7 @@ owRender=function(){
   if(!OW)return;const o=owAccount(),coverage=owCoverage(),stats=OW.st,notes=OW.clips.flatMap((c,i)=>c.events.map(e=>({...e,global:owOffset(i)+e.time}))),nextReward=25+Math.min(o.st+1,5)*5;
   $('main').innerHTML=`<div class="ow-page"><header class="ow-header"><div><span class="ow-eyebrow">STRIKE ZONE / CENTRUM ANALIZ</span><h1>Overwatch<span>.</span></h1><p>Obejrzyj trzy fragmenty. Oceń zachowanie suspecta i odbierz nagrodę za trafny werdykt.</p></div><div class="ow-investigator"><span>TRAFNOŚĆ OCEN</span><b>${o.n?Math.round(o.ok/o.n*100)+'%':'—'}</b><small>${o.ok} trafnych / ${o.n} ocen</small></div></header>
   <div class="ow-summary"><span><small>SERIA TRAFNYCH OCEN</small><b>${o.st}</b></span><span><small>NASTĘPNA NAGRODA</small><b>${owPaidToday()<OW_DAILY_LIMIT?'$'+nextReward:'Limit na dziś'}<i>${owPaidToday()<OW_DAILY_LIMIT?'+ 10 XP':''}</i></b></span><span><small>NAGRODY DZISIAJ</small><b>${owPaidToday()}<em> / ${OW_DAILY_LIMIT}</em></b></span><div><i></i>Tryb treningowy · dema z botami</div></div>
-  <section class="ow-player"><div class="ow-case-top"><div><span class="ow-case-id">${OW.id}</span><b>${owEscape(MAPN[OW.map])}</b><small class="ow-clip-caption"></small></div><span class="ow-status">W TRAKCIE ANALIZY</span></div><div class="ow-canvas-wrap"><canvas id="owc" width="1000" height="600" aria-label="Nagranie zachowania suspecta"></canvas></div><div class="ow-clip-tabs">${OW.clips.map((c,i)=>`<button data-clip="${i}" onclick="owSelectClip(${i})"><b>0${i+1}</b><span>${owEscape(c.title)}<small>Runda ${c.round}</small></span><i></i></button>`).join('')}</div><div class="ow-timeline"><div class="ow-timeline-marks">${notes.map(e=>`<button style="left:${e.global/OW.duration*100}%" title="Eliminacja · ${owClock(e.global)}" onclick="owSeekGlobal(${e.global})"></button>`).join('')}</div><input id="ow-seek" type="range" min="0" max="${OW.duration}" step=".0333333" value="${owOffset()+OW.time}" aria-label="Pozycja w demie" oninput="owSeekGlobal(+this.value)"></div><div class="ow-controls"><div><button id="ow-play" onclick="owTogglePlay()">Pauza</button><button onclick="owJump(-2)" title="Cofnij o dwie sekundy">−2 s</button><button onclick="owJump(2)" title="Przewiń o dwie sekundy">+2 s</button><select id="ow-rate" onchange="owRate(this.value)" aria-label="Szybkość odtwarzania">${[.25,.5,1,2,4].map(n=>`<option value="${n}">${n}×</option>`).join('')}</select><span id="ow-time"></span></div><div><button id="ow-xray" onclick="owView('xray')">X-ray</button><button id="ow-overview" onclick="owView('overview')">Cała mapa</button></div></div></section>
+  <section class="ow-player"><div class="ow-case-top"><div><span class="ow-case-id">${OW.id}</span><b>${szLocale.mapNameHTML(MAPN[OW.map])}</b><small class="ow-clip-caption"></small></div><span class="ow-status">W TRAKCIE ANALIZY</span></div><div class="ow-canvas-wrap"><canvas id="owc" width="1000" height="600" aria-label="Nagranie zachowania suspecta"></canvas></div><div class="ow-clip-tabs">${OW.clips.map((c,i)=>`<button data-clip="${i}" onclick="owSelectClip(${i})"><b>0${i+1}</b><span>${owEscape(c.title)}<small>Runda ${c.round}</small></span><i></i></button>`).join('')}</div><div class="ow-timeline"><div class="ow-timeline-marks">${notes.map(e=>`<button style="left:${e.global/OW.duration*100}%" title="Eliminacja · ${owClock(e.global)}" onclick="owSeekGlobal(${e.global})"></button>`).join('')}</div><input id="ow-seek" type="range" min="0" max="${OW.duration}" step=".0333333" value="${owOffset()+OW.time}" aria-label="Pozycja w demie" oninput="owSeekGlobal(+this.value)"></div><div class="ow-controls"><div><button id="ow-play" onclick="owTogglePlay()">Pauza</button><button onclick="owJump(-2)" title="Cofnij o dwie sekundy">−2 s</button><button onclick="owJump(2)" title="Przewiń o dwie sekundy">+2 s</button><select id="ow-rate" onchange="owRate(this.value)" aria-label="Szybkość odtwarzania">${[.25,.5,1,2,4].map(n=>`<option value="${n}">${n}×</option>`).join('')}</select><span id="ow-time"></span></div><div><button id="ow-xray" onclick="owView('xray')">X-ray</button><button id="ow-overview" onclick="owView('overview')">Cała mapa</button></div></div></section>
   <div class="ow-observer-note"><span class="ow-blue-dot"></span><b>Suspect</b><span class="ow-orange-dot"></span><b>Przeciwnicy</b><p>X-ray pokazuje ukryte pozycje obserwatorowi. Suspect widzi tylko to, co odsłaniają mapa i smoke.</p></div>
   <div class="ow-demo-stats">${[['Strzały',stats.shots],['Trafienia',stats.hits],['Headshoty',stats.hs+'%'],['Eliminacje',stats.kills],['Przez smoke',stats.smoke],['Przez osłonę',stats.wall]].map(([name,value])=>`<div><small>${name}</small><b>${value}</b></div>`).join('')}</div>
   <p class="ow-guidance">Trafienie przez smoke, cienką ścianę lub skrzynię może być legalne. Szukaj powtarzalnego zachowania i sprawdzaj, jakie informacje suspect miał przed strzałem.</p>
@@ -2292,7 +2292,7 @@ trTry=function(){if(!TR||!TR.mc||!TR.tc||TR.exec)return;if(!friTradeReady(TR.fid
 const PRESENTATION_TRADE_CLOSE=trClose;
 trClose=function(){if(TR?.finishTimer)clearTimeout(TR.finishTimer);PRESENTATION_TRADE_CLOSE();};
 trFin=function(){const state=TR;if(!state?.exec)return;if(state.pd){toast('Wymiana zakończona!');trClose();}else if(!state.finishTimer)state.finishTimer=setTimeout(()=>{if(TR===state&&!state.pd){toast('Twoja część wymiany jest zapisana. Oczekiwanie na partnera zakończone.');trClose();}},8000);};
-trUI=function(){if(!TR)return;const counts={};allItems(P()).filter(tradeItemValid).forEach(id=>counts[id]=(counts[id]||0)+1);const card=(id,own)=>{const item=presentationItem(id);return item?`<article class="cosmetic-card trade-card" style="--cosmetic-color:${RCol[item.rarity]}"><img src="${item.image(260,146)}" alt="${workshopEscape(item.name)}"><b>${workshopEscape(item.name)}</b>${item.st?`<small class="stat-tag">StatTrak™${own?' · zabójstwa: '+(P().stk?.[id]||0):' · licznik zabójstw'}</small>`:''}<small style="color:${RCol[item.rarity]}">${RC[item.rarity]}</small></article>`:'<div class="trade-empty">Wybierz przedmiot z ekwipunku</div>';};const o=$('pm');o.style.display='flex';o.innerHTML=`<section class="pmb trade-dialog"><small>WYMIANA PRZEDMIOTÓW</small><h2>${workshopEscape(TR.fname)}</h2><div class="trade-sides"><div><h3>Twoja oferta ${TR.mc?'· potwierdzona':''}</h3>${card(TR.my,true)}</div><div><h3>Oferta gracza ${TR.tc?'· potwierdzona':''}</h3>${card(TR.their,false)}</div></div><div class="trade-picks">${Object.keys(counts).map(id=>`<button ${TR.exec?'disabled':''} class="${TR.my===id?'selected':''}" onclick="trPick('${id}')">${workshopEscape(itName(id))} ×${counts[id]}</button>`).join('')||'Brak skinów i rękawiczek do wymiany.'}</div><p>Obie osoby potwierdzają ofertę. Zmiana przedmiotu cofa potwierdzenia.</p><button class="pri" ${TR.my&&TR.their&&!TR.mc&&!TR.exec?'':'disabled'} onclick="trConfirm()">Potwierdź wymianę</button> <button ${TR.exec?'disabled':''} onclick="trCancel()">Anuluj</button></section>`;};
+trUI=function(){if(!TR)return;const counts={};allItems(P()).filter(tradeItemValid).forEach(id=>counts[id]=(counts[id]||0)+1);const card=(id,own)=>{const item=presentationItem(id);return item?`<article class="cosmetic-card trade-card" style="--cosmetic-color:${RCol[item.rarity]}"><img src="${item.image(260,146)}" alt="${workshopEscape(item.name)}"><b>${workshopEscape(item.name)}</b>${item.st?`<small class="stat-tag">StatTrak™${own?' · zabójstwa: '+(P().stk?.[id]||0):' · licznik zabójstw'}</small>`:''}<small style="color:${RCol[item.rarity]}">${RC[item.rarity]}</small></article>`:'<div class="trade-empty">Wybierz przedmiot z ekwipunku</div>';};const o=$('pm');o.style.display='flex';o.innerHTML=`<section class="pmb trade-dialog"><small>WYMIANA PRZEDMIOTÓW</small><h2 data-user-content>${workshopEscape(TR.fname)}</h2><div class="trade-sides"><div><h3>Twoja oferta ${TR.mc?'· potwierdzona':''}</h3>${card(TR.my,true)}</div><div><h3>Oferta gracza ${TR.tc?'· potwierdzona':''}</h3>${card(TR.their,false)}</div></div><div class="trade-picks">${Object.keys(counts).map(id=>`<button ${TR.exec?'disabled':''} class="${TR.my===id?'selected':''}" onclick="trPick('${id}')">${workshopEscape(itName(id))} ×${counts[id]}</button>`).join('')||'Brak skinów i rękawiczek do wymiany.'}</div><p>Obie osoby potwierdzają ofertę. Zmiana przedmiotu cofa potwierdzenia.</p><button class="pri" ${TR.my&&TR.their&&!TR.mc&&!TR.exec?'':'disabled'} onclick="trConfirm()">Potwierdź wymianę</button> <button ${TR.exec?'disabled':''} onclick="trCancel()">Anuluj</button></section>`;};
 
 // The reward is committed once, before the presentation starts. Reload only replays its reveal.
 let CASE_PRESENTATION=null;
@@ -2347,6 +2347,7 @@ const MAP_BRIEFINGS=[
  {accent:'#99dcc9',floor:'#527e78',wall:'#a3c7be',dark:'#163831',label:'ZOMBIE / KOMPLEKS BADAWCZY',description:'Chłodne światło, laboratoria i ciasne przejścia. Krótkie dystanse premiują przygotowane pozycje i współpracę obrońców.',tips:['Zabezpiecz podejścia minami i osłonami.','Pozostaw sobie drogę odwrotu do kolejnego pomieszczenia.'],landmark:'lab'},
  {accent:'#d7bc90',floor:'#776d55',wall:'#b1a68b',dark:'#342f25',label:'ZOMBIE / OPUSZCZONA WIOSKA',description:'Stare domy, ogrodzenia i niebezpieczne podwórza. Obrona w grupie jest bezpieczniejsza niż samotny powrót przez otwarty teren.',tips:['Wybierz pozycję z widokiem na kilka wejść.','Nie oddalaj się od drużyny podczas ataku zombie.'],landmark:'village'}
 ];
+function szMapDescriptionHTML(briefing){if(!briefing)return '';if(!briefing.descriptionTemplate)return workshopEscape(szLocale.t(briefing.description));const text=szLocale.t(briefing.descriptionTemplate),parts=text.split('{name}');return parts.map(workshopEscape).join('<span data-user-content>'+workshopEscape(briefing.authorTitle||'')+'</span>');}
 function loadingLandmark(q,kind,accent){q.save();q.translate(56,40);q.strokeStyle=accent+'44';q.fillStyle=accent+'12';q.lineWidth=1.5;
  if(kind==='arch'||kind==='stone'){for(let j=0;j<3;j++){const x=j*62;q.beginPath();q.rect(x,42,50,90);q.fill();q.stroke();q.beginPath();q.moveTo(x+10,132);q.lineTo(x+10,75);q.bezierCurveTo(x+10,48,x+40,48,x+40,75);q.lineTo(x+40,132);q.stroke();}q.strokeRect(-12,24,198,18);}
  else if(kind==='temple'){for(let j=0;j<5;j++)q.strokeRect(j*18,120-j*22,180-j*36,22);}
@@ -2356,7 +2357,7 @@ function loadingLandmark(q,kind,accent){q.save();q.translate(56,40);q.strokeStyl
  else{for(let j=0;j<4;j++){const x=j*45,h=kind==='city'?45+j%3*30:55;q.strokeRect(x,140-h,39,h);if(kind==='roofs'||kind==='village'){q.beginPath();q.moveTo(x-5,140-h);q.lineTo(x+19,115-h);q.lineTo(x+44,140-h);q.closePath();q.fill();q.stroke();}for(let yy=150-h;yy<125;yy+=15)q.strokeRect(x+10,yy,8,7);}if(kind==='lab'){q.strokeRect(66,18,40,18);q.beginPath();q.moveTo(86,22);q.lineTo(86,32);q.moveTo(81,27);q.lineTo(91,27);q.stroke();}}
  q.restore();}
 function mapLoadingArt(map,w=1300,h=520){
- const key=`map-briefing:${map}:${w}:${h}`;if(PRESENTATION_IMAGES.has(key))return PRESENTATION_IMAGES.get(key);const theme=MAP_BRIEFINGS[map],grid=GRS[map],gw=grid?grid.cols*grid.cs:1000*SCL[map],gh=grid?grid.rows*grid.cs:640*SCL[map],[c,q]=presentationCanvas(w,h);q.scale(w/1300,h/520);
+ const key=`map-briefing:${globalThis.szLocale?.language||'pl'}:${map}:${w}:${h}`;if(PRESENTATION_IMAGES.has(key))return PRESENTATION_IMAGES.get(key);const theme=MAP_BRIEFINGS[map],grid=GRS[map],gw=grid?grid.cols*grid.cs:1000*SCL[map],gh=grid?grid.rows*grid.cs:640*SCL[map],[c,q]=presentationCanvas(w,h);q.scale(w/1300,h/520);
  const bg=q.createLinearGradient(0,0,1300,520);bg.addColorStop(0,theme.dark);bg.addColorStop(.65,'#14232d');bg.addColorStop(1,theme.dark);q.fillStyle=bg;q.fillRect(0,0,1300,520);
  q.strokeStyle=theme.accent+'0c';for(let x=0;x<1300;x+=32){q.beginPath();q.moveTo(x,0);q.lineTo(x,520);q.stroke();}for(let y=0;y<520;y+=32){q.beginPath();q.moveTo(0,y);q.lineTo(1300,y);q.stroke();}
  loadingLandmark(q,theme.landmark,theme.accent);
@@ -2374,7 +2375,7 @@ function mapLoadingArt(map,w=1300,h=520){
 let MAP_LOAD_SEQUENCE=0;
 loadScreen=function(callback,boot=false){
  const token=++MAP_LOAD_SEQUENCE,map=Math.max(0,Math.min(MAPN.length-1,sel.map||0)),briefing=MAP_BRIEFINGS[map],mode=MODES.find(x=>x[0]===sel.mode)?.[1]||'Classic',o=$('ld');o.style.display='flex';o.style.background='radial-gradient(ellipse at 75% 20%,'+briefing.dark+',#080f18 80%)';o.style.setProperty('--map-accent',briefing.accent);
- o.innerHTML=`<section class="map-loading" data-map="${map}" aria-label="Ładowanie mapy ${workshopEscape(MAPN[map])}"><div class="map-loading-hero"><img src="${mapLoadingArt(map)}" alt="Układ mapy ${workshopEscape(MAPN[map])}"><div class="map-loading-brand"><i class="sz-brand" aria-hidden="true"></i>STRIKE ZONE <span>2D</span></div><div class="map-loading-name"><small>${boot?'URUCHAMIANIE GRY':briefing.label}</small><h1>${boot?'STRIKE ZONE':workshopEscape(MAPN[map])}</h1><span>${workshopEscape(mode)}</span></div><div class="map-loading-coordinates">${isBombMap(map)?'A / B · DWA PUNKTY':map<9?'36 GRACZY · OSTATNI OCALAŁY':'OBRONA · WSPÓŁPRACA'}<br>MAP ${String(map+1).padStart(2,'0')} / ${MAPN.length}</div></div><div class="map-loading-body"><div><small>TEREN OPERACJI</small><p>${briefing.description}</p></div><aside><small>PRZED PIERWSZYM KONTAKTEM</small><p>${briefing.tips[0]}</p><p>${briefing.tips[1]}</p></aside></div><div class="map-loading-progress"><div><span id="map-load-stage">Przygotowanie mapy</span><b id="map-load-percent">0%</b></div><div role="progressbar" aria-label="Postęp ładowania" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="map-load-fill"></i></div><footer><span>WSKAZÓWKA <b>${map>=6&&map<=8?'M — mapa · H — apteczka':'B — sklep · TAB — tabela wyników'}</b></span><span>STRIKE ZONE / ${workshopEscape(MAPN[map].toUpperCase())}</span></footer></div></section>`;
+ o.innerHTML=`<section class="map-loading" data-map="${map}" aria-label="Ładowanie mapy ${workshopEscape(szLocale.mapName(MAPN[map]))}"><div class="map-loading-hero"><img src="${mapLoadingArt(map)}" alt="Układ mapy ${workshopEscape(szLocale.mapName(MAPN[map]))}"><div class="map-loading-brand"><i class="sz-brand" aria-hidden="true"></i>STRIKE ZONE <span>2D</span></div><div class="map-loading-name"><small>${boot?'URUCHAMIANIE GRY':briefing.label}</small><h1>${boot?'STRIKE ZONE':szLocale.mapNameHTML(MAPN[map])}</h1><span>${workshopEscape(mode)}</span></div><div class="map-loading-coordinates">${isBombMap(map)?'A / B · DWA PUNKTY':map<9?'36 GRACZY · OSTATNI OCALAŁY':'OBRONA · WSPÓŁPRACA'}<br>MAP ${String(map+1).padStart(2,'0')} / ${MAPN.length}</div></div><div class="map-loading-body"><div><small>TEREN OPERACJI</small><p data-no-translate>${szMapDescriptionHTML(briefing)}</p></div><aside><small>PRZED PIERWSZYM KONTAKTEM</small><p>${briefing.tips[0]}</p><p>${briefing.tips[1]}</p></aside></div><div class="map-loading-progress"><div><span id="map-load-stage">Przygotowanie mapy</span><b id="map-load-percent">0%</b></div><div role="progressbar" aria-label="Postęp ładowania" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="map-load-fill"></i></div><footer><span>WSKAZÓWKA <b>${map>=6&&map<=8?'M — mapa · H — apteczka':'B — sklep · TAB — tabela wyników'}</b></span><span>STRIKE ZONE / ${szLocale.mapNameHTML(MAPN[map])}</span></footer></div></section>`;
  const operations=[()=>{const g=GRS[map];if(g&&!g.d.length)throw new Error('map');},()=>{for(const id of Object.values(P().eq||{}))if(workshopValid(id))skinImg(id,200,80);},()=>{const glove=P().eq2?.['glove_'+(sel.team||'CT')];if(glove&&tradeItemValid(glove))glovePreview(glove,220,126);},()=>{}],labels=['Przygotowanie układu mapy','Wczytywanie wyposażenia','Przygotowanie interfejsu','Gotowe do rozgrywki'];
  const duration=boot?1200:2250,start=performance.now();let completed=0;
  return new Promise(resolve=>{function frame(now){if(token!==MAP_LOAD_SEQUENCE){resolve(false);return;}const fraction=Math.min(1,(now-start)/duration),stage=Math.min(3,Math.floor(fraction*4));while(completed<=stage){operations[completed]();completed++;}const percent=Math.round(fraction*100),bar=o.querySelector('[role="progressbar"]');$('map-load-stage').textContent=labels[stage];$('map-load-percent').textContent=percent+'%';$('map-load-fill').style.width=percent+'%';bar.setAttribute('aria-valuenow',percent);if(fraction<1)requestAnimationFrame(frame);else{requestAnimationFrame(()=>{if(token!==MAP_LOAD_SEQUENCE){resolve(false);return;}o.style.display='none';if(callback)callback();resolve(true);});}}requestAnimationFrame(frame);});
@@ -2382,7 +2383,7 @@ loadScreen=function(callback,boot=false){
 function previewMapLoading(map){const previous={map:sel.map,mode:sel.mode};sel.map=+map;sel.mode=isBombMap(map)?'tdm':map>=9?'zombie':'br';return loadScreen(()=>{Object.assign(sel,previous);},false);}
 function presentationTab(kind='gloves'){
  T='presentation';hdr();const tabs=`<div class="w-tabs">${[['gloves','Rękawiczki'],['music','Muzyka MVP'],['maps','Ekrany map']].map(([id,label])=>`<button class="${id===kind?'active':''}" onclick="presentationTab('${id}')">${label}</button>`).join('')}</div>`;
- $('main').innerHTML=`<div class="presentation-gallery"><div class="cosmetic-heading"><div><small>STRIKE ZONE / NOWY WYGLĄD</small><h1>${kind==='maps'?'Każda mapa ma swój klimat.':kind==='music'?'Dźwięk zwycięstwa.':'Wzór, który widać.'}</h1><p>${kind==='maps'?'Zobacz ekrany ładowania wszystkich dwunastu map.':kind==='music'?'Osiem zestawów MVP z własną okładką.':'Osobne materiały, przeszycia, panele i wzory dla każdej pary.'}</p></div></div>${tabs}<div class="cosmetic-grid ${kind==='maps'?'loading-gallery':''}">${kind==='maps'?MAPN.map((n,i)=>`<article class="cosmetic-card" style="--cosmetic-color:${MAP_BRIEFINGS[i].accent}"><img src="${mapLoadingArt(i,650,260)}" alt="Mapa ${workshopEscape(n)}"><div class="cosmetic-caption"><b>${workshopEscape(n)}</b><small>${MAP_BRIEFINGS[i].label}</small><button onclick="previewMapLoading(${i})">Zobacz ładowanie</button></div></article>`).join(''):kind==='music'?MK.map((k,i)=>`<article class="cosmetic-card" style="--cosmetic-color:${RCol[k.r]}"><img src="${musicPreview('m:'+i,340,204)}" alt="Okładka ${workshopEscape(k.n)}"><div class="cosmetic-caption"><b>${k.n}</b><small>${k.bpm} BPM · ${RC[k.r]}</small><button onclick="previewMusicKit(${i},this)">Posłuchaj</button></div></article>`).join(''):GLV.map((g,i)=>`<article class="cosmetic-card" style="--cosmetic-color:${RCol[g[2]]}"><img src="${glovePreview('v:'+i,340,196)}" alt="${workshopEscape(g[0])}"><div class="cosmetic-caption"><b>${g[0]}</b><small>${RC[g[2]]}</small></div></article>`).join('')}</div><button onclick="featureHub()">Wróć do nowości</button></div>`;$('main').scrollTop=0;
+ $('main').innerHTML=`<div class="presentation-gallery"><div class="cosmetic-heading"><div><small>STRIKE ZONE / NOWY WYGLĄD</small><h1>${kind==='maps'?'Każda mapa ma swój klimat.':kind==='music'?'Dźwięk zwycięstwa.':'Wzór, który widać.'}</h1><p>${kind==='maps'?'Zobacz ekrany ładowania map gry.':kind==='music'?'Osiem zestawów MVP z własną okładką.':'Osobne materiały, przeszycia, panele i wzory dla każdej pary.'}</p></div></div>${tabs}<div class="cosmetic-grid ${kind==='maps'?'loading-gallery':''}">${kind==='maps'?MAPN.map((n,i)=>`<article class="cosmetic-card" style="--cosmetic-color:${MAP_BRIEFINGS[i].accent}"><img src="${mapLoadingArt(i,650,260)}" alt="Mapa ${workshopEscape(n)}"><div class="cosmetic-caption"><b>${workshopEscape(n)}</b><small>${MAP_BRIEFINGS[i].label}</small><button onclick="previewMapLoading(${i})">Zobacz ładowanie</button></div></article>`).join(''):kind==='music'?MK.map((k,i)=>`<article class="cosmetic-card" style="--cosmetic-color:${RCol[k.r]}"><img src="${musicPreview('m:'+i,340,204)}" alt="Okładka ${workshopEscape(k.n)}"><div class="cosmetic-caption"><b>${k.n}</b><small>${k.bpm} BPM · ${RC[k.r]}</small><button onclick="previewMusicKit(${i},this)">Posłuchaj</button></div></article>`).join(''):GLV.map((g,i)=>`<article class="cosmetic-card" style="--cosmetic-color:${RCol[g[2]]}"><img src="${glovePreview('v:'+i,340,196)}" alt="${workshopEscape(g[0])}"><div class="cosmetic-caption"><b>${g[0]}</b><small>${RC[g[2]]}</small></div></article>`).join('')}</div><button onclick="featureHub()">Wróć do nowości</button></div>`;$('main').scrollTop=0;
 }
 const PRESENTATION_HUB=featureHub;
 featureHub=function(){PRESENTATION_HUB();document.querySelector('.w-hub-hero').insertAdjacentHTML('afterend',`<section class="presentation-news"><div><small>NOWY WYGLĄD / NOWE ANIMACJE</small><h2>Otwórz. Odkryj. Wyposaż.</h2><p>Skrzynki na środku ekranu, nowe grafiki wyposażenia i odprawy przed mapą.</p></div><div><button onclick="INV='w';tab('inv')">Otwórz skrzynki</button><button onclick="presentationTab('gloves')">Rękawiczki</button><button onclick="presentationTab('music')">Muzyki MVP</button><button onclick="presentationTab('maps')">Ekrany map</button><button onclick="tab('set')">Zoom kamery</button></div></section>`);};
@@ -2828,7 +2829,7 @@ mapSet=function(mode){const list=CREATOR_MAP_SET(mode);return CREATOR_TEST&&['cl
 isBombMap=function(id){return CREATOR_BOMB_MAP(id)||!!CREATOR_TEST&&id===CREATOR_BASE_MAP_COUNT;};
 function creatorMountMap(map,grid,id=CREATOR_BASE_MAP_COUNT){
  const theme=CREATOR_THEMES[map.theme];GRS[id]=grid;MAPN[id]='workshop / '+map.name;MAPS[id]=[];WINS[id]=map.windows.map(r=>r.slice());FLRS[id]=[];SITES[id]=creatorClone(map.sites);SPW[id]=creatorClone(map.spawns);LB[id]=[];SCL[id]=CREATOR_W/1000;FL[id]=theme.floor;WC[id]=theme.wall;FLG[id]=theme.floor;WCG[id]=theme.wall;BGC[id]=[theme.floor,theme.dark,theme.accent];
- MAP_BRIEFINGS[id]={...theme,label:'WARSZTAT / LOKALNY TRENING',description:'Twój projekt mapy: '+workshopEscape(map.name)+'. Sprawdź przejścia, osłony i pozycje obu drużyn w grze z botami.',tips:['Wróć do Warsztatu, aby poprawić układ mapy.','Ten test nie zmienia statystyk konta ani stanu portfela.'],landmark:map.theme==='forest'?'temple':map.theme==='desert'?'arch':'reactor'};SCV=null;SCK='';PRESENTATION_IMAGES.clear();
+ MAP_BRIEFINGS[id]={...theme,label:'WARSZTAT / LOKALNY TRENING',description:'Twój projekt mapy: '+workshopEscape(map.name)+'. Sprawdź przejścia, osłony i pozycje obu drużyn w grze z botami.',descriptionTemplate:'Twój projekt mapy: {name}. Sprawdź przejścia, osłony i pozycje obu drużyn w grze z botami.',authorTitle:map.name,tips:['Wróć do Warsztatu, aby poprawić układ mapy.','Ten test nie zmienia statystyk konta ani stanu portfela.'],landmark:map.theme==='forest'?'temple':map.theme==='desert'?'arch':'reactor'};SCV=null;SCK='';PRESENTATION_IMAGES.clear();
 }
 function creatorTestMap(){
  if(L){creatorNotice('Wyjdź z lobby przed uruchomieniem lokalnego testu mapy.',true);return;}const checked=creatorCheckMap();if(!checked)return;
@@ -2878,7 +2879,7 @@ function creatorDrawSkin(){const c=$('creator-skin');if(!c)return;const q=c.getC
 function creatorBindSkin(){const c=$('creator-skin'),s=creatorState();let stroke=null;const point=e=>{const r=c.getBoundingClientRect(),t=creatorSkinTransform();return [Math.round(((e.clientX-r.left)/r.width*c.width-t.x)/t.scale*4)/4,Math.round(((e.clientY-r.top)/r.height*c.height-t.y)/t.scale*4)/4];};const valid=p=>p.every(n=>n>=-32&&n<=120);
  c.onpointerdown=e=>{if(!s.brush||e.button!==0)return;if(s.skin.strokes.length>=80){creatorNotice('Limit 80 pociągnięć pędzla. Cofnij część rysunku lub zacznij nowy projekt.',true);return;}const p=point(e);if(!valid(p))return;e.preventDefault();c.setPointerCapture(e.pointerId);stroke={color:s.brushColor,size:s.brushSize,points:[p]};s.skin.strokes.push(stroke);s.dirty=true;creatorDrawSkin();};
  c.onpointermove=e=>{if(!stroke)return;const p=point(e),old=stroke.points.at(-1);if(valid(p)&&Math.hypot(p[0]-old[0],p[1]-old[1])>.35){if(stroke.points.length<120)stroke.points.push(p);else stroke.points[119]=p;creatorDrawSkin();}};
- c.onpointerup=e=>{stroke=null;if(c.hasPointerCapture(e.pointerId))c.releasePointerCapture(e.pointerId);};c.onpointercancel=()=>{stroke=null;};creatorDrawSkin();}
+ c.onpointerup=e=>{stroke=null;if(c.hasPointerCapture(e.pointerId))c.releasePointerCapture(e.pointerId);};c.onpointercancel=c.onlostpointercapture=()=>{stroke=null;};creatorDrawSkin();}
 function creatorUndoStroke(){const s=creatorState();s.skin.strokes.pop();s.dirty=true;creatorDrawSkin();}
 function creatorClearStrokes(){const s=creatorState();s.skin.strokes=[];s.dirty=true;creatorDrawSkin();}
 function creatorSaveSkin(equip=false){equip=false;try{const s=creatorState(),p=creatorParseSkin(s.skin),store=creatorClone(s.store),index=store.skins.findIndex(q=>q.id===p.id);if(index<0&&store.skins.length>=48)throw Error('Możesz zapisać 48 skinów. Wyeksportuj i usuń jeden projekt, aby zrobić miejsce.');if(index<0)store.skins.push(p);else store.skins[index]=p;for(const k of Object.keys(store.loadout))if(store.loadout[k]===p.id&&k!==p.weapon)delete store.loadout[k];if(equip)store.loadout[p.weapon]=p.id;creatorCommit(store);s.skin=p;s.dirty=false;creatorTab('skins');creatorNotice(equip?'Zapisano i wyposażono własny projekt. Będzie widoczny dla ciebie podczas gry.':'Zapisano projekt skina „'+p.name+'”.');return true;}catch(e){creatorNotice(e.message,true);return false;}}
@@ -2910,7 +2911,7 @@ function communityNavHTML(active){return `<button class="${active==='catalog'?'a
 function communityUpdateNav(){if(T!=='creator')return;const tabs=document.querySelector('.cr-tabs');if(!tabs||tabs.dataset.cloud==='page')return;tabs.querySelector('.cw-nav')?.remove();const el=document.createElement('span');el.className='cw-nav';el.innerHTML=communityNavHTML('');tabs.appendChild(el);}
 async function communityRefresh(){
  communityReset();if(!communityOnline())return false;if(COMMUNITY_REFRESH)return COMMUNITY_REFRESH;const epoch=COMMUNITY.epoch,owner=communityAccount(),client=sb;
- const task=Promise.resolve().then(async()=>{try{const rows=[];let complete=false;for(let offset=0;offset<10000;offset+=200){const r=await client.from('sz_workshop_catalog').select('id,kind,title,author_name,version,release_id,updated_at,weapon,model,theme,mode,plays,likes,featured,promoted_at').order('updated_at',{ascending:false}).range(offset,offset+199);if(r.error)throw r.error;rows.push(...r.data||[]);if((r.data||[]).length<200){complete=true;break;}}
+ const task=Promise.resolve().then(async()=>{try{const rows=[];let complete=false;for(let offset=0;offset<10000;offset+=200){const r=await client.from('sz_workshop_catalog').select('*').order('updated_at',{ascending:false}).range(offset,offset+199);if(r.error)throw r.error;rows.push(...r.data||[]);if((r.data||[]).length<200){complete=true;break;}}
   let mine=[],admin=false,queue=[];if(owner){const results=await Promise.all([client.from('sz_workshop_admins').select('user_id').eq('user_id',owner).maybeSingle(),client.from('sz_workshop_submissions').select('id,project_id,kind,title,author_name,description,payload,status,review_note,created_at,reviewed_at').eq('author_id',owner).order('created_at',{ascending:false}).limit(100)]);for(const r of results)if(r.error)throw r.error;admin=!!results[0].data;mine=results[1].data||[];if(admin){const r=await client.from('sz_workshop_submissions').select('id,project_id,kind,title,author_name,description,payload,status,review_note,created_at').eq('status','pending').order('created_at',{ascending:true}).limit(200);if(r.error)throw r.error;queue=r.data||[];}}
   if(COMMUNITY.epoch!==epoch||communityAccount()!==owner)return false;
   COMMUNITY.rows=rows.filter(r=>COMMUNITY_UUID.test(r.id)&&COMMUNITY_UUID.test(r.release_id)&&['map','skin'].includes(r.kind)&&Number.isSafeInteger(r.version));COMMUNITY.mine=mine;COMMUNITY.queue=queue;COMMUNITY.admin=admin;COMMUNITY.ready=true;COMMUNITY.complete=complete;COMMUNITY.lastSync=Date.now();if(COMMUNITY.error){COMMUNITY.error=false;COMMUNITY.message='';}
@@ -2950,19 +2951,19 @@ function communityRender(){
 function communityCard(r,active){
  const pub=active==='catalog',release=pub?r.release_id:r.id;
  const weapon=r.weapon||r.payload?.weapon,model=r.model||r.payload?.model,label=r.kind==='map'?'MAPA WARSZTATOWA':'SKIN / '+workshopEscape(weapon==='knife'?KNIFE_MODELS[model]||'Nóż':W[weapon]?.n||'Broń');
- const status=pub?(r.kind==='skin'?'<small>Projekt w Community Forge Case</small>':''):`<span class="cw-pill ${r.status}">${communityStatus(r.status)}</span>${r.review_note?`<div class="cw-author-note">${workshopEscape(r.review_note)}</div>`:''}`;
- const actions=pub?`<button class="cr-primary" onclick="${r.kind==='map'?'communityPlay':'forgeCatalogAction'}('${release}')">${r.kind==='map'?(L?.host?'Ustaw w lobby':'Zagraj'):'Skrzynka społeczności'}</button><button onclick="communityDetails('${release}','catalog')">Podgląd</button>${COMMUNITY.admin?`<button onclick="communityWithdraw('${r.id}')">Wycofaj</button>`:''}`:`<button class="${active==='moderation'?'cr-primary':''}" onclick="communityDetails('${r.id}','${active}')">${active==='moderation'?'Sprawdź projekt':'Zobacz zgłoszenie'}</button>`;
+ const status=pub?(r.kind==='skin'?(r.case_enabled===false?'<small>Skin wycofany ze skrzynki</small>':'<small>Projekt w Community Forge Case</small>'):''):`<span class="cw-pill ${r.status}">${communityStatus(r.status)}</span>${r.review_note?`<div class="cw-author-note" data-user-content>${workshopEscape(r.review_note)}</div>`:''}`;
+ const actions=pub?`<button class="cr-primary" onclick="${r.kind==='map'?'communityPlay':'forgeCatalogAction'}('${release}')">${r.kind==='map'?(L?.host?'Ustaw w lobby':'Zagraj'):'Skrzynka społeczności'}</button><button onclick="communityDetails('${release}','catalog')">Podgląd</button>${COMMUNITY.admin?`<button onclick="communityWithdraw('${r.id}')">Wycofaj publikację</button>`:''}`:`<button class="${active==='moderation'?'cr-primary':''}" onclick="communityDetails('${r.id}','${active}')">${active==='moderation'?'Sprawdź projekt':'Zobacz zgłoszenie'}</button>`;
  return `<article class="cw-card" data-cw-card="${release}"><div class="cw-preview" data-cw-thumb="${release}"><span>${r.kind==='map'?'MAPA WARSZTATOWA':'SKIN SPOŁECZNOŚCI'}</span></div><div><span class="cw-label">${label}</span><h3 data-user-content>${workshopEscape(r.title)}</h3><small>Autor: <span data-user-content>${workshopEscape(r.author_name)}</span>${pub?' · wersja '+r.version:''}</small>${status}${pub&&r.kind==='map'?(window.SzWorkshopMaps?.card(r)||''):''}<div class="cr-actions">${actions}</div></div></article>`;
 }
-function communitySetThumbnail(id,payload){const e=document.querySelector('[data-cw-thumb="'+id+'"]');if(!e)return;const src=communityArt(id,payload),img=document.createElement('img');img.src=src;img.alt=payload.name;e.appendChild(img);}
+function communitySetThumbnail(id,payload){const e=document.querySelector('[data-cw-thumb="'+id+'"]');if(!e)return;const src=communityArt(id,payload),img=document.createElement('img');img.src=src;img.alt=payload.name;img.dataset.userContent='';e.appendChild(img);}
 function communityArt(id,p){if(COMMUNITY.thumbnails.has(id))return COMMUNITY.thumbnails.get(id);const c=document.createElement('canvas');c.width=600;c.height=p.kind==='sz-map'?400:230;const q=c.getContext('2d');q.fillStyle='#101c29';q.fillRect(0,0,c.width,c.height);
  if(p.kind==='sz-map'){const m=creatorParseMap(p),g=creatorMapGrid(m),t=CREATOR_THEMES[m.theme],scale=Math.min(570/CREATOR_W,370/CREATOR_H);q.save();q.translate((600-CREATOR_W*scale)/2,(400-CREATOR_H*scale)/2);q.scale(scale,scale);q.fillStyle=t.floor;q.fillRect(0,0,CREATOR_W,CREATOR_H);for(let y=0;y<g.rows;y++)for(let x=0;x<g.cols;x++){const v=g.d[y*g.cols+x];if(v){q.fillStyle=v===3?'#9ac8d7':v===2?'#b18d62':t.wall;q.fillRect(x*16,y*16,16,16);}}for(const [i,r]of m.sites.entries()){q.strokeStyle='#f0cd83';q.lineWidth=5;q.strokeRect(...r);q.fillStyle='#f0cd83';q.font='bold 40px system-ui';q.textAlign='center';q.fillText('AB'[i],r[0]+r[2]/2,r[1]+r[3]/2+12);}for(const [i,r]of m.spawns.entries()){q.strokeStyle=i?'#ebaa7b':'#83b8f5';q.lineWidth=4;q.strokeRect(...r);}q.restore();}
  else{const s=creatorParseSkin(p);q.save();const scale=Math.min(540/94,190/45);q.translate(34,113);q.scale(scale,scale);creatorDrawPaint(q,s);q.restore();}
  const src=c.toDataURL();COMMUNITY.thumbnails.set(id,src);return src;
 }
 async function communityDetails(id,source){
- let row,p;try{if(source==='catalog'){row=COMMUNITY.rows.find(r=>r.release_id===id);p=(await communityRelease(id)).payload;}else{row=(source==='moderation'?COMMUNITY.queue:COMMUNITY.mine).find(r=>r.id===id);p=row?.payload;}if(!row||!p)return;const o=$('pm');o.style.display='flex';o.innerHTML=`<section class="pmb cw-detail"><header><div><small class="sz-eyebrow">${source==='moderation'?'OCENA ZGŁOSZENIA':'WARSZTAT SPOŁECZNOŚCI'}</small><h2 data-user-content>${workshopEscape(row.title)}</h2><small>Autor: <span data-user-content>${workshopEscape(row.author_name)}</span></small></div><button onclick="pmClose()">Zamknij ×</button></header><img class="cw-detail-art" src="${communityArt(id,p)}" alt="${workshopEscape(row.title)}"><p style="white-space:pre-line">${workshopEscape(row.description||'')}</p>${source==='moderation'?'<label class="cw-note">Wiadomość dla autora (wymagana przy odrzuceniu)</label><textarea id="cw-review-note" maxlength="500" rows="3" placeholder="Co należy poprawić?"></textarea>':row.review_note?`<p>Ocena: ${workshopEscape(row.review_note)}</p>`:''}<div id="cw-review-error" class="cw-note"></div><footer>${p.kind==='sz-map'&&source!=='catalog'?`<button onclick="communityTestSubmission('${id}','${source}')">Testuj mapę z botami</button>`:''}${source==='moderation'?`<button data-cw-review class="cw-reject" onclick="communityReview('${id}','rejected')">Odrzuć</button><button data-cw-review class="cr-primary" onclick="communityReview('${id}','approved')">Zatwierdź i opublikuj</button>`:source==='catalog'?`<button class="cr-primary" onclick="pmClose();${p.kind==='sz-map'?'communityPlay':'forgeCatalogAction'}('${id}')">${p.kind==='sz-map'?'Zagraj':'Skrzynka społeczności'}</button>`:''}</footer></section>`;}catch(e){communityNotice(communityError(e),true);}}
-async function communityReview(id,decision){if(!COMMUNITY.admin||COMMUNITY.busy)return;const note=($('cw-review-note')?.value||'').trim();if(decision==='rejected'&&!note){$('cw-review-error').textContent='Wpisz powód odrzucenia dla autora.';return;}COMMUNITY.busy=true;const epoch=COMMUNITY.epoch;document.querySelectorAll('[data-cw-review]').forEach(b=>b.disabled=true);try{const r=await sb.rpc('sz_workshop_review',{submission:id,decision,note});if(r.error)throw r.error;if(COMMUNITY.epoch!==epoch)return;pmClose();await communityRefresh();communityNotice(decision==='approved'?'Zatwierdzono projekt. Jest już dostępny w katalogu graczy.':'Odrzucono projekt. Autor zobaczy podany powód.');}catch(e){if($('cw-review-error'))$('cw-review-error').textContent=communityError(e);else communityNotice(communityError(e),true);}finally{if(COMMUNITY.epoch===epoch){COMMUNITY.busy=false;document.querySelectorAll('[data-cw-review]').forEach(b=>b.disabled=false);}}}
+ let row,p;try{if(source==='catalog'){row=COMMUNITY.rows.find(r=>r.release_id===id);p=(await communityRelease(id)).payload;}else{row=(source==='moderation'?COMMUNITY.queue:COMMUNITY.mine).find(r=>r.id===id);p=row?.payload;}if(!row||!p)return;const o=$('pm');o.style.display='flex';o.innerHTML=`<section class="pmb cw-detail"><header><div><small class="sz-eyebrow">${source==='moderation'?'OCENA ZGŁOSZENIA':'WARSZTAT SPOŁECZNOŚCI'}</small><h2 data-user-content>${workshopEscape(row.title)}</h2><small>Autor: <span data-user-content>${workshopEscape(row.author_name)}</span></small></div><button onclick="pmClose()">Zamknij ×</button></header><img data-user-content class="cw-detail-art" src="${communityArt(id,p)}" alt="${workshopEscape(row.title)}"><p style="white-space:pre-line" data-user-content>${workshopEscape(row.description||'')}</p>${source==='moderation'?'<label class="cw-note">Wiadomość dla autora (wymagana przy odrzuceniu)</label><textarea id="cw-review-note" maxlength="500" rows="3" placeholder="Co należy poprawić?"></textarea>':row.review_note?`<p>Ocena: ${workshopEscape(row.review_note)}</p>`:''}<div id="cw-review-error" class="cw-note"></div><footer>${p.kind==='sz-map'&&source!=='catalog'?`<button onclick="communityTestSubmission('${id}','${source}')">Testuj mapę z botami</button>`:''}${source==='moderation'?`<button data-cw-review class="cw-reject" onclick="communityReview('${id}','rejected')">Odrzuć</button><button data-cw-review class="cr-primary" onclick="communityReview('${id}','approved')">Zatwierdź i opublikuj</button>`:source==='catalog'?`<button class="cr-primary" onclick="pmClose();${p.kind==='sz-map'?'communityPlay':'forgeCatalogAction'}('${id}')">${p.kind==='sz-map'?'Zagraj':'Skrzynka społeczności'}</button>`:''}</footer></section>`;}catch(e){communityNotice(communityError(e),true);}}
+async function communityReview(id,decision){if(!COMMUNITY.admin||COMMUNITY.busy)return;const note=($('cw-review-note')?.value||'').trim();if(decision==='rejected'&&!note){$('cw-review-error').textContent='Wpisz powód odrzucenia dla autora.';return;}COMMUNITY.busy=true;const epoch=COMMUNITY.epoch;document.querySelectorAll('[data-cw-review]').forEach(b=>b.disabled=true);try{const r=await sb.rpc('sz_workshop_review',{submission:id,decision,note});if(r.error)throw r.error;if(COMMUNITY.epoch!==epoch)return;pmClose();await communityRefresh();communityNotice(decision==='approved'?'Zatwierdzono projekt. Jest już dostępny w katalogu graczy.':'Odrzucono projekt. Autor zobaczy podany powód.');}catch(e){if($('cw-review-error'))$('cw-review-error').textContent=communityError(e);else communityNotice(communityError(e),true);}finally{if(COMMUNITY.epoch===epoch){COMMUNITY.busy=false;if(T==='creator'&&document.querySelector('.cw-page'))communityRender();document.querySelectorAll('[data-cw-review]').forEach(b=>b.disabled=false);}}}
 async function communityWithdraw(id){if(!COMMUNITY.admin||!confirm('Wycofać ten projekt z katalogu wszystkich graczy?'))return;try{const r=await sb.rpc('sz_workshop_withdraw',{item:id});if(r.error)throw r.error;await communityRefresh();communityNotice('Wycofano projekt z publicznego katalogu.');}catch(e){communityNotice(communityError(e),true);}}
 </script>
 <script>
@@ -2970,15 +2971,15 @@ function communityRefAt(index){return COMMUNITY.slotRefs.get(index)||null;}
 function communityRefValid(ref){return !!ref&&COMMUNITY_UUID.test(ref.item)&&COMMUNITY_UUID.test(ref.release)&&Number.isSafeInteger(ref.version)&&ref.version>0;}
 function communityRegisterMap(release){
  if(release.payload.kind!=='sz-map')throw Error('To nie jest mapa.');if(COMMUNITY.mapSlots.has(release.id))return COMMUNITY.mapSlots.get(release.id);
- const checked=creatorValidatePlay(release.payload),slot=COMMUNITY.nextSlot++;creatorMountMap(checked.map,checked.grid,slot);MAPN[slot]='[Warsztat] '+checked.map.name;MAP_BRIEFINGS[slot].label='MAPA WARSZTATOWA / ZATWIERDZONA';MAP_BRIEFINGS[slot].description='Mapa społeczności: '+workshopEscape(checked.map.name)+'. Zatwierdzona do wspólnego katalogu graczy.';MAP_BRIEFINGS[slot].tips=['W Warsztacie znajdziesz autora i aktualną wersję mapy.','W lobby wszyscy gracze korzystają z tej samej zatwierdzonej wersji.'];
+ const checked=creatorValidatePlay(release.payload),slot=COMMUNITY.nextSlot++;creatorMountMap(checked.map,checked.grid,slot);MAPN[slot]='[Warsztat] '+checked.map.name;MAP_BRIEFINGS[slot].label='MAPA WARSZTATOWA / ZATWIERDZONA';MAP_BRIEFINGS[slot].description='Mapa społeczności: '+workshopEscape(checked.map.name)+'. Zatwierdzona do wspólnego katalogu graczy.';MAP_BRIEFINGS[slot].descriptionTemplate='Mapa społeczności: {name}. Zatwierdzona do wspólnego katalogu graczy.';MAP_BRIEFINGS[slot].authorTitle=checked.map.name;MAP_BRIEFINGS[slot].tips=['W Warsztacie znajdziesz autora i aktualną wersję mapy.','W lobby wszyscy gracze korzystają z tej samej zatwierdzonej wersji.'];
  const ref={item:release.item_id,release:release.id,version:release.version,mode:checked.map.mode};COMMUNITY.mapSlots.set(release.id,slot);COMMUNITY.slotRefs.set(slot,ref);return slot;
 }
 const COMMUNITY_MAP_SET=mapSet,COMMUNITY_IS_BOMB=isBombMap;
-mapSet=function(mode){const list=COMMUNITY_MAP_SET(mode);if(!COMMUNITY_MODES.includes(mode))return list;const added=[...COMMUNITY.slotRefs].filter(([slot,ref])=>ref.mode===mode&&(!COMMUNITY.complete||COMMUNITY.rows.some(r=>r.id===ref.item))&&(slot===sel.map||COMMUNITY.rows.some(r=>r.id===ref.item&&r.release_id===ref.release&&r.featured))).map(([slot])=>slot);return [...new Set([...list,...added])];};
+mapSet=function(mode){const list=COMMUNITY_MAP_SET(mode);if(!COMMUNITY_MODES.includes(mode))return list;const added=[...COMMUNITY.slotRefs].filter(([slot,ref])=>ref.mode===mode&&(!COMMUNITY.complete||COMMUNITY.rows.some(r=>r.id===ref.item))&&((slot===sel.map&&((!!G&&!G.over)||COMMUNITY.explicitSelection===ref.release))||COMMUNITY.rows.some(r=>r.id===ref.item&&r.release_id===ref.release&&r.featured))).map(([slot])=>slot);return [...new Set([...list,...added])];};
 isBombMap=function(id){return COMMUNITY_IS_BOMB(id)||COMMUNITY.slotRefs.has(id);};
 async function communityPlay(releaseId){
  if(COMMUNITY.busy)return;if(G)return toast('Wróć do menu przed uruchomieniem innej mapy.');if(L&&!L.host)return toast('Mapę wspólnego meczu wybiera host lobby.');COMMUNITY.busy=true;
- try{const r=COMMUNITY.rows.find(r=>r.release_id===releaseId&&r.kind==='map');if(!r)throw Error('Projekt został wycofany.');const release=await communityRelease(releaseId),mode=release.payload.mode||'tdm';sel.map=communityRegisterMap(release);sel.mode=COMMUNITY_MODES.includes(mode)?mode:'tdm';sel.comp=false;sel.team=L?.team||sel.team||'CT';pmClose();if(L?.host){tab('play');lobUI();toast('Ustawiono mapę warsztatową. Uruchom mecz dla lobby.');}else begin();}
+ try{const r=COMMUNITY.rows.find(r=>r.release_id===releaseId&&r.kind==='map');if(!r)throw Error('Projekt został wycofany.');const release=await communityRelease(releaseId),mode=release.payload.mode||'tdm';COMMUNITY.explicitSelection=releaseId;sel.map=communityRegisterMap(release);sel.mode=COMMUNITY_MODES.includes(mode)?mode:'tdm';sel.comp=false;sel.team=L?.team||sel.team||'CT';pmClose();if(L?.host){tab('play');lobUI();toast('Ustawiono mapę warsztatową. Uruchom mecz dla lobby.');}else begin();}
  catch(e){communityNotice(e.message||communityError(e),true);}finally{COMMUNITY.busy=false;}
 }
 function communityTestSubmission(id,source){
@@ -3049,7 +3050,7 @@ let FORGE={owner:null,epoch:0,owned:[],cases:[],ready:false,loading:null,busy:fa
 CS.communityforge={n:'Community Forge Case',cost:FORGE_PRICE,kc:0,pool:[],w:[0,0,100,0,0]};
 window.szCloudEconomyLocked=()=>FORGE.locked||FORGE.uncertain;
 function forgeReset(){const uid=communityAccount();if(FORGE.owner===uid)return;FORGE.owner=uid;FORGE.epoch++;FORGE.owned=[];FORGE.cases=[];FORGE.ready=false;FORGE.loading=null;FORGE.message='';FORGE.proofs.clear();}
-function forgePool(){return COMMUNITY.rows.filter(r=>r.kind==='skin');}
+function forgePool(){return COMMUNITY.rows.filter(r=>r.kind==='skin'&&r.case_enabled!==false);}
 function forgeOwnedActive(o){return COMMUNITY.rows.some(r=>r.id===o.item_id&&r.kind==='skin');}
 async function forgeLoad(){
  forgeReset();if(!sb||!SBU)return;if(FORGE.loading)return FORGE.loading;const owner=FORGE.owner,epoch=FORGE.epoch;
@@ -3066,11 +3067,11 @@ function forgeError(e){const m=String(e?.message||e||'');for(const[k,v]of Object
 function forgeArt(w=380,h=250){const c=document.createElement('canvas');c.width=w;c.height=h;const q=c.getContext('2d');q.scale(w/380,h/250);q.fillStyle='#07182366';q.beginPath();q.ellipse(185,222,142,17,0,0,7);q.fill();const g=q.createLinearGradient(70,50,290,210);g.addColorStop(0,'#395a73');g.addColorStop(.5,'#172d42');g.addColorStop(1,'#324464');visualPoly(q,[[61,72],[93,44],[280,44],[319,76],[304,201],[274,220],[101,220],[65,199]],g,'#67c2c7',3);visualPoly(q,[[70,81],[108,62],[267,62],[308,83],[292,188],[266,203],[108,203],[78,185]],'#101e2b','#6490a1',1);q.strokeStyle='#3e777d';q.lineWidth=1;for(let x=94;x<300;x+=22){q.beginPath();q.moveTo(x,85);q.lineTo(x-10,185);q.stroke();}for(const x of[72,285])visualRect(q,x,98,20,65,'#151b2c','#b48eff',2);q.shadowColor='#56ead8';q.shadowBlur=15;visualPoly(q,[[190,74],[230,98],[230,145],[190,168],[150,145],[150,98]],'#183b46','#75ead8',3);q.fillStyle='#a7fff1';q.font='bold 41px system-ui';q.textAlign='center';q.fillText('F',190,139);q.shadowBlur=0;q.font='bold 10px system-ui';q.fillStyle='#9de3e5';q.fillText('COMMUNITY / FORGE',190,189);q.fillStyle='#c9b2ff';for(const x of[108,263])q.fillRect(x,47,8,9);return c.toDataURL();}
 function forgeSkinArt(p,w=320,h=144){const c=document.createElement('canvas');c.width=w;c.height=h;const q=c.getContext('2d'),s=Math.min((w-24)/108,(h-14)/63);q.translate(w/2-40*s,h/2);q.scale(s,s);creatorDrawPaint(q,p);return c.toDataURL();}
 function forgeCard(){const count=forgePool().length,can=count>=FORGE_MIN&&!!SBU&&FORGE.ready&&!FORGE.busy&&!FORGE.uncertain,owned=FORGE.cases.filter(c=>!c.opened_at).length;return `<section class="forge-section" id="forge-shop"><div class="forge-case"><img src="${forgeArt()}" alt="Community Forge — grafitowa kapsuła z turkusowym rdzeniem"><div><small>STWORZONE PRZEZ GRACZY / ZATWIERDZONE PRZEZ WŁAŚCICIELA</small><h2>Community Forge Case</h2><p>Oryginalne projekty broni i noży. Każde otwarcie daje jeden własny przedmiot; 10% szans na wariant StatTrak™. Bez dodatkowego klucza.</p><div class="forge-progress"><b>${count} / ${FORGE_MIN} skinów</b><i><b style="width:${Math.min(100,count/FORGE_MIN*100)}%"></b></i><span>${count>=FORGE_MIN?'Odblokowana':'W przygotowaniu'}</span></div><button data-forge-buy class="forge-primary" ${can?'':'disabled'} onclick="forgeBuy()">Kup skrzynkę · $${FORGE_PRICE}</button><button onclick="forgeContents()">Zawartość i szanse</button><button onclick="communityRefresh()">Odśwież</button>${owned?`<button data-forge-open ${FORGE.busy||!count?'disabled':''} onclick="forgeOpen()">Otwórz posiadaną · ${owned}</button>`:''}<p class="forge-note">${count<FORGE_MIN?'Zakup będzie możliwy, gdy właściciel zatwierdzi co najmniej 5 różnych projektów.':`Każdy z ${count} projektów ma taką samą szansę: ${(100/count).toLocaleString('pl-PL',{maximumFractionDigits:2})}%.`}</p>${FORGE.message?`<p class="forge-error" role="status">${workshopEscape(FORGE.message)}</p>`:''}${FORGE.uncertain?'<button onclick="forgeBuy()">Sprawdź niedokończony zakup</button>':''}</div></div></section>`;}
-function forgeInventory(){return `<section class="forge-section forge-owned" id="forge-owned"><h3>Skiny ze skrzynki społeczności · ${FORGE.owned.length}</h3><p class="forge-note">To przedmioty przypisane do konta, zdobyte przez otwieranie skrzynek. Sam podgląd projektu nie daje prawa do jego wyposażenia.</p><div class="forge-owned-grid">${FORGE.owned.map(o=>{const p=o.payload,active=forgeOwnedActive(o),eq=P().communityLoadout?.[p.weapon]?.owned===o.id;return `<article class="forge-skin"><img src="${forgeSkinArt(p)}" alt="${workshopEscape(p.name)}"><div><small>${workshopEscape(p.weapon==='knife'?KNIFE_MODELS[p.model]:W[p.weapon].n)}</small><b>${workshopEscape(p.name)}</b><small>Autor: ${workshopEscape(o.author_name)}</small>${o.stattrak?`<small class="forge-stat">StatTrak™ · ${(P().communityStat||{})[o.id]||0} zabójstw</small>`:'<small>Zwykły wariant</small>'}<button data-forge-equip="${o.id}" ${active&&!FORGE.busy?'':'disabled'} onclick="forgeEquip('${o.id}')">${!active?'Wycofany z gry':eq?'Wyposażono':'Wyposaż'}</button></div></article>`;}).join('')||'<p class="forge-note">Nie masz jeszcze skinów społeczności. Znajdziesz je w Community Forge Case.</p>'}</div></section>`;}
+function forgeInventory(){return `<section class="forge-section forge-owned" id="forge-owned"><h3>Skiny ze skrzynki społeczności · ${FORGE.owned.length}</h3><p class="forge-note">To przedmioty przypisane do konta, zdobyte przez otwieranie skrzynek. Sam podgląd projektu nie daje prawa do jego wyposażenia.</p><div class="forge-owned-grid">${FORGE.owned.map(o=>{const p=o.payload,active=forgeOwnedActive(o),eq=P().communityLoadout?.[p.weapon]?.owned===o.id;return `<article class="forge-skin"><img data-user-content src="${forgeSkinArt(p)}" alt="${workshopEscape(p.name)}"><div><small>${workshopEscape(p.weapon==='knife'?KNIFE_MODELS[p.model]:W[p.weapon].n)}</small><b data-user-content>${workshopEscape(p.name)}</b><small>Autor: <span data-user-content>${workshopEscape(o.author_name)}</span></small>${o.stattrak?`<small class="forge-stat">StatTrak™ · ${(P().communityStat||{})[o.id]||0} zabójstw</small>`:'<small>Zwykły wariant</small>'}<button data-forge-equip="${o.id}" ${active&&!FORGE.busy?'':'disabled'} onclick="forgeEquip('${o.id}')">${!active?'Wycofany z gry':eq?'Wyposażono':'Wyposaż'}</button></div></article>`;}).join('')||'<p class="forge-note">Nie masz jeszcze skinów społeczności. Znajdziesz je w Community Forge Case.</p>'}</div></section>`;}
 function forgeMount(){if(T!=='shop'&&!(T==='inv'&&INV==='w'))return;const m=$('main');if(!m)return;let slot=$('forge-area');if(!slot){slot=document.createElement('div');slot.id='forge-area';m.prepend(slot);}slot.innerHTML=forgeCard()+(T==='inv'?forgeInventory():'');}
 const FORGE_TAB=tab,FORGE_INV=invTabs;
 tab=function(t){const r=FORGE_TAB(t);forgeMount();return r;};invTabs=function(){const r=FORGE_INV();forgeMount();return r;};
-async function forgeContents(){const pool=forgePool();await Promise.allSettled(pool.map(r=>communityRelease(r.release_id)));const o=$('pm');o.style.display='flex';o.innerHTML=`<section class="pmb cw-detail"><h2>Community Forge Case</h2><p>${pool.length} zatwierdzonych projektów. Każdy projekt ma równą szansę; w ramach niego 90% zwykły wariant i 10% StatTrak™.</p><div class="forge-owned-grid">${pool.map(r=>{const p=COMMUNITY.cache.get(r.release_id)?.payload;return p?`<article class="forge-skin"><img src="${forgeSkinArt(p)}" alt=""><div><b>${workshopEscape(r.title)}</b><small>${workshopEscape(r.author_name)} · ${(100/pool.length).toFixed(2)}%</small></div></article>`:'';}).join('')||'<p>Pula jest jeszcze pusta. Skrzynka odblokuje się przy 5 skinach.</p>'}</div><button onclick="pmClose()">Zamknij</button></section>`;}
+async function forgeContents(){const pool=forgePool();await Promise.allSettled(pool.map(r=>communityRelease(r.release_id)));const o=$('pm');o.style.display='flex';o.innerHTML=`<section class="pmb cw-detail"><h2>Community Forge Case</h2><p>${pool.length} zatwierdzonych projektów. Każdy projekt ma równą szansę; w ramach niego 90% zwykły wariant i 10% StatTrak™.</p><div class="forge-owned-grid">${pool.map(r=>{const p=COMMUNITY.cache.get(r.release_id)?.payload;return p?`<article class="forge-skin"><img data-user-content src="${forgeSkinArt(p)}" alt=""><div><b data-user-content>${workshopEscape(r.title)}</b><small><span data-user-content>${workshopEscape(r.author_name)}</span> · ${(100/pool.length).toLocaleString(szLocale.language==='en'?'en-US':'pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2})}%</small></div></article>`:'';}).join('')||'<p>Pula jest jeszcze pusta. Skrzynka odblokuje się przy 5 skinach.</p>'}</div><button onclick="pmClose()">Zamknij</button></section>`;}
 function forgeCatalogAction(release){const o=FORGE.owned.find(o=>o.release_id===release);if(o)return forgeEquip(o.id);tab('shop');$('forge-shop')?.scrollIntoView({block:'start'});}
 async function forgeEquip(id){const o=FORGE.owned.find(o=>o.id===id);if(!o)return;await communityEquip(o.release_id,o.id);forgeMount();}
 function forgeRequestKey(){return 'sz-forge-purchase:'+communityAccount()+':'+DB.cur;}
@@ -3096,6 +3097,8 @@ caseRollVisual=function(id){if(id==='communityforge'){const pool=forgePool().fil
 caseImg=function(id,w,h){return id==='communityforge'?forgeArt(w,h):FORGE_IMG(id,w,h);};
 async function forgeRemoteProof(id){const cached=FORGE.proofs.get(id);if(cached&&cached.until>Date.now())return cached.job;if(Date.now()-COMMUNITY_REMOTE_BUDGET.at>60000)COMMUNITY_REMOTE_BUDGET={at:Date.now(),count:0};if(COMMUNITY_REMOTE_BUDGET.count++>=40)return null;if(FORGE.proofs.size>250)FORGE.proofs.clear();const job=sb.rpc('sz_workshop_skin_proof',{instance_id:id}).then(r=>r.error?null:r.data);FORGE.proofs.set(id,{job,until:Date.now()+60000});return job;}
 </script>
+
+
 
 <script>
 /* Standalone browser builds use the same account isolation as the desktop client. */
@@ -3274,6 +3277,11 @@ mkServer=async function(){sel.mode=$('sm').value;sel.map=+$('sp').value;if(!mapS
 
 </style>
 <style>
+.wm-owner-actions{display:flex;flex-direction:column;gap:7px;padding:10px 0;border-top:1px solid #b7c7d51a}.wm-owner-actions>div{display:flex;flex-wrap:wrap;gap:6px}.wm-owner-actions button{font:10px/1.5 system-ui;padding:7px 9px;letter-spacing:0;box-shadow:none;text-transform:none}.wm-owner-actions small{font:10px/1.7 system-ui;color:#9faec1}.wm-owner-actions .wm-add-pool{background:#296450;color:#d7ffeb;border-color:#3e9a75}.wm-owner-actions [data-wm-rule=excluded],.wm-owner-actions [data-wm-enabled="0"]{border-color:#a57564;color:#e7bb9d}.wm-review-counts{font:10px/1.8 system-ui;color:#97aec0}.wm-excluded{font:9px/1.5 system-ui;color:#dfb99a;border-left:2px solid #c68f69;padding-left:7px}.wm-library{margin:16px 0 24px!important}.wm-library>header{display:flex;justify-content:space-between;gap:15px;padding:0 0 12px;background:none;border-bottom:1px solid #ffffff14}.wm-library h3{margin:0;font:600 16px system-ui}.wm-library p{font:11px/1.8 system-ui;color:#9caec1}.wm-library-tools{display:flex;flex-wrap:wrap;gap:9px;margin:13px 0}.wm-library-tools input{min-width:120px;flex:1}.wm-library-tools select{max-width:210px}.wm-library-list{display:grid;gap:9px}.wm-library-list>article{display:grid;grid-template-columns:minmax(140px,1fr) minmax(180px,1.5fr);gap:18px;padding:14px;background:#101d2bcc;border:1px solid #76879b26;border-radius:8px}.wm-library-list b{display:block;font:600 13px/1.5 system-ui;overflow-wrap:anywhere}.wm-library-list small{display:block;font:10px/1.8 system-ui;color:#99aec0}.wm-library-list .wm-owner-actions{border:0;padding:0}.wm-membership{font:10px/1.7 system-ui;color:#d2bc86}.wm-library>footer{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:16px;font:11px system-ui}.wm-library>footer button{font:11px system-ui}.cw-detail .wm-approve-pool{white-space:normal}.cw-card .wm-map-counts span{gap:4px}
+@media(max-width:750px){.wm-library-list>article{grid-template-columns:1fr;gap:10px}.wm-library-tools select{max-width:none}}
+
+</style>
+<style>
 /* The hub is scoped so combat, cases, trading and other modals retain their UI. */
 .hub-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 .hub-pass,.hub-lobby,.hub-dialog,.hub-inventory-toolbar,.hub-empty{font-family:system-ui,Arial,sans-serif;letter-spacing:0;color:#dce5ec}
@@ -3327,8 +3335,314 @@ mkServer=async function(){sel.mode=$('sm').value;sel.map=+$('sp').value;if(!mapS
 @media(prefers-reduced-motion:reduce){.hub-progress>i,.hub-vote-progress>i,.hub-map-art>img,.hub-mode-card{transition:none}}
 
 </style>
+<style>
+.sz-skin-view{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:7px;padding:12px 14px;border-bottom:1px solid #ffffff10;background:#111c2bc9;position:relative;z-index:1;font:11px system-ui;color:#9bb0ca}
+.sz-skin-view>span{margin-right:auto}.sz-skin-view button{min-width:31px;min-height:30px;padding:5px 10px;font:12px system-ui}.sz-skin-view button[aria-pressed=true]{color:#172131;background:#e6bb61;border-color:#e6bb61}.sz-skin-view output{min-width:43px;text-align:center;font-variant-numeric:tabular-nums;color:#e9eff8}.sz-skin-view-help{margin:0!important;padding:0 18px 15px!important;font:10px/1.7 system-ui!important;color:#8fa7c0!important}.cr-skin-stage:has(.sz-skin-view):before{display:none}.cr-skin-stage canvas.sz-skin-pan{cursor:grab}.cr-skin-stage canvas.sz-skin-drag{cursor:grabbing}
+#cv.sz-game-aim{cursor:none}
+#sz-mouse-capture{position:absolute;left:50%;bottom:76px;transform:translateX(-50%);z-index:5;max-width:calc(100% - 32px);padding:10px 17px;border:1px solid #d5b77766;background:#101923ed;box-shadow:0 5px 22px #0006;border-radius:7px;font:12px/1.5 system-ui;color:#f0dcac;text-align:center;cursor:pointer}#sz-mouse-capture[hidden]{display:none}#sz-mouse-capture small{display:block;color:#aebcc8;font-size:10px}
+[data-pointer-settings] p{font:12px/1.7 system-ui;color:#9aafbf}[data-pointer-settings] label{font:12px system-ui}
+
+</style>
 <script>
 (function(root){const pairs=`
+ZWYCIĘSTWO|VICTORY
+PORAŻKA|DEFEAT
+Nie uruchomiono konta. Wybierz „Spróbuj ponownie”.|The account connection has not started. Select “Try again”.
+Konto gotowe do logowania.|Ready to sign in.
+Panel moderacji jest przypisany do Twojego konta.|The moderation panel is linked to your account.
+Twoje zgłoszenia znajdziesz w Warsztacie.|You can find your submissions in the Workshop.
+Wyloguj|Log out
+WERSJA TESTOWA · KONTO I WARSZTAT ONLINE|TEST VERSION · ONLINE ACCOUNT AND WORKSHOP
+Logowanie i wczytywanie Twojego konta…|Signing in and loading your account…
+Brak sesji konta. Spróbuj ponownie.|No account session. Try again.
+Potwierdź adres e-mail konta przed zalogowaniem.|Confirm your account's email address before signing in.
+Konto — wersja testowa|Account — test version
+W publicznej aplikacji konto obsługuje launcher.|The launcher handles your account in the public app.
+POPROŚ|ASK
+Trade|Trade
+Okładka|Cover
+Układ mapy|Map layout
+Edytor mapy. Przeciągnij, aby narysować ścianę; kliknij, aby ustawić spawn lub bombsite.|Map editor. Drag to draw a wall; click to place a spawn or bomb site.
+Przed zasłonięciem gracz widział ten kierunek. Strzela w ostatnią znaną pozycję; samo trafienie przez zasłonę nie dowodzi oszustwa.|The player saw this direction before it was obscured. They fire at the last known position; a hit through cover alone does not prove cheating.
+Reakcja następuje po zauważeniu celu. Widać stopniową korektę i naturalny rozrzut; brak powtarzalnych oznak wspomagania.|The player reacts after spotting the target. Gradual corrections and natural spread are visible, with no repeated signs of assistance.
+Twoja strona jest gotowa; czekamy na drugiego gracza|Your side is done; waiting for the partner to finish
+Potwierdź wymianę|Confirm trade
+Zamień|Swap
+Odbijanie punktu|Retake
+Kooperacja 5 na 5 (boty uzupełniają skład)|Co-op 5v5 (bots fill)
+Niesklasyfikowany ({wins}/3 zwycięstw rankingowych)|Unranked ({wins}/3 competitive wins)
+zwycięstw rankingowych|competitive wins
+Sprawdzanie zapisu w chmurze...|Checking cloud save...
+Zwycięstwo w Battle Royale|Victory Royale
+STRIKE ZONE / KOLEKCJA MVP|STRIKE ZONE / MVP COLLECTION
+maks.|max
+Granat błyskowy|Flashbang
+Odłamkowy|Frag
+Błyskowy|Flash
+Specialist Gloves|Specialist Gloves
+Specialist|Specialist
+Neon Pulse|Neon Pulse
+Desert Run|Desert Run
+Bomb Squad|Bomb Squad
+Retro Arcade|Retro Arcade
+Midnight Siren|Midnight Siren
+Bass Cannon|Bass Cannon
+Night Hour|Night Hour
+Dragon Fire|Dragon Fire
+Szanse:|Odds:
+każde wykończenie może wypaść dla dowolnej broni; rzadkie przedmioty specjalne to noże|every finish can drop on any gun; rare special = knives
+Awatar i konto|Avatar & account
+PIERWSZA POŁOWA|FIRST HALF
+DRUGA POŁOWA|SECOND HALF
+ZMIANA STRON|SWITCH SIDES
+ŁUKI B|B ARCHES
+ZOMBIE|ZOMBIES
+LUDZIE|HUMANS
+WYŚCIG ZBROJEŃ|GUN GAME
+B zamyka · POPROŚ = kolega kupuje dla ciebie · Zwrot: przedmioty kupione w tej rundzie · Zestaw:|B closes · ASK = a teammate buys it for you · Refund: items bought this round · Loadout:
+zatwierdzonych projektów. Każdy projekt ma równą szansę; w ramach niego 90% zwykły wariant i 10% StatTrak™.|approved designs. Each design has an equal chance; within it, there is a 90% chance of a regular variant and a 10% chance of StatTrak™.
+Szukaj w ekwipunku…|Search inventory…
+Szukaj w ekwipunku|Search inventory
+Minimalny mnożnik wartości|Minimum value multiplier
+Szukaj celu…|Search targets…
+Szukaj skina docelowego|Search target skins
+Rodzaj skina|Skin type
+Jakość celu|Target rarity
+Pozycja w demie|Position in demo
+Cofnij o dwie sekundy|Go back two seconds
+Przewiń o dwie sekundy|Skip forward two seconds
+Postęp ładowania|Loading progress
+Twoja postać|Your character
+Usuń zapisany projekt|Delete saved design
+Malowanie skina. Włącz pędzel i przeciągnij po broni.|Skin painting. Enable the brush and drag over the weapon.
+Opis projektu dla osoby sprawdzającej (opcjonalnie)|Description for the reviewer (optional)
+Rodzaj projektów|Design type
+Szukaj projektu|Search designs
+Co należy poprawić?|What needs improving?
+Community Forge — grafitowa kapsuła z turkusowym rdzeniem|Community Forge — a graphite capsule with a turquoise core
+Zobacz ekrany ładowania map gry.|Preview loading screens for the game maps.
+Strike Zone 2D|Strike Zone 2D
+Strike Zone|Strike Zone
+LOSOWANIE|DRAWING
+pancerza|armor
+SPACJA|SPACE
+OBRAŻENIA ZADANE|DAMAGE DEALT
+OBRAŻENIA OTRZYMANE|DAMAGE TAKEN
+WYNIK ANALIZY|ANALYSIS RESULT
+INFO OD KOLEGI|TEAMMATE CALLOUT
+WIDOK BEZ X-RAY|VIEW WITHOUT X-RAY
+Ruiny|Ruins
+Zrzut zaopatrzenia|Supply drop
+Strefa|Zone
+PUNKT MEDYCZNY|MEDICAL STATION
+Apteczki:|Medkits:
+RUINY / KAMIENNE KORYTARZE|RUINS / STONE CORRIDORS
+Zostaw granat dymny na bezpieczne odbicie punktu.|Save a smoke grenade for a safer site retake.
+BATTLE ROYALE / WYSPA|BATTLE ROYALE / ISLAND
+Przytrzymaj E przy zapasach. H rozpoczyna leczenie.|Hold E near supplies. Press H to start healing.
+Nie przecinaj otwartej ulicy bez sprawdzenia otoczenia.|Check your surroundings before crossing an open street.
+Nowa strefa jest pokazana na mapie taktycznej pod M.|The next zone is shown on the tactical map opened with M.
+Obrona|Defense
+URUCHAMIANIE GRY|STARTING GAME
+TEREN OPERACJI|AREA OF OPERATIONS
+Zobacz ładowanie|Preview loading screen
+Kupiono|Purchased
+Miejsce|Place
+REMIS|DRAW
+Ponowne łączenie z lobby…|Reconnecting to the lobby…
+AZTEC / RUINY / MOST / WODA|AZTEC / RUINS / BRIDGE / WATER
+Brak miejsca na zapis. Wyeksportuj projekt do pliku i usuń niepotrzebne projekty.|Storage is full. Export your design to a file and remove designs you no longer need.
+projekt|design
+Ten test nie zmienia statystyk konta ani stanu portfela.|This test does not change account statistics or your wallet balance.
+Wróć do Warsztatu|Return to the Workshop
+Zaloguj się na konto gry.|Sign in to your game account.
+Nie znaleziono zgłoszenia.|Submission not found.
+Brak połączenia z Warsztatem.|No connection to the Workshop.
+Zaloguj się na konto gry|Sign in to your game account
+Ocena:|Review:
+Wpisz powód odrzucenia dla autora.|Enter a rejection reason for the author.
+Odrzucono projekt. Autor zobaczy podany powód.|Design rejected. The author will see your reason.
+Wróć do menu przed uruchomieniem innej mapy.|Return to the menu before starting another map.
+Potrzebujesz $2500 na zakup skrzynki.|You need $2500 to buy the case.
+Najpierw wczytaj i zapisz konto w chmurze.|Load your account and save it to the cloud first.
+Zwykły wariant|Regular variant
+nick|nickname
+Twój projekt mapy: {name}. Sprawdź przejścia, osłony i pozycje obu drużyn w grze z botami.|Your map design: {name}. Check routes, cover and both teams' positions in a bot match.
+Mapa społeczności: {name}. Zatwierdzona do wspólnego katalogu graczy.|Community map: {name}. Approved for the community catalog.
+Kolega: kroki za osłoną!|Teammate: footsteps behind cover!
+Kolega: przeciwnik na przejściu!|Teammate: enemy at the entrance!
+Celownik podąża za zmieniającym kierunek przeciwnikiem za osłoną, zanim pojawia się informacja o jego pozycji.|The crosshair follows an enemy's changes of direction behind cover before any information about their position is available.
+Celownik śledzi zmiany kierunku przeciwnika wewnątrz smoke’a, bez kontaktu wzrokowego.|The crosshair tracks an enemy's changes of direction inside smoke without visual contact.
+Krótki, bardzo precyzyjny przeskok celownika i natychmiastowy powrót dokładnie na poruszający się cel. Podobna korekta powtarza się w nagraniu.|A brief, precise crosshair snap immediately returns to the moving target. Similar corrections recur throughout the recording.
+Seria pełnych, bardzo szybkich obrotów przeplatana strzałami dokładnie w przeciwnika. To nie pojedyncze sprawdzenie tyłu.|Repeated rapid full rotations alternate with shots directly at opponents, rather than a single check behind the player.
+Przed strzałem pojawia się komunikat kolegi. Gracz ostrzeliwuje zgłoszoną pozycję, zamiast śledzić ukrytego przeciwnika.|A teammate's callout appears before the shot. The player fires at the reported position rather than tracking a hidden opponent.
+Strzał pada w znane przejście. Dalsza część nagrania pokazuje chybienia i brak śledzenia zmian kierunku ukrytego celu.|The shot targets a common passage. Later footage shows misses and no tracking of the hidden target's changes of direction.
+gracz grał uczciwie|the player played legitimately
+gracz korzystał z legalnych informacji|the player used legitimate information
+gracz grał dobrze, bez wspomagania|the player played well without assistance
+gracz używał wspomagania celowania|the player used aim assistance
+gracz śledził ukrytych przeciwników|the player tracked hidden opponents
+gracz używał nienaturalnych obrotów i automatycznego celowania|the player used unnatural spinning and automatic aiming
+Używanie apteczki|Using a medkit
+Otwieranie zapasów|Opening supplies
+PIASEK / DŁUGIE PRZEJŚCIA|SAND / LONG PASSAGES
+Pustynny dziedziniec, tunele i walka o środek. Otwarta długa przeplata się z ciasnymi przejściami do dwóch punktów podłożenia bomby.|A desert courtyard, tunnels and a fight for mid control. Open long lanes alternate with tight passages to two bomb sites.
+Dym ograniczy widoczność na długich liniach ostrzału.|Smoke blocks visibility along long firing lanes.
+Sprawdź tunele przed wejściem na punkt B.|Check the tunnels before entering B site.
+Zarośnięte ruiny z kamiennymi ścianami i ukrytymi przejściami. Kontrola środka ułatwia rotacje pomiędzy dwoma punktami.|Overgrown ruins with stone walls and hidden passages. Mid control makes it easier to rotate between the two sites.
+Sprawdzaj narożniki w wąskich korytarzach.|Check corners in narrow corridors.
+Nie zostawiaj środka bez informacji o przeciwniku.|Keep track of enemy movement through mid.
+MIASTO / PAŁAC / ŚRODEK|TOWN / PALACE / MID
+Jasne tynki i piaszczyste uliczki. Środek łączy drogi na A i B, a boczne przejścia pozwalają zaatakować obrońców z kilku kierunków.|Pale plaster and sandy streets. Mid connects the routes to A and B, while side passages allow attacks from multiple directions.
+Dym na środku ułatwi przejście do łącznika.|Smoke in mid makes crossing to connector safer.
+Wejście z dwóch stron utrudnia obronę bombsite’u.|Attacking from two sides makes a bomb site harder to defend.
+ULICZKI / BANAN / PODWÓRZA|STREETS / BANANA / COURTYARDS
+Ciepłe mury, ciasne uliczki i walka o każdy narożnik. Banan prowadzi na B, a środek otwiera alternatywną drogę do punktu A.|Warm stone walls, narrow streets and fights around every corner. Banana leads to B, while mid offers another route to A.
+Molotov może zatrzymać szybkie wejście w wąskie przejście.|A molotov can stop a rush through a narrow passage.
+Granaty błyskowe pomagają wyczyścić bliskie kąty.|Flashbangs help clear nearby corners.
+PARK / KANAŁY / WIADUKT|PARK / CANALS / OVERPASS
+Zieleń parku spotyka beton kanałów. Dłuższe przejścia zachęcają do flankowania, a pozycje przy punktach wymagają kontroli kilku wejść.|Park greenery meets concrete canals. Longer routes offer flanking opportunities, while site positions require control of several entrances.
+Uważaj na przeciwnika rotującego bokiem.|Watch for enemies rotating along the flank.
+PRZEMYSŁ / HALE / TEREN ZEWNĘTRZNY|INDUSTRY / HALLS / OUTSIDE
+Stalowe hale, instalacje przemysłowe i szeroki teren pomiędzy osłonami. Krótkie przejścia kontrastują z otwartymi liniami na zewnątrz.|Steel halls, industrial equipment and open ground between cover. Short passages contrast with long sightlines outside.
+Na otwartej przestrzeni korzystaj z dymów i osłon.|Use smoke and cover in open areas.
+Słuchaj strzałów, zanim zmienisz pozycję.|Listen for gunfire before changing position.
+Leśne obozy, port i opuszczone zabudowania. Rozproszone zapasy, skrzynie i zrzuty pomagają przetrwać coraz ciaśniejszą strefę.|Forest camps, a port and abandoned buildings. Scattered supplies, crates and airdrops help you survive the shrinking zone.
+M otwiera mapę — wybierz punkt lądowania i zaznacz cel.|Press M to open the map, choose a landing spot and place a marker.
+BATTLE ROYALE / GÓRSKA ZIMA|BATTLE ROYALE / WINTER MOUNTAINS
+Ośnieżone zbocza, doliny i samotne schroniska. Szukaj wyposażenia w punktach zaopatrzenia i planuj przejście do kolejnej strefy.|Snowy slopes, valleys and isolated shelters. Find equipment at supply points and plan your route to the next zone.
+Broń na ziemi zapewnia amunicję, ale zapas jest ograniczony.|Weapons on the ground provide ammunition, but supplies are limited.
+Apteczka działa podczas postoju — znajdź bezpieczną osłonę.|Stay still to use a medkit and find safe cover first.
+BATTLE ROYALE / MIEJSKA DŻUNGLA|BATTLE ROYALE / URBAN JUNGLE
+Sklepy, magazyny i dzielnice przecięte ulicami. Zbieraj łup pomiędzy budynkami i obserwuj zrzuty zaopatrzenia.|Shops, warehouses and city blocks divided by streets. Gather loot between buildings and watch for supply drops.
+Puste pasaże, sklepy i długie korytarze. Wspólna obrona przejść daje ludziom szansę zatrzymania nadciągającej fali.|Empty shopping arcades, stores and long corridors. Defending passages together gives the humans a chance to stop the incoming wave.
+Trzymaj się drużyny i nie blokuj drogi odwrotu.|Stay with your team and keep retreat routes clear.
+Budowniczy może stawiać ściany klawiszem Q.|The builder can place walls with Q.
+Chłodne światło, laboratoria i ciasne przejścia. Krótkie dystanse premiują przygotowane pozycje i współpracę obrońców.|Cold lighting, laboratories and tight passages. Short distances reward prepared positions and teamwork among defenders.
+Zabezpiecz podejścia minami i osłonami.|Secure approaches with mines and cover.
+Pozostaw sobie drogę odwrotu do kolejnego pomieszczenia.|Keep a retreat route open to the next room.
+Stare domy, ogrodzenia i niebezpieczne podwórza. Obrona w grupie jest bezpieczniejsza niż samotny powrót przez otwarty teren.|Old houses, fences and dangerous courtyards. Defending as a group is safer than retreating alone across open ground.
+Wybierz pozycję z widokiem na kilka wejść.|Choose a position overlooking several entrances.
+Nie oddalaj się od drużyny podczas ataku zombie.|Stay close to your team during a zombie attack.
+Adaptacja klasycznego Azteca do 2D: kamienne dziedzińce, podwójne drzwi, most i boczna trasa wodna. Mury osłaniają oba punkty.|A 2D adaptation of classic Aztec: stone courtyards, double doors, a bridge and a side route through water. Walls protect both sites.
+Sprawdź wyjście z podwójnych drzwi przed wejściem na dziedziniec.|Check the double-door exit before entering the courtyard.
+Atak przez most połącz z wejściem od strony wody.|Combine a bridge push with an attack from the water route.
+ANUBIS / KANAŁ / MOST / ŚWIĄTYNIE|ANUBIS / CANAL / BRIDGE / TEMPLES
+Świątynie rozdzielone kanałem. A Main, B Main, most i środek dają oddzielne drogi ataku, a wewnętrzne mury ograniczają długie linie strzału.|Temples divided by a canal. A Main, B Main, bridge and mid provide separate attack routes, while interior walls limit long sightlines.
+Kontrola mostu ułatwia rotację pomiędzy punktami.|Bridge control makes rotating between the sites easier.
+Zwróć uwagę na podejście od strony wody.|Watch the approach from the water.
+Mój skin|My skin
+Twój projekt mapy:|Your map design:
+. Sprawdź przejścia, osłony i pozycje obu drużyn w grze z botami.|. Check routes, cover and both teams' positions in a bot match.
+Wróć do Warsztatu, aby poprawić układ mapy.|Return to the Workshop to improve the layout.
+To konto nie ma uprawnień do moderacji.|This account does not have moderation permissions.
+Kod jest nieprawidłowy, wykorzystany lub wygasł.|The code is invalid, already used or expired.
+Projekt nie przeszedł kontroli. Sprawdź jego wymiary, przejścia i dane skina.|The design failed validation. Check its dimensions, routes and skin data.
+Przy odrzuceniu wpisz powód (maksymalnie 500 znaków).|Enter a reason when rejecting a design, up to 500 characters.
+Ktoś już rozpatrzył to zgłoszenie. Odśwież listę.|This submission has already been reviewed. Refresh the list.
+Skrzynka odblokuje się po zatwierdzeniu 5 różnych skinów.|The case unlocks once 5 different skins have been approved.
+Zapis konta zmienił się. Odśwież konto i spróbuj ponownie.|The account save has changed. Refresh your account and try again.
+Ta skrzynka nie należy do twojego konta.|This case does not belong to your account.
+Nie ma teraz aktywnych skinów do wylosowania. Zachowujesz skrzynkę.|No skins are currently available to draw. You keep the case.
+Najpierw otwórz część posiadanych skrzynek.|Open some of your existing cases first.
+Nowe opcje moderacji oczekują na wdrożenie aktualizacji.|The new moderation options are waiting for the update to be deployed.
+NOWY MODEL|NEW MODEL
+Kilof|Pickaxe
+Overwatch i Battle Royale|Overwatch and Battle Royale
+WASD · Mysz · B Sklep · 4 granaty · Esc menu|WASD · Mouse · B Shop · 4 grenades · Esc menu
+NOWE W ARSENALE|NEW IN THE ARSENAL
+Kolory, wzory i pędzel|Colors, patterns and a brush
+Bronie, noże i mapy|Weapons, knives and maps
+Noże i skiny|Knives and skins
+LOKALNE PROJEKTY|LOCAL PROJECTS
+Projekt mapy|Map project
+Podgląd tylko w edytorze|Editor preview only
+Zapisany projekt możesz wysłać do oceny. Zatwierdzone skiny trafiają do skrzynki społeczności; sam szkic nie daje przedmiotu ani nowego modelu noża.|Submit a saved design for review. Approved skins enter the Community Forge Case; a draft does not grant an item or a new knife model.
+Kolor pędzla|Brush color
+Jednolity|Solid
+Pasy|Stripes
+Moro|Camo
+Piksele|Pixels
+Baza|Base
+Akcent|Accent
+Detale|Details
+Oczekuje na ocenę|Pending review
+Wiadomość dla autora (wymagana przy odrzuceniu)|Message for the author (required when rejecting)
+OCENA ZGŁOSZENIA|SUBMISSION REVIEW
+Testuj mapę z botami|Test map with bots
+Zatwierdź i opublikuj|Approve and publish
+Otwórz edytor i wybierz „Wyślij do oceny”.|Open the editor and select “Submit for review”.
+Nie masz jeszcze muzyki MVP. Zestawy znajdziesz w MVP Music Box.|You have no MVP music kits yet. Find them in the MVP Music Box.
+Najnowsze|Newest
+Skrzynie:|Crates:
+Zagraj na mapie|Play this map
+NAGRODY DZISIAJ|REWARDS TODAY
+ocen|reviews
+egzemplarz|copy
+egzemplarze|copies
+egzemplarzy|copies
+okien|windows
+SKIN DO ZDOBYCIA|TARGET SKIN
+10 wybranych egzemplarzy zostanie zużytych. Każdy z {count} skinów następnej jakości ma taką samą szansę. 10 skinów StatTrak™ daje nagrodę StatTrak™; mieszany kontrakt daje zwykły skin.|The 10 selected items will be consumed. Each of the {count} skins of the next rarity has the same chance. Ten StatTrak™ skins grant a StatTrak™ reward; a mixed contract grants a regular skin.
+Szansa = wartość twojego skina ÷ wartość celu × 90%. Wartości pochodzą z rynku w grze. Przy sukcesie dostajesz wybrany cel; przy porażce tracisz wejściowy skin.|Chance = your skin value ÷ target value × 90%. Values come from the in-game market. Success grants the chosen target; failure consumes your input skin.
+Wycofaj|Withdraw
+Wycofaj publikację|Withdraw publication
+Skin wycofany ze skrzynki|Skin removed from the case
+Wyłączona z głównej puli|Excluded from the main pool
+Zastąp nową wersją|Replace with the new version
+Dodaj do głównej puli|Add to the main pool
+Wyłącz z głównej puli|Remove from the main pool
+Zablokuj automatyczny awans|Block automatic promotion
+Przywróć awans społeczności|Restore community promotion
+Najnowsza zatwierdzona wersja:|Latest approved version:
+W puli:|In the pool:
+Przywróć do skrzynki|Restore to the case
+Wycofaj ze skrzynki|Remove from the case
+Podgląd nowej wersji|Preview the new version
+Opublikowane projekty|Published projects
+Zarządzaj główną pulą map i zawartością skrzynki społeczności.|Manage the main map pool and the Community Forge Case.
+Rodzaj projektu|Project type
+Mapy i skiny|Maps and skins
+Tylko w Warsztacie|Workshop only
+W skrzynce społeczności|In the Community Forge Case
+Brak pasujących projektów.|No matching projects.
+Poprzednia|Previous
+Następna|Next
+Gracze:|Players:
+Boty:|Bots:
+Ręczne dodanie omija progi społeczności. Wyłączenie z puli zachowuje mapę w Warsztacie.|Manual addition bypasses community thresholds. Removing a map from the main pool keeps it in the Workshop.
+Wycofanie ze skrzynki blokuje przyszłe dropy. Zdobyte skiny i StatTrak pozostają u graczy.|Removing a skin from the case stops future drops. Players keep their earned skins and StatTrak counts.
+Ręczne dodanie działa także przy wyłączonym automatycznym awansie. Mapy dodane ręcznie zajmują miejsca przed mapami z rankingu.|Manual addition also works when automatic promotion is off. Manually added maps take slots before ranked maps.
+Po minucie gry uczestniczące boty testują mapę. Każdy ma 35% szansy na polubienie; ocena jest losowana tylko raz. Ich zagrania i oceny widać osobno i liczą się do awansu.|After one minute of gameplay, participating bots review the map. Each has a 35% chance of liking it, rolled only once. Their plays and likes are shown separately and count toward promotion.
+Zatwierdź i dodaj do głównej puli|Approve and add to the main pool
+Pojawiła się nowsza wersja projektu. Odśwież listę i wybierz ją ponownie.|A newer project version is available. Refresh the list and select it again.
+Zatwierdzono mapę i dodano ją do głównej puli jej trybu.|Map approved and added to the main pool for its mode.
+Przywrócono skin do skrzynki społeczności.|Skin restored to the Community Forge Case.
+Wycofano skin ze skrzynki. Zdobyte egzemplarze pozostają u graczy.|Skin removed from the case. Players keep their earned copies.
+Dodano wybraną wersję mapy do głównej puli jej trybu.|The selected map version was added to the main pool for its mode.
+Wyłączono mapę z głównej puli. Nadal można grać w nią z Warsztatu.|Map removed from the main pool. It can still be played from the Workshop.
+Przywrócono awans mapy według zasad społeczności.|Community-based map promotion restored.
+Nóż motylkowy|Butterfly Knife
+Nóż kukri|Kukri Knife
+Nóż Stiletto|Stiletto Knife
+Nóż klasyczny|Classic Knife
+Widok|View
+Oddal widok|Zoom out
+Przybliż widok|Zoom in
+Reset widoku|Reset view
+Przesuwanie|Pan
+Kółko: zoom · Spacja + przeciągnij lub środkowy przycisk: przesuń|Wheel: zoom · Space + drag or middle mouse button: pan
+Sterowanie myszą|Mouse controls
+Przechwytuj mysz podczas gry|Capture the mouse during gameplay
+Kursor pozostaje w oknie gry. Escape otwiera menu i zwalnia mysz; zakupy i rozmowy również ją zwalniają.|The cursor stays inside the game window. Escape opens the menu and releases the mouse; the shop and chats release it too.
+Kliknij, aby przechwycić mysz|Click to capture the mouse
+Mysz nie została przechwycona. Kliknij, aby spróbować ponownie.|The mouse could not be captured. Click to try again.
+Escape — menu i zwolnienie myszy|Escape — menu and release mouse
+Wygląd map|Map appearance
+Materiały ścian, podłoża i skrzyń oraz delikatne cienie.|Wall, floor and crate materials with subtle shadows.
+Szczegółowość|Detail level
+Tekstury i cieniowanie|Textures and shading
+Uproszczony wygląd|Simple appearance
 Wybierz tryb gry|Select game mode
 Ty|You
 Strzelby|Shotguns
@@ -4840,14 +5154,20 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   const maps={pl:new Map(),en:new Map()},put=(map,key,value)=>{key=key.toLocaleLowerCase('pl');if(!map.has(key))map.set(key,value);};for(const [pl,en]of pairs){if(!en)continue;put(maps.pl,en,pl);put(maps.pl,pl,pl);put(maps.en,pl,en);put(maps.en,en,en);}
   const escape=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
   const patterns={};for(const lang of ['pl','en']){const source=pairs.map(p=>p[lang==='en'?0:1]).filter(Boolean).filter(s=>s.length>=3).sort((a,b)=>b.length-a.length);patterns[lang]=new RegExp('(?<![\\p{L}\\p{N}_])(?:'+[...new Set(source)].map(escape).join('|')+')(?![\\p{L}\\p{N}_])','giu');}
-  api.t=function(value){if(typeof value!=='string'||!value.trim()||api.protected.has(value.trim())||value.length>6000||/^(data:|https?:|[A-Za-z0-9+/]{80})/.test(value))return value;const memo=cache[api.language];if(memo.has(value))return memo.get(value);const text=value.trim(),map=maps[api.language],exact=map.get(text.toLocaleLowerCase('pl'));let out=exact||text.replace(patterns[api.language],s=>map.get(s.toLocaleLowerCase('pl'))||s);if(!exact&&out===text&&/[\p{L}]{3}/u.test(text)&&api.unknown.size<3000)api.unknown.add(text);if(text===text.toUpperCase()&&/[\p{L}]/u.test(text))out=out.toUpperCase();const result=value.replace(text,out);if(memo.size>6000)memo.clear();memo.set(value,result);return result;};
-  let observer,scan;const originals=new WeakMap(),attrs=new WeakMap();
+  api.t=function(value){if(typeof value!=='string'||!value.trim()||api.protected.has(value.trim())||value.length>6000||/^(data:|https?:|[A-Za-z0-9+/]{80})/.test(value))return value;const sourceName=value.trim();if(/^\[(?:warsztat|workshop)\]/i.test(sourceName)||/^(?:warsztat|workshop)\s*\//i.test(sourceName))return value.replace(sourceName,api.mapName(sourceName));const memo=cache[api.language];if(memo.has(value))return memo.get(value);const text=value.trim(),map=maps[api.language],exact=map.get(text.toLocaleLowerCase('pl'));let out=exact||text.replace(patterns[api.language],s=>map.get(s.toLocaleLowerCase('pl'))||s);if(!exact&&out===text&&/[\p{L}]{3}/u.test(text)&&api.unknown.size<3000)api.unknown.add(text);if(text===text.toUpperCase()&&/[\p{L}]/u.test(text))out=out.toUpperCase();const result=value.replace(text,out);if(memo.size>6000)memo.clear();memo.set(value,result);return result;};
+  api.format=function(template,values={}){return api.t(template).replace(/\{([a-zA-Z][a-zA-Z0-9_]*)\}/g,(whole,key)=>Object.hasOwn(values,key)?String(values[key]):whole);};
+  // Only the game's prefix is translated; the author's map title is literal.
+  api.mapNameParts=function(value){const name=String(value??''),bracket=name.match(/^\[(?:Warsztat|Workshop)\](\s*)/i),local=name.match(/^(?:warsztat|workshop)(\s*\/\s*)/i),match=bracket||local,label=api.language==='en'?'Workshop':'Warsztat';return match?{prefix:bracket?'['+label+']'+bracket[1]:label+local[1],title:name.slice(match[0].length)}:{prefix:'',title:name};};
+  api.mapName=function(value){const p=api.mapNameParts(value);return p.prefix+p.title;};
+  const html=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),mapContent=value=>{const p=api.mapNameParts(value);return html(p.prefix)+'<span data-user-content>'+html(p.title)+'</span>';};
+  api.mapNameHTML=function(value){return '<span data-map-label="'+html(value)+'" data-no-translate>'+mapContent(value)+'</span>';};
+  let observer,scan;const originals=new WeakMap(),attrs=new WeakMap(),mapLabels=new WeakMap();
   api.set=function(lang){api.language=lang==='en'?'en':'pl';if(scan){document.documentElement.lang=api.language;scan(document.body);observer?.takeRecords();document.dispatchEvent(new CustomEvent('sz-language',{detail:api.language}));}return api.language;};
   api.mount=function(){
    const skip=e=>!e||e.closest('script,style,[contenteditable="true"],[data-user-content],[data-no-translate]');
-   function node(n){if(n.nodeType===3){if(skip(n.parentElement)||n.parentElement.closest('textarea,input'))return;const old=originals.get(n),source=old&&n.data===old.translated?old.source:n.data,translated=api.t(source);originals.set(n,{source,translated});if(n.data!==translated)n.data=translated;}else if(n.nodeType===1&&!skip(n)){let cache=attrs.get(n)||{};for(const key of ['title','placeholder','aria-label']){if(!n.hasAttribute(key))continue;const value=n.getAttribute(key),source=cache[key]&&value===cache[key].translated?cache[key].source:value,translated=api.t(source);cache[key]={source,translated};if(translated!==value)n.setAttribute(key,translated);}attrs.set(n,cache);}}
+   function node(n){if(n.nodeType===1&&n.hasAttribute('data-map-label')){const source=n.getAttribute('data-map-label'),previous=mapLabels.get(n);if(!previous||previous.source!==source||previous.language!==api.language){mapLabels.set(n,{source,language:api.language});if(n.tagName==='OPTION')n.textContent=api.mapName(source);else n.innerHTML=mapContent(source);}return;}if(n.nodeType===3){if(skip(n.parentElement)||n.parentElement.closest('textarea,input'))return;const old=originals.get(n),source=old&&n.data===old.translated?old.source:n.data,translated=api.t(source);originals.set(n,{source,translated});if(n.data!==translated)n.data=translated;}else if(n.nodeType===1&&!skip(n)){let cache=attrs.get(n)||{};for(const key of ['title','placeholder','aria-label','alt']){if(!n.hasAttribute(key))continue;const value=n.getAttribute(key),source=cache[key]&&value===cache[key].translated?cache[key].source:value,translated=api.t(source);cache[key]={source,translated};if(translated!==value)n.setAttribute(key,translated);}attrs.set(n,cache);}}
    scan=start=>{if(!start)return;node(start);const walker=document.createTreeWalker(start,NodeFilter.SHOW_ELEMENT|NodeFilter.SHOW_TEXT);let n;while((n=walker.nextNode()))node(n);};
-   observer=new MutationObserver(records=>{for(const r of records){if(r.type==='childList')for(const n of r.addedNodes)scan(n);else node(r.target);}observer.takeRecords();});observer.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['title','placeholder','aria-label']});api.set(api.language);
+   observer=new MutationObserver(records=>{for(const r of records){if(r.type==='childList')for(const n of r.addedNodes)scan(n);else node(r.target);}observer.takeRecords();});observer.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['title','placeholder','aria-label','alt','data-map-label']});api.set(api.language);
    for(const key of ['alert','confirm','prompt']){const original=window[key];window[key]=function(message,...rest){return original.call(window,api.t(message),...rest);};}
    if(typeof CanvasRenderingContext2D!=='undefined')for(const method of ['fillText','strokeText','measureText']){const original=CanvasRenderingContext2D.prototype[method];CanvasRenderingContext2D.prototype[method]=function(text,...rest){return original.call(this,api.t(text),...rest);};}
    return api;
@@ -5026,7 +5346,7 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
    sessions. The renderer never grants owner rights or writes popularity totals. */
 (function(){'use strict';
  const defaults={enabled:true,min_plays:50,min_likes:10,slots_per_mode:1};
- const state={owner:null,epoch:0,liked:new Set(),policy:{...defaults},busy:new Set(),mode:'all',sort:'popular',runs:new Set()};
+ const state={owner:null,epoch:0,liked:new Set(),policy:{...defaults},busy:new Set(),mode:'all',sort:'popular',runs:new Set(),moderationVersion:0};
  const t=s=>szLocale.t(s),esc=workshopEscape,number=n=>Math.max(0,Number(n)||0).toLocaleString(szLocale.language==='en'?'en-US':'pl-PL');
  const modeName=mode=>t(({tdm:'Team Deathmatch',classic:'Rozbrajanie bomby',ctf:'Capture the Flag'})[mode]||'Team Deathmatch');
  function noun(value,type){const n=Number(value)||0;if(szLocale.language==='en')return type==='plays'?(n===1?'play':'plays'):(n===1?'like':'likes');const form=n===1?0:n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?1:2;return(type==='plays'?['zagranie','zagrania','zagrań']:['polubienie','polubienia','polubień'])[form];}
@@ -5038,7 +5358,7 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
  async function sync(){
   account();if(syncing)return syncing;const epoch=state.epoch,ticket=++sequence;
   const task=(async()=>{try{const data=await rpc('state');if(epoch!==state.epoch||ticket!==sequence)return;
-   if(validPolicy(data?.policy))state.policy=data.policy;
+   if(validPolicy(data?.policy))state.policy=data.policy;state.moderationVersion=Number(data?.moderation_version)||0;
    state.liked=new Set((data?.liked||[]).filter(id=>COMMUNITY_UUID.test(id)));
    for(const row of COMMUNITY.rows.filter(r=>r.kind==='map'&&r.featured)){
     try{const release=await communityRelease(row.release_id);if(epoch!==state.epoch||ticket!==sequence)return;communityRegisterMap(release);}catch{/* A failed download leaves the built-in map pool available. */}
@@ -5054,7 +5374,8 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   return out.slice().sort((a,b)=>score(b)-score(a)||String(a.id).localeCompare(String(b.id)));
  }
  function card(row){account();const liked=state.liked.has(row.id),p=state.policy;
-  return `<div class="wm-map-data"><span class="wm-map-mode">${esc(modeName(row.mode))}</span><div class="wm-map-counts"><span><b>${number(row.plays)}</b><span data-no-translate>${noun(row.plays,'plays')}</span></span><span>${heart}<b>${number(row.likes)}</b><span data-no-translate>${noun(row.likes,'likes')}</span></span></div>${row.featured?`<span class="wm-featured">${esc(t('W głównej puli'))}</span>`:p.enabled?`<small>${esc(t('Próg awansu:'))} <span data-no-translate>${number(p.min_plays)} ${noun(p.min_plays,'plays')} · ${number(p.min_likes)} ${noun(p.min_likes,'likes')}</span></small>`:''}<button type="button" class="wm-like ${liked?'liked':''}" data-workshop-like="${row.id}" aria-pressed="${liked}" ${!SBU||state.busy.has(row.id)?'disabled':''} title="${esc(t(SBU?'Jedno polubienie na konto. Możesz je cofnąć.':'Zaloguj się, aby polubić mapę.'))}">${heart}${esc(t(liked?'Lubisz to':'Polub mapę'))}</button></div>`;
+  const counts=(plays,likes)=>`${number(plays)} ${noun(plays,'plays')} · ${number(likes)} ${noun(likes,'likes')}`;
+  return `<div class="wm-map-data" data-no-translate><span class="wm-map-mode">${esc(modeName(row.mode))}</span><div class="wm-map-counts"><span><b>${number(row.plays)}</b><span>${noun(row.plays,'plays')}</span></span><span>${heart}<b>${number(row.likes)}</b><span>${noun(row.likes,'likes')}</span></span></div><small class="wm-review-counts">${esc(t('Gracze:'))} ${counts(row.player_plays??row.plays,row.player_likes??row.likes)}<br>${esc(t('Boty:'))} ${counts(row.bot_plays,row.bot_likes)}</small>${row.featured?`<span class="wm-featured">${esc(t('W głównej puli'))} · v${row.version}</span>`:row.pool_rule==='excluded'?`<span class="wm-excluded">${esc(t('Wyłączona z głównej puli'))}</span>`:p.enabled?`<small>${esc(t('Próg awansu:'))} <span>${number(p.min_plays)} ${noun(p.min_plays,'plays')} · ${number(p.min_likes)} ${noun(p.min_likes,'likes')}</span></small>`:''}<button type="button" class="wm-like ${liked?'liked':''}" data-workshop-like="${row.id}" aria-pressed="${liked}" ${!SBU||state.busy.has(row.id)?'disabled':''} title="${esc(t(SBU?'Jedno polubienie na konto. Możesz je cofnąć.':'Zaloguj się, aby polubić mapę.'))}">${heart}${esc(t(liked?'Lubisz to':'Polub mapę'))}</button></div>`;
  }
  function settingsHTML(){const p=state.policy;return `<section class="cr-card wm-policy"><h3>${esc(t('Awans map do głównej puli'))}</h3><p>${esc(t('Najpopularniejsze zatwierdzone mapy awansują do puli swojego trybu po osiągnięciu obu progów.'))}</p><form data-workshop-policy><label class="wm-check"><input name="enabled" type="checkbox" ${p.enabled?'checked':''}>${esc(t('Automatyczny awans'))}</label><div class="wm-policy-fields"><label>${esc(t('Minimum zagrań'))}<input name="min_plays" type="number" min="1" max="1000000" step="1" value="${p.min_plays}" required></label><label>${esc(t('Minimum polubień'))}<input name="min_likes" type="number" min="1" max="1000000" step="1" value="${p.min_likes}" required></label><label>${esc(t('Map w puli na tryb'))}<input name="slots_per_mode" type="number" min="1" max="5" step="1" value="${p.slots_per_mode}" required></label><button class="cr-primary" type="submit">${esc(t('Zapisz zasady awansu'))}</button></div></form><p>${esc(t('Ranking łączy polubienia i zagrania względem ustawionych progów. Wycofana mapa wypada z puli.'))}</p></section>`;}
  function limitHints(){for(const e of document.querySelectorAll('[data-workshop-limit]'))e.textContent=t(COMMUNITY.admin?'Konto właściciela: bez limitu zgłoszeń map i skinów.':'Limit zgłoszeń: 10 oczekujących i 10 wysłanych w ciągu 24 godzin.');}
@@ -5074,21 +5395,62 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   catch{communityNotice(t('Nie udało się zapisać zasad awansu. Sprawdź wartości i połączenie.'),true);button.disabled=false;}
  });
  function makeRun(g){account();const ref=g?.communityMapRef;if(!g||!SBU||g.client||g.creatorTest||CREATOR_TEST||!ref)return;
-  const run={id:crypto.randomUUID(),uid:SBU.id,epoch:state.epoch,release:ref.release,mode:sel.mode,seconds:0,started:false,busy:false,done:false,retryAt:0};g.workshopRun=run;state.runs.add(run);progress(run);
+  const bots=Math.min(10,g.ps.filter(p=>!p.human&&!p.rh&&!p.rid).length);
+  const run={id:crypto.randomUUID(),uid:SBU.id,epoch:state.epoch,release:ref.release,mode:sel.mode,bots,seconds:0,started:false,busy:false,done:false,retryAt:0};g.workshopRun=run;state.runs.add(run);progress(run);
  }
  async function progress(run){account();if(run.done||run.busy||run.uid!==state.owner||run.epoch!==state.epoch||Date.now()<run.retryAt)return;run.busy=true;
   try{
-   if(!run.started){const r=await rpc('start',{session:run.id,release:run.release,mode:run.mode});if(run.epoch!==state.epoch)return;run.started=true;if(r?.counted)run.done=true;}
-   if(!run.done&&run.seconds>=60){const r=await rpc('finish',{session:run.id});if(run.epoch!==state.epoch)return;if(r?.retry_after)run.retryAt=Date.now()+Math.max(1,r.retry_after)*1000+150;else{run.done=true;if(r?.counted)communityRefresh();}}
+   if(!run.started){const r=await rpc('start',{session:run.id,release:run.release,mode:run.mode,bots:run.bots});if(run.epoch!==state.epoch)return;run.started=true;if(r?.counted)run.done=true;}
+   if(!run.done&&run.seconds>=60){const r=await rpc('finish',{session:run.id});if(run.epoch!==state.epoch)return;if(r?.retry_after)run.retryAt=Date.now()+Math.max(1,r.retry_after)*1000+150;else{run.done=true;run.botReview={plays:r?.bot_plays||0,likes:r?.bot_likes||0};if(r?.counted)communityRefresh();}}
   }catch{run.retryAt=Date.now()+10000;}finally{run.busy=false;if(run.done)state.runs.delete(run);}
  }
  const begin=begin0;begin0=function(){begin();if(G)makeRun(G);};
  const update=upd;upd=function(dt){const g=G,run=g?.workshopRun;if(run&&!g.paused&&!g.over&&!g.intro)run.seconds+=Math.max(0,Math.min(Number(dt)||0,.25));return update(dt);};
- const end=endG;endG=function(...args){if(G?.workshopRun)progress(G.workshopRun);return end(...args);};
- const leave=quit;quit=function(){const run=G?.workshopRun;if(run){if(run.seconds>=60)progress(run);else{run.done=true;state.runs.delete(run);}}return leave();};
+ const end=endG;endG=function(...args){if(G?.workshopRun)progress(G.workshopRun);COMMUNITY.explicitSelection=null;return end(...args);};
+ const leave=quit;quit=function(){const run=G?.workshopRun;if(run){if(run.seconds>=60)progress(run);else{run.done=true;state.runs.delete(run);}}COMMUNITY.explicitSelection=null;return leave();};
  setInterval(()=>{account();for(const run of state.runs)progress(run);},1000);
  document.addEventListener('sz-language',()=>{if(T==='creator'&&document.querySelector('.cw-page'))communityRender();else limitHints();});
- window.SzWorkshopMaps={card,filter,filtersHTML};
+ window.SzWorkshopMaps={card,filter,filtersHTML,moderationReady:()=>state.moderationVersion>=1};
+})();
+
+</script>
+<script>
+/* Membership is changed by owner-only database actions. Removing a drop never
+   revokes a skin already earned; map pool slots refer to immutable releases. */
+(function(){'use strict';
+ const t=s=>szLocale.t(s),esc=workshopEscape,state={kind:'all',query:'',page:0},ready=()=>!!window.SzWorkshopMaps?.moderationReady();
+ const mode=id=>t(({classic:'Rozbrajanie bomby',ctf:'Capture the Flag',tdm:'Team Deathmatch'})[id]||'Team Deathmatch');
+ const fold=s=>String(s||'').normalize('NFKD').replace(/\p{M}/gu,'').toLowerCase();
+ function controls(row){if(!COMMUNITY.admin||!ready())return'';const newest=row.latest_release_id||row.release_id,version=row.latest_version||row.version,disabled=COMMUNITY.busy?'disabled':'';
+  const button=(rule,label,extra='')=>`<button type="button" data-wm-action="pool" data-wm-item="${row.id}" data-wm-rule="${rule}" data-wm-release="${newest}" ${disabled} ${extra}>${esc(t(label))}</button>`;
+  return `<div class="wm-owner-actions" data-no-translate><small>${esc(t('Najnowsza zatwierdzona wersja:'))} v${version}${row.featured?' · '+esc(t('W puli:'))+' v'+row.version:''}</small><div>${row.kind==='map'?`${!row.featured||row.release_id!==newest?button('manual',row.featured?'Zastąp nową wersją':'Dodaj do głównej puli','class="wm-add-pool"'):''}${row.featured?button('excluded','Wyłącz z głównej puli'):row.pool_rule!=='excluded'?button('excluded','Zablokuj automatyczny awans'):''}${row.pool_rule!=='auto'?button('auto','Przywróć awans społeczności'):''}`:`<button type="button" data-wm-action="case_pool" data-wm-item="${row.id}" data-wm-enabled="${row.case_enabled===false?'1':'0'}" ${disabled}>${esc(t(row.case_enabled===false?'Przywróć do skrzynki':'Wycofaj ze skrzynki'))}</button>`}${row.kind==='map'&&newest!==row.release_id?`<button type="button" data-wm-preview="${newest}">${esc(t('Podgląd nowej wersji'))}</button>`:''}</div></div>`;
+ }
+ function libraryHTML(){if(!ready())return `<section class="cr-card wm-library" data-workshop-library data-no-translate><h3>${esc(t('Opublikowane projekty'))}</h3><p>${esc(t('Nowe opcje moderacji oczekują na wdrożenie aktualizacji.'))}</p></section>`;const rows=COMMUNITY.rows.filter(r=>(state.kind==='all'||r.kind===state.kind)&&(!state.query||fold(r.title+' '+r.author_name).includes(fold(state.query))));state.page=Math.max(0,Math.min(state.page,Math.max(0,Math.ceil(rows.length/8)-1)));
+  return `<section class="cr-card wm-library" data-workshop-library data-no-translate><header><div><h3>${esc(t('Opublikowane projekty'))}</h3><p>${esc(t('Zarządzaj główną pulą map i zawartością skrzynki społeczności.'))}</p></div><span>${rows.length}</span></header><div class="wm-library-tools"><input type="search" data-wm-search aria-label="${esc(t('Szukaj projektu lub autora'))}" placeholder="${esc(t('Szukaj projektu lub autora'))}" value="${esc(state.query)}"><select data-wm-kind aria-label="${esc(t('Rodzaj projektu'))}">${[['all','Mapy i skiny'],['map','Mapy'],['skin','Skiny']].map(([id,label])=>`<option value="${id}" ${id===state.kind?'selected':''}>${esc(t(label))}</option>`).join('')}</select></div><div class="wm-library-list">${rows.slice(state.page*8,state.page*8+8).map(r=>`<article data-wm-published="${r.id}"><div><b data-user-content>${esc(r.title)}</b><small><span data-user-content>${esc(r.author_name)}</span> · ${r.kind==='map'?esc(mode(r.mode)):esc(t('Skin'))} · ${esc(t('Wersja'))} ${r.version}</small><span class="wm-membership">${esc(t(r.kind==='map'?(r.featured?'W głównej puli':r.pool_rule==='excluded'?'Wyłączona z głównej puli':'Tylko w Warsztacie'):(r.case_enabled===false?'Skin wycofany ze skrzynki':'W skrzynce społeczności')))}</span></div>${controls(r)}</article>`).join('')||`<p>${esc(t('Brak pasujących projektów.'))}</p>`}</div><footer><button type="button" data-wm-page="-1" ${state.page?'':'disabled'}>${esc(t('Poprzednia'))}</button><span>${rows.length?state.page+1:0} / ${Math.ceil(rows.length/8)}</span><button type="button" data-wm-page="1" ${(state.page+1)*8<rows.length?'':'disabled'}>${esc(t('Następna'))}</button></footer><p>${esc(t('Ręczne dodanie omija progi społeczności. Wyłączenie z puli zachowuje mapę w Warsztacie.'))}</p><p>${esc(t('Wycofanie ze skrzynki blokuje przyszłe dropy. Zdobyte skiny i StatTrak pozostają u graczy.'))}</p></section>`;
+ }
+ function renderLibrary(){const root=document.querySelector('[data-workshop-library]');if(!root)return;const active=document.activeElement?.matches('[data-wm-search]'),position=active?document.activeElement.selectionStart:null;root.outerHTML=libraryHTML();if(active){const input=document.querySelector('[data-wm-search]');input.focus({preventScroll:true});try{input.setSelectionRange(position,position);}catch{}}}
+ const render=communityRender;communityRender=function(){render();if(COMMUNITY.admin&&COMMUNITY.tab==='moderation'&&document.querySelector('.cw-page')){document.querySelector('.wm-policy')?.insertAdjacentHTML('afterend',libraryHTML());document.querySelector('.wm-policy')?.insertAdjacentHTML('beforeend',`<p data-no-translate>${esc(t('Ręczne dodanie działa także przy wyłączonym automatycznym awansie. Mapy dodane ręcznie zajmują miejsca przed mapami z rankingu.'))}</p>`);}if(ready()&&COMMUNITY.tab==='catalog')document.querySelector('.cw-page')?.insertAdjacentHTML('beforeend',`<p class="cw-note" data-no-translate>${esc(t('Po minucie gry uczestniczące boty testują mapę. Każdy ma 35% szansy na polubienie; ocena jest losowana tylko raz. Ich zagrania i oceny widać osobno i liczą się do awansu.'))}</p>`);};
+ const card=communityCard;communityCard=function(row,active){const html=card(row,active);return active==='catalog'&&COMMUNITY.admin?html.replace('<div class="cr-actions">',controls(row)+'<div class="cr-actions">'):html;};
+ const details=communityDetails;communityDetails=async function(id,source){await details(id,source);const row=COMMUNITY.queue.find(r=>r.id===id),footer=document.querySelector('.cw-detail footer');if(source==='moderation'&&COMMUNITY.admin&&ready()&&row?.kind==='map'&&footer){const b=document.createElement('button');b.type='button';b.className='cr-primary wm-approve-pool';b.dataset.workshopApprovePool=id;b.dataset.cwReview='';b.dataset.noTranslate='';b.textContent=t('Zatwierdź i dodaj do głównej puli');footer.append(b);}};
+ function failure(error){if(String(error?.message||'').includes('WORKSHOP_VERSION_CHANGED'))return t('Pojawiła się nowsza wersja projektu. Odśwież listę i wybierz ją ponownie.');return t(communityError(error));}
+ async function run(action,args,message){if(!COMMUNITY.admin||!ready()||COMMUNITY.busy)return;const epoch=COMMUNITY.epoch,owner=communityAccount();COMMUNITY.busy=true;document.querySelectorAll('[data-wm-action],[data-workshop-approve-pool]').forEach(b=>b.disabled=true);
+  try{const r=await sb.rpc('sz_workshop_map',{action,args});if(r.error)throw r.error;if(epoch!==COMMUNITY.epoch||owner!==communityAccount())return;pmClose();await communityRefresh();communityNotice(t(message));}
+  catch(error){if(epoch===COMMUNITY.epoch){const e=$('cw-review-error');if(e)e.textContent=failure(error);else communityNotice(failure(error),true);}}
+  finally{if(epoch===COMMUNITY.epoch){COMMUNITY.busy=false;if(T==='creator'&&document.querySelector('.cw-page'))communityRender();document.querySelectorAll('[data-wm-action],[data-workshop-approve-pool]').forEach(b=>b.disabled=false);}}
+ }
+ async function preview(id){if(!COMMUNITY.admin)return;const row=COMMUNITY.rows.find(r=>r.latest_release_id===id);if(!row)return;try{const release=await communityRelease(id),p=release.payload;if(!COMMUNITY.admin)return;$('pm').style.display='flex';$('pm').innerHTML=`<section class="pmb cw-detail" data-no-translate><header><div><small>${esc(t('Najnowsza zatwierdzona wersja:'))} v${release.version}</small><h2 data-user-content>${esc(p.name)}</h2></div><button onclick="pmClose()">${esc(t('Zamknij'))}</button></header><img data-user-content class="cw-detail-art" src="${communityArt(id,p)}" alt="${esc(p.name)}"><p>${esc(mode(p.mode))}</p><footer>${controls(row)}</footer></section>`;}catch(error){communityNotice(failure(error),true);}}
+ document.addEventListener('click',e=>{const b=e.target.closest('[data-wm-action],[data-workshop-approve-pool],[data-wm-page],[data-wm-preview]');if(!b||b.disabled)return;
+  if(b.dataset.wmPage){state.page+=Number(b.dataset.wmPage);renderLibrary();return;}
+  if(b.dataset.wmPreview){preview(b.dataset.wmPreview);return;}
+  if(b.dataset.workshopApprovePool){run('approve_pool',{submission:b.dataset.workshopApprovePool,note:($('cw-review-note')?.value||'').trim()},'Zatwierdzono mapę i dodano ją do głównej puli jej trybu.');return;}
+  const row=COMMUNITY.rows.find(r=>r.id===b.dataset.wmItem);if(!row)return;
+  if(b.dataset.wmAction==='case_pool'){const enabled=b.dataset.wmEnabled==='1';run('case_pool',{item:row.id,enabled},enabled?'Przywrócono skin do skrzynki społeczności.':'Wycofano skin ze skrzynki. Zdobyte egzemplarze pozostają u graczy.');}
+  else{const rule=b.dataset.wmRule;run('pool',{item:row.id,rule,release:b.dataset.wmRelease,expected_latest:row.latest_release_id||row.release_id},rule==='manual'?'Dodano wybraną wersję mapy do głównej puli jej trybu.':rule==='excluded'?'Wyłączono mapę z głównej puli. Nadal można grać w nią z Warsztatu.':'Przywrócono awans mapy według zasad społeczności.');}
+ });
+ document.addEventListener('input',e=>{if(e.target.matches('[data-wm-search]')){state.query=e.target.value;state.page=0;renderLibrary();}});
+ document.addEventListener('change',e=>{if(e.target.matches('[data-wm-kind]')){state.kind=e.target.value;state.page=0;renderLibrary();}});
+ document.addEventListener('sz-language',()=>{for(const b of document.querySelectorAll('[data-workshop-approve-pool]'))b.textContent=t('Zatwierdź i dodaj do głównej puli');});
+ window.SzWorkshopModeration={controls,preview};
 })();
 
 </script>
@@ -5147,12 +5509,12 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   const t=s=>root.szLocale?.t(s)||s,esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const number=n=>Math.max(0,Number(n)||0).toLocaleString(root.szLocale?.language==='en'?'en-US':'pl-PL');
   const state={owner:null,query:'',type:'all',passPage:null},art=new WeakMap();
-  const isEnglish=()=>root.szLocale?.language==='en';
+  const isEnglish=()=>root.szLocale?.language==='en',mapLabel=i=>root.szLocale.mapName(MAPN[i]),mapTitle=i=>root.szLocale.mapNameHTML(MAPN[i]);
   function title(mode,ranked=false){return t(ranked?'Competitive Ranked':(MODES.find(m=>m[0]===mode)?.[1]||mode));}
-  function artwork(map){const g=GRS[map];if(g&&art.has(g))return art.get(g);let uri='';
+  function artwork(map){const g=GRS[map];if(g&&art.get(g)?.language===szLocale.language)return art.get(g).uri;let uri='';
    if(map<MAP_BRIEFINGS.length)try{uri=mapLoadingArt(map,600,260);}catch{}
    if(!uri&&g){const c=document.createElement('canvas');c.width=600;c.height=260;const q=c.getContext('2d'),cell=Math.min(568/g.cols,228/g.rows),ox=(600-g.cols*cell)/2,oy=(260-g.rows*cell)/2;q.fillStyle='#101d29';q.fillRect(0,0,600,260);for(let i=0;i<g.d.length;i++){q.fillStyle=['#45545b','#a4b1b0','#ab8350','#77a2ad'][g.d[i]]||'#263d44';q.fillRect(ox+(i%g.cols)*cell,oy+Math.floor(i/g.cols)*cell,cell+.2,cell+.2);}uri=c.toDataURL();}
-   if(g&&uri)art.set(g,uri);return uri;
+   if(g&&uri)art.set(g,{language:szLocale.language,uri});return uri;
   }
   function inventoryOwner(){const owner=SBU?.id||DB.cur;if(state.owner!==owner){state.owner=owner;state.query='';state.type='all';state.passPage=null;}}
   function standardMeta(id){const s=sk(id),weapon=s.w;return{category:category(weapon,W[weapon]),search:[id,s.n,s.name,W[weapon]?.n,t(W[weapon]?.n||''),weapon==='knife'?KNIFE_MODELS[s.model||'classic']:'',s.st?'StatTrak':''].join(' ')};}
@@ -5188,14 +5550,15 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
    if(!L){e.innerHTML=`<section class="hub-lobby" data-no-translate><header class="hub-section-heading"><div><small class="hub-kicker">${esc(t('GRAJ ZE ZNAJOMYMI'))}</small><h2>${esc(t('Lobby wieloosobowe'))}</h2><p>${esc(t('Zbierz drużynę i ruszajcie do wspólnego meczu.'))}</p></div><span class="hub-lobby-heading-icon">${icon('tdm')}</span></header><div class="hub-lobby-entry"><div><span class="hub-lobby-option-icon">${icon('plus')}</span><h3>${esc(t('Twoje lobby'))}</h3><p>${esc(t('Utwórz pokój, wybierz mapę i zaproś znajomych kodem.'))}</p><button type="button" class="hub-primary" onclick="mkLobby()" ${connecting?'disabled':''}>${esc(t(connecting?'Łączenie…':'Utwórz lobby'))}${icon('arrow')}</button></div><form onsubmit="event.preventDefault();joinLobby()"><span class="hub-lobby-option-icon">${icon('key')}</span><h3>${esc(t('Masz już kod?'))}</h3><p>${esc(t('Wpisz kod od znajomego i dołącz do jego drużyny.'))}</p><div class="hub-join-code"><input id="jc" aria-label="${esc(t('Kod lobby'))}" autocomplete="off" maxlength="6" placeholder="${esc(t('KOD LOBBY'))}" value="${esc(code)}"><button type="submit" ${connecting?'disabled':''}>${esc(t('Dołącz'))}${icon('arrow')}</button></div></form></div>${LM?`<div class="hub-lobby-notice" role="status">${esc(t(LM))}</div>`:''}<footer>${icon('coop')}<span>${esc(t('Boty uzupełniają wolne miejsca. Wszyscy gracze dołączają do wspólnego meczu.'))}</span></footer></section>`;if(focused){$('jc').focus();$('jc').setSelectionRange(selection,selection);}return;}
    const peers=lobPeers().slice();if(!peers.some(p=>p.cid===NET.cid))peers.unshift(lobbyPresence());const mode=sel.mode||'classic',map=sel.map,ffa=['dm','snipers','deagle','pistols','shotguns','knife','br'].includes(mode),friends=FR.synced?(FR.list||[]).filter(f=>FR.on?.[f.friend_id]?.length):[];
    const teamColumn=team=>`<section class="hub-team ${team==='CT'?'ct':'t'}"><div class="hub-team-title"><b>${team==='CT'?esc(t('Antyterroryści')):esc(t('Terroryści'))}</b><span>${team} · ${peers.filter(p=>(p.team||'CT')===team).length}</span></div>${peers.filter(p=>(p.team||'CT')===team).map(peerCard).join('')||`<div class="hub-team-empty">${icon('person')}<span>${esc(t('Miejsce dla graczy i botów'))}</span></div>`}</section>`;
-   e.innerHTML=`<section class="hub-lobby" data-no-translate><header class="hub-section-heading"><div><small class="hub-kicker">${esc(t('GOTOWI NA WSPÓLNY MECZ'))}</small><h2>${esc(t('Lobby wieloosobowe'))}</h2><p>${esc(t('Gracze:'))} ${peers.length} · ${esc(t('Wolne miejsca uzupełnią boty'))}</p></div><div class="hub-lobby-code"><small>${esc(t('Kod zaproszenia'))}</small><div><b data-user-content>${esc(L.code)}</b><button type="button" onclick="SzGameHub.copyCode()" aria-label="${esc(t('Kopiuj kod lobby'))}" title="${esc(t('Kopiuj kod lobby'))}">${icon('copy')}</button></div><span id="hub-code-status" aria-live="polite"></span></div></header><div class="hub-lobby-active"><div class="hub-roster">${ffa?`<section class="hub-team ct"><div class="hub-team-title"><b>${esc(t('Gracze w lobby'))}</b></div>${peers.map(peerCard).join('')}</section>`:teamColumn('CT')+teamColumn('T')}<div class="hub-team-choice"><label for="hub-lobby-team">${esc(t('Twoja drużyna:'))}</label><select id="hub-lobby-team" onchange="lobTeam(this.value)"><option value="CT" ${L.team==='CT'?'selected':''}>CT</option><option value="T" ${L.team==='T'?'selected':''}>T</option></select></div></div><aside class="hub-lobby-match"><div class="hub-lobby-map">${artwork(map)?`<img src="${artwork(map)}" alt="">`:''}<span data-user-content>${esc(MAPN[map])}</span></div>${L.host?`<label>${esc(t('Tryb gry'))}<select data-lobby-mode onchange="setLobMode(this.value)">${MODES.map(([id])=>`<option value="${id}" ${mode===id?'selected':''}>${esc(title(id))}</option>`).join('')}</select></label><label>${esc(t('Mapa'))}<select data-lobby-map onchange="SzGameHub.setMap(this.value)">${mapSet(mode).map(i=>`<option value="${i}" ${map===i?'selected':''}>${esc(MAPN[i])}</option>`).join('')}</select></label><button type="button" class="hub-primary" onclick="lobStart()" ${NET.pending?'disabled':''}>${icon('arrow')}${esc(t('Rozpocznij mecz'))}</button>`:`<b>${esc(title(mode,sel.comp))}</b><p class="hub-host-wait">${esc(t('Oczekiwanie na rozpoczęcie meczu przez hosta…'))}</p>`}<button type="button" class="hub-leave" onclick="lobLeave()">${esc(t('Opuść lobby'))}</button></aside></div>${friends.length?`<div class="hub-lobby-invites"><span>${esc(t('Zaproś znajomego online'))}</span>${friends.slice(0,8).map(f=>`<button type="button" data-lobby-invite="${esc(f.friend_id)}">${icon('plus')}<span data-user-content>${esc(f.name)}</span></button>`).join('')}</div>`:''}${LM?`<div class="hub-lobby-notice" role="status">${esc(t(LM))}</div>`:''}</section>`;
+   e.innerHTML=`<section class="hub-lobby" data-no-translate><header class="hub-section-heading"><div><small class="hub-kicker">${esc(t('GOTOWI NA WSPÓLNY MECZ'))}</small><h2>${esc(t('Lobby wieloosobowe'))}</h2><p>${esc(t('Gracze:'))} ${peers.length} · ${esc(t('Wolne miejsca uzupełnią boty'))}</p></div><div class="hub-lobby-code"><small>${esc(t('Kod zaproszenia'))}</small><div><b data-user-content>${esc(L.code)}</b><button type="button" onclick="SzGameHub.copyCode()" aria-label="${esc(t('Kopiuj kod lobby'))}" title="${esc(t('Kopiuj kod lobby'))}">${icon('copy')}</button></div><span id="hub-code-status" aria-live="polite"></span></div></header><div class="hub-lobby-active"><div class="hub-roster">${ffa?`<section class="hub-team ct"><div class="hub-team-title"><b>${esc(t('Gracze w lobby'))}</b></div>${peers.map(peerCard).join('')}</section>`:teamColumn('CT')+teamColumn('T')}<div class="hub-team-choice"><label for="hub-lobby-team">${esc(t('Twoja drużyna:'))}</label><select id="hub-lobby-team" onchange="lobTeam(this.value)"><option value="CT" ${L.team==='CT'?'selected':''}>CT</option><option value="T" ${L.team==='T'?'selected':''}>T</option></select></div></div><aside class="hub-lobby-match"><div class="hub-lobby-map">${artwork(map)?`<img src="${artwork(map)}" alt="">`:''}<span>${mapTitle(map)}</span></div>${L.host?`<label>${esc(t('Tryb gry'))}<select data-lobby-mode onchange="setLobMode(this.value)">${MODES.map(([id])=>`<option value="${id}" ${mode===id?'selected':''}>${esc(title(id))}</option>`).join('')}</select></label><label>${esc(t('Mapa'))}<select data-lobby-map onchange="SzGameHub.setMap(this.value)">${mapSet(mode).map(i=>`<option data-map-label="${esc(MAPN[i])}" data-no-translate value="${i}" ${map===i?'selected':''}>${esc(mapLabel(i))}</option>`).join('')}</select></label><button type="button" class="hub-primary" onclick="lobStart()" ${NET.pending?'disabled':''}>${icon('arrow')}${esc(t('Rozpocznij mecz'))}</button>`:`<b>${esc(title(mode,sel.comp))}</b><p class="hub-host-wait">${esc(t('Oczekiwanie na rozpoczęcie meczu przez hosta…'))}</p>`}<button type="button" class="hub-leave" onclick="lobLeave()">${esc(t('Opuść lobby'))}</button></aside></div>${friends.length?`<div class="hub-lobby-invites"><span>${esc(t('Zaproś znajomego online'))}</span>${friends.slice(0,8).map(f=>`<button type="button" data-lobby-invite="${esc(f.friend_id)}">${icon('plus')}<span data-user-content>${esc(f.name)}</span></button>`).join('')}</div>`:''}${LM?`<div class="hub-lobby-notice" role="status">${esc(t(LM))}</div>`:''}</section>`;
    for(const b of e.querySelectorAll('[data-lobby-invite]'))b.onclick=()=>friInvite(b.dataset.lobbyInvite);
   }
   function modeCard(mode,index,ranked=false){const key=ranked?'ranked':mode,[description,tag]=modeDetails[key]||modeDetails.classic;return `<button type="button" class="hub-mode-card ${ranked?'ranked':''}" data-game-mode="${key}" onclick="pickMode(${index}${ranked?',1':''})"><div class="hub-mode-top"><span class="hub-mode-icon">${icon(key)}</span><small>${esc(t(tag))}</small></div><b>${esc(title(mode,ranked))}</b><p>${esc(t(description))}</p><span class="hub-mode-arrow">${icon('arrow')}</span></button>`;}
   function renderModes(){const o=$('pm');o.style.display='flex';o.innerHTML=`<section class="hub-dialog hub-modes" data-no-translate><header><div><small class="hub-kicker">${esc(t('ZAGRAJ PO SWOJEMU'))}</small><h2>${esc(t('Wybierz tryb gry'))}</h2><p>${esc(t('W następnym kroku wybierzesz mapę.'))}</p></div><button type="button" class="hub-dialog-close" onclick="pmClose()" aria-label="${esc(t('Zamknij'))}">${icon('close')}</button></header><div class="hub-mode-grid">${modeCard('classic',0,true)}${MODES.map(([id],i)=>modeCard(id,i)).join('')}</div><footer><span>${esc(t('Wybierz ulubiony styl rozgrywki.'))}</span><button type="button" onclick="pmClose()">${esc(t('Anuluj'))}</button></footer></section>`;}
+  function seconds(n){if(isEnglish())return n===1?'second':'seconds';return n===1?'sekunda':n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?'sekundy':'sekund';}
   function votes(n){if(isEnglish())return n===1?'vote':'votes';return n===1?'głos':n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?'głosy':'głosów';}
-  function voteLog(line){for(const i of MV.ml){const suffix=' voted '+MAPN[i];if(line.endsWith(suffix))return `<b data-user-content>${esc(line.slice(0,-suffix.length))}</b><span>${esc(t('zagłosował na'))}</span><b data-user-content>${esc(MAPN[i])}</b>`;}return esc(line);}
-  function renderVote(){if(!MV)return;const focus=document.activeElement?.dataset.voteIndex,mode=sel.mode||'classic';$('pm').style.display='flex';$('pm').innerHTML=`<section class="hub-dialog hub-map-vote" data-no-translate><header><div><small class="hub-kicker">${esc(title(mode,sel.comp))}</small><h2>${esc(t('Głosuj na mapę'))}</h2><p>${esc(t('Wybierz arenę. Boty również biorą udział w głosowaniu.'))}</p></div><div class="hub-vote-timer"><strong>${MV.t}</strong><small>${esc(t('sekund'))}</small></div></header><div class="hub-vote-progress"><i style="width:${Math.max(0,Math.min(100,MV.t/12*100))}%"></i></div><div class="hub-map-grid">${MV.ml.map((map,i)=>{const brief=MAP_BRIEFINGS[map],description=brief?.description||'Mapa stworzona przez społeczność.',selected=MV.mine===i;return `<button type="button" class="hub-map-card ${selected?'selected':''}" data-vote-index="${i}" aria-pressed="${selected}" onclick="mvVote(${i})"><div class="hub-map-art">${artwork(map)?`<img src="${artwork(map)}" alt="${esc(t('Podgląd mapy'))} ${esc(MAPN[map])}">`:icon('flag')}${selected?`<span>${icon('check')}${esc(t('Twój wybór'))}</span>`:''}</div><div class="hub-map-copy"><b data-user-content>${esc(MAPN[map])}</b><p>${esc(t(description))}</p><span class="hub-map-votes">${number(MV.v[i])} ${votes(MV.v[i])}</span></div></button>`;}).join('')}</div><footer><div class="hub-vote-log">${(MV.log||[]).slice(-2).map(line=>`<div>${voteLog(line)}</div>`).join('')}</div><button type="button" onclick="pmClose()">${esc(t('Anuluj'))}</button></footer></section>`;if(focus!==undefined)$('pm').querySelector('[data-vote-index="'+focus+'"]')?.focus({preventScroll:true});}
+  function voteLog(line){for(const i of MV.ml){const suffix=' voted '+MAPN[i];if(line.endsWith(suffix))return `<b data-user-content>${esc(line.slice(0,-suffix.length))}</b><span>${esc(t('zagłosował na'))}</span><b>${mapTitle(i)}</b>`;}return esc(line);}
+  function renderVote(){if(!MV)return;const focus=document.activeElement?.dataset.voteIndex,mode=sel.mode||'classic';$('pm').style.display='flex';$('pm').innerHTML=`<section class="hub-dialog hub-map-vote" data-no-translate><header><div><small class="hub-kicker">${esc(title(mode,sel.comp))}</small><h2>${esc(t('Głosuj na mapę'))}</h2><p>${esc(t('Wybierz arenę. Boty również biorą udział w głosowaniu.'))}</p></div><div class="hub-vote-timer"><strong>${MV.t}</strong><small>${seconds(MV.t)}</small></div></header><div class="hub-vote-progress"><i style="width:${Math.max(0,Math.min(100,MV.t/12*100))}%"></i></div><div class="hub-map-grid">${MV.ml.map((map,i)=>{const brief=MAP_BRIEFINGS[map],description=brief?.description||'Mapa stworzona przez społeczność.',selected=MV.mine===i;return `<button type="button" class="hub-map-card ${selected?'selected':''}" data-vote-index="${i}" aria-pressed="${selected}" onclick="mvVote(${i})"><div class="hub-map-art">${artwork(map)?`<img src="${artwork(map)}" alt="${esc(t('Podgląd mapy'))} ${esc(mapLabel(map))}">`:icon('flag')}${selected?`<span>${icon('check')}${esc(t('Twój wybór'))}</span>`:''}</div><div class="hub-map-copy"><b>${mapTitle(map)}</b><p>${szMapDescriptionHTML(brief)}</p><span class="hub-map-votes">${number(MV.v[i])} ${votes(MV.v[i])}</span></div></button>`;}).join('')}</div><footer><div class="hub-vote-log">${(MV.log||[]).slice(-2).map(line=>`<div>${voteLog(line)}</div>`).join('')}</div><button type="button" onclick="pmClose()">${esc(t('Anuluj'))}</button></footer></section>`;if(focus!==undefined)$('pm').querySelector('[data-vote-index="'+focus+'"]')?.focus({preventScroll:true});}
   const oldForge=forgeMount;forgeMount=function(){const r=oldForge();enhanceInventory();return r;};
   const oldTab2=tab2;tab2=function(kind){if(kind!=='bp')return oldTab2(kind);T=kind;hdr();renderPass();};
   lobUI=renderLobby;playFlow=renderModes;mvUI=renderVote;
@@ -5213,10 +5576,100 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
 
 </script>
 <script>
+/* Original, procedural top-down materials. Static detail is baked into the
+   existing SCV; the normal frame renderer keeps its existing cropped blit. */
+(function(root,factory){const api=factory(root);if(typeof module==='object'&&module.exports)module.exports=api;else{root.SzMapMaterials=api;api.mount();}})(globalThis,function(root){
+ 'use strict';
+ const names=['dust','ancient','mirage','inferno','overpass','nuke','island','snow','metro','mall','lab','village','aztec','anubis'];
+ const profiles={
+  dust:{floor:'sand',wall:'sandstone'},ancient:{floor:'pavers',wall:'stone',moss:true},
+  mirage:{floor:'pavers',wall:'plaster'},inferno:{floor:'cobble',wall:'brick'},
+  overpass:{floor:'asphalt',wall:'concrete'},nuke:{floor:'concrete',wall:'metal'},
+  island:{floor:'grass',wall:'stone'},snow:{floor:'snow',wall:'concrete'},
+  metro:{floor:'asphalt',wall:'brick'},mall:{floor:'tiles',wall:'concrete'},
+  lab:{floor:'tiles',wall:'metal'},village:{floor:'dirt',wall:'wood'},
+  aztec:{floor:'pavers',wall:'stone',moss:true},anubis:{floor:'pavers',wall:'sandstone'},
+  desert:{floor:'sand',wall:'sandstone'},industrial:{floor:'concrete',wall:'metal'},forest:{floor:'grass',wall:'stone',moss:true}
+ };
+ function profile(map,theme={}){let id=names[map];if(!id)id=theme.landmark==='temple'?'forest':theme.landmark==='arch'?'desert':'industrial';return{id,...profiles[id],floorColor:theme.floor||'#9e8c68',wallColor:theme.wall||'#d2ba91',dark:theme.dark||'#293033'};}
+ function hash(s){let n=2166136261;for(const c of String(s))n=Math.imul(n^c.charCodeAt(0),16777619);return n>>>0;}
+ function random(seed){let n=seed>>>0||1;return()=>{n^=n<<13;n^=n>>>17;n^=n<<5;return(n>>>0)/4294967296;};}
+ function shade(color,delta){const n=parseInt(color.slice(1),16);return'#'+[n>>16,(n>>8)&255,n&255].map(v=>Math.max(0,Math.min(255,Math.round(v+delta))).toString(16).padStart(2,'0')).join('');}
+ // Runs are inside actual solid cells. Covers (2) and open windows (3) are not
+ // walls, and no render path is ever written back into collision/navigation.
+ function edgeRuns(g){const out={top:[],bottom:[],left:[],right:[]},d=g.d,W=g.cols,H=g.rows,solid=(x,y)=>x<0||y<0||x>=W||y>=H||d[y*W+x]===1;
+  for(const[side,dx,dy,vertical]of[['top',0,-1,false],['bottom',0,1,false],['left',-1,0,true],['right',1,0,true]]){
+   const lines=vertical?W:H,length=vertical?H:W;
+   for(let line=0;line<lines;line++){let start=-1;for(let i=0;i<=length;i++){const x=vertical?line:i,y=vertical?i:line,edge=i<length&&d[y*W+x]===1&&!solid(x+dx,y+dy);if(edge&&start<0)start=i;else if(!edge&&start>=0){out[side].push(vertical?[line,start,i-start]:[start,line,i-start]);start=-1;}}}
+  }return out;
+ }
+ function mount(){
+  const tiles=new Map(),MAX_TILES=64;let sprites=new WeakMap(),baking=false,gridCrates=false;
+  const stats={bakes:0,tileBuilds:0,spriteBuilds:0,lastBakeMs:0,cachePixels:0};
+  const old={floor:floorPat,wall:wallPat,grid:drawGridMap,drawWall,cover:drawMapCover,build:buildStatic,settings:setTab};
+  const enabled=()=>ST_().mapMaterials!==0,current=()=>profile(sel.map,MAP_BRIEFINGS[sel.map]);
+  function grain(q,w,h,rand,count,amount){for(let i=0;i<count;i++){q.fillStyle=rand()<.5?'rgba(0,0,0,'+amount+')':'rgba(255,255,255,'+amount+')';q.fillRect(rand()*w|0,rand()*h|0,rand()<.85?1:2,1);}}
+  function path(q,points){q.beginPath();points.forEach(([x,y],i)=>i?q.lineTo(x,y):q.moveTo(x,y));q.stroke();}
+  function masonry(q,w,h,color,rand,moss,brick){const bh=brick?16:24,bw=brick?32:48;
+   q.fillStyle=shade(color,-34);q.fillRect(0,0,w,h);
+   for(let y=0,row=0;y<h;y+=bh,row++)for(let x=-(row%2)*bw/2;x<w;x+=bw){const c=shade(color,(rand()-.5)*18);q.fillStyle=c;q.fillRect(x+1,y+1,bw-2,bh-2);q.fillStyle=shade(c,12);q.fillRect(x+2,y+1,bw-4,1);q.fillRect(x+1,y+2,1,bh-4);q.fillStyle=shade(c,-18);q.fillRect(x+2,y+bh-2,bw-3,1);
+    if(rand()<.28){q.strokeStyle=shade(c,-22);q.lineWidth=.7;path(q,[[x+bw*.65,y+1],[x+bw*.58,y+6],[x+bw*.69,y+9]]);}
+    if(moss&&rand()<.65){q.fillStyle='#3c513c66';q.fillRect(x+1,y+bh-3,5+rand()*14,2);q.fillRect(x+1,y+bh-7,2,5);}
+   }grain(q,w,h,rand,650,.1);
+  }
+  function makeTile(kind,color,moss=false){const key=kind+':'+color+':'+moss;if(tiles.has(key))return tiles.get(key).pattern;
+   const c=document.createElement('canvas');c.width=c.height=kind==='sandstone'||kind==='stone'||kind==='brick'?96:128;const q=c.getContext('2d'),w=c.width,h=c.height,rand=random(hash(key));q.fillStyle=color;q.fillRect(0,0,w,h);
+   if(['sandstone','stone','brick'].includes(kind))masonry(q,w,h,color,rand,moss,kind==='brick');
+   else if(kind==='plaster'){q.fillStyle=shade(color,-4);q.fillRect(0,0,w,h);for(let i=0;i<28;i++){q.fillStyle=shade(color,(rand()-.5)*15);q.fillRect(rand()*w|0,rand()*h|0,4+rand()*18,2+rand()*9);}grain(q,w,h,rand,1300,.065);q.strokeStyle=shade(color,-22);q.lineWidth=.65;path(q,[[18,32],[26,40],[23,47],[31,55]]);path(q,[[82,94],[78,103],[83,111]]);}
+   else if(kind==='metal'){for(let x=0;x<w;x+=32){q.fillStyle=shade(color,(x%64===0?5:-4));q.fillRect(x,0,32,h);q.fillStyle=shade(color,-32);q.fillRect(x,0,2,h);q.fillStyle=shade(color,20);q.fillRect(x+2,0,1,h);for(const y of [7,h-8]){q.fillStyle=shade(color,-45);q.fillRect(x+7,y,3,3);q.fillRect(x+25,y,3,3);q.fillStyle=shade(color,30);q.fillRect(x+7,y,2,1);q.fillRect(x+25,y,2,1);}}q.fillStyle=shade(color,-25);q.fillRect(0,63,w,2);grain(q,w,h,rand,1000,.07);}
+   else if(kind==='wood'||kind==='planks'){const vertical=kind==='wood';for(let a=0;a<128;a+=16){q.fillStyle=shade(color,(rand()-.5)*25);q.fillRect(vertical?a:0,vertical?0:a,vertical?16:128,vertical?128:16);q.fillStyle=shade(color,-32);q.fillRect(vertical?a:0,vertical?0:a,vertical?1:128,vertical?128:1);for(let i=0;i<8;i++){q.strokeStyle=shade(color,-10-rand()*18);q.lineWidth=.5;const p=a+2+rand()*12,b=rand()*128;path(q,vertical?[[p,b],[p+1,b+10],[p,b+20]]:[[b,p],[b+14,p+1],[b+28,p]]);}for(const b of[8,119]){q.fillStyle='#302b25aa';q.fillRect(vertical?a+4:b,vertical?b:a+4,2,2);}}grain(q,w,h,rand,500,.06);}
+   else if(kind==='pavers'||kind==='cobble'||kind==='tiles'){const bw=kind==='tiles'?32:kind==='cobble'?24:64,bh=kind==='tiles'?32:kind==='cobble'?16:32;q.fillStyle=shade(color,-24);q.fillRect(0,0,w,h);for(let y=0,row=0;y<h;y+=bh,row++)for(let x=kind==='tiles'?0:-(row%2)*bw/2;x<w;x+=bw){const tone=shade(color,(rand()-.5)*(kind==='tiles'?8:20));q.fillStyle=tone;if(kind==='cobble'){q.beginPath();q.roundRect(x+1,y+1,bw-2,bh-2,3);q.fill();}else q.fillRect(x+1,y+1,bw-1,bh-1);q.fillStyle=shade(tone,11);q.fillRect(x+2,y+1,bw-3,1);if(moss&&rand()<.5){q.fillStyle='#49604766';q.fillRect(x+1,y+bh-2,8+rand()*18,2);}}grain(q,w,h,rand,900,.08);}
+   else if(kind==='concrete'||kind==='asphalt'){grain(q,w,h,rand,kind==='asphalt'?1900:1300,.11);q.strokeStyle=shade(color,-15);q.lineWidth=.7;path(q,[[3,88],[17,91],[26,87],[42,93],[49,105]]);if(kind==='concrete'){q.fillStyle=shade(color,-14);q.fillRect(0,0,w,1);q.fillRect(0,0,1,h);q.fillStyle=shade(color,8);q.fillRect(1,1,w,1);}else{for(let i=0;i<16;i++){q.fillStyle=shade(color,22);q.fillRect(rand()*w|0,rand()*h|0,2,1);}}}
+   else{const natural=kind==='grass'||kind==='dirt';for(let i=0;i<55;i++){q.fillStyle=shade(color,(rand()-.5)*(natural?22:12));q.beginPath();q.ellipse(rand()*w,rand()*h,4+rand()*12,2+rand()*6,rand()*3,0,Math.PI*2);q.fill();}grain(q,w,h,rand,1500,natural?.1:.07);if(kind==='grass')for(let i=0;i<150;i++){q.strokeStyle=shade(color,(rand()-.5)*35);q.lineWidth=1;const x=rand()*w,y=rand()*h;path(q,[[x,y],[x-1,y-3]]);}if(kind==='sand'||kind==='snow')for(let i=0;i<6;i++){q.strokeStyle=shade(color,8);q.lineWidth=.7;const y=10+i*21;path(q,[[0,y],[34,y-3],[64,y],[96,y-2],[128,y]]);}}
+   const pattern=q.createPattern(c,'repeat');if(tiles.size>=MAX_TILES){const key=tiles.keys().next().value;tiles.get(key).canvas.width=0;tiles.delete(key);}tiles.set(key,{canvas:c,pattern});stats.tileBuilds++;return pattern;
+  }
+  function floor(){const p=current();return makeTile(p.floor,p.floorColor,p.moss);}
+  function wall(){const p=current();return makeTile(p.wall,p.wallColor,p.moss);}
+  function bevel(q,x,y,w,h){const e=Math.min(3,w/5,h/5);q.fillStyle='#ffffff28';q.fillRect(x,y,w,e);q.fillRect(x,y,e,h);q.fillStyle='#00000050';q.fillRect(x,y+h-e,w,e);q.fillRect(x+w-e,y,e,h);}
+  function crate(q,w){const[x,y,a,b]=w;q.fillStyle=makeTile('wood','#a9814d');q.fillRect(x,y,a,b);q.strokeStyle='#493724';q.lineWidth=3;q.strokeRect(x+2,y+2,a-4,b-4);q.strokeStyle='#d2af73';q.lineWidth=4;path(q,[[x+5,y+5],[x+a-5,y+b-5]]);path(q,[[x+a-5,y+5],[x+5,y+b-5]]);q.strokeStyle='#5c4229';q.lineWidth=1;path(q,[[x+4,y+6],[x+a-6,y+b-4]]);path(q,[[x+a-4,y+6],[x+6,y+b-4]]);q.fillStyle='#46494a';for(const dx of[3,a-9])for(const dy of[3,b-9]){q.fillRect(x+dx,y+dy,6,6);q.fillStyle='#9d9c8d';q.fillRect(x+dx+2,y+dy+2,2,2);q.fillStyle='#46494a';}bevel(q,x,y,a,b);}
+  function paintWall(w){if(w.brCover){old.drawWall(w);return;}const isCrate=gridCrates||(!GR&&w[2]<100&&w[3]<100&&Math.min(w[2],w[3])>30);if(isCrate){crate(cx,w);return;}cx.fillStyle=wall();cx.fillRect(...w);bevel(cx,...w);}
+  function renderWall(w){if(!enabled())return old.drawWall(w);if(baking)return paintWall(w);
+   const p=current(),key=p.id+'|'+p.wallColor+'|'+w[2]+'|'+w[3]+'|'+(w.brCover||'');let entry=sprites.get(w);
+   if(!entry||entry.key!==key){if(w[2]>512||w[3]>512)return paintWall(w);const c=document.createElement('canvas');c.width=Math.ceil(w[2])+16;c.height=Math.ceil(w[3])+16;const oldContext=cx;try{cx=c.getContext('2d');cx.translate(8-w[0],8-w[1]);paintWall(w);}finally{cx=oldContext;}entry={key,canvas:c};sprites.set(w,entry);stats.spriteBuilds++;}cx.drawImage(entry.canvas,w[0]-8,w[1]-8);
+  }
+  function runs(g,accept,visit){for(let y=0;y<g.rows;y++){let start=-1;for(let x=0;x<=g.cols;x++){const yes=x<g.cols&&accept(x,y);if(yes&&start<0)start=x;else if(!yes&&start>=0){visit(start,y,x-start);start=-1;}}}}
+  function renderGrid(){if(!enabled())return old.grid();const g=GR,q=cx,s=g.cs,W=g.cols,H=g.rows,d=g.d,p=current(),get=(x,y)=>x<0||y<0||x>=W||y>=H?1:d[y*W+x];
+   q.fillStyle=p.dark;q.fillRect(0,0,WW,WH);q.save();q.globalAlpha=.16;q.fillStyle=wall();q.fillRect(0,0,WW,WH);q.restore();
+   const walk=new Path2D();runs(g,(x,y)=>get(x,y)!==1,(x,y,n)=>walk.rect(x*s,y*s,n*s,s));q.fillStyle=floor();q.fill(walk);
+   const edges=edgeRuns(g);q.save();q.clip(walk);for(let layer=3;layer>0;layer--){q.fillStyle='rgba(0,0,0,'+(layer===1?.19:.065)+')';const size=layer*2;for(const[x,y,n]of edges.bottom)q.fillRect(x*s,(y+1)*s,n*s+size,size);for(const[x,y,n]of edges.right)q.fillRect((x+1)*s,y*s,size,n*s+size);}q.restore();
+   // Two-cell caps give the wall material enough width to read at low zoom.
+   const band=new Path2D();runs(g,(x,y)=>{if(get(x,y)!==1)return false;for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++)if(Math.abs(dx)+Math.abs(dy)<=2&&get(x+dx,y+dy)!==1)return true;return false;},(x,y,n)=>band.rect(x*s,y*s,n*s,s));q.fillStyle=wall();q.fill(band);
+   const bevelSize=Math.min(3,s*.17),face=Math.min(8,s*.42);q.fillStyle='#ffffff44';for(const[x,y,n]of edges.top)q.fillRect(x*s,y*s,n*s,bevelSize);for(const[x,y,n]of edges.left)q.fillRect(x*s,y*s,bevelSize,n*s);q.fillStyle='#00000055';for(const[x,y,n]of edges.bottom)q.fillRect(x*s,(y+1)*s-face,n*s,face);for(const[x,y,n]of edges.right)q.fillRect((x+1)*s-bevelSize,y*s,bevelSize,n*s);
+   gridCrates=true;try{for(const c of g.crates||[]){const x=c[0]*s,y=c[1]*s,w=s*3;q.fillStyle='#0005';q.fillRect(x+4,y+6,w,w);paintWall([x+1,y+1,w-2,w-2]);}}finally{gridCrates=false;}
+   for(const cover of g.covers||[])drawMapCover(q,cover);for(const window of g.windows||[])drawMapWindow(q,window);drawMapLinks(q,g);
+  }
+  floorPat=function(){return enabled()?floor():old.floor();};wallPat=function(){return enabled()?wall():old.wall();};drawGridMap=renderGrid;drawWall=renderWall;
+  drawMapCover=function(q,cover){old.cover(q,cover);if(!enabled()||cover.material==='vehicle')return;const p=cover.polygon,kind=cover.material==='metal'?'metal':cover.material==='stone'?'stone':'wood',color=kind==='metal'?'#79929d':kind==='stone'?'#a49a81':'#a3794c';q.save();q.beginPath();p.forEach(([x,y],i)=>i?q.lineTo(x,y):q.moveTo(x,y));q.closePath();q.clip();q.globalCompositeOperation='multiply';q.globalAlpha=.3;q.fillStyle=makeTile(kind,color);const xs=p.map(v=>v[0]),ys=p.map(v=>v[1]),x=Math.min(...xs),y=Math.min(...ys);q.fillRect(x,y,Math.max(...xs)-x,Math.max(...ys)-y);q.restore();};
+  buildStatic=function(g){const start=performance.now();baking=true;try{return old.build(g);}finally{baking=false;stats.bakes++;stats.lastBakeMs=performance.now()-start;stats.cachePixels=SCV?SCV.width*SCV.height:0;}};
+  const t=s=>root.szLocale?.t(s)||s;
+  function settings(target){if(target.querySelector('[data-map-materials-panel]'))return;const panel=document.createElement('section');panel.className='box';panel.setAttribute('data-map-materials-panel','');panel.setAttribute('data-no-translate','');panel.innerHTML='<h3>'+t('Wygląd map')+'</h3><p style="font:12px system-ui;color:#9aafbf;line-height:1.7">'+t('Materiały ścian, podłoża i skrzyń oraz delikatne cienie.')+'</p><label style="font:12px system-ui">'+t('Szczegółowość')+' <select data-map-materials onchange="SzMapMaterials.setEnabled(this.value===\'1\')"><option value="1" '+(enabled()?'selected':'')+'>'+t('Tekstury i cieniowanie')+'</option><option value="0" '+(!enabled()?'selected':'')+'>'+t('Uproszczony wygląd')+'</option></select></label>';target.append(panel);}
+  setTab=function(mm){const result=old.settings(mm);settings(mm?.nodeType?mm:$('main'));return result;};
+  root.SzMapMaterials.setEnabled=function(value,persist=true){ST_().mapMaterials=value?1:0;SCV=null;SCG=null;SCK='';sprites=new WeakMap();if(persist)save();for(const el of document.querySelectorAll('[data-map-materials]'))el.value=value?'1':'0';};
+  root.SzMapMaterials.enabled=enabled;
+  root.SzMapMaterials.stats=()=>({...stats,tileCount:tiles.size,tileBytes:[...tiles.values()].reduce((n,t)=>n+t.canvas.width*t.canvas.height*4,0)});
+  document.addEventListener('sz-language',()=>{for(const panel of document.querySelectorAll('[data-map-materials-panel]')){const target=panel.parentElement;panel.remove();settings(target);}});
+ }
+ return{profile,hash,random,shade,edgeRuns,mount};
+});
+
+</script>
+<script>
 /* UI integration is shared by standalone HTML and desktop. Public builds keep
    authentication in the launcher; previews retain their separate test sign-in. */
 (function(){'use strict';
  SzSettings.mount();
+ // Static map labels are baked in the selected language; rebuild once on a change.
+ document.addEventListener('sz-language',()=>{SCV=null;SCG=null;SCK='';});
  const api=window.strikeZoneDesktop;let control,unsubscribe,uid=null,friends=[],view;
  function protect(){const set=szLocale.protected;set.clear();try{set.add(P().name);for(const p of G?.ps||[])for(const s of [p.rname,p.name])if(s)set.add(s);for(const f of FR?.list||[])if(f.name)set.add(f.name);for(const f of F||[])if(f.n)set.add(f.n);for(const r of COMMUNITY?.rows||[])for(const s of [r.title,r.author_name])if(s)set.add(s);for(const r of COMMUNITY?.cache?.values()||[])if(r.payload?.name)set.add(r.payload.name);}catch{}}
  const options=setTab;setTab=function(mm){options(mm);const target=mm?.nodeType?mm:$('main'),box=document.createElement('section');box.className='sz-language-box';SzSettings.choices(box);target.prepend(box);};
@@ -5228,6 +5681,95 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
  window.szMessages=view;
  setInterval(protect,1000);protect();
 })();
+
+</script>
+<script>
+/* Editor view only. Zoom and pan never become part of a published skin. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else{root.SzSkinView=api;api.mount(root);}})(globalThis,function(){
+ 'use strict';
+ const MIN=.5,MAX=4,clamp=n=>Math.max(MIN,Math.min(MAX,Number(n)||1));
+ function transform(base,width,height,view){const zoom=clamp(view.zoom);return{scale:base.scale*zoom,x:width/2+(base.x-width/2)*zoom+view.x,y:height/2+(base.y-height/2)*zoom+view.y};}
+ function zoomAt(view,next,anchor,width,height){next=clamp(next);const ratio=next/clamp(view.zoom);return{...view,zoom:next,x:anchor.x-width/2-(anchor.x-width/2-view.x)*ratio,y:anchor.y-height/2-(anchor.y-height/2-view.y)*ratio};}
+ function mount(root){
+  const views=new WeakMap(),t=s=>root.szLocale?.t(s)||s;let refreshLanguage=null;
+  document.addEventListener('sz-language',()=>refreshLanguage?.());
+  function view(){const state=creatorState();if(!views.has(state))views.set(state,{zoom:1,x:0,y:0,panMode:false});return views.get(state);}
+  const original={transform:creatorSkinTransform,bind:creatorBindSkin};
+  creatorSkinTransform=function(){const c=$('creator-skin');return transform(original.transform(),c.width,c.height,view());};
+  function update(){const c=$('creator-skin');if(!c)return;const v=view(),bar=c.closest('.cr-skin-stage').querySelector('[data-skin-view]');
+   if(bar){bar.querySelector('output').value=Math.round(v.zoom*100)+'%';bar.querySelector('[data-skin-zoom="out"]').disabled=v.zoom<=MIN;bar.querySelector('[data-skin-zoom="in"]').disabled=v.zoom>=MAX;const pan=bar.querySelector('[data-skin-pan]');pan.setAttribute('aria-pressed',String(v.panMode));c.classList.toggle('sz-skin-pan',v.panMode);}
+   creatorDrawSkin();
+  }
+  function setZoom(value,anchor){const c=$('creator-skin');if(!c)return;Object.assign(view(),zoomAt(view(),value,anchor||{x:c.width/2,y:c.height/2},c.width,c.height));update();}
+  function reset(){Object.assign(view(),{zoom:1,x:0,y:0});update();}
+  creatorBindSkin=function(){original.bind();const c=$('creator-skin'),stage=c.closest('.cr-skin-stage');c.tabIndex=0;let pan=null,space=false,paintPointer=null;
+   const bar=document.createElement('div');bar.className='sz-skin-view';bar.dataset.skinView='';bar.dataset.noTranslate='';
+   function labels(){bar.innerHTML='<span>'+t('Widok')+'</span><button type="button" data-skin-zoom="out" aria-label="'+t('Oddal widok')+'">−</button><output aria-live="polite">100%</output><button type="button" data-skin-zoom="in" aria-label="'+t('Przybliż widok')+'">+</button><button type="button" data-skin-reset>'+t('Reset widoku')+'</button><button type="button" data-skin-pan aria-pressed="false">'+t('Przesuwanie')+'</button>';
+    bar.querySelector('[data-skin-zoom="out"]').onclick=()=>setZoom(view().zoom/1.25);bar.querySelector('[data-skin-zoom="in"]').onclick=()=>setZoom(view().zoom*1.25);bar.querySelector('[data-skin-reset]').onclick=reset;bar.querySelector('[data-skin-pan]').onclick=()=>{view().panMode=!view().panMode;update();};update();
+   }
+   stage.prepend(bar);const help=document.createElement('p');help.className='sz-skin-view-help';help.dataset.noTranslate='';stage.append(help);
+   const local=e=>{const r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*c.width/r.width,y:(e.clientY-r.top)*c.height/r.height};};
+   c.addEventListener('wheel',e=>{e.preventDefault();if(pan||paintPointer!==null)return;const delta=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?c.clientHeight:1);setZoom(view().zoom*Math.exp(-Math.max(-100,Math.min(100,delta))*.0025),local(e));},{passive:false});
+   c.addEventListener('keydown',e=>{if(e.code==='Space'){space=true;e.preventDefault();}if(e.key==='+'||e.key==='='){e.preventDefault();setZoom(view().zoom*1.25);}if(e.key==='-'){e.preventDefault();setZoom(view().zoom/1.25);}if(e.key==='0'){e.preventDefault();reset();}});
+   c.addEventListener('keyup',e=>{if(e.code==='Space'){space=false;e.preventDefault();}});
+   c.addEventListener('pointerdown',e=>{c.focus({preventScroll:true});if(e.button!==1&&!(e.button===0&&(space||view().panMode))){if(e.button===0&&creatorState().brush)paintPointer=e.pointerId;return;}e.preventDefault();e.stopImmediatePropagation();const point=local(e),v=view();pan={id:e.pointerId,point,x:v.x,y:v.y};c.setPointerCapture(e.pointerId);c.classList.add('sz-skin-drag');},true);
+   c.addEventListener('pointermove',e=>{if(!pan||pan.id!==e.pointerId)return;e.preventDefault();e.stopImmediatePropagation();const point=local(e),v=view();v.x=pan.x+point.x-pan.point.x;v.y=pan.y+point.y-pan.point.y;update();},true);
+   function end(e){if(pan&&(!e||pan.id===e.pointerId)){const id=pan.id;pan=null;c.classList.remove('sz-skin-drag');if(c.hasPointerCapture(id))c.releasePointerCapture(id);}paintPointer=null;space=false;}
+   c.addEventListener('pointerup',end,true);c.addEventListener('pointercancel',end,true);c.addEventListener('lostpointercapture',()=>{pan=null;paintPointer=null;c.classList.remove('sz-skin-drag');});c.addEventListener('blur',()=>{end();c.onpointercancel?.();});
+   function language(){labels();help.textContent=t('Kółko: zoom · Spacja + przeciągnij lub środkowy przycisk: przesuń');}
+   language();refreshLanguage=()=>{if(c.isConnected)language();};
+  };
+  Object.assign(root.SzSkinView,{view,setZoom,reset});
+ }
+ return{MIN,MAX,clamp,transform,zoomAt,mount};
+});
+
+</script>
+<script>
+/* Keep the game's moving reticle, using relative movement while the OS cursor is locked. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else{root.SzGameInput=api;api.mount(root);}})(globalThis,function(){
+ 'use strict';
+ function move(point,dx,dy,width,height,rect){const finite=n=>Number.isFinite(n)?n:0;return{x:Math.max(0,Math.min(width,finite(point.x)+finite(dx)*width/Math.max(1,rect.width))),y:Math.max(0,Math.min(height,finite(point.y)+finite(dy)*height/Math.max(1,rect.height)))};}
+ function mount(root){
+  const t=s=>root.szLocale?.t(s)||s,canvas=$('cv'),game=$('game');let pending=false,failed=false,wasLocked=false,expectedExit=false,requestId=0,timeout,gestureTimer,gesture='',escapeUntil=0,rect=canvas.getBoundingClientRect();
+  const enabled=()=>ST_().pointerLock!==0,locked=()=>document.pointerLockElement===canvas;
+  const visible=id=>{const e=$(id);return !!e&&!e.hidden&&e.style.display!==''&&e.style.display!=='none';};
+  function playable(){return !!G&&!game.hidden&&!G.paused&&!G.intro&&!G.over&&!visible('buy')&&!visible('ov')&&!visible('pm')&&!root.document.querySelector('dialog[open]')&&!document.querySelector('#br-map:not([hidden])');}
+  function clear(){keys={};mouse.d=mouse.r=0;if(G?.client)netSend({t:'in',k:{w:false,a:false,s:false,d:false,e:false},an:G.me.a||0,nd:G.me.nd||null,f:false});}
+  function release(){requestId++;pending=false;clearTimeout(timeout);if(locked()&&!expectedExit){expectedExit=true;document.exitPointerLock?.();}clear();}
+  const hint=document.createElement('button');hint.id='sz-mouse-capture';hint.type='button';hint.hidden=true;hint.dataset.noTranslate='';game.append(hint);
+  function sync(){const active=playable();if((locked()||pending)&&(!active||!enabled()))release();canvas.classList.toggle('sz-game-aim',active);const hidden=!active||!enabled()||locked();if(hint.hidden!==hidden)hint.hidden=hidden;const text=failed?t('Mysz nie została przechwycona. Kliknij, aby spróbować ponownie.'):t('Kliknij, aby przechwycić mysz');if(hint.dataset.text!==text){hint.dataset.text=text;hint.replaceChildren(document.createTextNode(text),Object.assign(document.createElement('small'),{textContent:t('Escape — menu i zwolnienie myszy')}));}}
+  function reject(id){if(id!==requestId)return;pending=false;failed=true;clearTimeout(timeout);sync();}
+  function request(){if(!playable()||!enabled()||locked()||pending)return;clear();rect=canvas.getBoundingClientRect();pending=true;failed=false;const id=++requestId;try{if(!canvas.requestPointerLock){reject(id);return;}const result=canvas.requestPointerLock();if(result&&typeof result.catch==='function')result.catch(()=>reject(id));timeout=setTimeout(()=>{if(!locked())reject(id);},2000);}catch{reject(id);}sync();}
+  hint.onclick=request;
+  document.addEventListener('pointerlockchange',()=>{const now=locked(),lost=wasLocked&&!now,intentional=expectedExit;wasLocked=now;expectedExit=false;pending=false;clearTimeout(timeout);
+   if(now){failed=false;rect=canvas.getBoundingClientRect();if(!playable()||!enabled())release();}
+   else if(lost){clear();if(!intentional&&playable()){escapeUntil=performance.now()+300;togglePause();}}sync();
+  });
+  document.addEventListener('pointerlockerror',()=>reject(requestId));
+  canvas.addEventListener('mousedown',e=>{if(!playable()){clear();e.stopImmediatePropagation();return;}if(enabled()&&!locked()&&!failed){if(e.button===0)request();e.preventDefault();e.stopImmediatePropagation();}},true);
+  document.addEventListener('mousemove',e=>{if(!locked())return;const next=move(mouse,e.movementX,e.movementY,VW,640,rect);mouse.x=next.x;mouse.y=next.y;});
+  // Target handlers keep working in forms; gameplay's window handlers never see typing.
+  document.addEventListener('keydown',e=>{if(!G)return;const form=e.target.closest?.('input,textarea,select,[contenteditable="true"],dialog');if(form||(e.key!=='Escape'&&!playable()&&e.key.toLowerCase()!=='b')){clear();e.stopPropagation();}});
+  function markGesture(kind){gesture=kind;clearTimeout(gestureTimer);gestureTimer=setTimeout(()=>gesture='',0);}
+  addEventListener('keydown',e=>{markGesture('key');if(e.key==='Escape'&&(locked()||performance.now()<escapeUntil)){e.preventDefault();e.stopImmediatePropagation();escapeUntil=performance.now()+300;if(locked()&&playable())togglePause();release();sync();}},true);
+  addEventListener('keyup',e=>{if(e.key==='Escape')escapeUntil=0;},true);
+  addEventListener('click',()=>markGesture('click'),true);
+  function wrap(name,fn){const old=root[name];if(typeof old==='function')root[name]=function(...args){return fn(old,this,args);};}
+  for(const name of['togglePause','skipIntro','showBuy','brToggleMap'])wrap(name,(old,self,args)=>{const before=playable(),result=old.apply(self,args);sync();if(!before&&playable()&&gesture&&(name!=='togglePause'||gesture==='click'))request();return result;});
+  for(const name of['begin0','beginClient'])wrap(name,(old,self,args)=>{failed=false;const result=old.apply(self,args);sync();return result;});
+  wrap('quit',(old,self,args)=>{release();const result=old.apply(self,args);sync();return result;});
+  wrap('fit',(old,self,args)=>{const width=VW,result=old.apply(self,args);mouse.x=Math.max(0,Math.min(VW,mouse.x*VW/Math.max(1,width)));mouse.y=Math.max(0,Math.min(640,mouse.y));rect=canvas.getBoundingClientRect();return result;});
+  function blur(){release();if(playable())togglePause();sync();}addEventListener('blur',blur);document.addEventListener('visibilitychange',()=>{if(document.hidden)blur();});
+  const observer=new MutationObserver(sync),observed=new WeakSet();function watch(e){if(!e||observed.has(e))return;observed.add(e);observer.observe(e,{subtree:true,attributes:true,attributeFilter:['hidden','style','open']});}
+  watch(game);watch($('pm'));watch($('br-map'));document.querySelectorAll('dialog').forEach(watch);new MutationObserver(records=>{for(const r of records)for(const n of r.addedNodes)if(n.nodeType===1){if(n.matches('dialog'))watch(n);n.querySelectorAll('dialog').forEach(watch);}sync();}).observe(document.body,{childList:true});
+  const oldSettings=setTab;function settings(target){if(target.querySelector('[data-pointer-settings]'))return;const panel=document.createElement('section');panel.className='box';panel.dataset.pointerSettings='';panel.dataset.noTranslate='';panel.innerHTML='<h3>'+t('Sterowanie myszą')+'</h3><label><input type="checkbox" data-pointer-lock '+(enabled()?'checked':'')+'> '+t('Przechwytuj mysz podczas gry')+'</label><p>'+t('Kursor pozostaje w oknie gry. Escape otwiera menu i zwalnia mysz; zakupy i rozmowy również ją zwalniają.')+'</p>';panel.querySelector('input').onchange=e=>root.SzGameInput.setEnabled(e.target.checked);target.append(panel);}
+  setTab=function(mm){const result=oldSettings(mm);settings(mm?.nodeType?mm:$('main'));return result;};
+  document.addEventListener('sz-language',()=>{for(const panel of document.querySelectorAll('[data-pointer-settings]')){const target=panel.parentElement;panel.remove();settings(target);}hint.dataset.text='';sync();});
+  Object.assign(root.SzGameInput,{enabled,locked,playable,request,release,sync,setEnabled(value){ST_().pointerLock=value?1:0;failed=false;save();sync();for(const el of document.querySelectorAll('[data-pointer-lock]'))el.checked=!!value;}});sync();
+ }
+ return{move,mount};
+});
 
 </script>
 <!-- SZ SHARED UI END -->

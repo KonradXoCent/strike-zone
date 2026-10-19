@@ -1,4 +1,302 @@
 (function(root){const pairs=`
+ZWYCIĘSTWO|VICTORY
+PORAŻKA|DEFEAT
+Nie uruchomiono konta. Wybierz „Spróbuj ponownie”.|The account connection has not started. Select “Try again”.
+Konto gotowe do logowania.|Ready to sign in.
+Panel moderacji jest przypisany do Twojego konta.|The moderation panel is linked to your account.
+Twoje zgłoszenia znajdziesz w Warsztacie.|You can find your submissions in the Workshop.
+Wyloguj|Log out
+WERSJA TESTOWA · KONTO I WARSZTAT ONLINE|TEST VERSION · ONLINE ACCOUNT AND WORKSHOP
+Logowanie i wczytywanie Twojego konta…|Signing in and loading your account…
+Brak sesji konta. Spróbuj ponownie.|No account session. Try again.
+Potwierdź adres e-mail konta przed zalogowaniem.|Confirm your account's email address before signing in.
+Konto — wersja testowa|Account — test version
+W publicznej aplikacji konto obsługuje launcher.|The launcher handles your account in the public app.
+POPROŚ|ASK
+Trade|Trade
+Okładka|Cover
+Układ mapy|Map layout
+Edytor mapy. Przeciągnij, aby narysować ścianę; kliknij, aby ustawić spawn lub bombsite.|Map editor. Drag to draw a wall; click to place a spawn or bomb site.
+Przed zasłonięciem gracz widział ten kierunek. Strzela w ostatnią znaną pozycję; samo trafienie przez zasłonę nie dowodzi oszustwa.|The player saw this direction before it was obscured. They fire at the last known position; a hit through cover alone does not prove cheating.
+Reakcja następuje po zauważeniu celu. Widać stopniową korektę i naturalny rozrzut; brak powtarzalnych oznak wspomagania.|The player reacts after spotting the target. Gradual corrections and natural spread are visible, with no repeated signs of assistance.
+Twoja strona jest gotowa; czekamy na drugiego gracza|Your side is done; waiting for the partner to finish
+Potwierdź wymianę|Confirm trade
+Zamień|Swap
+Odbijanie punktu|Retake
+Kooperacja 5 na 5 (boty uzupełniają skład)|Co-op 5v5 (bots fill)
+Niesklasyfikowany ({wins}/3 zwycięstw rankingowych)|Unranked ({wins}/3 competitive wins)
+zwycięstw rankingowych|competitive wins
+Sprawdzanie zapisu w chmurze...|Checking cloud save...
+Zwycięstwo w Battle Royale|Victory Royale
+STRIKE ZONE / KOLEKCJA MVP|STRIKE ZONE / MVP COLLECTION
+maks.|max
+Granat błyskowy|Flashbang
+Odłamkowy|Frag
+Błyskowy|Flash
+Specialist Gloves|Specialist Gloves
+Specialist|Specialist
+Neon Pulse|Neon Pulse
+Desert Run|Desert Run
+Bomb Squad|Bomb Squad
+Retro Arcade|Retro Arcade
+Midnight Siren|Midnight Siren
+Bass Cannon|Bass Cannon
+Night Hour|Night Hour
+Dragon Fire|Dragon Fire
+Szanse:|Odds:
+każde wykończenie może wypaść dla dowolnej broni; rzadkie przedmioty specjalne to noże|every finish can drop on any gun; rare special = knives
+Awatar i konto|Avatar & account
+PIERWSZA POŁOWA|FIRST HALF
+DRUGA POŁOWA|SECOND HALF
+ZMIANA STRON|SWITCH SIDES
+ŁUKI B|B ARCHES
+ZOMBIE|ZOMBIES
+LUDZIE|HUMANS
+WYŚCIG ZBROJEŃ|GUN GAME
+B zamyka · POPROŚ = kolega kupuje dla ciebie · Zwrot: przedmioty kupione w tej rundzie · Zestaw:|B closes · ASK = a teammate buys it for you · Refund: items bought this round · Loadout:
+zatwierdzonych projektów. Każdy projekt ma równą szansę; w ramach niego 90% zwykły wariant i 10% StatTrak™.|approved designs. Each design has an equal chance; within it, there is a 90% chance of a regular variant and a 10% chance of StatTrak™.
+Szukaj w ekwipunku…|Search inventory…
+Szukaj w ekwipunku|Search inventory
+Minimalny mnożnik wartości|Minimum value multiplier
+Szukaj celu…|Search targets…
+Szukaj skina docelowego|Search target skins
+Rodzaj skina|Skin type
+Jakość celu|Target rarity
+Pozycja w demie|Position in demo
+Cofnij o dwie sekundy|Go back two seconds
+Przewiń o dwie sekundy|Skip forward two seconds
+Postęp ładowania|Loading progress
+Twoja postać|Your character
+Usuń zapisany projekt|Delete saved design
+Malowanie skina. Włącz pędzel i przeciągnij po broni.|Skin painting. Enable the brush and drag over the weapon.
+Opis projektu dla osoby sprawdzającej (opcjonalnie)|Description for the reviewer (optional)
+Rodzaj projektów|Design type
+Szukaj projektu|Search designs
+Co należy poprawić?|What needs improving?
+Community Forge — grafitowa kapsuła z turkusowym rdzeniem|Community Forge — a graphite capsule with a turquoise core
+Zobacz ekrany ładowania map gry.|Preview loading screens for the game maps.
+Strike Zone 2D|Strike Zone 2D
+Strike Zone|Strike Zone
+LOSOWANIE|DRAWING
+pancerza|armor
+SPACJA|SPACE
+OBRAŻENIA ZADANE|DAMAGE DEALT
+OBRAŻENIA OTRZYMANE|DAMAGE TAKEN
+WYNIK ANALIZY|ANALYSIS RESULT
+INFO OD KOLEGI|TEAMMATE CALLOUT
+WIDOK BEZ X-RAY|VIEW WITHOUT X-RAY
+Ruiny|Ruins
+Zrzut zaopatrzenia|Supply drop
+Strefa|Zone
+PUNKT MEDYCZNY|MEDICAL STATION
+Apteczki:|Medkits:
+RUINY / KAMIENNE KORYTARZE|RUINS / STONE CORRIDORS
+Zostaw granat dymny na bezpieczne odbicie punktu.|Save a smoke grenade for a safer site retake.
+BATTLE ROYALE / WYSPA|BATTLE ROYALE / ISLAND
+Przytrzymaj E przy zapasach. H rozpoczyna leczenie.|Hold E near supplies. Press H to start healing.
+Nie przecinaj otwartej ulicy bez sprawdzenia otoczenia.|Check your surroundings before crossing an open street.
+Nowa strefa jest pokazana na mapie taktycznej pod M.|The next zone is shown on the tactical map opened with M.
+Obrona|Defense
+URUCHAMIANIE GRY|STARTING GAME
+TEREN OPERACJI|AREA OF OPERATIONS
+Zobacz ładowanie|Preview loading screen
+Kupiono|Purchased
+Miejsce|Place
+REMIS|DRAW
+Ponowne łączenie z lobby…|Reconnecting to the lobby…
+AZTEC / RUINY / MOST / WODA|AZTEC / RUINS / BRIDGE / WATER
+Brak miejsca na zapis. Wyeksportuj projekt do pliku i usuń niepotrzebne projekty.|Storage is full. Export your design to a file and remove designs you no longer need.
+projekt|design
+Ten test nie zmienia statystyk konta ani stanu portfela.|This test does not change account statistics or your wallet balance.
+Wróć do Warsztatu|Return to the Workshop
+Zaloguj się na konto gry.|Sign in to your game account.
+Nie znaleziono zgłoszenia.|Submission not found.
+Brak połączenia z Warsztatem.|No connection to the Workshop.
+Zaloguj się na konto gry|Sign in to your game account
+Ocena:|Review:
+Wpisz powód odrzucenia dla autora.|Enter a rejection reason for the author.
+Odrzucono projekt. Autor zobaczy podany powód.|Design rejected. The author will see your reason.
+Wróć do menu przed uruchomieniem innej mapy.|Return to the menu before starting another map.
+Potrzebujesz $2500 na zakup skrzynki.|You need $2500 to buy the case.
+Najpierw wczytaj i zapisz konto w chmurze.|Load your account and save it to the cloud first.
+Zwykły wariant|Regular variant
+nick|nickname
+Twój projekt mapy: {name}. Sprawdź przejścia, osłony i pozycje obu drużyn w grze z botami.|Your map design: {name}. Check routes, cover and both teams' positions in a bot match.
+Mapa społeczności: {name}. Zatwierdzona do wspólnego katalogu graczy.|Community map: {name}. Approved for the community catalog.
+Kolega: kroki za osłoną!|Teammate: footsteps behind cover!
+Kolega: przeciwnik na przejściu!|Teammate: enemy at the entrance!
+Celownik podąża za zmieniającym kierunek przeciwnikiem za osłoną, zanim pojawia się informacja o jego pozycji.|The crosshair follows an enemy's changes of direction behind cover before any information about their position is available.
+Celownik śledzi zmiany kierunku przeciwnika wewnątrz smoke’a, bez kontaktu wzrokowego.|The crosshair tracks an enemy's changes of direction inside smoke without visual contact.
+Krótki, bardzo precyzyjny przeskok celownika i natychmiastowy powrót dokładnie na poruszający się cel. Podobna korekta powtarza się w nagraniu.|A brief, precise crosshair snap immediately returns to the moving target. Similar corrections recur throughout the recording.
+Seria pełnych, bardzo szybkich obrotów przeplatana strzałami dokładnie w przeciwnika. To nie pojedyncze sprawdzenie tyłu.|Repeated rapid full rotations alternate with shots directly at opponents, rather than a single check behind the player.
+Przed strzałem pojawia się komunikat kolegi. Gracz ostrzeliwuje zgłoszoną pozycję, zamiast śledzić ukrytego przeciwnika.|A teammate's callout appears before the shot. The player fires at the reported position rather than tracking a hidden opponent.
+Strzał pada w znane przejście. Dalsza część nagrania pokazuje chybienia i brak śledzenia zmian kierunku ukrytego celu.|The shot targets a common passage. Later footage shows misses and no tracking of the hidden target's changes of direction.
+gracz grał uczciwie|the player played legitimately
+gracz korzystał z legalnych informacji|the player used legitimate information
+gracz grał dobrze, bez wspomagania|the player played well without assistance
+gracz używał wspomagania celowania|the player used aim assistance
+gracz śledził ukrytych przeciwników|the player tracked hidden opponents
+gracz używał nienaturalnych obrotów i automatycznego celowania|the player used unnatural spinning and automatic aiming
+Używanie apteczki|Using a medkit
+Otwieranie zapasów|Opening supplies
+PIASEK / DŁUGIE PRZEJŚCIA|SAND / LONG PASSAGES
+Pustynny dziedziniec, tunele i walka o środek. Otwarta długa przeplata się z ciasnymi przejściami do dwóch punktów podłożenia bomby.|A desert courtyard, tunnels and a fight for mid control. Open long lanes alternate with tight passages to two bomb sites.
+Dym ograniczy widoczność na długich liniach ostrzału.|Smoke blocks visibility along long firing lanes.
+Sprawdź tunele przed wejściem na punkt B.|Check the tunnels before entering B site.
+Zarośnięte ruiny z kamiennymi ścianami i ukrytymi przejściami. Kontrola środka ułatwia rotacje pomiędzy dwoma punktami.|Overgrown ruins with stone walls and hidden passages. Mid control makes it easier to rotate between the two sites.
+Sprawdzaj narożniki w wąskich korytarzach.|Check corners in narrow corridors.
+Nie zostawiaj środka bez informacji o przeciwniku.|Keep track of enemy movement through mid.
+MIASTO / PAŁAC / ŚRODEK|TOWN / PALACE / MID
+Jasne tynki i piaszczyste uliczki. Środek łączy drogi na A i B, a boczne przejścia pozwalają zaatakować obrońców z kilku kierunków.|Pale plaster and sandy streets. Mid connects the routes to A and B, while side passages allow attacks from multiple directions.
+Dym na środku ułatwi przejście do łącznika.|Smoke in mid makes crossing to connector safer.
+Wejście z dwóch stron utrudnia obronę bombsite’u.|Attacking from two sides makes a bomb site harder to defend.
+ULICZKI / BANAN / PODWÓRZA|STREETS / BANANA / COURTYARDS
+Ciepłe mury, ciasne uliczki i walka o każdy narożnik. Banan prowadzi na B, a środek otwiera alternatywną drogę do punktu A.|Warm stone walls, narrow streets and fights around every corner. Banana leads to B, while mid offers another route to A.
+Molotov może zatrzymać szybkie wejście w wąskie przejście.|A molotov can stop a rush through a narrow passage.
+Granaty błyskowe pomagają wyczyścić bliskie kąty.|Flashbangs help clear nearby corners.
+PARK / KANAŁY / WIADUKT|PARK / CANALS / OVERPASS
+Zieleń parku spotyka beton kanałów. Dłuższe przejścia zachęcają do flankowania, a pozycje przy punktach wymagają kontroli kilku wejść.|Park greenery meets concrete canals. Longer routes offer flanking opportunities, while site positions require control of several entrances.
+Uważaj na przeciwnika rotującego bokiem.|Watch for enemies rotating along the flank.
+PRZEMYSŁ / HALE / TEREN ZEWNĘTRZNY|INDUSTRY / HALLS / OUTSIDE
+Stalowe hale, instalacje przemysłowe i szeroki teren pomiędzy osłonami. Krótkie przejścia kontrastują z otwartymi liniami na zewnątrz.|Steel halls, industrial equipment and open ground between cover. Short passages contrast with long sightlines outside.
+Na otwartej przestrzeni korzystaj z dymów i osłon.|Use smoke and cover in open areas.
+Słuchaj strzałów, zanim zmienisz pozycję.|Listen for gunfire before changing position.
+Leśne obozy, port i opuszczone zabudowania. Rozproszone zapasy, skrzynie i zrzuty pomagają przetrwać coraz ciaśniejszą strefę.|Forest camps, a port and abandoned buildings. Scattered supplies, crates and airdrops help you survive the shrinking zone.
+M otwiera mapę — wybierz punkt lądowania i zaznacz cel.|Press M to open the map, choose a landing spot and place a marker.
+BATTLE ROYALE / GÓRSKA ZIMA|BATTLE ROYALE / WINTER MOUNTAINS
+Ośnieżone zbocza, doliny i samotne schroniska. Szukaj wyposażenia w punktach zaopatrzenia i planuj przejście do kolejnej strefy.|Snowy slopes, valleys and isolated shelters. Find equipment at supply points and plan your route to the next zone.
+Broń na ziemi zapewnia amunicję, ale zapas jest ograniczony.|Weapons on the ground provide ammunition, but supplies are limited.
+Apteczka działa podczas postoju — znajdź bezpieczną osłonę.|Stay still to use a medkit and find safe cover first.
+BATTLE ROYALE / MIEJSKA DŻUNGLA|BATTLE ROYALE / URBAN JUNGLE
+Sklepy, magazyny i dzielnice przecięte ulicami. Zbieraj łup pomiędzy budynkami i obserwuj zrzuty zaopatrzenia.|Shops, warehouses and city blocks divided by streets. Gather loot between buildings and watch for supply drops.
+Puste pasaże, sklepy i długie korytarze. Wspólna obrona przejść daje ludziom szansę zatrzymania nadciągającej fali.|Empty shopping arcades, stores and long corridors. Defending passages together gives the humans a chance to stop the incoming wave.
+Trzymaj się drużyny i nie blokuj drogi odwrotu.|Stay with your team and keep retreat routes clear.
+Budowniczy może stawiać ściany klawiszem Q.|The builder can place walls with Q.
+Chłodne światło, laboratoria i ciasne przejścia. Krótkie dystanse premiują przygotowane pozycje i współpracę obrońców.|Cold lighting, laboratories and tight passages. Short distances reward prepared positions and teamwork among defenders.
+Zabezpiecz podejścia minami i osłonami.|Secure approaches with mines and cover.
+Pozostaw sobie drogę odwrotu do kolejnego pomieszczenia.|Keep a retreat route open to the next room.
+Stare domy, ogrodzenia i niebezpieczne podwórza. Obrona w grupie jest bezpieczniejsza niż samotny powrót przez otwarty teren.|Old houses, fences and dangerous courtyards. Defending as a group is safer than retreating alone across open ground.
+Wybierz pozycję z widokiem na kilka wejść.|Choose a position overlooking several entrances.
+Nie oddalaj się od drużyny podczas ataku zombie.|Stay close to your team during a zombie attack.
+Adaptacja klasycznego Azteca do 2D: kamienne dziedzińce, podwójne drzwi, most i boczna trasa wodna. Mury osłaniają oba punkty.|A 2D adaptation of classic Aztec: stone courtyards, double doors, a bridge and a side route through water. Walls protect both sites.
+Sprawdź wyjście z podwójnych drzwi przed wejściem na dziedziniec.|Check the double-door exit before entering the courtyard.
+Atak przez most połącz z wejściem od strony wody.|Combine a bridge push with an attack from the water route.
+ANUBIS / KANAŁ / MOST / ŚWIĄTYNIE|ANUBIS / CANAL / BRIDGE / TEMPLES
+Świątynie rozdzielone kanałem. A Main, B Main, most i środek dają oddzielne drogi ataku, a wewnętrzne mury ograniczają długie linie strzału.|Temples divided by a canal. A Main, B Main, bridge and mid provide separate attack routes, while interior walls limit long sightlines.
+Kontrola mostu ułatwia rotację pomiędzy punktami.|Bridge control makes rotating between the sites easier.
+Zwróć uwagę na podejście od strony wody.|Watch the approach from the water.
+Mój skin|My skin
+Twój projekt mapy:|Your map design:
+. Sprawdź przejścia, osłony i pozycje obu drużyn w grze z botami.|. Check routes, cover and both teams' positions in a bot match.
+Wróć do Warsztatu, aby poprawić układ mapy.|Return to the Workshop to improve the layout.
+To konto nie ma uprawnień do moderacji.|This account does not have moderation permissions.
+Kod jest nieprawidłowy, wykorzystany lub wygasł.|The code is invalid, already used or expired.
+Projekt nie przeszedł kontroli. Sprawdź jego wymiary, przejścia i dane skina.|The design failed validation. Check its dimensions, routes and skin data.
+Przy odrzuceniu wpisz powód (maksymalnie 500 znaków).|Enter a reason when rejecting a design, up to 500 characters.
+Ktoś już rozpatrzył to zgłoszenie. Odśwież listę.|This submission has already been reviewed. Refresh the list.
+Skrzynka odblokuje się po zatwierdzeniu 5 różnych skinów.|The case unlocks once 5 different skins have been approved.
+Zapis konta zmienił się. Odśwież konto i spróbuj ponownie.|The account save has changed. Refresh your account and try again.
+Ta skrzynka nie należy do twojego konta.|This case does not belong to your account.
+Nie ma teraz aktywnych skinów do wylosowania. Zachowujesz skrzynkę.|No skins are currently available to draw. You keep the case.
+Najpierw otwórz część posiadanych skrzynek.|Open some of your existing cases first.
+Nowe opcje moderacji oczekują na wdrożenie aktualizacji.|The new moderation options are waiting for the update to be deployed.
+NOWY MODEL|NEW MODEL
+Kilof|Pickaxe
+Overwatch i Battle Royale|Overwatch and Battle Royale
+WASD · Mysz · B Sklep · 4 granaty · Esc menu|WASD · Mouse · B Shop · 4 grenades · Esc menu
+NOWE W ARSENALE|NEW IN THE ARSENAL
+Kolory, wzory i pędzel|Colors, patterns and a brush
+Bronie, noże i mapy|Weapons, knives and maps
+Noże i skiny|Knives and skins
+LOKALNE PROJEKTY|LOCAL PROJECTS
+Projekt mapy|Map project
+Podgląd tylko w edytorze|Editor preview only
+Zapisany projekt możesz wysłać do oceny. Zatwierdzone skiny trafiają do skrzynki społeczności; sam szkic nie daje przedmiotu ani nowego modelu noża.|Submit a saved design for review. Approved skins enter the Community Forge Case; a draft does not grant an item or a new knife model.
+Kolor pędzla|Brush color
+Jednolity|Solid
+Pasy|Stripes
+Moro|Camo
+Piksele|Pixels
+Baza|Base
+Akcent|Accent
+Detale|Details
+Oczekuje na ocenę|Pending review
+Wiadomość dla autora (wymagana przy odrzuceniu)|Message for the author (required when rejecting)
+OCENA ZGŁOSZENIA|SUBMISSION REVIEW
+Testuj mapę z botami|Test map with bots
+Zatwierdź i opublikuj|Approve and publish
+Otwórz edytor i wybierz „Wyślij do oceny”.|Open the editor and select “Submit for review”.
+Nie masz jeszcze muzyki MVP. Zestawy znajdziesz w MVP Music Box.|You have no MVP music kits yet. Find them in the MVP Music Box.
+Najnowsze|Newest
+Skrzynie:|Crates:
+Zagraj na mapie|Play this map
+NAGRODY DZISIAJ|REWARDS TODAY
+ocen|reviews
+egzemplarz|copy
+egzemplarze|copies
+egzemplarzy|copies
+okien|windows
+SKIN DO ZDOBYCIA|TARGET SKIN
+10 wybranych egzemplarzy zostanie zużytych. Każdy z {count} skinów następnej jakości ma taką samą szansę. 10 skinów StatTrak™ daje nagrodę StatTrak™; mieszany kontrakt daje zwykły skin.|The 10 selected items will be consumed. Each of the {count} skins of the next rarity has the same chance. Ten StatTrak™ skins grant a StatTrak™ reward; a mixed contract grants a regular skin.
+Szansa = wartość twojego skina ÷ wartość celu × 90%. Wartości pochodzą z rynku w grze. Przy sukcesie dostajesz wybrany cel; przy porażce tracisz wejściowy skin.|Chance = your skin value ÷ target value × 90%. Values come from the in-game market. Success grants the chosen target; failure consumes your input skin.
+Wycofaj|Withdraw
+Wycofaj publikację|Withdraw publication
+Skin wycofany ze skrzynki|Skin removed from the case
+Wyłączona z głównej puli|Excluded from the main pool
+Zastąp nową wersją|Replace with the new version
+Dodaj do głównej puli|Add to the main pool
+Wyłącz z głównej puli|Remove from the main pool
+Zablokuj automatyczny awans|Block automatic promotion
+Przywróć awans społeczności|Restore community promotion
+Najnowsza zatwierdzona wersja:|Latest approved version:
+W puli:|In the pool:
+Przywróć do skrzynki|Restore to the case
+Wycofaj ze skrzynki|Remove from the case
+Podgląd nowej wersji|Preview the new version
+Opublikowane projekty|Published projects
+Zarządzaj główną pulą map i zawartością skrzynki społeczności.|Manage the main map pool and the Community Forge Case.
+Rodzaj projektu|Project type
+Mapy i skiny|Maps and skins
+Tylko w Warsztacie|Workshop only
+W skrzynce społeczności|In the Community Forge Case
+Brak pasujących projektów.|No matching projects.
+Poprzednia|Previous
+Następna|Next
+Gracze:|Players:
+Boty:|Bots:
+Ręczne dodanie omija progi społeczności. Wyłączenie z puli zachowuje mapę w Warsztacie.|Manual addition bypasses community thresholds. Removing a map from the main pool keeps it in the Workshop.
+Wycofanie ze skrzynki blokuje przyszłe dropy. Zdobyte skiny i StatTrak pozostają u graczy.|Removing a skin from the case stops future drops. Players keep their earned skins and StatTrak counts.
+Ręczne dodanie działa także przy wyłączonym automatycznym awansie. Mapy dodane ręcznie zajmują miejsca przed mapami z rankingu.|Manual addition also works when automatic promotion is off. Manually added maps take slots before ranked maps.
+Po minucie gry uczestniczące boty testują mapę. Każdy ma 35% szansy na polubienie; ocena jest losowana tylko raz. Ich zagrania i oceny widać osobno i liczą się do awansu.|After one minute of gameplay, participating bots review the map. Each has a 35% chance of liking it, rolled only once. Their plays and likes are shown separately and count toward promotion.
+Zatwierdź i dodaj do głównej puli|Approve and add to the main pool
+Pojawiła się nowsza wersja projektu. Odśwież listę i wybierz ją ponownie.|A newer project version is available. Refresh the list and select it again.
+Zatwierdzono mapę i dodano ją do głównej puli jej trybu.|Map approved and added to the main pool for its mode.
+Przywrócono skin do skrzynki społeczności.|Skin restored to the Community Forge Case.
+Wycofano skin ze skrzynki. Zdobyte egzemplarze pozostają u graczy.|Skin removed from the case. Players keep their earned copies.
+Dodano wybraną wersję mapy do głównej puli jej trybu.|The selected map version was added to the main pool for its mode.
+Wyłączono mapę z głównej puli. Nadal można grać w nią z Warsztatu.|Map removed from the main pool. It can still be played from the Workshop.
+Przywrócono awans mapy według zasad społeczności.|Community-based map promotion restored.
+Nóż motylkowy|Butterfly Knife
+Nóż kukri|Kukri Knife
+Nóż Stiletto|Stiletto Knife
+Nóż klasyczny|Classic Knife
+Widok|View
+Oddal widok|Zoom out
+Przybliż widok|Zoom in
+Reset widoku|Reset view
+Przesuwanie|Pan
+Kółko: zoom · Spacja + przeciągnij lub środkowy przycisk: przesuń|Wheel: zoom · Space + drag or middle mouse button: pan
+Sterowanie myszą|Mouse controls
+Przechwytuj mysz podczas gry|Capture the mouse during gameplay
+Kursor pozostaje w oknie gry. Escape otwiera menu i zwalnia mysz; zakupy i rozmowy również ją zwalniają.|The cursor stays inside the game window. Escape opens the menu and releases the mouse; the shop and chats release it too.
+Kliknij, aby przechwycić mysz|Click to capture the mouse
+Mysz nie została przechwycona. Kliknij, aby spróbować ponownie.|The mouse could not be captured. Click to try again.
+Escape — menu i zwolnienie myszy|Escape — menu and release mouse
+Wygląd map|Map appearance
+Materiały ścian, podłoża i skrzyń oraz delikatne cienie.|Wall, floor and crate materials with subtle shadows.
+Szczegółowość|Detail level
+Tekstury i cieniowanie|Textures and shading
+Uproszczony wygląd|Simple appearance
 Wybierz tryb gry|Select game mode
 Ty|You
 Strzelby|Shotguns

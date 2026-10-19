@@ -62,10 +62,10 @@ test('Workshop map engagement, owner limits and mode-specific promotion',async t
  await t.test('revisions preserve metrics in one mode; changing mode starts a fresh ranking',async()=>{
   const same={...second.payload,name:'Nowa wersja'},release=await submit(U.admin,same);
   await asUser(U.admin,tx=>tx.query("select public.sz_workshop_review($1,'approved','')",[release]));
-  let row=(await catalog()).find(r=>r.id===second.item);assert.equal(row.featured,true);assert.equal(row.likes,3);assert.equal(row.release_id,release);
+  let row=(await catalog()).find(r=>r.id===second.item);assert.equal(row.featured,true);assert.equal(row.likes,3);assert.equal(row.release_id,second.release);assert.equal(row.latest_release_id,release);await rpc(U.admin,'pool',{item:second.item,rule:'manual',release});
   const changed={...same,mode:'classic'},newRelease=await submit(U.admin,changed);
   await asUser(U.admin,tx=>tx.query("select public.sz_workshop_review($1,'approved','')",[newRelease]));
-  row=(await catalog()).find(r=>r.id===second.item);assert.equal(row.mode,'classic');assert.equal(row.plays,0);assert.equal(row.likes,0);assert.equal(row.featured,false);
+  await rpc(U.admin,'pool',{item:second.item,rule:'auto'});row=(await catalog()).find(r=>r.id===second.item);assert.equal(row.mode,'classic');assert.equal(row.plays,0);assert.equal(row.likes,0);assert.equal(row.featured,false);
   assert.equal((await rpc(U.author,'state')).liked.includes(second.item),false);
   assert.equal((await catalog()).find(r=>r.id===tdm.item).featured,true);
  });

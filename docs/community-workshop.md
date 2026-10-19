@@ -15,8 +15,9 @@ Gracze muszą jednak najpierw otrzymać klienta zawierającego tę funkcję.
    zachowuje identyfikator projektu, dodając nowy identyfikator wydania i numer wersji.
 
 Test zgłoszenia nie daje nagród i nie publikuje projektu. Katalog zawiera wyłącznie
-zatwierdzone wydania. Właściciel może wycofać pozycję z katalogu; wyposażony skin
-znika po odświeżeniu, także gdy jego rysunek pozostaje w pamięci klienta.
+zatwierdzone wydania. „Wycofaj publikację” usuwa pozycję z całego katalogu;
+wyposażony skin znika po odświeżeniu. Osobne przyciski opisane poniżej pozwalają
+wyłączyć tylko główną pulę map albo przyszłe dropy skina.
 
 ## Baza
 
@@ -27,6 +28,7 @@ Projekt: `mvzlqpccmjslxdajjbfw`. Wdrożono migracje:
 - `20261017184015 community_forge_case`
 - `20261018105926 workshop_map_engagement_owner_limits`
 - `20261018110220 workshop_map_session_access`
+- `20261018225130 workshop_moderation_versions_and_bot_reviews`
 
 `database/workshop.sql` oraz `database/community-case.sql` opisują schemat dla nowej instalacji. Nie należy
 uruchamiać całego pliku ponownie na już skonfigurowanym projekcie. Istniejące
@@ -39,7 +41,7 @@ aktualizuje wyłącznie portfel bieżącego profilu w istniejącym zapisie konta
 | `sz_workshop_submissions` | Autor widzi swoje kopie; moderator widzi kolejkę; nowe kopie tylko jako oczekujące |
 | `sz_workshop_items` | Odczyt aktywnych pozycji, bez publicznego dostępu do identyfikatora właściciela |
 | `sz_workshop_releases` | Odczyt niezmiennych zatwierdzonych wydań aktywnych pozycji |
-| `sz_workshop_catalog` | Widok `security_invoker` z metadanymi najnowszych wydań |
+| `sz_workshop_catalog` | Widok `security_invoker`; mapa w puli wskazuje przypięte wydanie, osobne pola opisują najnowsze zatwierdzone wydanie |
 | `sz_workshop_private.owner_invite` | Brak dostępu klienta; wyłącznie obsługa jednorazowego kodu po stronie serwera |
 
 Publiczne RPC są `security_invoker`. Operacje uprzywilejowane mają implementacje
@@ -81,6 +83,14 @@ nalicza host, dzięki czemu klienci nie dublują jednego meczu. UUID sesji zapew
 idempotencję; na konto i mapę nalicza się najwyżej jedno zagranie co 5 minut.
 Historia sesji jest prywatna, a klient nie może ustawić jej czasu ani liczników.
 
+Po takiej minucie gry naliczane są również testy uczestniczących botów. Host
+zgłasza ich liczbę przy rejestracji sesji (maksymalnie 10). Serwer losuje każdemu
+botowi polubienie z prawdopodobieństwem 35%, zapisuje wynik raz i zwraca go także
+przy ponowieniu żądania. Liczniki graczy i botów są podpisane oddzielnie; ich sumy
+decydują o automatycznym awansie. Nie ma kont botów udających graczy ani procesu
+generującego oceny bez uruchomionej rozgrywki. Ograniczenia czasowe dotyczą także
+botów; klient nie zapisuje sum bezpośrednio.
+
 Każde zalogowane konto może polubić mapę raz i cofnąć polubienie. Para mapa/konto
 jest unikalna. Publiczne są tylko sumy; odczyt konkretnych polubień obejmuje własne
 konto. Zapisy przechodzą przez `sz_workshop_map`, publiczny RPC `security_invoker`
@@ -102,12 +112,55 @@ samym trybie zachowuje liczniki; zmiana trybu zeruje je i usuwa dotychczasowe
 polubienia, aby popularność TDM nie awansowała mapy do CTF. Liczniki zaczynają się
 od tej aktualizacji; wcześniejszych zagrań nie odtwarza się z zapisów kont.
 
+## Ręczne sterowanie pulą i wersjami
+
+Moderacja zawiera wyszukiwalną listę „Opublikowane projekty” oraz filtry map/skinów.
+Właściciel może użyć:
+
+- **Zatwierdź i dodaj do głównej puli** w ocenie zgłoszenia mapy. Jedna transakcja
+  zatwierdza nową mapę albo rewizję i umieszcza ją w puli trybu zapisanego przez autora.
+- **Dodaj do głównej puli** dla już zatwierdzonej mapy. Działa przy zerowych licznikach
+  i wyłączonym automatycznym awansie, bez wymagań testów społeczności.
+- **Wyłącz z głównej puli / Zablokuj automatyczny awans**. Mapa pozostaje opublikowana
+  i można ją uruchamiać z Warsztatu lub w lobby; ranking nie doda jej ponownie sam.
+- **Przywróć awans społeczności**, aby ponownie stosować zwykłe progi i ranking.
+- **Podgląd nowej wersji / Zastąp nową wersją**, aby zmienić przypięte wydanie.
+
+Zwykłe „Zatwierdź i opublikuj” nowej rewizji zachowuje stare wydanie w głównej puli.
+Aktualizacja nie podmienia geometrii rozpoczętego meczu. Dopiero ręczna podmiana
+wybiera nowe niezmienne UUID wydania; nie zajmuje drugiego miejsca dla tego projektu.
+Kontrola `expected_latest` odrzuca kliknięcie ze starej listy po publikacji kolejnej
+rewizji. Ponowienie starego approve-and-add nie może cofnąć nowszej wersji.
+
+Ręczne mapy mają pierwszeństwo przed rankingiem i zajmują jego miejsca w danym trybie.
+Właściciel może przypiąć więcej map niż limit automatycznego rankingu; wtedy nie
+dochodzi żadna automatyczna mapa. Każda pozycja pozostaje wyłącznie w swoim trybie.
+Wyniki starego wydania nie zwiększają liczników nowego wydania w innym trybie.
+
+Operacje sprawdzają serwerową tabelę moderatorów. Publiczny RPC pozostaje
+`security_invoker`, a prywatna implementacja ma stały pusty `search_path` i jawne
+uprawnienia. Wspólna blokada transakcyjna porządkuje zatwierdzanie, wybór puli,
+wycofywanie i losowania skrzynek. Poprzednia implementacja RPC jest prywatna i nie
+ma uprawnienia wykonania dla klientów.
+
 Zatwierdzone skiny trafiają do Community Forge Case. Minimum zakupu to 5 różnych
-aktywnych projektów skinów; rewizje, oczekujące zgłoszenia i mapy nie zwiększają
+aktywnych projektów skinów włączonych do skrzynki; rewizje, oczekujące zgłoszenia i mapy nie zwiększają
 licznika. Cena to 2500$ z gry, bez klucza. Pula jest dynamiczna, obejmuje najnowszą
 zatwierdzoną wersję każdego projektu, z równą szansą na każdy projekt i 10% szans
 na StatTrak. Już kupioną skrzynkę można otworzyć przy mniejszej niepustej puli;
 przy pustej puli pozostaje w posiadaniu gracza.
+
+„Wycofaj ze skrzynki” wyłącza przyszłe losowanie tego projektu i zmniejsza licznik
+odblokowania nowych zakupów. „Przywróć do skrzynki” odwraca tę decyzję. Obie akcje
+zachowują publikację w katalogu, zdobyte egzemplarze, możliwość wyposażenia, dowody
+własności i liczniki StatTrak. Ponowne otwarcie już otwartej skrzynki zwraca jej
+wcześniejszą nagrodę także po wycofaniu projektu z przyszłych dropów.
+
+Implementację tej aktualizacji opisuje `database/workshop-moderation.sql` oraz
+odpowiadająca mu migracja `workshop_moderation_versions_and_bot_reviews`.
+Klient rozpoznaje możliwości serwera przez odpowiedź `state`. Przed wdrożeniem
+migracji katalog i istniejąca moderacja nadal działają, a nowe przyciski są
+zastąpione informacją o oczekującej aktualizacji.
 
 `database/community-case.sql` dodaje tabele `sz_workshop_cases` i
 `sz_workshop_owned_skins`. Obie mają RLS i wyłącznie odczyt własnych rekordów;

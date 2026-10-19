@@ -43,7 +43,9 @@ async function startFixture({ friends = [], profiles = [], userId = randomUUID()
   }
   const server = http.createServer((req, res) => { let body = ''; req.on('data', b => { body += b; }); req.on('end', async () => { try { const result = await request(req.method, req.url, body, req.headers); res.writeHead(result.status, result.headers); res.end(result.body); } catch (e) { res.writeHead(500); res.end(JSON.stringify({ message: e.message })); } }); });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  return { base: 'http://127.0.0.1:' + server.address().port, request, user, email, password, writes, saves, close: () => new Promise(resolve => server.close(resolve)) };
+  // Chromium may preconnect without sending HTTP headers. Such sockets survive
+  // server.close() and otherwise leave GUI checks waiting indefinitely at cleanup.
+  return { base: 'http://127.0.0.1:' + server.address().port, request, user, email, password, writes, saves, close: () => new Promise(resolve => { server.close(resolve); server.closeAllConnections(); }) };
 }
 async function connectFixture(electron, fixture) {
   // Inject only through the debugger in this test, never via a production flag or IPC API.

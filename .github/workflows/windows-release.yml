@@ -46,6 +46,16 @@ jobs:
         run: npm run test:hub
       - name: Test community map bots, counters, likes and promotion
         run: npm run test:workshop-maps
+      - name: Test Workshop pool overrides, version replacement and case membership
+        run: npm run test:moderation
+      - name: Test Workshop submissions, shared lobbies and skin ownership
+        run: npm run test:community
+      - name: Audit Polish and English interface screens
+        run: npm run test:locale
+      - name: Test editor zoom, painting and gameplay pointer lock
+        run: npm run test:controls
+      - name: Test cached map materials, geometry and render cost
+        run: npm run test:materials
       - name: Test shared languages, themes and persistent chat
         run: npm run test:social
       - name: Test two SDK clients through lobby and running server list
@@ -64,12 +74,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/publish-release.cjs
-      - name: Download previous public 1.2.0 installer
+      - name: Download previous public 1.5.0 installer
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: pwsh
-        run: gh release download v1.2.0 --repo "$env:GITHUB_REPOSITORY" --pattern "StrikeZone-Setup-1.2.0.exe" --dir release
-      - name: Test installed 1.2.0 update, launcher accounts and Escape on Windows
+        run: gh release download v1.5.0 --repo "$env:GITHUB_REPOSITORY" --pattern "StrikeZone-Setup-1.5.0.exe" --dir release
+      - name: Test installed 1.5.0 update, launcher accounts and Escape on Windows
         run: node scripts/windows-update-smoke.cjs
       - name: Attach Windows update test report
         if: always()

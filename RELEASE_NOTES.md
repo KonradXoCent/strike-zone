@@ -1,3 +1,31 @@
+Strike Zone 2D 1.5.1 — tłumaczenia, Warsztat i sterowanie
+
+- Poprawione tłumaczenia PL/EN: „Workshop”, opisy i wskazówki wszystkich map, głosowanie, wczytywanie, Overwatch, Kill Cam, skrzynki, zakupy, wyniki meczu i podpowiedzi. Kontrola obejmuje 270 widoków, tekst na ekranie gry i etykiety dostępności. Nazwy graczy i projekty autorów zachowują swój zapis.
+- Moderacja Warsztatu: „Zatwierdź i dodaj do głównej puli”, ręczne dodawanie zatwierdzonych map do ich trybu, wyłączanie i przywracanie awansu oraz podgląd i podmiana przypiętych wersji. Zwykła akceptacja aktualizacji zachowuje stare wydanie do decyzji właściciela.
+- Boty uczestniczące w meczu testują mapę po minucie rozgrywki. Każdy ma jednorazowo 35% szansy polubienia; statystyki botów i graczy są oznaczone oddzielnie i liczą się do awansu mapy.
+- Wycofywanie i przywracanie projektów w Community Forge Case. Do odblokowania zakupu liczy się pięć aktywnych projektów; zdobyte skiny, wyposażenie i StatTrak pozostają dostępne.
+- Nowe materiały ścian, podłoża i skrzyń na wszystkich 14 mapach i trzech motywach Warsztatu. Detale korzystają z gotowego obrazu mapy. W ustawieniach gry i pauzy jest wybór „Tekstury i cieniowanie” / „Uproszczony wygląd”.
+- Edytor skinów: zoom 50–400% przyciskami i kółkiem, przesuwanie modelu i reset widoku, z zachowaniem dokładności malowania i cofania.
+- Przechwytywanie myszy w meczu: własny celownik i kursor zatrzymany w oknie. Escape, zakupy, czat i utrata fokusu zwalniają mysz. Funkcję można wyłączyć w ustawieniach.
+
+W dotychczasowym launcherze pobierz aktualizację **1.5.1**, a następnie wybierz instalację i ponowne uruchomienie. Gra i launcher aktualizują się razem. Nowa instalacja: **StrikeZone-Setup-1.5.1.exe**.
+Konto i logowanie obsługuje launcher; publiczna gra korzysta z tej samej sesji.
+
+English
+
+- Corrected PL/EN translations: Workshop labels, every map's briefings and tips, voting, loading, Overwatch, Kill Cam, cases, purchasing, match results and tooltips. The audit covers 270 screens, in-game text and accessibility labels; player names and authored titles retain their spelling.
+- Workshop owners can approve and add maps directly to their mode's main pool, bypass thresholds, exclude/restore automatic promotion, and preview/replace pinned releases. Ordinary approval keeps the previous live version until the owner replaces it.
+- Participating bots review maps after a minute of gameplay, each with a one-time 35% like chance. Human and bot counters are shown separately and both count toward promotion.
+- Remove or restore Community Forge designs from future drops. Only enabled designs count toward the five-design purchase gate; earned skins, equipment and StatTrak stay available.
+- Original wall, floor and crate materials across all 14 built-in maps and all three Workshop themes. Details use the existing map cache; settings offer Textures and shading / Simple appearance.
+- Skin-editor zoom from 50–400%, pointer-centered wheel zoom, pan and reset, preserving brush accuracy and undo.
+- Gameplay mouse capture displays the configured reticle and keeps the pointer inside the window. Escape, shopping, chats and focus loss release capture; settings can disable it.
+
+Download **1.5.1** in the existing launcher, then install and restart. The game and launcher update together. New installation: **StrikeZone-Setup-1.5.1.exe**.
+The public game uses the launcher account session.
+
+---
+
 Strike Zone 2D 1.5.0 — ekwipunek, przepustka i nowe lobby
 
 - Wyszukiwanie skinów po nazwie skina lub broni, również z pominięciem polskich znaków. Filtry: noże, pistolety, pistolety maszynowe, karabiny, snajperki, strzelby i ciężkie karabiny. Wszystkie osiem modeli noży, StatTrak i posiadane skiny społeczności korzystają z tych samych filtrów.
