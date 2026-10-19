@@ -4,8 +4,11 @@ Gra na Windows z launcherem, kontem Supabase i obowiązkowymi aktualizacjami.
 
 **[Pobierz aktualne wydanie](https://github.com/KonradXoCent/strike-zone/releases/latest)**
 
-Wersja **1.5.0**: zainstaluj `StrikeZone-Setup-1.5.0.exe` lub zaktualizuj wersję
-1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0 lub 1.4.1 przez launcher — razem z samym launcherem.
+Wersja **1.5.1**: zainstaluj `StrikeZone-Setup-1.5.1.exe` lub zaktualizuj wersję
+1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0, 1.4.1 lub 1.5.0 przez launcher — razem z samym launcherem.
+
+Nowości 1.5.1: pełne poprawki PL/EN, rozszerzona moderacja Warsztatu, materiały
+map, zoom edytora skinów i przechwytywanie myszy w grze. Audyt obejmuje 270 widoków.
 
 Nowości 1.5.0: wyszukiwanie skinów i filtry typów broni, ze wszystkimi modelami
 noży w jednej kategorii. Odświeżona przepustka, lobby z drużynami i kodem
@@ -28,12 +31,12 @@ z jednym miejscem na tryb. Właściciel ustawia progi w Moderacji i ma nielimito
 zgłoszenia map oraz skinów. Pozostali gracze zachowują limit 10 oczekujących
 i 10 wysłanych w ciągu 24 godzin.
 
-W przygotowywanej aktualizacji Moderacja pozwala również od razu zatwierdzić mapę
+W wersji 1.5.1 Moderacja pozwala również od razu zatwierdzić mapę
 i dodać ją do głównej puli jej trybu bez progów społeczności. Właściciel może
 wyłączać mapy z puli, podmieniać przypięte wersje oraz wycofywać skiny ze skrzynki
 bez odbierania zdobytych egzemplarzy. Boty uczestniczące w meczu losowo oceniają
 mapy, a ich statystyki są podpisane osobno. `npm run test:moderation` sprawdza ten
-przepływ w grze, a `npm run test:locale` kontroluje 70 ekranów PL/EN.
+przepływ w grze, a `npm run test:locale` kontroluje 270 widoków PL/EN.
 
 Nowe modele i skiny noży, widoczne rękawiczki, Kill Cam, kontrakty, upgrader,
 ulepszony Overwatch i Battle Royale oraz nowe animacje skrzynek i ekrany map.
@@ -60,8 +63,8 @@ dodają publiczne awatary, Warsztat i wiadomości, bez zastępowania istniejący
 ani zapisów gry. Szczegóły: [docs/community-workshop.md](docs/community-workshop.md)
 i [docs/settings-chat-network.md](docs/settings-chat-network.md).
 
-GitHub Actions buduje wydanie, instaluje wcześniejszą publiczną 1.2.0 i sprawdza
-aktualizację do 1.5.0, zachowanie danych, logowanie, rejestrację, profil, wspólną
+GitHub Actions buduje wydanie, instaluje wcześniejszą publiczną 1.5.0 i sprawdza
+aktualizację do 1.5.1, zachowanie danych, logowanie, rejestrację, profil, wspólną
 sesję gry oraz wyjście przez Escape. Raport `update-smoke-report.json` jest
 w wydaniu. Testy kont używają odizolowanych odpowiedzi HTTP, bez zmian prawdziwych kont.
 

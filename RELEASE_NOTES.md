@@ -1,35 +1,28 @@
-W przygotowaniu — moderacja Warsztatu, tekstury map i sterowanie
+Strike Zone 2D 1.5.1 — tłumaczenia, Warsztat i sterowanie
 
-- Moderacja: „Zatwierdź i dodaj do głównej puli” oraz ręczne dodawanie opublikowanych map bez progów społeczności, także przy wyłączonym automatycznym awansie.
-- Wyłączanie map z głównej puli z zachowaniem Warsztatu. Osobne przywracanie awansu, podgląd nowej wersji i podmiana starego wydania na nowe bez testów społeczności. Zwykła akceptacja aktualizacji zachowuje stare wydanie w puli do decyzji właściciela.
-- Testy map przez uczestniczące boty po minucie rozgrywki; każdy ma 35% szansy polubienia, losowanej raz. Podpisane oddzielnie statystyki botów i graczy liczą się do automatycznego awansu.
-- Wycofywanie i przywracanie skinów w Community Forge Case. Licznik pięciu projektów uwzględnia tylko aktywne dropy; zdobyte skiny, wyposażenie i StatTrak pozostają dostępne.
-- Poprawione pełne tłumaczenia PL/EN w Warsztacie, moderacji, edytorach, ekwipunku, kontraktach, upgraderze i prezentacji nowości. Audyt interfejsu obejmuje 70 ekranów w obu językach.
+- Poprawione tłumaczenia PL/EN: „Workshop”, opisy i wskazówki wszystkich map, głosowanie, wczytywanie, Overwatch, Kill Cam, skrzynki, zakupy, wyniki meczu i podpowiedzi. Kontrola obejmuje 270 widoków, tekst na ekranie gry i etykiety dostępności. Nazwy graczy i projekty autorów zachowują swój zapis.
+- Moderacja Warsztatu: „Zatwierdź i dodaj do głównej puli”, ręczne dodawanie zatwierdzonych map do ich trybu, wyłączanie i przywracanie awansu oraz podgląd i podmiana przypiętych wersji. Zwykła akceptacja aktualizacji zachowuje stare wydanie do decyzji właściciela.
+- Boty uczestniczące w meczu testują mapę po minucie rozgrywki. Każdy ma jednorazowo 35% szansy polubienia; statystyki botów i graczy są oznaczone oddzielnie i liczą się do awansu mapy.
+- Wycofywanie i przywracanie projektów w Community Forge Case. Do odblokowania zakupu liczy się pięć aktywnych projektów; zdobyte skiny, wyposażenie i StatTrak pozostają dostępne.
+- Nowe materiały ścian, podłoża i skrzyń na wszystkich 14 mapach i trzech motywach Warsztatu. Detale korzystają z gotowego obrazu mapy. W ustawieniach gry i pauzy jest wybór „Tekstury i cieniowanie” / „Uproszczony wygląd”.
+- Edytor skinów: zoom 50–400% przyciskami i kółkiem, przesuwanie modelu i reset widoku, z zachowaniem dokładności malowania i cofania.
+- Przechwytywanie myszy w meczu: własny celownik i kursor zatrzymany w oknie. Escape, zakupy, czat i utrata fokusu zwalniają mysz. Funkcję można wyłączyć w ustawieniach.
 
-- Oryginalne tekstury ścian, podłoża i skrzyń w stylistyce strzelanek oglądanych z góry: piaskowiec, tynk, cegła, kamień z mchem, beton, metal i drewno.
-- Osobne materiały dla wszystkich 14 map oraz trzech motywów map Warsztatu. Szersze powierzchnie ścian, krawędzie i delikatne cienie poprawiają odczytanie kształtu przeszkód.
-- Szczegóły są przygotowywane w dotychczasowej warstwie mapy. Kolejne klatki korzystają z gotowego obrazu; dodatkowe tekstury nie wymagają pobierania plików.
-- W ustawieniach gry i pauzy wybór „Tekstury i cieniowanie” albo „Uproszczony wygląd”, z zapamiętywaniem i tłumaczeniem PL/EN.
-- Układy map i działanie przejść, okien, schodów oraz botów pozostają zgodne z istniejącymi danymi.
-
-- Edytor skinów: zoom 50–400% przyciskami i kółkiem, powiększanie wokół kursora, przesuwanie modelu oraz reset widoku. Malowanie i cofanie zachowują prawidłowe współrzędne.
-- Przechwytywanie myszy podczas gry: widoczny jest własny celownik, a kursor pozostaje w oknie. Escape, zakupy, okna rozmów i utrata fokusu zwalniają mysz i zerują wciśnięte sterowanie. W ustawieniach można wyłączyć przechwytywanie.
+W dotychczasowym launcherze pobierz aktualizację **1.5.1**, a następnie wybierz instalację i ponowne uruchomienie. Gra i launcher aktualizują się razem. Nowa instalacja: **StrikeZone-Setup-1.5.1.exe**.
+Konto i logowanie obsługuje launcher; publiczna gra korzysta z tej samej sesji.
 
 English
 
-- Owner moderation can approve and add a map immediately, or add an approved map to its authored mode, bypassing community thresholds even with automatic promotion disabled.
-- Remove maps from the main pool while keeping Workshop play. Preview and replace pinned versions explicitly; ordinary approval keeps the previous live release until the owner replaces it.
-- Participating bots review a map after a minute of gameplay, each with a one-time 35% like chance. Bot and human counters are shown separately and both count toward automatic promotion.
-- Remove or restore designs in the Community Forge Case without revoking earned skins, equipment or StatTrak. Only enabled designs count toward the five-design purchase gate.
-- Corrected complete PL/EN interface phrases across the Workshop, moderation, editors, inventory, contracts, upgrader and features; 70 screens are checked in both languages.
+- Corrected PL/EN translations: Workshop labels, every map's briefings and tips, voting, loading, Overwatch, Kill Cam, cases, purchasing, match results and tooltips. The audit covers 270 screens, in-game text and accessibility labels; player names and authored titles retain their spelling.
+- Workshop owners can approve and add maps directly to their mode's main pool, bypass thresholds, exclude/restore automatic promotion, and preview/replace pinned releases. Ordinary approval keeps the previous live version until the owner replaces it.
+- Participating bots review maps after a minute of gameplay, each with a one-time 35% like chance. Human and bot counters are shown separately and both count toward promotion.
+- Remove or restore Community Forge designs from future drops. Only enabled designs count toward the five-design purchase gate; earned skins, equipment and StatTrak stay available.
+- Original wall, floor and crate materials across all 14 built-in maps and all three Workshop themes. Details use the existing map cache; settings offer Textures and shading / Simple appearance.
+- Skin-editor zoom from 50–400%, pointer-centered wheel zoom, pan and reset, preserving brush accuracy and undo.
+- Gameplay mouse capture displays the configured reticle and keeps the pointer inside the window. Escape, shopping, chats and focus loss release capture; settings can disable it.
 
-- Original top-down wall, floor and crate materials, with map-specific sandstone, plaster, brick, mossy stone, concrete, metal and wood.
-- All 14 built-in maps and all three Workshop themes use the new appearance. Wall caps, bevels and subtle contact shadows are baked into the existing map cache.
-- No extra full-map layer or per-frame texture generation; materials need no external downloads. Main and pause settings offer persistent Textures and shading / Simple appearance in PL/EN.
-- Existing collision, navigation, passages, windows, stairs, sites and spawns are preserved.
-
-- Skin editor: 50–400% button/wheel zoom around the pointer, pan and reset, with unchanged model-space brush data and undo.
-- Gameplay mouse capture keeps the OS cursor inside the game and displays the configured reticle. Escape, shop, chats and focus loss release capture and clear held input. Capture can be disabled in settings.
+Download **1.5.1** in the existing launcher, then install and restart. The game and launcher update together. New installation: **StrikeZone-Setup-1.5.1.exe**.
+The public game uses the launcher account session.
 
 ---
 
