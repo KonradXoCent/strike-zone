@@ -74,7 +74,7 @@ process.on('beforeExit',()=>{if(!completed&&!process.exitCode){console.error('Hu
   assert.equal(await page.locator('.hub-prestige').count(),0);
   console.log('PASS pass: paged rewards, locked/claimed tiers, single reward grants, daily reward, quests and prestige');
   await page.evaluate(()=>playFlow());assert.equal(await page.locator('.hub-dialog h2').textContent(),'Wybierz tryb gry');
-  assert.equal(await page.locator('.hub-mode-card').count(),15);assert.equal(await page.locator('.hub-mode-icon svg').count(),15);
+  assert.equal(await page.locator('.hub-mode-card').count(),await page.evaluate(()=>MODES.length+1));assert.equal(await page.locator('.hub-mode-icon svg').count(),await page.evaluate(()=>MODES.length+1));
   await shot('modes-pl');await page.evaluate(()=>szLocale.set('en'));assert.equal(await page.locator('.hub-dialog h2').textContent(),'Select game mode');
   await page.evaluate(()=>szLocale.set('pl'));await page.locator('[data-game-mode="tdm"]').click();
   assert.equal(await page.evaluate(()=>sel.mode),'tdm');assert.equal(await page.locator('.hub-dialog h2').textContent(),'Głosuj na mapę');
@@ -111,7 +111,7 @@ process.on('beforeExit',()=>{if(!completed&&!process.exitCode){console.error('Hu
    await size(width,height);await page.evaluate(()=>playFlow());
    const bounds=await page.locator('.hub-dialog').boundingBox(),cancel=await page.locator('.hub-dialog>footer>button').boundingBox();
    assert.ok(bounds.x>=-1&&bounds.x+bounds.width<=width+1,JSON.stringify(bounds));assert.ok(cancel.y+cancel.height<=height+1,JSON.stringify(cancel));
-   assert.equal(await page.locator('.hub-mode-card').count(),15);await page.evaluate(()=>pmClose());
+   assert.equal(await page.locator('.hub-mode-card').count(),await page.evaluate(()=>MODES.length+1));await page.evaluate(()=>pmClose());
   }
   await size(1366,860);await page.locator('.hub-leave').click();assert.equal(await page.evaluate(()=>L),null);assert.equal(await page.locator('#jc').count(),1);
   assert.deepEqual(errors,[]);completed=true;

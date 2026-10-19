@@ -1,4 +1,41 @@
 (function(root){const pairs=`
+złapał|caught
+Zabawa w chowanego|Hide and Seek
+MAGAZYN / CHOWANY|WAREHOUSE / HIDE AND SEEK
+OGRÓD / CHOWANY|GARDEN / HIDE AND SEEK
+MOTEL / CHOWANY|MOTEL / HIDE AND SEEK
+Osobna arena zabawy w chowanego: magazyn z bocznymi składami, rzędami kontenerów i kilkoma drogami między halami.|A dedicated hide-and-seek arena: a warehouse with side storerooms, rows of containers and multiple routes between halls.
+Zmieniaj alejkę za osłoną, aby zgubić szukającego.|Switch aisles behind cover to lose a seeker.
+Zryw pod E pomaga uciec z otwartej hali.|Press E to dash out of an open hall.
+Osobna arena zabawy w chowanego: ogród z pawilonami, kamiennymi parawanami i okrężnymi ścieżkami wokół dziedzińca.|A dedicated hide-and-seek arena: a garden with pavilions, stone screens and looping paths around a courtyard.
+Pawilony pozwalają wyjść inną stroną niż wejście.|Pavilions offer a different way out from the entrance.
+Sygnał dźwiękowy wskazuje okolicę, a nie dokładną kryjówkę.|The sound cue indicates an area rather than the exact hiding spot.
+Osobna arena zabawy w chowanego: motel z pokojami połączonymi korytarzami, recepcją i przejściami przez tylne podwórze.|A dedicated hide-and-seek arena: a motel with connected rooms, corridors, a reception area and backyard passages.
+Korytarz jest szybki, ale łatwo zostać w nim zauważonym.|The corridor is fast, but makes you easy to spot.
+Za meblami znajdziesz osłony; sprawdzaj także drugie wyjście.|Furniture provides cover; check the other exit as well.
+Wynik drużyn:|Team score:
+Szukający|Seekers
+Ukrywający się|Hiders
+Punkty osobiste: złapani przeciwnicy|Personal score: opponents caught
+Czas na ukrycie|Hiding time
+Zamiana ról|Swapping roles
+Szukanie|Searching
+POCZEKAJ NA SYGNAŁ|WAIT FOR THE SIGNAL
+Ukrywający się wybierają swoje kryjówki.|The hiders are choosing their hiding spots.
+Po odliczaniu ruszysz na poszukiwania.|Start searching when the countdown ends.
+Złapano cię — obserwujesz swoją drużynę|You were caught — spectating your team
+Pozostało ukrywających się:|Hiders remaining:
+Gotowy|Ready
+E — zryw|E — dash
+LPM lub dotknięcie — złap przeciwnika|Left click or touch — catch an opponent
+TAB — tabela wyników|TAB — scoreboard
+Szukający wygrali rundę|The seekers won the round
+Ukrywający się wygrali rundę|The hiders won the round
+Schowaj się lub odszukaj przeciwników. Osobne areny i zamiana ról.|Hide or find the opponents. Dedicated arenas and alternating roles.
+Drużyna niebieska|Blue team
+Drużyna pomarańczowa|Orange team
+Wybierz pierwszą rolę|Choose your first role
+30 sekund na ukrycie, 150 sekund szukania. Po każdej rundzie zamiana ról.|30 seconds to hide, 150 seconds to search. Swap roles after every round.
 ZWYCIĘSTWO|VICTORY
 PORAŻKA|DEFEAT
 Nie uruchomiono konta. Wybierz „Spróbuj ponownie”.|The account connection has not started. Select “Try again”.

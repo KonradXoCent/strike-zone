@@ -54,6 +54,8 @@ jobs:
         run: npm run test:locale
       - name: Test editor zoom, painting and gameplay pointer lock
         run: npm run test:controls
+      - name: Test Hide and Seek arenas, fair bots, rounds and rewards
+        run: npm run test:hide-seek
       - name: Test cached map materials, geometry and render cost
         run: npm run test:materials
       - name: Test shared languages, themes and persistent chat

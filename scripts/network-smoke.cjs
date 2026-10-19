@@ -8,7 +8,7 @@ let finished=false;process.on('beforeExit',()=>{if(!finished&&!process.exitCode)
  const broker=live?null:await startPresenceFixture();
  // Keep the production translation API used by the server browser, while
  // omitting account/chat integrations which are outside this transport fixture.
- const locale=['locale-data.js','locale.js'].map(file=>'<script>'+fs.readFileSync(repo+'/shared/'+file,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>').join('\n')+'<script>window.szLocale=SzI18n.create("pl").mount();</script>';
+ const locale=['locale-data.js','locale.js'].map(file=>'<script>'+fs.readFileSync(repo+'/shared/'+file,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>').join('\n')+'<script>window.szLocale=SzI18n.create("pl").mount();</script><script>'+fs.readFileSync(repo+'/shared/hide-seek.js','utf8')+'</script>';
  let html=fs.readFileSync(repo+'/game-source/index.html','utf8').replace(/<script src="https:\/\/cdn\.jsdelivr\.net[^\"]+"><\/script>/,'<script src="supabase.js"></script>').replace('\nsbInit();','\n// Authentication is isolated in this transport test.').replace(/<!-- SZ SHARED UI START -->[\s\S]*?<!-- SZ SHARED UI END -->/,()=>locale);
  fs.copyFileSync(repo+'/node_modules/@supabase/supabase-js/dist/umd/supabase.js',tmp+'/supabase.js');fs.writeFileSync(tmp+'/index.html',html);fs.writeFileSync(tmp+'/package.json',JSON.stringify({main:'main.cjs'}));fs.writeFileSync(tmp+'/main.cjs',`const{app,BrowserWindow}=require('electron');app.setPath('userData',${JSON.stringify(tmp+'/profile')});app.whenReady().then(()=>{for(let i=0;i<2;i++){const w=new BrowserWindow({width:1200,height:800,webPreferences:{partition:'network-'+i,backgroundThrottling:false}});w.loadFile(${JSON.stringify(tmp+'/index.html')});}});`);
  const args=[tmp,'--no-sandbox','--ozone-platform=headless','--headless','--disable-gpu'];if(live&&process.env.HTTPS_PROXY)args.push('--proxy-server='+process.env.HTTPS_PROXY,'--ignore-certificate-errors');
@@ -22,18 +22,27 @@ let finished=false;process.on('beforeExit',()=>{if(!finished&&!process.exitCode)
    },{i,url:broker?.endpoint?.replace(/^ws/,'http')||null});
    if(broker)await p.evaluate(endpoint=>{sb.realtime.endPoint=endpoint;},broker.endpoint);
   }
-  const modes=(process.env.SZ_NETWORK_MODES?.split(',')||['tdm','classic','ctf','dm','gungame','retake','br','zombie','coop','snipers','deagle','pistols','shotguns','knife']);
+  const modes=(process.env.SZ_NETWORK_MODES?.split(',')||['tdm','classic','ctf','dm','gungame','retake','br','zombie','coop','snipers','deagle','pistols','shotguns','knife','hns']);
   for(const entry of ['code','server']){
    for(const mode of modes){console.log('RUN',entry,mode);
-    await host.evaluate(mode=>{sel.mode=mode;sel.map=mode==='br'?6:mode==='zombie'?9:2;sel.team='CT';sel.comp=false;},mode);await guest.evaluate(()=>{sel.team='T';});
+    await host.evaluate(mode=>{sel.mode=mode;sel.map=mode==='br'?6:mode==='zombie'?9:mode==='hns'?SzHideSeekMaps.ids[0]:2;sel.team='CT';sel.comp=false;},mode);await guest.evaluate(()=>{sel.team='T';});
     if(entry==='code'){await host.evaluate(()=>mkLobby());const code=await host.evaluate(()=>L?.code);assert.ok(code);await guest.evaluate(c=>mkLobby(c),code);}
-    else{await host.evaluate(()=>{T='srv';srvRender();$('sm').value=sel.mode;$('sp').value=String(sel.map);$('sn').value='QA isolated server';});await host.evaluate(()=>mkServer());await host.waitForFunction(()=>!!SV.own);await host.evaluate(()=>pubSrv());
+    else{await host.evaluate(()=>{T='srv';srvRender();$('sm').value=sel.mode;SzHideSeek.serverMaps();$('sp').value=String(sel.map);$('sn').value='QA isolated server';});await host.evaluate(()=>mkServer());await host.waitForFunction(()=>!!SV.own);await host.evaluate(()=>pubSrv());
      
      // Joining one's own listing must retain the host role and code.
      await host.evaluate(async()=>{SV.ps=(await sb.from('servers').select('*')).data;T='srv';srvRender();return joinSrv(SV.list.findIndex(s=>!s.bot));});assert.equal(await host.evaluate(()=>L.host),true);await host.evaluate(()=>lobStart());await guest.evaluate(async()=>{T='srv';SV.ps=(await sb.from('servers').select('*')).data;srvRender();});assert.equal(await guest.evaluate(()=>SV.list.filter(s=>!s.bot).length),1);await guest.evaluate(()=>joinSrv(SV.list.findIndex(s=>!s.bot)));
     }
     await host.waitForFunction(()=>lobPeers().length===2,{timeout:15000});await guest.waitForFunction(()=>!!roomHost(),{timeout:15000});await guest.evaluate(()=>lobTeam('T'));await host.waitForFunction(()=>lobPeers().some(p=>!p.host&&p.team==='T'));await host.evaluate(()=>{if(!G)lobStart();});try{await guest.waitForFunction(()=>G?.client&&!G.netWaiting&&G.me.rid===NET.cid,null,{timeout:45000});}catch(e){for(const [j,p]of pages.entries())console.log('STATE',j,await p.evaluate(()=>({mode:sel.mode,lobby:L,host:roomHost(),net:{...NET,iv1:!!NET.iv1,iv2:!!NET.iv2},game:G?{client:G.client,waiting:G.netWaiting,phase:G.ph,count:G.ps.length,remote:G.ps.filter(p=>p.rh).length,me:G.me.rid}:null,looping,age:performance.now()-last})));console.log('ERRORS',errors);throw e;}
     const hs=await host.evaluate(()=>({sid:NET.session,mode:sel.mode,remote:G.ps.filter(p=>p.rh).length,count:G.ps.length})),gs=await guest.evaluate(()=>({sid:NET.session,mode:sel.mode,count:G.ps.length}));assert.equal(hs.sid,gs.sid);assert.equal(hs.mode,mode);assert.equal(gs.mode,mode);assert.equal(hs.remote,1);assert.equal(hs.count,gs.count);
+    if(mode==='hns'){
+     assert.deepEqual(await guest.evaluate(()=>({map:sel.map,seeker:G.hns.seekerTeam,round:G.hns.round})),await host.evaluate(()=>({map:sel.map,seeker:G.hns.seekerTeam,round:G.hns.round})));
+     await guest.evaluate(()=>netSend({t:'buy',k:'ak'}));assert.equal(await host.evaluate(()=>G.ps.find(p=>p.rh).pri),null);
+     const captures=await host.evaluate(()=>{const p=G.me,e=G.ps.find(p=>p.rh);G.paused=false;G.ph='live';G.t=100;keys={};for(const q of G.ps)if(q!==p&&q!==e)q.alive=false;let point;outer:for(let y=96;y<WH-96;y+=16)for(let x=96;x<WW-120;x+=16)if([0,16,32,48,64,80].every(dx=>!hitW(x+dx,y))){point={x,y};break outer;}p.x=point.x;p.y=point.y;p.a=0;p.cd=0;e.x=p.x+44;e.y=p.y;SzHideSeek.catchPlayer(p,e);netSnap();return{score:G.sc.CT,caught:p.hnsCatches};});
+     assert.equal(captures.score,1);assert.equal(captures.caught,1);await guest.waitForFunction(()=>!G.me.alive&&G.ph==='end'&&G.sc.CT===1);
+     await host.evaluate(()=>{G.t=.01;upd(.02);netSnap();});await guest.waitForFunction(()=>G.hns.round===1&&G.hns.seekerTeam==='T'&&G.ph==='buy'&&G.me.alive&&G.me.hp===100);
+     await guest.evaluate(()=>LC.send({type:'broadcast',event:'g',payload:{t:'snap',v:2,c:NET.cid,sid:NET.session,hns:{round:99,seekerTeam:'CT'}}}));assert.equal(await host.evaluate(()=>G.hns.round),1);
+     console.log('PASS host-only Hide and Seek capture, role switch, respawn and blocked client state/weapon messages');
+    }
     if(mode==='classic'){await host.evaluate(()=>{const p=G.ps.find(p=>p.rh);G.paused=true;p.bomb=true;p.pl=1.3;netSnap();});await guest.waitForFunction(()=>G.me.bomb&&Math.abs(G.me.pl-1.3)<.1);assert.equal(await guest.evaluate(()=>{draw();return true;}),true);console.log('PASS remote bomb carrier renders planting progress');}
     if(mode==='tdm'){
      await host.evaluate(()=>{G.ph='live';G.t=500;G.ps.forEach(p=>{if(!p.human&&!p.rh)p.alive=false;});});const team=await host.evaluate(()=>{const p=G.ps.find(p=>p.rh);return {team:p.team,money:p.money,alive:p.alive};});console.log('purchase before',team);const weapon=team.team==='T'?'ak':'m4';await host.waitForFunction(k=>G.ps.some(p=>p.rh&&p.money>=W[k].cost),weapon);await guest.evaluate(k=>buy(G.me,k),weapon);await host.waitForFunction(k=>G.ps.some(p=>p.rh&&p.pri===k),weapon);

@@ -13,7 +13,7 @@
   aztec:{floor:'pavers',wall:'stone',moss:true},anubis:{floor:'pavers',wall:'sandstone'},
   desert:{floor:'sand',wall:'sandstone'},industrial:{floor:'concrete',wall:'metal'},forest:{floor:'grass',wall:'stone',moss:true}
  };
- function profile(map,theme={}){let id=names[map];if(!id)id=theme.landmark==='temple'?'forest':theme.landmark==='arch'?'desert':'industrial';return{id,...profiles[id],floorColor:theme.floor||'#9e8c68',wallColor:theme.wall||'#d2ba91',dark:theme.dark||'#293033'};}
+ function profile(map,theme={}){let id=Object.hasOwn(profiles,theme.material)?theme.material:names[map];if(!id)id=theme.landmark==='temple'?'forest':theme.landmark==='arch'?'desert':'industrial';return{id,...profiles[id],floorColor:theme.floor||'#9e8c68',wallColor:theme.wall||'#d2ba91',dark:theme.dark||'#293033'};}
  function hash(s){let n=2166136261;for(const c of String(s))n=Math.imul(n^c.charCodeAt(0),16777619);return n>>>0;}
  function random(seed){let n=seed>>>0||1;return()=>{n^=n<<13;n^=n>>>17;n^=n<<5;return(n>>>0)/4294967296;};}
  function shade(color,delta){const n=parseInt(color.slice(1),16);return'#'+[n>>16,(n>>8)&255,n&255].map(v=>Math.max(0,Math.min(255,Math.round(v+delta))).toString(16).padStart(2,'0')).join('');}

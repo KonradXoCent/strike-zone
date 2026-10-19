@@ -24,6 +24,8 @@ jobs:
       - run: npm run test:friends
       - run: npm run test:hub
       - run: npm run test:controls
+      - name: Test Hide and Seek arenas, fair bots, rounds and rewards
+        run: npm run test:hide-seek
       - run: npm run test:materials
       - run: npm run test:workshop-maps
       - name: Test Workshop pool overrides, version replacement and case membership

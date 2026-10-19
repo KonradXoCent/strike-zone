@@ -11,6 +11,21 @@ wspólnym źródłem dla interfejsu i osadzonego HTML, a `assets/icon.ico` zawie
 rozmiarów ikon Windows (16–256 px). Po zmianie obrazu uruchom
 `node scripts/embed-shared.cjs`; przygotowanie gry sprawdza zgodność logo.
 
+## W przygotowaniu: Hide and Seek
+
+Tryb **Zabawa w chowanego / Hide and Seek** ma trzy własne areny:
+`hs_warehouse`, `hs_garden` i `hs_motel`. Pula jest oddzielona od zwykłych map.
+Drużyny mają 30 sekund na ukrycie i 150 sekund na szukanie. Po rundzie zmiana
+ról; mecz obejmuje sześć rund. Szukający łapią dotknięciem lub lewym przyciskiem
+myszy z bliska. Ukrywający się mają zryw pod E z czasem odnowienia.
+Co 25 sekund pojawia się przybliżona wskazówka dźwiękowa o okolicy ukrycia.
+Boty reagują na widoczność i wskazówki oraz pamiętają ostatnią obserwację.
+
+Tryb działa lokalnie oraz w lobby i serwerach ze wspólną symulacją hosta.
+`npm run test:hide-seek` sprawdza mapy, boty, rundy, łapanie i nagrody;
+`npm run test:network` obejmuje też synchronizację nowego trybu.
+Szczegóły: [docs/hide-seek.md](docs/hide-seek.md).
+
 ## Język, motywy i rozmowy
 
 Wersja 1.5.1 dodaje materiały i cieniowanie map. W ustawieniach
