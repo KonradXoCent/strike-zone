@@ -56,6 +56,8 @@ jobs:
         run: npm run test:controls
       - name: Test Hide and Seek arenas, fair bots, rounds and rewards
         run: npm run test:hide-seek
+      - name: Test Prop Hunt forms, fair observations, shots and matches
+        run: npm run test:prop-hunt
       - name: Test cached map materials, geometry and render cost
         run: npm run test:materials
       - name: Test shared languages, themes and persistent chat

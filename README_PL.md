@@ -11,7 +11,15 @@ wspólnym źródłem dla interfejsu i osadzonego HTML, a `assets/icon.ico` zawie
 rozmiarów ikon Windows (16–256 px). Po zmianie obrazu uruchom
 `node scripts/embed-shared.cjs`; przygotowanie gry sprawdza zgodność logo.
 
-## W przygotowaniu: Hide and Seek
+## W przygotowaniu: Hide and Seek i Prop Hunt
+
+Prop Hunt pozwala graczom i botom przebierać się za przedmioty otoczenia.
+Każda z trzech aren ma pięć dostępnych przebrań. **R** kopiuje pobliski
+przedmiot, **F** blokuje obrót, a **E** uruchamia zryw. Szukający strzelają
+z pistoletów; trafienie zwykłej dekoracji kosztuje 5 HP. Zmiany przebrania,
+trafienia i zmiany ról rozstrzyga host wspólnego meczu.
+
+Test nowego wariantu: `npm run test:prop-hunt`. Opis: [docs/prop-hunt.md](docs/prop-hunt.md).
 
 Tryb **Zabawa w chowanego / Hide and Seek** ma trzy własne areny:
 `hs_warehouse`, `hs_garden` i `hs_motel`. Pula jest oddzielona od zwykłych map.

@@ -1,4 +1,32 @@
 (function(root){const pairs=`
+Polowanie na przedmioty|Prop Hunt
+Zamień się w przedmiot, wtop się w otoczenie i przetrwaj polowanie.|Become a prop, blend into the scenery and survive the hunt.
+Zamieniaj się w przedmioty i przetrwaj polowanie. Szukający strzelają; trafienie dekoracji kosztuje 5 HP.|Become a prop and survive the hunt. Hunters use guns; hitting scenery costs 5 HP.
+Mała skrzynia|Small crate
+Beczka|Barrel
+Opona|Tire
+Skrzynka narzędziowa|Toolbox
+Paleta|Pallet
+Doniczka|Plant pot
+Kamień|Rock
+Krzew|Bush
+Krzesło|Chair
+Walizka|Suitcase
+Kosz|Bin
+odnalazł|found
+trafił za dużo dekoracji|hit too much scenery
+Za mało miejsca na ten przedmiot.|There is not enough room for this prop.
+LPM — strzał · R — przeładuj|Left click — fire · R — reload
+Obrót zablokowany|Rotation locked
+Obrót swobodny|Free rotation
+Podejdź do przedmiotu|Move closer to a prop
+Zamień w|Become
+Przemiana za|Transform in
+Przebranie:|Disguise:
+Zdrowie:|Health:
+Trafienia:|Hits:
+Zwykły przedmiot: −5 HP|Scenery hit: −5 HP
+Przeładowanie…|Reloading…
 złapał|caught
 Zabawa w chowanego|Hide and Seek
 MAGAZYN / CHOWANY|WAREHOUSE / HIDE AND SEEK

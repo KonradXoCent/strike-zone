@@ -31,7 +31,8 @@
     "check:ui": "node scripts/check-ui.cjs",
     "test:moderation": "npm run prepare:game && node scripts/moderation-smoke.cjs",
     "test:locale": "npm run prepare:game && node scripts/locale-smoke.cjs",
-    "test:hide-seek": "npm run prepare:game && node scripts/hide-seek-smoke.cjs"
+    "test:hide-seek": "npm run prepare:game && node scripts/hide-seek-smoke.cjs",
+    "test:prop-hunt": "npm run prepare:game && node scripts/prop-hunt-smoke.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",
