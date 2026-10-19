@@ -31,9 +31,13 @@ Hiding players have no visibility fog: scenery and actors remain visible through
 walls and beyond the hunter sight radius within the camera view. Hunter
 visibility and bot perception still use line of sight.
 
-Movement uses a conservative circular clearance around the actual form.
+Movement uses the locked form's oriented footprint, with conservative rectangular
+clearance for an elliptical rock. Rotation and transformation cannot clip a
+wall, scenery or another actor. Navigation still reserves clearance for the
+largest form.
 Shots intersect the form's rotated rectangle, circle or ellipse. Walls and
-intervening props block shots. Per-arena storage rows, pavilion decorations and room furniture are authored
+intervening props block shots. The warehouse has 125 scenery objects, the garden
+92 and the motel 99 (previously 26, 25 and 28). Per-arena storage rows, pavilion decorations and room furniture are authored
 against specific wall faces, with a two-pixel visual gap. Solid scenery uses its
 oriented sides for movement collision. The complete layout is checked for
 connected navigation with the largest form before placement;
@@ -41,11 +45,20 @@ the normal arena grids and Workshop allocation are not modified.
 
 ## Bots and multiplayer
 
-Hiding bots choose spaces beside themed scenery, match its form and orientation,
-and decide whether to flee based on visible hunters and recent damage.
+Hiding bots reserve distinct, wall-backed empty places in the scenery rows:
+23 places in the warehouse and 24 in each other arena. Each has an accessible
+approach, matching source prop and exact stopping position. All places can be
+filled simultaneously without disconnecting the navigation grid. Bots copy the
+intended form and orientation before entering the place, lock rotation and stop
+flush with the same two-pixel gap as scenery. They retry another place if blocked.
+A settled bot stays still when a hunter passes; a visible threat and actual
+damage can trigger flight. There is no radial-ring or open-corridor fallback.
 Hunter perception supplies only anonymous form, position and angle samples.
-Bots compare visible observations for movement, react after a delay, investigate
-area cues and occasionally check stationary scenery. They remember copied
+Bots first match unchanged scenery and require two consecutive movement samples,
+so newly visible identical props do not count as movement. They react after a
+delay, investigate area cues and check stationary scenery every 7–12 seconds
+while above 35 HP. A wrong prop is not deliberately checked again that round.
+They remember copied
 positions after an observed hit. They have no target selector using hidden
 player coordinates or an observation flag identifying which object is a player.
 
@@ -61,14 +74,16 @@ inventory items. No database migration is needed.
 
 ## Verification
 
-- `npm test`: bounded form geometry, oriented ray intersections, deterministic
-  scenery, five available forms per arena and connected routes for the largest
+- `npm test`: bounded form geometry, oriented ray intersections and footprints,
+  anonymous movement matching, deterministic dense scenery, five available forms
+  per arena, accessible hiding places and connected routes for the largest
   form, plus existing tests.
 - `npm run test:prop-hunt`: transformation and rotation inputs, collision,
   blind setup, wall-blocked shots, actual damage, scenery penalties, anonymous
-  observations, full bot simulations and a single match reward.
+  observations, full bot simulations, distinct matched hiding places reached
+  before the hunt, staying disguised near a hunter and a single match reward.
 - `npm run test:network`: two SDK clients, lobby and server joins, client
-  transformation/rotation/fire, host hits and penalties, role changes, ignored
+  transformation (including scenery IDs above 99), rotation/fire, host hits and penalties, role changes, ignored
   forged form/HP fields, and one reward for repeated final snapshots.
 - `npm run test:locale`: both languages, including the new HUD and scoreboard.
 

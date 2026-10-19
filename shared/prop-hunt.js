@@ -3,33 +3,39 @@
 (function(root){'use strict';
  const D=SzPropData,H=SzHideSeek,CACHE=new Map(),WORLDS=new Map(),RANGE=500,DAMAGE=25,PENALTY=5;
  const active=()=>!!G&&sel.mode==='prophunt',seeker=p=>p.team===G.hns.seekerTeam,t=s=>szLocale.t(s),distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
- function ensure(g=G){if(g.propWorld?.map===sel.map)return g.propWorld;const grid=GRS[sel.map];let world=WORLDS.get(sel.map);if(!world||world.grid!==grid){const objects=D.layout(grid);world={map:sel.map,grid,objects,nav:D.navGrid(grid,objects)};WORLDS.set(sel.map,world);}g.propWorld=world;return world;}
+ function ensure(g=G){if(g.propWorld?.map===sel.map)return g.propWorld;const grid=GRS[sel.map];let world=WORLDS.get(sel.map);if(!world||world.grid!==grid){const objects=D.layout(grid),nav=D.navGrid(grid,objects);world={map:sel.map,grid,objects,nav,hidingPlaces:D.hidingPlaces(grid,objects,nav)};WORLDS.set(sel.map,world);}g.propWorld=world;return world;}
  const radius=p=>seeker(p)?12:D.radius(p.propForm);
- function occupied(p,x,y,placed=G.ps){const w=ensure();return D.collides(w.grid,w.objects,x,y,radius(p))||placed.some(q=>q!==p&&q.alive&&distance({x,y},q)<radius(p)+radius(q)+1);}
+ const body=(p,x=p.x,y=p.y,a=p.propAngle||0)=>seeker(p)?{x,y,w:24,h:24,shape:'circle'}:{x,y,a,form:p.propForm};
+ function occupied(p,x,y,placed=G.ps,angle=p.propAngle||0){const w=ensure(),o=body(p,x,y,angle);return D.bodyCollides(w.grid,w.objects,o)||placed.some(q=>q!==p&&q.alive&&D.overlaps(o,body(q),1));}
  function place(p,placed){const area=SPW[sel.map][seeker(p)?0:1],cx=area[0]+area[2]/2,cy=area[1]+area[3]/2;for(let i=0;i<500;i++){const r=i<150?65:180,a=i*2.399963,x=cx+Math.cos(a)*Math.sqrt((i%150)/150)*r,y=cy+Math.sin(a)*Math.sqrt((i%150)/150)*r;if(!occupied(p,x,y,placed)){p.x=x;p.y=y;return;}}const grid=ensure().nav;for(let i=0;i<grid.d.length;i++)if(!grid.d[i]){const x=(i%grid.cols+.5)*grid.cs,y=(Math.floor(i/grid.cols)+.5)*grid.cs;if(!occupied(p,x,y,placed)){p.x=x;p.y=y;return;}}throw Error('Prop Hunt spawn has no clearance');}
  function initRound(g,first){const w=ensure(g),pool=D.pools[w.grid.source];g.hns.phEffects=[];g.hns.phCleared={};const placed=[];
-  for(const p of g.ps){p.propForm=seeker(p)?null:pool[(p.i+(p.team==='T'?2:0)+g.hns.round)%pool.length];p.propAngle=0;p.propLocked=false;p.propMorph=0;p.propRDown=p.propFDown=false;p.phHitUntil=0;p.phDamagedAt=-100;p.phShots=first?0:p.phShots||0;p.phHits=first?0:p.phHits||0;p.phWrong=first?0:p.phWrong||0;p.phBrain={sense:0,inspect:2+Math.random()*3,history:[],checked:new Map(),reaction:.5};p.pri=null;p.sec=seeker(p)?(p.team==='CT'?'usp':'glock'):null;p.cur=p.sec||'knife';p.ammo=p.sec?{[p.sec]:12}:{};p.hp=p.mh=100;p.rl=0;place(p,placed);placed.push(p);p.hnsLock={x:p.x,y:p.y};if(!seeker(p))p.hnsBrain.goal=hidingSpot(p);}
+  for(const p of g.ps){p.propForm=seeker(p)?null:pool[(p.i+(p.team==='T'?2:0)+g.hns.round)%pool.length];p.propAngle=0;p.propLocked=false;p.propMorph=0;p.propRDown=p.propFDown=false;p.phHitUntil=0;p.phDamagedAt=-100;p.phShots=first?0:p.phShots||0;p.phHits=first?0:p.phHits||0;p.phWrong=first?0:p.phWrong||0;p.phBrain={sense:0,inspect:4+Math.random()*4,history:[],checked:new Map(),avoided:new Map(),reaction:.5};p.pri=null;p.sec=seeker(p)?(p.team==='CT'?'usp':'glock'):null;p.cur=p.sec||'knife';p.ammo=p.sec?{[p.sec]:12}:{};p.hp=p.mh=100;p.rl=0;place(p,placed);placed.push(p);p.hnsLock={x:p.x,y:p.y};p.hnsBrain.goal=null;}
+  for(const p of g.ps)if(!seeker(p)&&!p.human&&!p.rh)p.hnsBrain.goal=hidingSpot(p);
  }
  function effect(kind,p){G.hns.phEffects.push({kind,x:p.x,y:p.y,left:.45});G.hns.phEffects=G.hns.phEffects.slice(-16);}
  function canSee(a,b,skip){if(G.ph==='buy'&&seeker(a)||distance(a,b)>H.SIGHT||!los(a,b))return false;const angle=Math.atan2(b.y-a.y,b.x-a.x),max=distance(a,b)-D.radius(b.form||b.propForm)-2;return !ensure().objects.some(o=>o!==skip&&o!==b&&D.ray(a,angle,o,max)!==null);}
  function canRender(viewer,target,skip){return !seeker(G.me)||canSee(viewer,target,skip);}
  function nearest(p,aim){const w=ensure(),list=w.objects.filter(o=>distance(p,o)<112&&canSee(p,o,o));if(!list.length)return null;return list.sort((a,b)=>(aim&&distance(aim,a)<42?distance(aim,a):distance(p,a)+50)-(aim&&distance(aim,b)<42?distance(aim,b):distance(p,b)+50))[0];}
- function transform(p,object){if(!active()||G.client||G.paused||!p.alive||seeker(p)||G.ph==='end'||p.propMorph>0)return false;const w=ensure();if(!w.objects.includes(object)||distance(p,object)>112||!canSee(p,object,object))return false;const old=p.propForm;p.propForm=object.form;if(occupied(p,p.x,p.y)){p.propForm=old;if(p.human)toast(t('Za mało miejsca na ten przedmiot.'));return false;}p.propAngle=object.a;p.propMorph=3;p.propLocked=true;effect('morph',p);return true;}
+ function transform(p,object){if(!active()||G.client||G.paused||!p.alive||seeker(p)||G.ph==='end'||p.propMorph>0)return false;const w=ensure();if(!w.objects.includes(object)||distance(p,object)>112||!canSee(p,object,object))return false;const old=p.propForm;p.propForm=object.form;if(occupied(p,p.x,p.y,G.ps,object.a)){p.propForm=old;if(p.human)toast(t('Za mało miejsca na ten przedmiot.'));return false;}p.propAngle=object.a;p.propMorph=3;p.propLocked=true;effect('morph',p);return true;}
  function reload(p){if(!seeker(p)||p.rl>0||(p.ammo[p.cur]||0)>=12)return;p.rl=1.4;}
- function input(p,k){const r=!!k.r,f=!!k.lock;if(r&&!p.propRDown){if(seeker(p))reload(p);else transform(p,p.rh?ensure().objects.find(o=>o.id===k.source):nearest(p,{x:mouse.x/VIEW_ZOOM+cam.x,y:mouse.y/VIEW_ZOOM+cam.y}));}if(f&&!p.propFDown&&!seeker(p)){p.propLocked=!p.propLocked;p.propAngle=p.a;}p.propRDown=r;p.propFDown=f;}
- function move(p,dx,dy){if(!p.alive)return;const before={x:p.x,y:p.y};for(const axis of['x','y']){const step=axis==='x'?dx:dy,x=p.x+(axis==='x'?step:0),y=p.y+(axis==='y'?step:0),w=ensure();if(D.collides(w.grid,w.objects,x,y,radius(p)))continue;const blocks=G.ps.some(q=>q!==p&&q.alive&&distance({x,y},q)<radius(p)+radius(q)&&distance({x,y},q)<distance(p,q)-.01);if(!blocks)p[axis]+=step;}
+ function input(p,k){const r=!!k.r,f=!!k.lock;if(r&&!p.propRDown){if(seeker(p))reload(p);else transform(p,p.rh?ensure().objects.find(o=>o.id===k.source):nearest(p,{x:mouse.x/VIEW_ZOOM+cam.x,y:mouse.y/VIEW_ZOOM+cam.y}));}if(f&&!p.propFDown&&!seeker(p)){p.propLocked=!p.propLocked;if(!occupied(p,p.x,p.y,G.ps,p.a))p.propAngle=p.a;}p.propRDown=r;p.propFDown=f;}
+ function move(p,dx,dy){if(!p.alive)return;const before={x:p.x,y:p.y};for(const axis of['x','y']){const step=axis==='x'?dx:dy,x=p.x+(axis==='x'?step:0),y=p.y+(axis==='y'?step:0),w=ensure(),o=body(p,x,y);if(D.bodyCollides(w.grid,w.objects,o))continue;const blocks=G.ps.some(q=>q!==p&&q.alive&&D.overlaps(o,body(q))&&distance({x,y},q)<distance(p,q)-.01);if(!blocks)p[axis]+=step;}
   const moved=distance(before,p);p.wk=(p.wk||0)+moved;if(moved>.1)p.phMovedAt=G.el;if(p.wk>48){p.wk=0;snd('step',p.x,p.y);}
  }
  function speed(p){return seeker(p)?185:p.hnsSprint>0?228:158;}
- function moveTo(p,goal,dt){if(!goal||distance(p,goal)<10)return;const w=ensure(),base=GR;let q;try{GR=w.nav;q=navStep(p,goal.x,goal.y,dt);}finally{GR=base;}const dx=q[0]-p.x,dy=q[1]-p.y,d=Math.hypot(dx,dy);if(d<.1)return;const before={x:p.x,y:p.y};p.a=Math.atan2(dy,dx);move(p,dx/d*speed(p)*dt,dy/d*speed(p)*dt);const b=p.hnsBrain;if(distance(before,p)<speed(p)*dt*.1)b.stuck+=dt;else b.stuck=0;if(b.stuck>1.2){p.pth=null;p.npt=0;b.stuck=0;b.goal=null;p.phBrain.target=null;b.patrol++;}}
- function hidingSpot(p,threat){const w=ensure(),spots=[];for(const o of w.objects)for(let i=0;i<8;i++){const a=i*Math.PI/4,d=D.radius(o.form)+Math.max(D.radius(p.propForm),D.radius(o.form))+8,q={x:o.x+Math.cos(a)*d,y:o.y+Math.sin(a)*d,source:o};if(occupied(p,q.x,q.y,[]))continue;const cell=Math.floor(q.y/w.nav.cs)*w.nav.cols+Math.floor(q.x/w.nav.cs);if(w.nav.d[cell])continue;const shelter=threat?distance(q,threat)-(los(q,threat)?200:0):Math.random()*240;spots.push({...q,score:shelter-distance(p,q)*.18});}return spots.sort((a,b)=>b.score-a.score)[0]||GR.hidePoints[(p.i*7)%GR.hidePoints.length];}
+ function moveTo(p,goal,dt,direct=false){if(!goal||distance(p,goal)<.2)return;const w=ensure(),base=GR;let q=[goal.x,goal.y];if(!direct)try{GR=w.nav;q=navStep(p,goal.x,goal.y,dt);}finally{GR=base;}const dx=q[0]-p.x,dy=q[1]-p.y,d=Math.hypot(dx,dy),before={x:p.x,y:p.y},step=Math.min(d,speed(p)*dt);if(d>.1){p.a=Math.atan2(dy,dx);move(p,dx/d*step,dy/d*step);}const b=p.hnsBrain;if(d<.1||distance(before,p)<step*.1)b.stuck+=dt;else b.stuck=0;if(b.stuck>1.2){if(b.goal?.id)p.phBrain.avoided.set(b.goal.id,G.el+15);p.pth=null;p.npt=0;b.stuck=0;b.goal=null;p.phBrain.target=null;p.phBrain.settled=false;p.phBrain.approaching=null;p.phBrain.exit=null;b.patrol++;}}
+ function hidingSpot(p,threat){const w=ensure(),spots=[];for(const q of w.hidingPlaces){if((p.phBrain.avoided.get(q.id)||0)>G.el||threat&&distance(p,q)<100)continue;
+   if(G.ps.some(other=>other!==p&&other.alive&&!seeker(other)&&(other.hnsBrain?.goal?.id===q.id||distance(other,q)<55)))continue;
+   if(D.bodyCollides(w.grid,w.objects,q)||G.ps.some(other=>other!==p&&other.alive&&D.overlaps(q,body(other),2)))continue;
+   const shelter=threat?distance(q,threat)-(los(q,threat)?260:0):Math.random()*320;spots.push({q,score:shelter-distance(p,q)*.16});
+  }return spots.sort((a,b)=>b.score-a.score)[0]?.q||null;}
  function observe(p){const w=ensure(),observations=[];for(const o of w.objects)if(canSee(p,o,o))observations.push({form:o.form,x:o.x,y:o.y,a:o.a});for(const q of G.ps)if(q.alive&&!seeker(q)&&canSee(p,q))observations.push({form:q.propForm,x:q.x,y:q.y,a:q.propAngle});return observations;}
  const observationKey=o=>o.form+':'+Math.round(o.x/24)+':'+Math.round(o.y/24);
  function botHunter(p,dt){if(G.ph==='buy')return;const b=p.phBrain,h=p.hnsBrain;b.sense-=dt;b.inspect-=dt;
-  if(b.sense<=0){b.sense=.22+Math.random()*.12;const seen=observe(p),old=b.history;const moving=seen.filter(o=>{const before=old.filter(q=>q.form===o.form).sort((a,c)=>distance(a,o)-distance(c,o))[0];return before&&distance(before,o)>2&&distance(before,o)<65;});b.history=seen.map(o=>({...o}));
+  if(b.sense<=0){b.sense=.22+Math.random()*.12;const seen=observe(p),tracks=D.trackObservations(seen,b.history),moving=tracks.filter(o=>o.motions>=2).sort((a,c)=>distance(p,a)-distance(p,c));b.history=tracks;
    const confirmed=b.confirmed&&b.confirmed.until>G.el?seen.filter(o=>distance(o,b.confirmed)<85).sort((a,c)=>distance(a,b.confirmed)-distance(c,b.confirmed))[0]:null;
    let candidate=moving[0]||confirmed;
-   if(!candidate&&b.inspect<=0&&p.hp>20){const list=seen.filter(o=>distance(p,o)<380&&(b.checked.get(observationKey(o))||0)<G.el);candidate=list[Math.random()*list.length|0];b.inspect=3.5+Math.random()*3;if(candidate)b.checked.set(observationKey(candidate),G.el+65);}
+   if(!candidate&&b.inspect<=0&&p.hp>35){const list=seen.filter(o=>distance(p,o)<330&&(b.checked.get(observationKey(o))||0)<G.el);candidate=list[Math.random()*list.length|0];b.inspect=7+Math.random()*5;if(candidate)b.checked.set(observationKey(candidate),Infinity);}
    if(candidate){const same=b.target&&distance(candidate,b.target)<70;b.target={...candidate,until:G.el+3.5};if(!same)b.reaction=.38+Math.random()*.5;h.goal={x:candidate.x,y:candidate.y};H.memory(h,candidate,G.el);}
    else if(b.target&&b.target.until<G.el)b.target=null;
    if(!b.target){H.memory(h,null,G.el);if(h.memory)h.goal={x:h.memory.x,y:h.memory.y};else if(!h.goal||distance(p,h.goal)<45){h.patrol=(h.patrol+1+Math.floor(Math.random()*3))%GR.hidePoints.length;h.goal=GR.hidePoints[h.patrol];}}
@@ -37,12 +43,20 @@
   if(b.target){b.reaction-=dt;p.a=Math.atan2(b.target.y-p.y,b.target.x-p.x);if(distance(p,b.target)>290)moveTo(p,b.target,dt);if(b.target&&b.reaction<=0&&distance(p,b.target)<RANGE&&canSee(p,b.target)){p.a=Math.atan2(b.target.y-p.y,b.target.x-p.x)+(Math.random()-.5)*.035;shoot(p);}}
   else moveTo(p,h.goal,dt);
  }
- function botHider(p,dt){const b=p.phBrain,h=p.hnsBrain;b.sense-=dt;if(b.sense<=0){b.sense=.3+Math.random()*.15;const threats=G.ph==='live'?G.ps.filter(q=>q.alive&&seeker(q)&&canSee(p,q)).sort((a,c)=>distance(p,a)-distance(p,c)):[],q=threats[0];const looking=q&&Math.abs(Math.atan2(Math.sin(Math.atan2(p.y-q.y,p.x-q.x)-q.a),Math.cos(Math.atan2(p.y-q.y,p.x-q.x)-q.a)))<.7;
-   if(q&&(distance(p,q)<125&&looking||G.el-p.phDamagedAt<2)){h.goal=hidingSpot(p,q);H.sprint(p);b.flee=G.el+2.5;}
-   else if(!h.goal)h.goal=hidingSpot(p);
+ function botHider(p,dt){const b=p.phBrain,h=p.hnsBrain,w=ensure();b.sense-=dt;if(b.sense<=0){b.sense=.3+Math.random()*.15;const threats=G.ph==='live'?G.ps.filter(q=>q.alive&&seeker(q)&&canSee(p,q)).sort((a,c)=>distance(p,a)-distance(p,c)):[],q=threats[0];const looking=q&&Math.abs(Math.atan2(Math.sin(Math.atan2(p.y-q.y,p.x-q.x)-q.a),Math.cos(Math.atan2(p.y-q.y,p.x-q.x)-q.a)))<.7;
+   // A disguised, stationary bot keeps its nerve until it is actually hit.
+   if(q&&(!b.settled&&distance(p,q)<110&&looking||G.el-p.phDamagedAt<2)&&!(b.flee>G.el)){const next=hidingSpot(p,q);if(next){if(h.goal){b.avoided.set(h.goal.id,G.el+15);if(b.settled||b.approaching)b.exit=h.goal.approach;}h.goal=next;b.approaching=null;b.settled=false;p.pth=null;p.npt=0;H.sprint(p);b.flee=G.el+3;}}
+   else if(!h.goal){h.goal=hidingSpot(p);b.approaching=null;b.settled=false;}
   }
-  if(h.goal&&distance(p,h.goal)>12)moveTo(p,h.goal,dt);
-  else if(!b.flee||b.flee<G.el){const o=nearest(p);if(o&&o.form!==p.propForm)transform(p,o);p.propLocked=true;if(o)p.propAngle=o.a;}
+  const goal=h.goal;if(!goal)return;
+  if(b.exit){if(distance(p,b.exit)>.5){moveTo(p,b.exit,dt,true);return;}b.exit=null;}
+  const source=w.objects.find(o=>o.id===goal.sourceId);
+  if(p.propForm!==goal.form&&source)transform(p,source);
+  if(!occupied(p,p.x,p.y,G.ps,goal.a)){p.propLocked=true;p.propAngle=goal.a;}
+  if(b.approaching!==goal.id){if(distance(p,goal.approach)>.5){moveTo(p,goal.approach,dt,distance(p,goal.approach)<24);return;}if(p.propForm!==goal.form)return;b.approaching=goal.id;}
+  if(p.propForm!==goal.form)return;
+  if(distance(p,goal)>.2){moveTo(p,goal,dt,true);return;}
+  if(!occupied(p,goal.x,goal.y,G.ps,goal.a)){p.x=goal.x;p.y=goal.y;p.propAngle=goal.a;p.propLocked=true;b.settled=true;}
  }
  function bot(p,dt){return seeker(p)?botHunter(p,dt):botHider(p,dt);}
  function shoot(p){if(!active()||G.client||G.paused||G.ph!=='live'||!p.alive||!seeker(p)||p.cd>0||p.rl>0)return false;if((p.ammo[p.cur]||0)<=0){reload(p);return false;}p.cd=.32;p.ammo[p.cur]--;p.phShots++;snd('shot',p.x,p.y,p.cur);
@@ -51,11 +65,11 @@
   for(const q of G.ps)if(q.alive&&!seeker(q)){const d=D.ray(p,p.a,{form:q.propForm,x:q.x,y:q.y,a:q.propAngle},end);if(d!==null&&d<hit){hit=d;target={player:q};}}
   G.tr.push({x:p.x,y:p.y,x2:p.x+Math.cos(p.a)*hit,y2:p.y+Math.sin(p.a)*hit,c:target?.player?'#a8eed7':'#f4cb89',t:.12});
   if(target?.player){const victim=target.player;victim.hp=Math.max(0,victim.hp-DAMAGE);victim.phDamagedAt=G.el;p.phHits++;p.phHitUntil=G.el+.22;p.phBrain.confirmed={x:victim.x,y:victim.y,until:G.el+4};effect('hit',victim);snd('hit',victim.x,victim.y);if(!victim.hp)H.eliminate(p,victim);}
-  else if(target?.object){p.phWrong++;p.hp=Math.max(0,p.hp-PENALTY);p.phPenaltyUntil=G.el+.35;effect('wrong',target.object);if(p.phBrain){p.phBrain.target=null;p.phBrain.confirmed=null;p.hnsBrain.goal=null;p.phBrain.checked.set(observationKey(target.object),G.el+65);}if(!p.hp){p.alive=false;G.hns.events.unshift({by:nm(p),who:'',action:'trafił za dużo dekoracji',left:4});}}
+  else if(target?.object){p.phWrong++;p.hp=Math.max(0,p.hp-PENALTY);p.phPenaltyUntil=G.el+.35;effect('wrong',target.object);if(p.phBrain){p.phBrain.target=null;p.phBrain.confirmed=null;p.hnsBrain.goal=null;p.phBrain.inspect=Math.max(p.phBrain.inspect,7);p.phBrain.checked.set(observationKey(target.object),Infinity);}if(!p.hp){p.alive=false;G.hns.events.unshift({by:nm(p),who:'',action:'trafił za dużo dekoracji',left:4});}}
   if(!G.ps.some(q=>q.alive&&seeker(q)))H.finishRound(G.hns.seekerTeam==='CT'?'T':'CT');return true;
  }
  function tickPlayer(p,dt){p.cur=seeker(p)?p.sec:'knife';p.propMorph=Math.max(0,(p.propMorph||0)-dt);if(p.rl>0){p.rl=Math.max(0,p.rl-dt);if(!p.rl&&seeker(p))p.ammo[p.cur]=12;}else if(seeker(p)&&(p.ammo[p.cur]||0)<=0)reload(p);}
- function afterPlayer(p){if(!seeker(p)&&!p.propLocked)p.propAngle=p.a;}
+ function afterPlayer(p){if(!seeker(p)&&!p.propLocked&&!occupied(p,p.x,p.y,G.ps,p.a))p.propAngle=p.a;}
  function tickWorld(dt){G.tr=G.tr.filter(q=>(q.t-=dt)>0);G.hns.phEffects=(G.hns.phEffects||[]).filter(q=>(q.left-=dt)>0);}
  function serialize(p){return{form:p.propForm||null,angle:p.propAngle||0,locked:!!p.propLocked,morph:p.propMorph||0,shots:p.phShots||0,hits:p.phHits||0,wrong:p.phWrong||0,hit:p.phHitUntil||0,penalty:p.phPenaltyUntil||0};}
  function restore(p,o={}){p.propForm=D.models[o.form]?o.form:null;p.propAngle=Number(o.angle)||0;p.propLocked=!!o.locked;p.propMorph=Number(o.morph)||0;p.phShots=Number(o.shots)||0;p.phHits=Number(o.hits)||0;p.phWrong=Number(o.wrong)||0;p.phHitUntil=Number(o.hit)||0;p.phPenaltyUntil=Number(o.penalty)||0;}
