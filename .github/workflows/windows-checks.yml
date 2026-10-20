@@ -22,6 +22,7 @@ jobs:
       - run: npm run check:ui
       - name: Test minigames votes, physics, bots and arcade rotation
         run: npm run test:minigames
+      - run: npm run test:network
       - run: npm run test:launcher
       - run: npm run test:friends
       - run: npm run test:hub
@@ -39,7 +40,6 @@ jobs:
       - name: Audit Polish and English interface screens
         run: npm run test:locale
       - run: npm run test:social
-      - run: npm run test:network
       - run: npm run test:gameplay
       - name: Build standalone HTML test preview
         run: node scripts/prepare-preview.cjs test-preview/Strike-Zone-Prop-Hunt-Test.html
