@@ -11,7 +11,7 @@ separate local session.
 | Grenade dodgeball | `mg_dodgeyard` | 5v5, 100 seconds. Players stay on their own half; HE grenades fly over the central fence. Eliminate the other team. A timeout compares survivors, then health. |
 | Bomb tag | `mg_bombtag` | Free for all, 13-second fuse. Touch another player to pass the bomb without resetting the fuse. A short transfer lock prevents immediate tag-back. The explosion eliminates its carrier; the last survivor wins. |
 | Snowball fight | `mg_snowfield` | 5v5, first to 15 eliminations or 100 seconds. Snowballs deal 34 damage and briefly slow; eliminated players respawn after three seconds. |
-| Football | `mg_stadium` | Dedicated stadium, 5v5, first to ten goals, with no time limit. Left click kicks a nearby ball; contact allows dribbling. Bots chase, support and keep goal. |
+| Football | `mg_stadium` | Dedicated stadium, 5v5, first to ten goals, with no time limit. Left click passes and right click shoots. Players carry the ball, receive passes and tackle; bots support their teammates and keep goal. |
 
 WASD moves and E gives a short dash/sprint. Minigames use compact HUD panels,
 a Tab scoreboard, their own equipment and original cached Canvas arenas.
@@ -46,16 +46,40 @@ minigame roulette. Lobby and server creation expose this mode and the stadium.
 Host authority and one-time participant rewards are shared with Minigames;
 late joiners arriving only for a result see it without receiving a reward.
 
+At kickoff and after every goal, each designated goalkeeper spawns in the
+centre of their own goal area. Bots track incoming shots, catch the ball and
+pass to teammates instead of running back from an outfield spawn. These roles
+are included in host snapshots and survive the replacement of a bot by a guest.
+
+Touching a loose ball takes possession. It stays just in front of its holder,
+who moves slightly more slowly while dribbling. Teammates cannot take it by
+walking into the holder; an opponent close to the ball can steal it. A brief
+transfer lock prevents the same pair from immediately trading possession back
+and forth. Left click sends a shorter pass toward the cursor, with limited
+lead when aiming at a nearby teammate; right click shoots harder. Both decay
+quickly enough that one shot cannot cross the whole pitch. Other players may
+intercept a released ball immediately. Bots spread out to receive passes,
+pass under pressure, challenge opponents and shoot from closer range.
+
+Possession, tackles, catches and shots are resolved only by the host. Guests
+send input and predict the visible ball, then reconcile to the holder and
+velocity in host snapshots. Submitted ownership and goalkeeper flags cannot
+override the host's decisions.
+
 ## Verification
 
 - `npm test`: arena geometry, extreme centre-bound inputs, swept snowball hits,
-  goal crossings, ball friction and non-repeating choices, plus existing tests.
+  goal crossings, reduced shot range, ball friction and non-repeating choices,
+  plus existing tests.
 - `npm run test:minigames`: actual mode-card entry and loading, lobby guest gate,
   shared voting, blocked centre, HE hits, fuse transfers, snowball respawn,
-  third/ninth/tenth goals, no timeout, standalone results, one reward, uninterrupted roulette and full seeded bot matches.
+  goalkeeper spawn/reset and saves, possession, dribbling, passes, reception,
+  steals and transfer locks, third/ninth/tenth goals, no timeout, standalone
+  results, one reward, uninterrupted roulette and full seeded bot matches.
 - `npm run test:network`: two SDK clients in lobby and server sessions; voting,
-  client kicking, rejected forged state, synchronized goal/results, repeated
-  result snapshots, new arena mounting and the central movement restriction.
+  guest dribbling and shooting, synchronized steals and goalkeeper roles,
+  rejected forged ownership, synchronized goal/results, repeated result
+  snapshots, new arena mounting and the central movement restriction.
 - `npm run test:locale`: PL/EN votes, warmups, live HUDs, scoreboards, results and
   roulette for all four games.
 
