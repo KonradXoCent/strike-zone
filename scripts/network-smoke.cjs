@@ -25,7 +25,7 @@ let finished=false;process.on('beforeExit',()=>{if(!finished&&!process.exitCode)
   const modes=(process.env.SZ_NETWORK_MODES?.split(',')||['tdm','classic','ctf','dm','gungame','retake','br','zombie','coop','snipers','deagle','pistols','shotguns','knife','prophunt','minigames','football']);
   for(const entry of ['code','server']){
    for(const mode of modes){console.log('RUN',entry,mode);if(mode==='tdm')await require('./test-support/halloween-network.cjs').seed(guest);
-    await host.evaluate(mode=>{sel.mode=mode;sel.map=mode==='football'?SzMiniData.ids.football:mode==='minigames'?SzMiniData.ids.grenade:mode==='br'?6:mode==='zombie'?9:['hns','prophunt'].includes(mode)?SzHideSeekMaps.ids[0]:2;sel.team='CT';sel.comp=false;},mode);await guest.evaluate(()=>{sel.team='T';});
+    await host.evaluate(mode=>{sel.mode=mode;sel.map=mode==='football'?SzMiniData.ids.football:mode==='minigames'?SzMiniData.ids.grenade:mode==='br'?6:mode==='zombie'?(SzHalloweenMap.available()?SzHalloweenMap.id:9):['hns','prophunt'].includes(mode)?SzHideSeekMaps.ids[0]:2;sel.team='CT';sel.comp=false;},mode);await guest.evaluate(()=>{sel.team='T';});
     if(entry==='code'){await host.evaluate(()=>mkLobby());const code=await host.evaluate(()=>L?.code);assert.ok(code);await guest.evaluate(c=>mkLobby(c),code);}
     else{await host.evaluate(()=>{T='srv';srvRender();$('sm').value=sel.mode;SzHideSeek.serverMaps();$('sp').value=String(sel.map);$('sn').value='QA isolated server';});await host.evaluate(()=>mkServer());await host.waitForFunction(()=>!!SV.own);await host.evaluate(()=>pubSrv());
      
@@ -52,6 +52,7 @@ let finished=false;process.on('beforeExit',()=>{if(!finished&&!process.exitCode)
      const before=await host.evaluate(()=>{const p=G.ps.find(p=>p.rh);for(let y=100;y<WH-100;y+=20)for(let x=100;x<WW-250;x+=20)if(Array.from({length:12},(_,i)=>!hitW(x+i*10,y)).every(Boolean)){p.x=x;p.y=y;p.inv=10;netSnap();return x;}throw new Error('No movement fixture');});await guest.evaluate(()=>{keys.d=1;});try{await host.waitForFunction(x=>G.ps.find(p=>p.rh).x>x+8,before,{timeout:10000});}catch(e){console.log('movement debug',await host.evaluate(()=>({phase:G.ph,paused:G.paused,p:G.ps.filter(p=>p.rh).map(p=>({x:p.x,y:p.y,alive:p.alive,inp:p.inp,lastIn:p.lastIn})),sid:NET.session})),await guest.evaluate(()=>({phase:G.ph,paused:G.paused,keys,waiting:G.netWaiting,lastSnap:performance.now()-NET.lastSnap,alive:G.me.alive})));throw e;}await guest.evaluate(()=>{keys.d=0;});
      await host.evaluate(()=>{const p=G.ps.find(p=>p.rh);p.hp=30;p.armor=0;p.inv=0;dmg(p,1000,G.me,'AK-47');netSnap();});await guest.waitForFunction(()=>!G.me.alive);assert.equal(await guest.evaluate(()=>G.sc.CT),await host.evaluate(()=>G.sc.CT));
     }
+    if(['zombie','minigames'].includes(mode))await require('./test-support/halloween-mode-network.cjs')(host,guest,mode);
     results.push({entry,mode,sameSession:true,players:hs.count});console.log('PASS actual SDK',live?'LIVE':'local',entry,mode);await host.evaluate(()=>quit());await guest.waitForFunction(()=>!G);await guest.evaluate(()=>lobLeave());await host.evaluate(()=>lobLeave());
    }
   }

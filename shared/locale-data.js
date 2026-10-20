@@ -1,4 +1,9 @@
 (function(root){const pairs=`
+Halloweenowa mapa nie jest już dostępna.|The Halloween map is no longer available.
+Nawiedzony cmentarz z ruinami kaplicy, kryptami i bocznymi alejkami. Mapa wydarzenia dostępna do 30 listopada 2026.|A haunted cemetery with a ruined chapel, crypts and side alleys. This event map is available through 30 November 2026.
+Kaplica ma trzy wejścia. Pilnuj boków i trzymaj się drużyny.|The chapel has three entrances. Watch the flanks and stay with your team.
+Krypty i nagrobki zapewniają osłony, ale każdą część cmentarza można obejść.|Crypts and gravestones provide cover, and routes lead around every part of the cemetery.
+Za aktywną grę w Zombie Mode otrzymujesz cukierki wydarzenia.|Active play in Zombie Mode earns event candies.
 Polski|Polish
 W toku|In progress
 Noc nagród|Night of rewards

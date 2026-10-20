@@ -2,9 +2,16 @@
 
 The event appears above Multiplayer Lobby. It runs through 30 November 2026, 23:59:59 Europe/Warsaw (exclusive end: 2026-11-30T23:00:00Z). The menu theme ends automatically. Existing items and player trades remain available afterwards.
 
+## Seasonal Zombie Mode arena
+
+`zm_hallows_end` is an original 1280 × 832 cemetery with a three-entrance ruined chapel, four crypts, gravestone covers, pumpkins and cobwebs. Its collision grid and bot navigation use the same geometry. Decorative detail is baked into the static map canvas.
+
+The arena appears only in Zombie Mode, including map votes, multiplayer lobbies and server creation. It follows the exact event deadline and is removed from new selections on expiry; an already running match can finish. Its index is reserved before local and Workshop map slots so an expiry never changes map IDs. Clients reject a new expired-map start rather than loading a different arena from their host.
+
 ## Candy progression
 
 - 2 candies per complete minute of live, unpaused play, across supported game modes.
+- Zombie Mode and every Minigames variant (grenades, bomb tag, snowballs and football) use these rewards for both host and guests. Round-based match endings and Deathmatch also notify the event completion handler, in addition to the shared match-end function. A toast confirms candies earned during play.
 - 12 candies for completing a match or 18 for winning, after at least 60 seconds of participation. Each match result is recorded once.
 - Daily quests: play 10 minutes (30), complete 2 matches (25), win once (20), get 15 eliminations (20).
 - Event milestones: play 60 minutes (100), complete 10 matches (100), win 10 matches (150).
@@ -31,3 +38,7 @@ Purchases and quest claims use the existing guarded profile transaction: a local
 ## Validation
 
 Pure data tests cover dates, Warsaw day boundaries, rewards, probabilities, duplicate requests, expiry and legacy save compatibility. The isolated Electron smoke test covers the responsive PL/EN panel, active/paused Football play, rewards, save rollback, case opening, inventory equipment, StatTrak, original glove and MVP assets, forbidden sources, reload recovery and event expiry. Existing two-client SDK trade and multiplayer suites exercise event knives, gloves and music ownership transfers and synchronized held cosmetics. The full Windows feature checks run against the standalone source and build a downloadable HTML preview.
+
+The seasonal extension also checks connected cemetery routes with actor clearance, all five Zombie/Minigames reward paths and exact map expiry. Two-client SDK scenarios run through lobby codes and server listings, including host/guest candy progression, shared results, duplicate-result protection, Prop Hunt conversion and round resets, all minigames, football goals and the ten-goal finish.
+
+Overwatch now pays up to ten correct, sufficiently watched verdicts per day. A GUI check submits eleven watched demos and confirms that only ten receive money/XP.
