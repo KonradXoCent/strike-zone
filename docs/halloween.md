@@ -10,11 +10,11 @@ The arena appears only in Zombie Mode, including map votes, multiplayer lobbies 
 
 ## Candy progression
 
-- 2 candies per complete minute of live, unpaused play, across supported game modes.
+- 6 candies per complete minute of live, unpaused play, across supported game modes.
 - Zombie Mode and every Minigames variant (grenades, bomb tag, snowballs and football) use these rewards for both host and guests. Round-based match endings and Deathmatch also notify the event completion handler, in addition to the shared match-end function. A toast confirms candies earned during play.
-- 12 candies for completing a match or 18 for winning, after at least 60 seconds of participation. Each match result is recorded once.
-- Daily quests: play 10 minutes (30), complete 2 matches (25), win once (20), get 15 eliminations (20).
-- Event milestones: play 60 minutes (100), complete 10 matches (100), win 10 matches (150).
+- 30 candies for completing a match or 45 for winning, after at least 60 seconds of participation. Each match result is recorded once.
+- Daily quests: play 10 minutes (100), complete 2 matches (75), win once (60), get 15 eliminations (60).
+- Event milestones: play 60 minutes (300), complete 10 matches (300), win 10 matches (450).
 - Daily quests reset at midnight in Europe/Warsaw, including the October DST change.
 
 ## Cases and exclusive content
@@ -46,3 +46,9 @@ Pure data tests cover dates, Warsaw day boundaries, rewards, probabilities, dupl
 The seasonal extension also checks connected cemetery routes with actor clearance, all five Zombie/Minigames reward paths and exact map expiry. Two-client SDK scenarios run through lobby codes and server listings, including host/guest candy progression, shared results, duplicate-result protection, Prop Hunt conversion and round resets, all minigames, football goals and the ten-goal finish.
 
 Overwatch now pays up to ten correct, sufficiently watched verdicts per day. A GUI check submits eleven watched demos and confirms that only ten receive money/XP.
+
+## Reward and music improvements
+
+Active minutes now pay 6 candies, completed matches 30 and wins 45. Cases still cost 60 / 240 / 35. Existing claimed quests stay claimed; unclaimed quests use the increased rewards. Five original 13–18 second arrangements use celesta, dissonant organ, cemetery bells/choir, a vampire dance and a theremin/clock texture. They have distinct scores, layered instruments, percussion and room/echo effects rather than the ordinary MVP note renderer. Only one event arrangement plays at a time.
+
+The [bonus-code system](bonus-codes.md) gives 80 candies for HALLOWEEN once per account, with definitions managed directly in Supabase.

@@ -38,6 +38,8 @@ jobs:
         run: node scripts/configure-updates.cjs --github "$env:GITHUB_REPOSITORY"
       - run: npm test
       - run: npm run check:ui
+      - name: Test Zombie grenades, football safety, original Halloween music and bonus-code recovery
+        run: npm run test:seasonal
       - name: Test Halloween progression, event cases, exclusive items, rendering and expiry
         run: npm run test:halloween
       - name: Test minigames votes, physics, bots and arcade rotation

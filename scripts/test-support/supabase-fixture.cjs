@@ -2,7 +2,7 @@
 const http = require('node:http');
 const { randomUUID } = require('node:crypto');
 const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jM5kAAAAASUVORK5CYII=';
-async function startFixture({ friends = [], profiles = [], userId = randomUUID(), chatRPC = null } = {}) {
+async function startFixture({ friends = [], profiles = [], userId = randomUUID(), chatRPC = null, bonusRPC = null } = {}) {
   const users = new Map(), saves = new Map(), writes = [];
   const email = 'desktop-smoke@example.test', password = 'SmokePass123!';
   const user = { id: userId, email, aud: 'authenticated', role: 'authenticated', email_confirmed_at: new Date().toISOString(), user_metadata: { nickname: 'KonradQA' }, app_metadata: { provider: 'email' }, identities: [] };
@@ -15,6 +15,7 @@ async function startFixture({ friends = [], profiles = [], userId = randomUUID()
     const bearer = headers.authorization || headers.Authorization || '';
     let id; try { id = JSON.parse(Buffer.from(bearer.replace(/^Bearer /i, '').split('.')[1], 'base64url')).sub; } catch {}
     const actor = [...users.values()].find(u => u.id === id);
+    if (u.pathname.endsWith('/rpc/sz_bonus_redeem') && bonusRPC) return bonusRPC(actor?.id, data).then(value => ({ status: 200, body: JSON.stringify(value), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } })).catch(error => ({ status: 400, body: JSON.stringify({ message: error.message }), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } }));
     if (u.pathname.endsWith('/rpc/sz_chat') && chatRPC) return chatRPC(actor?.id, data.action, data.args).then(value => ({ status: 200, body: JSON.stringify(value), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } })).catch(error => ({ status: 400, body: JSON.stringify({ message: error.message }), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } }));
     let status = 200, value = {};
     if (method === 'OPTIONS') status = 204;
