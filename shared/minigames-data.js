@@ -2,7 +2,7 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else{root.SzMiniData=api;api.install({MAPN,GRS,MAPS,WINS,FLRS,SITES,SPW,LB,SCL,FL,WC,FLG,WCG,BGC,MAP_BRIEFINGS});}})(globalThis,function(){
  'use strict';
  const WIDTH=1280,HEIGHT=832,RADIUS=12,FOOTBALL_GOALS=10,keys=['grenade','bomb','snow','football'];
- const FOOTBALL={keeperX:112,carryOffset:26,drag:1.35,shotSpeed:480,passMin:220,passMax:420,maxSpeed:520};
+ const FOOTBALL={keeperX:112,drag:1.35,shotSpeed:560,passMin:220,passMax:420,maxSpeed:600};
  const specs={
   grenade:{name:'mg_dodgeyard',title:'Granatowy zbijak',description:'Rzucaj granatami na drugą połowę i unikaj wybuchów. Środka boiska nie można przekroczyć.',control:'LPM — rzuć granat · E — zryw',duration:100,material:'industrial',floor:'#647585',wall:'#b9c5cb',dark:'#14232f',accent:'#ecb85b',covers:[[192,192,96,32],[192,608,96,32],[992,192,96,32],[992,608,96,32]]},
   bomb:{name:'mg_bombtag',title:'Berek z bombą',description:'Dotknij innego gracza, aby przekazać bombę. Przekazanie nie resetuje zapalnika. Przetrwaj do końca.',control:'Dotknij gracza — przekaż bombę · E — zryw',duration:135,material:'industrial',floor:'#667875',wall:'#c3b59b',dark:'#172a29',accent:'#f18369',covers:[[384,208,64,112],[832,208,64,112],[384,512,64,112],[832,512,64,112]]},
