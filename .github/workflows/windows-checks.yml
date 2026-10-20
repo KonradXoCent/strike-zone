@@ -20,6 +20,8 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm test
       - run: npm run check:ui
+      - name: Test minigames votes, physics, bots and arcade rotation
+        run: npm run test:minigames
       - run: npm run test:launcher
       - run: npm run test:friends
       - run: npm run test:hub
@@ -28,8 +30,6 @@ jobs:
         run: npm run test:hide-seek
       - name: Test Prop Hunt forms, fair observations, shots and matches
         run: npm run test:prop-hunt
-      - name: Test minigames votes, physics, bots and arcade rotation
-        run: npm run test:minigames
       - run: npm run test:materials
       - run: npm run test:workshop-maps
       - name: Test Workshop pool overrides, version replacement and case membership

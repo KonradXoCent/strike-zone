@@ -7,7 +7,7 @@ module.exports=async function verifyFootball(page){
   G.ps.forEach((p,i)=>{p.x=150+i*90;p.y=110;p.a=0;});Object.assign(me,{x:400,y:416,a:0});Object.assign(mate,{x:620,y:416,a:0});Object.assign(enemy,{x:900,y:650,a:Math.PI});
   G.mg.ball={...SzFootball.ball(),x:440,y:416,vx:150};upd(.05);const x=G.mg.ball.x;me.x=300;me.a=Math.PI;mgTicks(.15);
   const free=G.mg.ball.x>x+10&&!('owner'in G.mg.ball)&&Math.hypot(G.mg.ball.x-me.x,G.mg.ball.y-me.y)>100;
-  me.x=400;me.cd=0;G.mg.ball={...SzFootball.ball(),x:425,y:416};const pass=SzMiniGames.action(me,mate.x,mate.y),passSpeed=Math.hypot(G.mg.ball.vx,G.mg.ball.vy);mgTicks(1.7);
+  me.x=400;me.cd=0;G.mg.ball={...SzFootball.ball(),x:425,y:416};const pass=SzMiniGames.action(me,mate.x,mate.y),passSpeed=Math.hypot(G.mg.ball.vx,G.mg.ball.vy);for(let i=0;i<90&&G.mg.ball.last!==G.ps.indexOf(mate);i++)upd(1/60);
   const received=G.mg.ball.last===G.ps.indexOf(mate)&&G.mg.stats.completedPasses===1&&!('owner'in G.mg.ball);const after=G.mg.ball.x;mate.y=300;mgTicks(.2);const keepsRolling=Math.abs(G.mg.ball.x-after)>5;
   Object.assign(enemy,{x:750,y:416});G.mg.ball={...SzFootball.ball(),x:700,y:416,vx:300,last:G.ps.indexOf(me)};mgTicks(.5);const intercepted=G.mg.ball.last===G.ps.indexOf(enemy)&&G.mg.stats.interceptions===1;
   me.cd=0;G.mg.ball={...SzFootball.ball(),x:425,y:416};const shot=SzMiniGames.action(me,1000,416,true),shotSpeed=Math.hypot(G.mg.ball.vx,G.mg.ball.vy);
