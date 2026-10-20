@@ -53,6 +53,10 @@ Ukrywający się wybierają swoje kryjówki.|The hiders are choosing their hidin
 Po odliczaniu ruszysz na poszukiwania.|Start searching when the countdown ends.
 Złapano cię — obserwujesz swoją drużynę|You were caught — spectating your team
 Pozostało ukrywających się:|Hiders remaining:
+Start rundy: 3 szukających i 7 ukrywających się. Znalezieni dołączają do szukających.|Round start: 3 hunters and 7 hiders. Found players join the hunters.
+Znaleziono cię — dołączasz do szukających.|You were found — joining the hunters.
+Wygrane rundy:|Rounds won:
+Rundy / złapani|Rounds / found
 Gotowy|Ready
 E — zryw|E — dash
 LPM lub dotknięcie — złap przeciwnika|Left click or touch — catch an opponent
