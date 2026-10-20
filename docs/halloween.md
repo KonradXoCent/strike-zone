@@ -29,6 +29,8 @@ All case probabilities appear in the contents dialog and match the weighted rewa
 
 Content uses original cached Canvas artwork and synthesized MVP music. It is excluded from regular cases, random normal drops, bot-market listings, bot sales/swaps, contracts and upgrader inputs/outputs. All event content supports player trades, including the new MVP music kits.
 
+The home card has seasonal inline SVG pumpkins, a moon, bats and a cobweb, with a warm orange/purple background. The decorations are static, ignore pointer input, stay within the card and shrink on small screens. They appear only on the Play home screen while the event is active and are removed when it ends.
+
 ## Save and compatibility
 
 Progression, ownership, and equipped event items live in the existing account profile JSON under `halloween2026`. Legacy inventories and loadouts never receive unknown event IDs, so the older public client can still load an account used in the test build. The new client overlays these items into the existing inventory, filters and team loadout UI. No database migration or new Supabase service is required.
