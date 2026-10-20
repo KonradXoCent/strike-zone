@@ -1,4 +1,155 @@
 (function(root){const pairs=`
+Halloweenowa mapa nie jest już dostępna.|The Halloween map is no longer available.
+Nawiedzony cmentarz z ruinami kaplicy, kryptami i bocznymi alejkami. Mapa wydarzenia dostępna do 30 listopada 2026.|A haunted cemetery with a ruined chapel, crypts and side alleys. This event map is available through 30 November 2026.
+Kaplica ma trzy wejścia. Pilnuj boków i trzymaj się drużyny.|The chapel has three entrances. Watch the flanks and stay with your team.
+Krypty i nagrobki zapewniają osłony, ale każdą część cmentarza można obejść.|Crypts and gravestones provide cover, and routes lead around every part of the cemetery.
+Za aktywną grę w Zombie Mode otrzymujesz cukierki wydarzenia.|Active play in Zombie Mode earns event candies.
+Polski|Polish
+W toku|In progress
+Noc nagród|Night of rewards
+Dyniowa skrytka|Pumpkin Cache
+Skarbiec Żniwiarza|Reaper Vault
+Upiorna pozytywka|Haunted Music Box
+Cukierki|Candies
+Graj, zbieraj cukierki i otwieraj skrzynki wydarzenia.|Play, collect candies and open event cases.
+Wydarzenie zakończone. Zdobyte przedmioty zostają w ekwipunku.|The event has ended. Earned items stay in your inventory.
+Do 30 listopada 2026, godz. 23:59 (czas polski)|Until 30 November 2026, 23:59 (Poland time)
+BROŃ · NOŻE · RĘKAWICZKI|WEAPONS · KNIVES · GLOVES
+MUZYKA MVP|MVP MUSIC
+SKINY BRONI|WEAPON SKINS
+Rzadkie wykończenia, 4 noże i 2 wzory rękawiczek.|Rare finishes, 4 knives and 2 glove designs.
+Pięć upiornych melodii i autorskie okładki.|Five haunting melodies and original cover art.
+Osiem halloweenowych skinów do twojego arsenału.|Eight Halloween skins for your arsenal.
+Otwórz za {n} cukierków|Open for {n} candies
+2 cukierki za minutę aktywnej gry · 12 za ukończony mecz · 18 za wygrany.|2 candies per minute of active play · 12 per completed match · 18 per win.
+Nagroda za mecz wymaga co najmniej minuty udziału.|Match rewards require at least one minute of participation.
+Bez kluczy. Przedmioty poza rynkiem botów, kontraktami i upgraderem. Wymiany z graczami są dostępne.|No keys. Items are excluded from the bot market, contracts and upgrader. Player trades are available.
+Zadania wydarzenia|Event quests
+Odbierz dodatkowe cukierki|Earn extra candies
+Nowy zestaw o północy czasu polskiego.|New quests at midnight in Poland.
+Cele całego wydarzenia|Event milestones
+Graj aktywnie przez 10 minut|Play actively for 10 minutes
+Ukończ 2 mecze|Complete 2 matches
+Wygraj 1 mecz|Win 1 match
+Zdobądź 15 eliminacji|Get 15 eliminations
+Spędź 60 minut w meczach|Spend 60 minutes in matches
+Ukończ 10 meczów|Complete 10 matches
+Nagroda: {n} cukierków|Reward: {n} candies
+Cukierki: +{n}|Candies: +{n}
+Halloween 2026 · wymiana z graczami|Halloween 2026 · player trades
+Wyłącznie skrzynki wydarzenia i wymiany z graczami.|Only event cases and player trades.
+Każde otwarcie daje jeden zestaw muzyki MVP.|Each opening grants one MVP music kit.
+Każde otwarcie daje jeden przedmiot. Broń i noże mają dodatkowo 10% szans na StatTrak™.|Each opening grants one item. Weapons and knives also have a 10% chance of StatTrak™.
+Wydarzenie Halloween zostało zakończone.|The Halloween event has ended.
+Masz za mało cukierków.|You do not have enough candies.
+Najpierw ukończ zadanie.|Complete the quest first.
+Ta skrzynka nie jest dostępna.|This case is not available.
+To zadanie nie jest dostępne.|This quest is not available.
+Nie udało się otworzyć skrzynki.|Could not open the case.
+Poczekaj na zapis konta.|Wait for the account save to finish.
+Przedmioty wydarzenia nie są dostępne w kontraktach ani upgraderze.|Event items are not available in contracts or the upgrader.
+Przedmioty Halloween można wymieniać z graczami. Rynek botów jest wyłączony.|Halloween items can be traded with players. The bot market is disabled.
+Polowanie na przedmioty|Prop Hunt
+Zamień się w przedmiot, wtop się w otoczenie i przetrwaj polowanie.|Become a prop, blend into the scenery and survive the hunt.
+Zamieniaj się w przedmioty i przetrwaj polowanie. Szukający strzelają; trafienie dekoracji kosztuje 5 HP.|Become a prop and survive the hunt. Hunters use guns; hitting scenery costs 5 HP.
+Mała skrzynia|Small crate
+Beczka|Barrel
+Opona|Tire
+Skrzynka narzędziowa|Toolbox
+Paleta|Pallet
+Doniczka|Plant pot
+Kamień|Rock
+Krzew|Bush
+Krzesło|Chair
+Walizka|Suitcase
+Kosz|Bin
+odnalazł|found
+trafił za dużo dekoracji|hit too much scenery
+Za mało miejsca na ten przedmiot.|There is not enough room for this prop.
+LPM — strzał · R — przeładuj|Left click — fire · R — reload
+Obrót zablokowany|Rotation locked
+Obrót swobodny|Free rotation
+Podejdź do przedmiotu|Move closer to a prop
+Zamień w|Become
+Przemiana za|Transform in
+Przebranie:|Disguise:
+Zdrowie:|Health:
+Trafienia:|Hits:
+Zwykły przedmiot: −5 HP|Scenery hit: −5 HP
+Przeładowanie…|Reloading…
+złapał|caught
+Zabawa w chowanego|Hide and Seek
+MAGAZYN / CHOWANY|WAREHOUSE / HIDE AND SEEK
+OGRÓD / CHOWANY|GARDEN / HIDE AND SEEK
+MOTEL / CHOWANY|MOTEL / HIDE AND SEEK
+Osobna arena zabawy w chowanego: magazyn z bocznymi składami, rzędami kontenerów i kilkoma drogami między halami.|A dedicated hide-and-seek arena: a warehouse with side storerooms, rows of containers and multiple routes between halls.
+Zmieniaj alejkę za osłoną, aby zgubić szukającego.|Switch aisles behind cover to lose a seeker.
+Zryw pod E pomaga uciec z otwartej hali.|Press E to dash out of an open hall.
+Osobna arena zabawy w chowanego: ogród z pawilonami, kamiennymi parawanami i okrężnymi ścieżkami wokół dziedzińca.|A dedicated hide-and-seek arena: a garden with pavilions, stone screens and looping paths around a courtyard.
+Pawilony pozwalają wyjść inną stroną niż wejście.|Pavilions offer a different way out from the entrance.
+Sygnał dźwiękowy wskazuje okolicę, a nie dokładną kryjówkę.|The sound cue indicates an area rather than the exact hiding spot.
+Osobna arena zabawy w chowanego: motel z pokojami połączonymi korytarzami, recepcją i przejściami przez tylne podwórze.|A dedicated hide-and-seek arena: a motel with connected rooms, corridors, a reception area and backyard passages.
+Korytarz jest szybki, ale łatwo zostać w nim zauważonym.|The corridor is fast, but makes you easy to spot.
+Za meblami znajdziesz osłony; sprawdzaj także drugie wyjście.|Furniture provides cover; check the other exit as well.
+Wynik drużyn:|Team score:
+Szukający|Seekers
+Ukrywający się|Hiders
+Punkty osobiste: złapani przeciwnicy|Personal score: opponents caught
+Czas na ukrycie|Hiding time
+Zamiana ról|Swapping roles
+Szukanie|Searching
+POCZEKAJ NA SYGNAŁ|WAIT FOR THE SIGNAL
+Ukrywający się wybierają swoje kryjówki.|The hiders are choosing their hiding spots.
+Po odliczaniu ruszysz na poszukiwania.|Start searching when the countdown ends.
+Złapano cię — obserwujesz swoją drużynę|You were caught — spectating your team
+Pozostało ukrywających się:|Hiders remaining:
+Start rundy: 3 szukających i 7 ukrywających się. Znalezieni dołączają do szukających.|Round start: 3 hunters and 7 hiders. Found players join the hunters.
+Znaleziono cię — dołączasz do szukających.|You were found — joining the hunters.
+Wygrane rundy:|Rounds won:
+Rundy / złapani|Rounds / found
+Minigry|Minigames
+MINIGRY|MINIGAMES
+Granatowy zbijak|Grenade dodgeball
+Berek z bombą|Bomb tag
+Bitwa na śnieżki|Snowball fight
+Piłka nożna|Football
+Do 10 goli|First to 10 goals
+Piłka nożna na osobnym stadionie. Pierwsza drużyna do 10 goli wygrywa.|Football on a dedicated stadium. First team to 10 goals wins.
+Rzucaj granatami na drugą połowę i unikaj wybuchów. Środka boiska nie można przekroczyć.|Throw grenades onto the other half and dodge explosions. Players cannot cross the centre.
+LPM — rzuć granat · E — zryw|LMB — throw grenade · E — dash
+LPM — akcja · E — zryw|LMB — action · E — dash
+Dotknij innego gracza, aby przekazać bombę. Przekazanie nie resetuje zapalnika. Przetrwaj do końca.|Touch another player to pass the bomb. Passing does not reset its fuse. Be the last survivor.
+Dotknij gracza — przekaż bombę · E — zryw|Touch a player — pass the bomb · E — dash
+Celuj śnieżkami w przeciwników. Trafienie spowalnia, a po eliminacji wracasz do gry. Pierwsza drużyna do 15 punktów wygrywa.|Hit opponents with snowballs. Hits slow them down and eliminated players respawn. First team to 15 points wins.
+LPM — rzuć śnieżkę · E — zryw|LMB — throw snowball · E — dash
+Podawaj i strzelaj do bramki przeciwnika na osobnym stadionie. Pierwsza drużyna do 10 goli wygrywa.|Pass and shoot into the opposing goal in a dedicated stadium. First team to 10 goals wins.
+LPM — kopnij piłkę · E — sprint|LMB — kick the ball · E — sprint
+BRAMKARZ|GOALKEEPER
+Głosuj na minigrę|Vote for a minigame
+Jedna gra, cztery areny. Gracze i boty wybierają pierwszą minigrę.|One mode, four arenas. Players and bots vote for the first minigame.
+Po meczu następna minigra zostanie wylosowana.|The next minigame is randomly selected after the match.
+Głosy|Votes
+Losowanie następnej minigry|Drawing the next minigame
+Kolejna gra rozpocznie się automatycznie.|The next game will start automatically.
+Pozostało graczy:|Players remaining:
+Masz bombę!|You have the bomb!
+Obserwujesz grę|Spectating
+Drużyna niebieska wygrywa|Blue team wins
+Drużyna pomarańczowa wygrywa|Orange team wins
+Następna minigra za|Next minigame in
+GOL!|GOAL!
+Granatowy zbijak, berek z bombą, śnieżki i piłka nożna. Głosowanie i losowa rotacja.|Grenade dodgeball, bomb tag, snowballs and football. Voting and random rotation.
+Gotowy|Ready
+E — zryw|E — dash
+LPM lub dotknięcie — złap przeciwnika|Left click or touch — catch an opponent
+TAB — tabela wyników|TAB — scoreboard
+Szukający wygrali rundę|The seekers won the round
+Ukrywający się wygrali rundę|The hiders won the round
+Schowaj się lub odszukaj przeciwników. Osobne areny i zamiana ról.|Hide or find the opponents. Dedicated arenas and alternating roles.
+Drużyna niebieska|Blue team
+Drużyna pomarańczowa|Orange team
+Wybierz pierwszą rolę|Choose your first role
+30 sekund na ukrycie, 150 sekund szukania. Po każdej rundzie zamiana ról.|30 seconds to hide, 150 seconds to search. Swap roles after every round.
 ZWYCIĘSTWO|VICTORY
 PORAŻKA|DEFEAT
 Nie uruchomiono konta. Wybierz „Spróbuj ponownie”.|The account connection has not started. Select “Try again”.

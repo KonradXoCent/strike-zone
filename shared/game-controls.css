@@ -3,3 +3,6 @@
 #cv.sz-game-aim{cursor:none}
 #sz-mouse-capture{position:absolute;left:50%;bottom:76px;transform:translateX(-50%);z-index:5;max-width:calc(100% - 32px);padding:10px 17px;border:1px solid #d5b77766;background:#101923ed;box-shadow:0 5px 22px #0006;border-radius:7px;font:12px/1.5 system-ui;color:#f0dcac;text-align:center;cursor:pointer}#sz-mouse-capture[hidden]{display:none}#sz-mouse-capture small{display:block;color:#aebcc8;font-size:10px}
 [data-pointer-settings] p{font:12px/1.7 system-ui;color:#9aafbf}[data-pointer-settings] label{font:12px system-ui}
+
+#game.sz-compact-hud #sz-mouse-capture{left:auto;right:12px;bottom:64px;transform:none;padding:5px 9px;font-size:9px;max-width:260px;background:#101923d9;box-shadow:none}#game.sz-compact-hud #sz-mouse-capture small{display:none}
+@media(max-width:650px){#game.sz-compact-hud #sz-mouse-capture{bottom:100px;right:8px;max-width:220px}}

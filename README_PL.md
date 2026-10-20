@@ -1,15 +1,40 @@
-# Strike Zone 2D — 1.5.1
+# Strike Zone 2D — 1.5.2
 
-Pobierz `StrikeZone-Setup-1.5.1.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
-Posiadacze wersji 1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0, 1.4.1 i 1.5.0 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
+Pobierz `StrikeZone-Setup-1.5.2.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
+Posiadacze wersji 1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0, 1.4.1, 1.5.0 i 1.5.1 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
 
-Pełna lista zmian 1.5.1: [RELEASE_NOTES.md](RELEASE_NOTES.md).
+Pełna lista zmian 1.5.2: [RELEASE_NOTES.md](RELEASE_NOTES.md).
+
+Wersja 1.5.2 dodaje Prop Hunt, Minigry, osobną Piłkę nożną do 10 goli oraz wydarzenie Halloween do 30 listopada 2026. Cukierki, zadania i trzy skrzynki wydarzenia obejmują 23 sezonowe przedmioty, a Zombie Mode otrzymuje mapę cmentarną. Menu i launcher mają wspólne sezonowe dekoracje. Overwatch nagradza do 10 poprawnych ocen dziennie.
 
 Wersja 1.4.1 ujednolica logo launchera, menu, ekranów startowych oraz ikon aplikacji
 i instalatora: złota tarcza z literą Z na przezroczystym tle. `assets/icon.png` jest
 wspólnym źródłem dla interfejsu i osadzonego HTML, a `assets/icon.ico` zawiera siedem
 rozmiarów ikon Windows (16–256 px). Po zmianie obrazu uruchom
 `node scripts/embed-shared.cjs`; przygotowanie gry sprawdza zgodność logo.
+
+## W przygotowaniu: Hide and Seek i Prop Hunt
+
+Prop Hunt pozwala graczom i botom przebierać się za przedmioty otoczenia.
+Każda z trzech aren ma pięć dostępnych przebrań. **R** kopiuje pobliski
+przedmiot, **F** blokuje obrót, a **E** uruchamia zryw. Szukający strzelają
+z pistoletów; trafienie zwykłej dekoracji kosztuje 5 HP. Zmiany przebrania,
+trafienia i zmiany ról rozstrzyga host wspólnego meczu.
+
+Test nowego wariantu: `npm run test:prop-hunt`. Opis: [docs/prop-hunt.md](docs/prop-hunt.md).
+
+Tryb **Zabawa w chowanego / Hide and Seek** ma trzy własne areny:
+`hs_warehouse`, `hs_garden` i `hs_motel`. Pula jest oddzielona od zwykłych map.
+Drużyny mają 30 sekund na ukrycie i 150 sekund na szukanie. Po rundzie zmiana
+ról; mecz obejmuje sześć rund. Szukający łapią dotknięciem lub lewym przyciskiem
+myszy z bliska. Ukrywający się mają zryw pod E z czasem odnowienia.
+Co 25 sekund pojawia się przybliżona wskazówka dźwiękowa o okolicy ukrycia.
+Boty reagują na widoczność i wskazówki oraz pamiętają ostatnią obserwację.
+
+Tryb działa lokalnie oraz w lobby i serwerach ze wspólną symulacją hosta.
+`npm run test:hide-seek` sprawdza mapy, boty, rundy, łapanie i nagrody;
+`npm run test:network` obejmuje też synchronizację nowego trybu.
+Szczegóły: [docs/hide-seek.md](docs/hide-seek.md).
 
 ## Język, motywy i rozmowy
 
@@ -183,7 +208,7 @@ Sprawdza także blokadę 4/5, odblokowanie po piątym projekcie, zakup, animacj�
 otwierania, wyposażenie zdobytego przedmiotu i jego odczyt po przeładowaniu.
 Obejmuje też niedostępny health endpoint, ograniczenie skryptów `data:`, zerwanie
 sieci oraz żądanie, które nie odpowiada aż do przerwania po limicie czasu.
-Workflow Windows instaluje prawdziwą publiczną 1.5.0 i aktualizuje ją do bieżącej wersji.
+Workflow Windows instaluje prawdziwą publiczną 1.5.1 i aktualizuje ją do bieżącej wersji.
 Następnie sprawdza błędne hasło, rejestrację z potwierdzeniem e-maila i bez niego,
 odczyt nicku i awatara, tę samą sesję w grze, brak osobnych kontrolek logowania,
 Escape, zapis postępu, zmiany profilu, wylogowanie oraz izolację dwóch kont.

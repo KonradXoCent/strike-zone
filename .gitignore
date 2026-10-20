@@ -10,3 +10,5 @@ vendor/
 .DS_Store
 /network-report.json
 /locale-report.json*
+/test-output/
+/test-preview/

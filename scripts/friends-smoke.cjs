@@ -70,6 +70,7 @@ let complete=false;process.on('beforeExit',()=>{if(!complete&&!process.exitCode)
   await recipient.waitForFunction(()=>!TR&&P().skins.includes('knife:8:st')&&!P().skins.includes('ak:0'));
   assert.equal(await recipient.evaluate(()=>P().tradeHistory[0].receive),'knife:8:st');
   console.log('PASS real SDK invitation delivery, acceptance and completed StatTrak knife trade between two clients');
+  await require('./test-support/halloween-trades.cjs')(sender,recipient,a,b);
 
   await sender.evaluate(id=>trStart(id,'Play'),b);await recipient.waitForFunction(id=>TRQ?.fid===id,a);await recipient.evaluate(()=>trAccept());
   await sender.waitForFunction(()=>TR?.ch?.state==='joined');await recipient.waitForFunction(()=>TR?.ch?.state==='joined');

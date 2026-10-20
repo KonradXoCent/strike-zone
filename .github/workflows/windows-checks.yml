@@ -20,18 +20,35 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm test
       - run: npm run check:ui
+      - name: Test Halloween progression, event cases, exclusive items, rendering and expiry
+        run: npm run test:halloween
+      - name: Audit Polish and English interface screens
+        run: npm run test:locale
+      - name: Test minigames votes, physics, bots and arcade rotation
+        run: npm run test:minigames
+      - run: npm run test:network
       - run: npm run test:launcher
       - run: npm run test:friends
       - run: npm run test:hub
       - run: npm run test:controls
+      - name: Test Hide and Seek arenas, fair bots, rounds and rewards
+        run: npm run test:hide-seek
+      - name: Test Prop Hunt forms, fair observations, shots and matches
+        run: npm run test:prop-hunt
       - run: npm run test:materials
       - run: npm run test:workshop-maps
       - name: Test Workshop pool overrides, version replacement and case membership
         run: npm run test:moderation
       - name: Test Workshop submissions, shared lobbies and skin ownership
         run: npm run test:community
-      - name: Audit Polish and English interface screens
-        run: npm run test:locale
       - run: npm run test:social
-      - run: npm run test:network
       - run: npm run test:gameplay
+      - name: Build standalone HTML test preview
+        run: node scripts/prepare-preview.cjs test-preview/Strike-Zone-Halloween-Test.html
+      - name: Upload standalone HTML test preview
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: Strike-Zone-HTML-Test
+          path: test-preview/Strike-Zone-Halloween-Test.html
+          if-no-files-found: error
+          retention-days: 90

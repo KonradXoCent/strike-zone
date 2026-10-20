@@ -1,0 +1,24 @@
+/* No animation or canvas loop: these decorations are confined to the launcher hero. */
+body.launcher-halloween .app{background:radial-gradient(ellipse at 82% 0,#73466f35,transparent 58%),radial-gradient(ellipse at 20% 100%,#d67b2920,transparent 52%)}
+body.launcher-halloween .titlebar{border-bottom:1px solid #c98c3920}
+body.launcher-halloween .hero{border-color:#d19a5352}
+body.launcher-halloween .hero-art{opacity:.45}
+body.launcher-halloween .hero-shade{background:linear-gradient(90deg,#161c27f5 0%,#1b202ce8 35%,#49314550 100%),linear-gradient(0deg,#221f2af0,transparent 55%,#392c4433)}
+body.launcher-halloween .hero-emblem{z-index:0}
+body.launcher-halloween .hero-top,body.launcher-halloween .hero-copy,body.launcher-halloween .map-label{position:relative;z-index:2}
+body.launcher-halloween .map-label{position:absolute}
+body.launcher-halloween .edition{display:none}
+body.launcher-halloween h1 em{color:#edb777}
+body.launcher-halloween .play-button{background:linear-gradient(115deg,#f0c17e,#dc944e);border-color:#e8b87e}
+body.launcher-halloween .play-button:not(:disabled):hover{background:#f3c78c}
+body.launcher-halloween .launch-panel,body.launcher-halloween .account-card,body.launcher-halloween .auth-gate{border-color:#c5944c2b}
+.launcher-halloween-badge{color:#efbc81;border:1px solid #db9c5b66;background:#392b3ac2;border-radius:5px;padding:6px 8px;font-size:7px;font-weight:650;letter-spacing:1px;white-space:nowrap}
+.launcher-halloween-decor{position:absolute;inset:0;pointer-events:none;user-select:none}
+.launcher-halloween-decor svg{position:absolute;overflow:hidden;pointer-events:none}
+.launcher-halloween-sky{width:50%;height:auto;right:0;top:20px;z-index:-1}
+.launcher-halloween-web{width:110px;height:110px;right:0;top:0;opacity:.24;z-index:1}
+.launcher-halloween-pumpkins{width:180px;height:auto;right:14px;bottom:43px;z-index:1}
+@media(max-height:610px){.launcher-halloween-sky{width:44%;top:19px}.launcher-halloween-web{width:80px;height:80px}.launcher-halloween-pumpkins{width:137px;right:3px;bottom:33px}}
+@media(max-width:820px){body.launcher-halloween .hero-top>.eyebrow{display:none}.launcher-halloween-badge{font-size:7px}.launcher-halloween-sky{width:60%;right:-8px}.launcher-halloween-pumpkins{width:133px;right:0;bottom:36px}.launcher-halloween-web{width:86px;height:86px}}
+@media(max-width:560px){.launcher-halloween-sky{width:45%}.launcher-halloween-pumpkins{width:114px;bottom:36px}.launcher-halloween-web{width:72px;height:72px}}
+@media(max-width:820px) and (max-height:610px){.launcher-halloween-pumpkins{width:103px;bottom:30px}.launcher-halloween-sky{width:56%;top:13px}.launcher-halloween-web{width:68px;height:68px}}
