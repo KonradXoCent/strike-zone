@@ -19,6 +19,9 @@ Dokończ odbiór nagrody|Complete your reward claim
 Sprawdzamy zapis poprzedniej próby. Ponowne sprawdzenie nie przyzna nagrody dwa razy.|We are checking your previous attempt. Checking again will not award the reward twice.
 Sprawdź i dokończ odbiór|Check and complete claim
 Odebrano {n} cukierków!|Claimed {n} candies!
+Odebrano pieniądze: {n}$.|Claimed money: {n}$.
+Odebrano skrzynki: {item} × {n}!|Claimed cases: {item} × {n}!
+Odebrano klucze: {item} × {n}!|Claimed keys: {item} × {n}!
 Ten kod został już wykorzystany na twoim koncie.|This code has already been redeemed on your account.
 Halloweenowa mapa nie jest już dostępna.|The Halloween map is no longer available.
 Nawiedzony cmentarz z ruinami kaplicy, kryptami i bocznymi alejkami. Mapa wydarzenia dostępna do 30 listopada 2026.|A haunted cemetery with a ruined chapel, crypts and side alleys. This event map is available through 30 November 2026.
