@@ -1,3 +1,33 @@
+Strike Zone 2D 1.5.2 — Halloween, Prop Hunt i Minigry
+
+- Halloween 2026 do 30 listopada, godz. 23:59 czasu polskiego: sezonowy panel nad lobby, dynie, nietoperze, księżyc i pajęczyny w menu gry oraz launcherze. Dekoracje dopasowują się do małych ekranów i wyłączą się po wydarzeniu; motywy launchera pozostają dostępne.
+- Cukierki za aktywną grę, ukończone mecze oraz zadania dzienne i wydarzeniowe. Zombie Mode i wszystkie Minigry również nagradzają cukierkami.
+- Trzy skrzynki wydarzenia za 60, 240 i 35 cukierków: 23 halloweenowe skiny broni, noży, rękawiczek i muzyki MVP. Broń i noże mają szansę na StatTrak. Przedmioty pozostają w ekwipunku po wydarzeniu i można je wymieniać z graczami; nie trafiają do rynku botów, zwykłych skrzynek, kontraktów ani upgradera.
+- Nowa mapa Zombie Mode zm_hallows_end: cmentarz, kaplica, krypty i sezonowe dekoracje. Dostępna do końca wydarzenia także w lobby i na serwerach.
+- Prop Hunt z trzema własnymi mapami: 3 szukających i 7 chowających się, zamiana w rekwizyty, anonimowi chowający, przejście znalezionych do szukających oraz boty reagujące na zauważony ruch. Chowający widzą całą mapę.
+- Minigry: zbijak granatami, berek z bombą, śnieżki i piłka nożna. Głosowanie na start, losowanie kolejnej minigry, własne areny i wspólna gra przez lobby lub serwery.
+- Osobny tryb Piłka nożna i jej wariant w Minigrach do 10 goli. Swobodna piłka, kopnięcie lewym przyciskiem myszy, bramkarze ustawieni na środku bramki oraz podania botów do graczy.
+- Overwatch: do 10 nagradzanych poprawnych ocen dziennie. Sprawdzone wspólne mecze nowych trybów, synchronizacja wyników i nagrody hosta oraz dołączających.
+
+W obecnym launcherze pobierz aktualizację **1.5.2**, następnie wybierz instalację i ponowne uruchomienie. Gra i launcher aktualizują się razem, zachowując konto, ekwipunek i dane lokalne. Nowa instalacja: **StrikeZone-Setup-1.5.2.exe**.
+W publicznej grze logowanie odbywa się przez launcher.
+
+English
+
+- Halloween 2026 runs through 30 November, 23:59 Polish time. Seasonal lobby panel, pumpkins, bats, moonlight and cobwebs in the game menu and launcher. Decorations fit compact windows and expire with the event; launcher themes remain available.
+- Earn candies from active play, completed matches, daily quests and event milestones, including Zombie Mode and all four Minigames.
+- Three event cases cost 60, 240 and 35 candies and contain 23 Halloween weapon, knife, glove and MVP music items. Weapons and knives can be StatTrak. Earned items remain owned after the event and support player trades; regular cases, bot-market transactions, contracts and the upgrader exclude them.
+- Seasonal Zombie Mode cemetery zm_hallows_end, with a chapel and crypts, supports lobbies and servers until the event ends.
+- Prop Hunt features three dedicated maps, 3 hunters and 7 hiders, prop transformations, anonymous hiders, conversion on capture and bots that react to observed movement. Hiders can see the whole map.
+- Minigames includes grenade dodgeball, bomb tag, snowballs and football, an opening vote, random rotation, dedicated arenas and shared lobby/server matches.
+- Standalone Football and its Minigames variant play to ten goals with a free ball, the original left-click kick, centred goalkeepers and bot passes to human teammates.
+- Overwatch rewards up to ten correct verdicts per day. Shared new-mode matches, score synchronization and host/guest rewards have been checked.
+
+Download **1.5.2** in the existing launcher, then install and restart. The game and launcher update together while preserving accounts, inventories and local data. New installation: **StrikeZone-Setup-1.5.2.exe**.
+The public game uses the launcher account session.
+
+---
+
 Strike Zone 2D 1.5.1 — tłumaczenia, Warsztat i sterowanie
 
 - Poprawione tłumaczenia PL/EN: „Workshop”, opisy i wskazówki wszystkich map, głosowanie, wczytywanie, Overwatch, Kill Cam, skrzynki, zakupy, wyniki meczu i podpowiedzi. Kontrola obejmuje 270 widoków, tekst na ekranie gry i etykiety dostępności. Nazwy graczy i projekty autorów zachowują swój zapis.

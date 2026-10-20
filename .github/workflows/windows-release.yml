@@ -38,6 +38,10 @@ jobs:
         run: node scripts/configure-updates.cjs --github "$env:GITHUB_REPOSITORY"
       - run: npm test
       - run: npm run check:ui
+      - name: Test Halloween progression, event cases, exclusive items, rendering and expiry
+        run: npm run test:halloween
+      - name: Test minigames votes, physics, bots and arcade rotation
+        run: npm run test:minigames
       - name: Test launcher accounts and friends on Windows before publishing
         run: npm run test:launcher
       - name: Test in-game avatars, presence and online-only trade invitations
@@ -78,12 +82,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/publish-release.cjs
-      - name: Download previous public 1.5.0 installer
+      - name: Download previous public 1.5.1 installer
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: pwsh
-        run: gh release download v1.5.0 --repo "$env:GITHUB_REPOSITORY" --pattern "StrikeZone-Setup-1.5.0.exe" --dir release
-      - name: Test installed 1.5.0 update, launcher accounts and Escape on Windows
+        run: gh release download v1.5.1 --repo "$env:GITHUB_REPOSITORY" --pattern "StrikeZone-Setup-1.5.1.exe" --dir release
+      - name: Test installed 1.5.1 update, launcher accounts and Escape on Windows
         run: node scripts/windows-update-smoke.cjs
       - name: Attach Windows update test report
         if: always()
