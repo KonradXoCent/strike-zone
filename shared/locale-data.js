@@ -63,6 +63,8 @@ Granatowy zbijak|Grenade dodgeball
 Berek z bombą|Bomb tag
 Bitwa na śnieżki|Snowball fight
 Piłka nożna|Football
+Do 10 goli|First to 10 goals
+Piłka nożna na osobnym stadionie. Pierwsza drużyna do 10 goli wygrywa.|Football on a dedicated stadium. First team to 10 goals wins.
 Rzucaj granatami na drugą połowę i unikaj wybuchów. Środka boiska nie można przekroczyć.|Throw grenades onto the other half and dodge explosions. Players cannot cross the centre.
 LPM — rzuć granat · E — zryw|LMB — throw grenade · E — dash
 LPM — akcja · E — zryw|LMB — action · E — dash
@@ -70,7 +72,7 @@ Dotknij innego gracza, aby przekazać bombę. Przekazanie nie resetuje zapalnika
 Dotknij gracza — przekaż bombę · E — zryw|Touch a player — pass the bomb · E — dash
 Celuj śnieżkami w przeciwników. Trafienie spowalnia, a po eliminacji wracasz do gry. Pierwsza drużyna do 15 punktów wygrywa.|Hit opponents with snowballs. Hits slow them down and eliminated players respawn. First team to 15 points wins.
 LPM — rzuć śnieżkę · E — zryw|LMB — throw snowball · E — dash
-Podawaj i strzelaj do bramki przeciwnika na osobnym stadionie. Pierwsza drużyna do 3 goli wygrywa.|Pass and shoot into the opposing goal in a dedicated stadium. First team to 3 goals wins.
+Podawaj i strzelaj do bramki przeciwnika na osobnym stadionie. Pierwsza drużyna do 10 goli wygrywa.|Pass and shoot into the opposing goal in a dedicated stadium. First team to 10 goals wins.
 LPM — kopnij piłkę · E — sprint|LMB — kick ball · E — sprint
 Głosuj na minigrę|Vote for a minigame
 Jedna gra, cztery areny. Gracze i boty wybierają pierwszą minigrę.|One mode, four arenas. Players and bots vote for the first minigame.

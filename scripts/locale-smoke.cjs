@@ -44,6 +44,10 @@ fs.writeFileSync(tmp+'/package.json',JSON.stringify({main:'main.cjs'}));fs.write
    await snap(language,'minigame-roulette:'+kind,()=>{SzMiniGames.startRoll();G.mg.phaseElapsed=2;draw();});
   }
   await page.evaluate(()=>quit());
+  await snap(language,'football-warmup',()=>{sel.mode='football';sel.map=SzMiniData.ids.football;sel.team='CT';begin0();G.paused=true;draw();});
+  await snap(language,'football-live',()=>{G.mg.phase='live';G.ph='live';draw();});
+  await snap(language,'football-scoreboard',()=>{keys.tab=1;draw();keys.tab=0;});
+  await snap(language,'football-result',()=>{G.sc.CT=10;G.sc.T=7;SzMiniGames.finish('CT');draw();});await page.evaluate(()=>quit());
   await page.evaluate(()=>{sel.map=2;sel.mode='tdm';sel.team='CT';begin0();if(G.intro)skipIntro();G.paused=true;});
   await snap(language,'pause',()=>{G.paused=false;togglePause();});await snap(language,'pause-settings',()=>pauseSettings());
   await page.evaluate(()=>{G.paused=false;G.ph='buy';G.bo=1;$('ov').style.display='none';});
