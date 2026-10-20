@@ -33,7 +33,8 @@
     "test:locale": "npm run prepare:game && node scripts/locale-smoke.cjs",
     "test:hide-seek": "npm run prepare:game && node scripts/hide-seek-smoke.cjs",
     "test:prop-hunt": "npm run prepare:game && node scripts/prop-hunt-smoke.cjs",
-    "test:minigames": "npm run prepare:game && node scripts/minigames-smoke.cjs"
+    "test:minigames": "npm run prepare:game && node scripts/minigames-smoke.cjs",
+    "test:halloween": "npm run prepare:game && node scripts/halloween-smoke.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",

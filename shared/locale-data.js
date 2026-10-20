@@ -1,4 +1,48 @@
 (function(root){const pairs=`
+W toku|In progress
+Noc nagród|Night of rewards
+Dyniowa skrytka|Pumpkin Cache
+Skarbiec Żniwiarza|Reaper Vault
+Upiorna pozytywka|Haunted Music Box
+Cukierki|Candies
+Graj, zbieraj cukierki i otwieraj skrzynki wydarzenia.|Play, collect candies and open event cases.
+Wydarzenie zakończone. Zdobyte przedmioty zostają w ekwipunku.|The event has ended. Earned items stay in your inventory.
+Do 30 listopada 2026, godz. 23:59 (czas polski)|Until 30 November 2026, 23:59 (Poland time)
+BROŃ · NOŻE · RĘKAWICZKI|WEAPONS · KNIVES · GLOVES
+MUZYKA MVP|MVP MUSIC
+SKINY BRONI|WEAPON SKINS
+Rzadkie wykończenia, 4 noże i 2 wzory rękawiczek.|Rare finishes, 4 knives and 2 glove designs.
+Pięć upiornych melodii i autorskie okładki.|Five haunting melodies and original cover art.
+Osiem halloweenowych skinów do twojego arsenału.|Eight Halloween skins for your arsenal.
+Otwórz za {n} cukierków|Open for {n} candies
+2 cukierki za minutę aktywnej gry · 12 za ukończony mecz · 18 za wygrany.|2 candies per minute of active play · 12 per completed match · 18 per win.
+Nagroda za mecz wymaga co najmniej minuty udziału.|Match rewards require at least one minute of participation.
+Bez kluczy. Przedmioty poza rynkiem botów, kontraktami i upgraderem. Wymiany z graczami są dostępne.|No keys. Items are excluded from the bot market, contracts and upgrader. Player trades are available.
+Zadania wydarzenia|Event quests
+Odbierz dodatkowe cukierki|Earn extra candies
+Nowy zestaw o północy czasu polskiego.|New quests at midnight in Poland.
+Cele całego wydarzenia|Event milestones
+Graj aktywnie przez 10 minut|Play actively for 10 minutes
+Ukończ 2 mecze|Complete 2 matches
+Wygraj 1 mecz|Win 1 match
+Zdobądź 15 eliminacji|Get 15 eliminations
+Spędź 60 minut w meczach|Spend 60 minutes in matches
+Ukończ 10 meczów|Complete 10 matches
+Nagroda: {n} cukierków|Reward: {n} candies
+Cukierki: +{n}|Candies: +{n}
+Halloween 2026 · wymiana z graczami|Halloween 2026 · player trades
+Wyłącznie skrzynki wydarzenia i wymiany z graczami.|Only event cases and player trades.
+Każde otwarcie daje jeden zestaw muzyki MVP.|Each opening grants one MVP music kit.
+Każde otwarcie daje jeden przedmiot. Broń i noże mają dodatkowo 10% szans na StatTrak™.|Each opening grants one item. Weapons and knives also have a 10% chance of StatTrak™.
+Wydarzenie Halloween zostało zakończone.|The Halloween event has ended.
+Masz za mało cukierków.|You do not have enough candies.
+Najpierw ukończ zadanie.|Complete the quest first.
+Ta skrzynka nie jest dostępna.|This case is not available.
+To zadanie nie jest dostępne.|This quest is not available.
+Nie udało się otworzyć skrzynki.|Could not open the case.
+Poczekaj na zapis konta.|Wait for the account save to finish.
+Przedmioty wydarzenia nie są dostępne w kontraktach ani upgraderze.|Event items are not available in contracts or the upgrader.
+Przedmioty Halloween można wymieniać z graczami. Rynek botów jest wyłączony.|Halloween items can be traded with players. The bot market is disabled.
 Polowanie na przedmioty|Prop Hunt
 Zamień się w przedmiot, wtop się w otoczenie i przetrwaj polowanie.|Become a prop, blend into the scenery and survive the hunt.
 Zamieniaj się w przedmioty i przetrwaj polowanie. Szukający strzelają; trafienie dekoracji kosztuje 5 HP.|Become a prop and survive the hunt. Hunters use guns; hitting scenery costs 5 HP.

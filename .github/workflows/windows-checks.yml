@@ -20,6 +20,8 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm test
       - run: npm run check:ui
+      - name: Test Halloween progression, event cases, exclusive items, rendering and expiry
+        run: npm run test:halloween
       - name: Test minigames votes, physics, bots and arcade rotation
         run: npm run test:minigames
       - run: npm run test:network
@@ -42,11 +44,11 @@ jobs:
       - run: npm run test:social
       - run: npm run test:gameplay
       - name: Build standalone HTML test preview
-        run: node scripts/prepare-preview.cjs test-preview/Strike-Zone-Prop-Hunt-Test.html
+        run: node scripts/prepare-preview.cjs test-preview/Strike-Zone-Halloween-Test.html
       - name: Upload standalone HTML test preview
         uses: actions/upload-artifact@v7.0.2
         with:
           name: Strike-Zone-HTML-Test
-          path: test-preview/Strike-Zone-Prop-Hunt-Test.html
+          path: test-preview/Strike-Zone-Halloween-Test.html
           if-no-files-found: error
           retention-days: 90

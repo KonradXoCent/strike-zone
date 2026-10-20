@@ -81,7 +81,7 @@
    for(const card of main.querySelectorAll('#forge-owned .forge-skin')){card.querySelector('b')?.setAttribute('data-user-content','');}
    filterInventory();
   }
-  function filterInventory(){if(T!=='inv'||INV!=='w'||!$('hub-inventory-toolbar'))return;const counts=new Map();for(const id of P().skins)counts.set(id,(counts.get(id)||0)+1);let total=0,shown=0,standard=0,community=0;
+  function filterInventory(){if(T!=='inv'||INV!=='w'||!$('hub-inventory-toolbar'))return;const counts=new Map();for(const id of (globalThis.SzHalloween?SzHalloween.inventoryProfile(P()):P()).skins)counts.set(id,(counts.get(id)||0)+1);let total=0,shown=0,standard=0,community=0;
    for(const card of $('main').querySelectorAll('[data-inventory-id]')){const id=card.dataset.inventoryId,quantity=counts.get(id)||0,show=matches(standardMeta(id),state.query,state.type);card.hidden=!show;total+=quantity;if(show){shown+=quantity;standard++;}}
    for(const card of $('main').querySelectorAll('#forge-owned .forge-skin')){const id=card.querySelector('[data-forge-equip]')?.dataset.forgeEquip,o=FORGE.owned.find(o=>o.id===id);if(!o)continue;const show=matches(communityMeta(o),state.query,state.type);card.hidden=!show;total++;if(show){shown++;community++;}}
    $('hub-skin-count').textContent=t('Wyniki:')+' '+number(shown)+' / '+number(total);$('inventory-skins').hidden=standard===0;const owned=$('forge-owned');if(owned)owned.hidden=community===0;$('hub-inventory-empty').hidden=shown>0;
