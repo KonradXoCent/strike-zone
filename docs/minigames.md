@@ -11,7 +11,7 @@ separate local session.
 | Grenade dodgeball | `mg_dodgeyard` | 5v5, 100 seconds. Players stay on their own half; HE grenades fly over the central fence. Eliminate the other team. A timeout compares survivors, then health. |
 | Bomb tag | `mg_bombtag` | Free for all, 13-second fuse. Touch another player to pass the bomb without resetting the fuse. A short transfer lock prevents immediate tag-back. The explosion eliminates its carrier; the last survivor wins. |
 | Snowball fight | `mg_snowfield` | 5v5, first to 15 eliminations or 100 seconds. Snowballs deal 34 damage and briefly slow; eliminated players respawn after three seconds. |
-| Football | `mg_stadium` | Dedicated stadium, 5v5, first to ten goals, with no time limit. Left click passes and right click shoots. The ball rolls freely and rebounds from players; bots pass, intercept and keep goal. |
+| Football | `mg_stadium` | Dedicated stadium, 5v5, first to ten goals, with no time limit. Left click kicks toward the cursor using the original strength and reach. The ball rolls freely and rebounds from players; bots pass, intercept and keep goal. |
 
 WASD moves and E gives a short dash/sprint. Minigames use compact HUD panels,
 a Tab scoreboard, their own equipment and original cached Canvas arenas.
@@ -52,13 +52,16 @@ pass to teammates instead of running back from an outfield spawn. These roles
 are included in host snapshots and survive the replacement of a bot by a guest.
 
 The ball rolls freely, with friction and rebounds from players. Touching it
-never grants possession or attaches it to a player, and moving or turning away
-does not pull it along. Left click passes toward the cursor, with limited lead
-when aiming at a nearby teammate; right click makes a moderately stronger
-560 px/s shot. Passes are capped at 420 px/s. A full shot stops after roughly
-417 px, so it still cannot cross the whole pitch. Teammates and opponents can
-intercept or deflect it immediately; only the kicker has a short contact grace
-period to prevent their own body from blocking a released ball.
+never grants possession or attaches it to a player. The original kick is
+restored: left click aims directly from the player toward the cursor, with
+820 px/s strength, 52 px reach, a 0.35-second player cooldown and a 0.45-second
+ball kick cooldown. Right click does not trigger a different football action.
+Drag is again 0.65, with the original 900 px/s physics cap, so a kick can travel
+the length of an unobstructed pitch. Kick strength no longer depends on target
+distance, pass/shot intent or proximity to a teammate, and aiming has no
+automatic lead or ball repositioning. Players can still intercept or deflect
+a released ball; the kicker has a short contact grace period to avoid blocking
+their own kick.
 
 Bots consider both local and remote human teammates when choosing a pass.
 An open human has additional priority, including safe short backpasses. A
@@ -74,12 +77,12 @@ the host's decisions.
 ## Verification
 
 - `npm test`: arena geometry, extreme centre-bound inputs, swept snowball hits,
-  goal crossings, reduced shot range, ball friction and non-repeating choices,
+  goal crossings, restored full-pitch kick range, ball friction and non-repeating choices,
   plus existing tests.
 - `npm run test:minigames`: actual mode-card entry and loading, lobby guest gate,
   shared voting, blocked centre, HE hits, fuse transfers, snowball respawn,
   goalkeeper spawn/reset and deflections, independent ball motion, passes,
-  loose reception, interceptions, stronger shots and local/remote human backpasses, third/ninth/tenth goals, no timeout, standalone
+  loose reception, interceptions, original kick strength/reach/cooldowns and local/remote human backpasses, third/ninth/tenth goals, no timeout, standalone
   results, one reward, uninterrupted roulette and full seeded bot matches.
 - `npm run test:network`: two SDK clients in lobby and server sessions; voting,
   guest movement independent of the ball, actual shooting, bot passes to the

@@ -2,15 +2,13 @@
 (function(root){'use strict';
  const A=SzMiniGames,D=SzMiniData,F=D.FOOTBALL;
  const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),index=p=>G.ps.indexOf(p),players=()=>G.ps.filter(p=>p.alive),human=p=>!!(p.human||p.rh);
- function ball(){return{x:D.WIDTH/2,y:D.HEIGHT/2,vx:0,vy:0,last:-1,previous:-1,releaseUntil:0,passFrom:-1};}
+ function ball(){return{x:D.WIDTH/2,y:D.HEIGHT/2,vx:0,vy:0,last:-1,previous:-1,releaseUntil:0,kickUntil:0,passFrom:-1};}
  function assignRoles(){for(const team of['CT','T']){const peers=G.ps.filter(p=>(p.mgHomeTeam||p.team)===team);peers.forEach((p,i)=>{p.mgKeeper=i===peers.length-1;p.mgPitchRole=i;});}}
  function spawnPoint(p){const own=(p.mgHomeTeam||p.team)==='CT',formation=[[360,320],[260,180],[360,512],[260,652]],point=p.mgKeeper?[F.keeperX,D.HEIGHT/2]:formation[(p.mgPitchRole||0)%4];return{x:own?point[0]:D.WIDTH-point[0],y:point[1]};}
- function kick(p,x,y,shot=false){const m=G.mg,b=m.ball;if(G.client||G.paused||G.over||m.phase!=='live'||!p.alive||p.cd>0||distance(p,b)>40)return false;
+ function kick(p,x,y,shot=false){const m=G.mg,b=m.ball;if(G.client||G.paused||G.over||m.phase!=='live'||!p.alive||p.cd>0||distance(p,b)>F.kickRange||(b.kickUntil||0)>G.el)return false;
   const receiver=!shot?players().filter(q=>q!==p&&q.team===p.team&&distance(q,{x,y})<44&&distance(p,q)<350).sort((a,c)=>distance(a,{x,y})-distance(c,{x,y}))[0]:null;
-  if(receiver){x=receiver.x+D.clamp((receiver.mgVx||0)*.18,-24,24);y=receiver.y+D.clamp((receiver.mgVy||0)*.18,-24,24);}
-  const a=Math.atan2(y-b.y,x-b.x),range=distance(b,{x,y}),speed=shot?F.shotSpeed:D.clamp(110+range*F.drag,F.passMin,F.passMax);p.a=a;
-  if(distance(p,b)<24){b.x=p.x+Math.cos(a)*26;b.y=p.y+Math.sin(a)*26;}
-  b.previous=b.last=index(p);b.releaseUntil=G.el+.18;b.passFrom=shot?-1:index(p);b.vx=Math.cos(a)*speed;b.vy=Math.sin(a)*speed;p.cd=shot?.6:.45;
+  const a=Math.atan2(y-p.y,x-p.x),speed=F.kickSpeed;p.a=a;
+  b.previous=b.last=index(p);b.releaseUntil=G.el+.18;b.kickUntil=G.el+F.ballCooldown;b.passFrom=shot?-1:index(p);b.vx=Math.cos(a)*speed;b.vy=Math.sin(a)*speed;p.cd=F.kickCooldown;
   m.stats.kicks=(m.stats.kicks||0)+1;if(shot)m.stats.shots=(m.stats.shots||0)+1;else{m.stats.passes++;if(receiver){p.mgBrain.lastPassTo=index(receiver);p.mgBrain.lastPassAt=G.el;if(!human(p)&&human(receiver))m.stats.humanPasses=(m.stats.humanPasses||0)+1;}}
   snd('step',p.x,p.y);return true;
  }
@@ -43,10 +41,10 @@
    brain.keeperSense=(brain.keeperSense||0)-dt;if(brain.keeperSense<=0){brain.keeperSense=.12+Math.random()*.08;const goalX=own?F.keeperX:D.WIDTH-F.keeperX,toward=own?b.vx<0:b.vx>0,eta=toward?(goalX-b.x)/b.vx:0,aim=eta>0&&eta<1.2?b.y+b.vy*eta:b.y;brain.keeperY=D.clamp(aim,D.HEIGHT/2-68,D.HEIGHT/2+68);}
    A.go(p,{x:own?F.keeperX:D.WIDTH-F.keeperX,y:brain.keeperY??D.HEIGHT/2},dt);p.a=Math.atan2(b.y-p.y,b.x-p.x);
    const incoming=(b.x-p.x)*b.vx+(b.y-p.y)*b.vy<0&&Math.hypot(b.vx,b.vy)>160;
-   if(distance(p,b)<40&&!incoming&&G.el>=(brain.playAt||0)){const receiver=passTarget(p,true);A.action(p,receiver?.x??p.x+direction*230,receiver?.y??D.HEIGHT/2+(p.y>D.HEIGHT/2?-130:130));brain.playAt=G.el+.35;}return;
+   if(distance(p,b)<F.kickRange&&!incoming&&G.el>=(brain.playAt||0)){const receiver=passTarget(p,true);A.action(p,receiver?.x??p.x+direction*230,receiver?.y??D.HEIGHT/2+(p.y>D.HEIGHT/2?-130:130));brain.playAt=G.el+.35;}return;
   }
   const goal={x:own?D.WIDTH-30:30,y:D.HEIGHT/2},goalDistance=distance(p,goal);
-  if(distance(p,b)<40&&G.el>=(brain.playAt||0)){
+  if(distance(p,b)<F.kickRange&&G.el>=(brain.playAt||0)){
    const receiver=passTarget(p,pressure),keeper=enemies.find(q=>q.mgKeeper),lane=enemies.some(q=>!q.mgKeeper&&distance(p,q)<110&&D.segmentCircle(b,goal,q,24)!==null);
    if(goalDistance<315&&!lane){const side=keeper&&keeper.y<D.HEIGHT/2?1:-1;A.action(p,goal.x,goal.y+side*(58+Math.random()*12),true);}
    else if(receiver)A.action(p,receiver.x,receiver.y);

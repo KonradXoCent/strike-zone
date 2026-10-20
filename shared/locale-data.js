@@ -73,7 +73,7 @@ Dotknij gracza — przekaż bombę · E — zryw|Touch a player — pass the bom
 Celuj śnieżkami w przeciwników. Trafienie spowalnia, a po eliminacji wracasz do gry. Pierwsza drużyna do 15 punktów wygrywa.|Hit opponents with snowballs. Hits slow them down and eliminated players respawn. First team to 15 points wins.
 LPM — rzuć śnieżkę · E — zryw|LMB — throw snowball · E — dash
 Podawaj i strzelaj do bramki przeciwnika na osobnym stadionie. Pierwsza drużyna do 10 goli wygrywa.|Pass and shoot into the opposing goal in a dedicated stadium. First team to 10 goals wins.
-LPM — podanie · PPM — strzał · E — sprint|LMB — pass · RMB — shoot · E — sprint
+LPM — kopnij piłkę · E — sprint|LMB — kick the ball · E — sprint
 BRAMKARZ|GOALKEEPER
 Głosuj na minigrę|Vote for a minigame
 Jedna gra, cztery areny. Gracze i boty wybierają pierwszą minigrę.|One mode, four arenas. Players and bots vote for the first minigame.

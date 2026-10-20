@@ -2834,12 +2834,12 @@ function creatorDrawMap(){
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else{root.SzMiniData=api;api.install({MAPN,GRS,MAPS,WINS,FLRS,SITES,SPW,LB,SCL,FL,WC,FLG,WCG,BGC,MAP_BRIEFINGS});}})(globalThis,function(){
  'use strict';
  const WIDTH=1280,HEIGHT=832,RADIUS=12,FOOTBALL_GOALS=10,keys=['grenade','bomb','snow','football'];
- const FOOTBALL={keeperX:112,drag:1.35,shotSpeed:560,passMin:220,passMax:420,maxSpeed:600};
+ const FOOTBALL={keeperX:112,drag:.65,kickSpeed:820,kickRange:52,kickCooldown:.35,ballCooldown:.45,maxSpeed:900};
  const specs={
   grenade:{name:'mg_dodgeyard',title:'Granatowy zbijak',description:'Rzucaj granatami na drugą połowę i unikaj wybuchów. Środka boiska nie można przekroczyć.',control:'LPM — rzuć granat · E — zryw',duration:100,material:'industrial',floor:'#647585',wall:'#b9c5cb',dark:'#14232f',accent:'#ecb85b',covers:[[192,192,96,32],[192,608,96,32],[992,192,96,32],[992,608,96,32]]},
   bomb:{name:'mg_bombtag',title:'Berek z bombą',description:'Dotknij innego gracza, aby przekazać bombę. Przekazanie nie resetuje zapalnika. Przetrwaj do końca.',control:'Dotknij gracza — przekaż bombę · E — zryw',duration:135,material:'industrial',floor:'#667875',wall:'#c3b59b',dark:'#172a29',accent:'#f18369',covers:[[384,208,64,112],[832,208,64,112],[384,512,64,112],[832,512,64,112]]},
   snow:{name:'mg_snowfield',title:'Bitwa na śnieżki',description:'Celuj śnieżkami w przeciwników. Trafienie spowalnia, a po eliminacji wracasz do gry. Pierwsza drużyna do 15 punktów wygrywa.',control:'LPM — rzuć śnieżkę · E — zryw',duration:100,material:'industrial',floor:'#bacdd7',wall:'#edf4f4',dark:'#182d40',accent:'#b7efff',covers:[[288,192,128,48],[864,192,128,48],[288,592,128,48],[864,592,128,48],[608,320,64,64],[608,448,64,64]]},
-  football:{name:'mg_stadium',title:'Piłka nożna',description:'Podawaj i strzelaj do bramki przeciwnika na osobnym stadionie. Pierwsza drużyna do 10 goli wygrywa.',control:'LPM — podanie · PPM — strzał · E — sprint',duration:0,material:'forest',floor:'#43805c',wall:'#b5c8bb',dark:'#102b24',accent:'#f3dfad',covers:[]}
+  football:{name:'mg_stadium',title:'Piłka nożna',description:'Podawaj i strzelaj do bramki przeciwnika na osobnym stadionie. Pierwsza drużyna do 10 goli wygrywa.',control:'LPM — kopnij piłkę · E — sprint',duration:0,material:'forest',floor:'#43805c',wall:'#b5c8bb',dark:'#102b24',accent:'#f3dfad',covers:[]}
  };
  const iconPaths={grenade:'M12 10h8v4l4 4v8l-5 4h-6l-5-4v-8l4-4Zm2-6h8v4h-8Zm8 2h5v7M10 22h12',bomb:'M16 12a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0-7v7m0-7 5-3m1 5 4-1m-1 7 4 1',snow:'M16 2v28M4 9l24 14M4 23 28 9M12 5l4 4 4-4M12 27l4-4 4 4M4 14l6-1-1-6m18 11-6 1 1 6M4 18l6 1-1 6m18-11-6-1 1-6',football:'M16 3a13 13 0 1 0 0 26 13 13 0 0 0 0-26Zm0 8 6 4-2 7h-8l-2-7ZM16 3v8M3 14l7 1m2 7-4 5m12-5 4 5m-2-12 7-1'};
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -3495,7 +3495,7 @@ Dotknij gracza — przekaż bombę · E — zryw|Touch a player — pass the bom
 Celuj śnieżkami w przeciwników. Trafienie spowalnia, a po eliminacji wracasz do gry. Pierwsza drużyna do 15 punktów wygrywa.|Hit opponents with snowballs. Hits slow them down and eliminated players respawn. First team to 15 points wins.
 LPM — rzuć śnieżkę · E — zryw|LMB — throw snowball · E — dash
 Podawaj i strzelaj do bramki przeciwnika na osobnym stadionie. Pierwsza drużyna do 10 goli wygrywa.|Pass and shoot into the opposing goal in a dedicated stadium. First team to 10 goals wins.
-LPM — podanie · PPM — strzał · E — sprint|LMB — pass · RMB — shoot · E — sprint
+LPM — kopnij piłkę · E — sprint|LMB — kick the ball · E — sprint
 BRAMKARZ|GOALKEEPER
 Głosuj na minigrę|Vote for a minigame
 Jedna gra, cztery areny. Gracze i boty wybierają pierwszą minigrę.|One mode, four arenas. Players and bots vote for the first minigame.
@@ -5751,7 +5751,7 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   if(['warmup','goal'].includes(m.phase)){if(m.time<=0){setPhase('live',m.phase==='goal'?m.resumeTime||D.specs[m.kind].duration:D.specs[m.kind].duration);if(m.kind==='bomb'&&m.bomb.carrier<0)chooseCarrier();}return;}
   if(m.phase==='result'){if(m.time<=0)startRoll();return;}if(m.phase==='roulette'){if(m.time<=0)beginGame(m.nextKind);return;}if(m.phase!=='live')return;
   for(const p of g.ps){p.mgStepX=p.x;p.mgStepY=p.y;}for(const p of g.ps){p.cd=Math.max(0,p.cd-dt);p.mgDash=Math.max(0,p.mgDash-dt);p.mgDashCd=Math.max(0,p.mgDashCd-dt);p.mgSlow=Math.max(0,p.mgSlow-dt);if(!p.alive){if(m.kind==='snow'&&p.mgRespawn&&g.el>=p.mgRespawn)resetPlayer(p,g.ps);continue;}
-   if(p.human||p.rh){const k=p.rh?(performance.now()-p.lastIn<2000?p.inp||{}:{}):keys,dx=(k.d?1:0)-(k.a?1:0),dy=(k.s?1:0)-(k.w?1:0),n=Math.hypot(dx,dy)||1;if(k.e&&!p.mgE)dash(p);p.mgE=!!k.e;move(p,dx/n*velocity(p)*dt,dy/n*velocity(p)*dt);const aim=p.rh?{x:k.mgX??p.x+Math.cos(k.an||0)*400,y:k.mgY??p.y+Math.sin(k.an||0)*400}:{x:mouse.x/VIEW_ZOOM+cam.x,y:mouse.y/VIEW_ZOOM+cam.y};p.a=Math.atan2(aim.y-p.y,aim.x-p.x);if(p.rh?k.f:mouse.d||m.kind==='football'&&mouse.r)action(p,aim.x,aim.y,p.rh?!!k.mgShot:!!mouse.r);
+   if(p.human||p.rh){const k=p.rh?(performance.now()-p.lastIn<2000?p.inp||{}:{}):keys,dx=(k.d?1:0)-(k.a?1:0),dy=(k.s?1:0)-(k.w?1:0),n=Math.hypot(dx,dy)||1;if(k.e&&!p.mgE)dash(p);p.mgE=!!k.e;move(p,dx/n*velocity(p)*dt,dy/n*velocity(p)*dt);const aim=p.rh?{x:k.mgX??p.x+Math.cos(k.an||0)*400,y:k.mgY??p.y+Math.sin(k.an||0)*400}:{x:mouse.x/VIEW_ZOOM+cam.x,y:mouse.y/VIEW_ZOOM+cam.y};p.a=Math.atan2(aim.y-p.y,aim.x-p.x);if(p.rh?k.f:mouse.d)action(p,aim.x,aim.y);
    }else bot(p,dt);
   }
   for(const p of g.ps){p.mgVx=(p.x-p.mgStepX)/dt;p.mgVy=(p.y-p.mgStepY)/dt;}if(m.kind==='bomb'){const b=m.bomb;b.lock=Math.max(0,b.lock-dt);if(b.lock<=0)b.previous=-1;b.fuse-=dt;const carrier=g.ps[b.carrier];if(carrier?.alive){if(b.fuse<=0){eliminate(carrier);chooseCarrier();}else passBomb(carrier);}else chooseCarrier();}
@@ -5761,7 +5761,7 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   if(m.time<=0&&m.kind!=='football'){if(m.kind==='bomb'){const list=alive();finish(list.length===1?'ffa':'draw',list.length===1?index(list[0]):null);}else{const value=team=>m.kind==='grenade'?alive().filter(p=>p.team===team).length*1000+alive().filter(p=>p.team===team).reduce((n,p)=>n+p.hp,0):g.sc[team],ct=value('CT'),tt=value('T');finish(ct===tt?'draw':ct>tt?'CT':'T');}}
  }
  function snapshot(){const m=G.mg;return{...m,ball:{...m.ball},bomb:{...m.bomb},botVoteAt:0,projectiles:m.projectiles.map(q=>({...q})),effects:m.effects.map(q=>({...q})),events:m.events.map(q=>({...q}))};}
- function clientStep(dt){const g=G,m=g.mg;if(!m)return;const locked=g.paused||m.phase!=='live'||!g.me.alive;NET.ti=(NET.ti||0)+dt;if(NET.ti>.05){NET.ti=0;netSend({t:'in',k:Object.fromEntries(['w','a','s','d','e'].map(k=>[k,!locked&&!!keys[k]])),f:!locked&&!!(mouse.d||m.kind==='football'&&mouse.r),an:g.me.a||0,mg:{x:mouse.x/VIEW_ZOOM+cam.x,y:mouse.y/VIEW_ZOOM+cam.y,shot:!locked&&!!mouse.r}});}if(g.paused||performance.now()-NET.lastSnap>12000)return;m.time=Math.max(0,m.time-dt);m.phaseElapsed+=dt;g.t=m.time;
+ function clientStep(dt){const g=G,m=g.mg;if(!m)return;const locked=g.paused||m.phase!=='live'||!g.me.alive;NET.ti=(NET.ti||0)+dt;if(NET.ti>.05){NET.ti=0;netSend({t:'in',k:Object.fromEntries(['w','a','s','d','e'].map(k=>[k,!locked&&!!keys[k]])),f:!locked&&!!mouse.d,an:g.me.a||0,mg:{x:mouse.x/VIEW_ZOOM+cam.x,y:mouse.y/VIEW_ZOOM+cam.y}});}if(g.paused||performance.now()-NET.lastSnap>12000)return;m.time=Math.max(0,m.time-dt);m.phaseElapsed+=dt;g.t=m.time;
   if(!locked){const p=g.me,dx=(keys.d?1:0)-(keys.a?1:0),dy=(keys.s?1:0)-(keys.w?1:0),n=Math.hypot(dx,dy)||1;move(p,dx/n*velocity(p)*dt,dy/n*velocity(p)*dt);p.a=Math.atan2(mouse.y/VIEW_ZOOM+cam.y-p.y,mouse.x/VIEW_ZOOM+cam.x-p.x);}for(const p of g.ps)if(p!==g.me&&p.tx!=null){p.x+=(p.tx-p.x)*Math.min(1,dt*15);p.y+=(p.ty-p.y)*Math.min(1,dt*15);}if(m.kind==='football'&&m.phase==='live')SzFootball.predict(dt);m.effects=m.effects.filter(e=>(e.left-=dt)>0);root.SzMiniGames.view?.sync();
  }
  const oldSet=mapSet;mapSet=function(mode){return mode==='football'?[D.ids.football]:mode===MODE?D.keys.map(k=>D.ids[k]):oldSet(mode).filter(i=>!Object.values(D.ids).includes(i));};
@@ -5778,7 +5778,7 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
  const oldDamage=dmg;dmg=function(...args){if(!active())return oldDamage(...args);};
  const oldCheat=cheatInit;cheatInit=function(){if(active()){G.cheat=null;return;}return oldCheat();};
  const oldSend=netSend;netSend=function(message){if(active()&&message.t==='snap'){if(G.client)return;message={...message,mg:snapshot(),p:message.p.map((r,i)=>({...r,mg:{points:G.ps[i].mgPoints||0,total:G.ps[i].mgTotal||0,dash:G.ps[i].mgDash||0,slow:G.ps[i].mgSlow||0,home:G.ps[i].mgHomeTeam,keeper:!!G.ps[i].mgKeeper}}))};}return oldSend(message);};
- const oldReceive=hostRecv;hostRecv=function(message){if(!active())return oldReceive(message);if(!['hello','in','bye','mg_vote'].includes(message?.t))return;const accepted=!G.client&&message.c!==NET.cid&&roomPeer(message.c)&&message.sid===NET.session;if(!accepted)return;if(message.t==='mg_vote'){const p=G.ps.find(q=>q.rid===message.c);if(p&&message.serial===G.mg.serial)vote(message.kind,p);return;}const result=oldReceive(message),p=G.ps.find(q=>q.rid===message.c);if(message.t==='in'&&p?.inp){p.inp.mgShot=message.mg?.shot===true;p.inp.mgX=Number.isFinite(message.mg?.x)?D.clamp(message.mg.x,0,WW):undefined;p.inp.mgY=Number.isFinite(message.mg?.y)?D.clamp(message.mg.y,0,WH):undefined;}return result;};
+ const oldReceive=hostRecv;hostRecv=function(message){if(!active())return oldReceive(message);if(!['hello','in','bye','mg_vote'].includes(message?.t))return;const accepted=!G.client&&message.c!==NET.cid&&roomPeer(message.c)&&message.sid===NET.session;if(!accepted)return;if(message.t==='mg_vote'){const p=G.ps.find(q=>q.rid===message.c);if(p&&message.serial===G.mg.serial)vote(message.kind,p);return;}const result=oldReceive(message),p=G.ps.find(q=>q.rid===message.c);if(message.t==='in'&&p?.inp){p.inp.mgX=Number.isFinite(message.mg?.x)?D.clamp(message.mg.x,0,WW):undefined;p.inp.mgY=Number.isFinite(message.mg?.y)?D.clamp(message.mg.y,0,WH):undefined;}return result;};
  const oldApply=applySnap;applySnap=function(s){if(!active()||!G.client||s.sid!==NET.session||!s.mg||!D.specs[s.mg.kind])return oldApply(s);if(G.mgArena!==D.ids[s.mg.kind])arena(s.mg.kind);const result=oldApply({...s,ov:0});G.mg=JSON.parse(JSON.stringify(s.mg));G.nobuy=1;G.over=standalone()&&G.mg.phase==='result';if(G.over)G.voting=1;G.mgRewarded=G.mgRewarded||new Set();for(const row of s.p||[]){const p=G.ps[row.i];if(p&&row.mg){p.mgPoints=row.mg.points;p.mgTotal=row.mg.total;p.mgDash=row.mg.dash;p.mgSlow=row.mg.slow;p.mgHomeTeam=row.mg.home;p.mgKeeper=!!row.mg.keeper;}}if(['warmup','live','goal'].includes(G.mg.phase))G.mgSeenSerial=G.mg.serial;if(G.mg.phase==='result')award();root.SzMiniGames.view?.sync();return result;};
  const oldClose=pmClose;pmClose=function(){if(active()&&G.mg?.phase==='vote')return quit();return oldClose();};
  const oldQuit=quit;quit=function(){if(active()){$('pm').style.display='none';root.SzMiniGames.view?.clear();}return oldQuit();};
@@ -5791,15 +5791,13 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
 (function(root){'use strict';
  const A=SzMiniGames,D=SzMiniData,F=D.FOOTBALL;
  const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),index=p=>G.ps.indexOf(p),players=()=>G.ps.filter(p=>p.alive),human=p=>!!(p.human||p.rh);
- function ball(){return{x:D.WIDTH/2,y:D.HEIGHT/2,vx:0,vy:0,last:-1,previous:-1,releaseUntil:0,passFrom:-1};}
+ function ball(){return{x:D.WIDTH/2,y:D.HEIGHT/2,vx:0,vy:0,last:-1,previous:-1,releaseUntil:0,kickUntil:0,passFrom:-1};}
  function assignRoles(){for(const team of['CT','T']){const peers=G.ps.filter(p=>(p.mgHomeTeam||p.team)===team);peers.forEach((p,i)=>{p.mgKeeper=i===peers.length-1;p.mgPitchRole=i;});}}
  function spawnPoint(p){const own=(p.mgHomeTeam||p.team)==='CT',formation=[[360,320],[260,180],[360,512],[260,652]],point=p.mgKeeper?[F.keeperX,D.HEIGHT/2]:formation[(p.mgPitchRole||0)%4];return{x:own?point[0]:D.WIDTH-point[0],y:point[1]};}
- function kick(p,x,y,shot=false){const m=G.mg,b=m.ball;if(G.client||G.paused||G.over||m.phase!=='live'||!p.alive||p.cd>0||distance(p,b)>40)return false;
+ function kick(p,x,y,shot=false){const m=G.mg,b=m.ball;if(G.client||G.paused||G.over||m.phase!=='live'||!p.alive||p.cd>0||distance(p,b)>F.kickRange||(b.kickUntil||0)>G.el)return false;
   const receiver=!shot?players().filter(q=>q!==p&&q.team===p.team&&distance(q,{x,y})<44&&distance(p,q)<350).sort((a,c)=>distance(a,{x,y})-distance(c,{x,y}))[0]:null;
-  if(receiver){x=receiver.x+D.clamp((receiver.mgVx||0)*.18,-24,24);y=receiver.y+D.clamp((receiver.mgVy||0)*.18,-24,24);}
-  const a=Math.atan2(y-b.y,x-b.x),range=distance(b,{x,y}),speed=shot?F.shotSpeed:D.clamp(110+range*F.drag,F.passMin,F.passMax);p.a=a;
-  if(distance(p,b)<24){b.x=p.x+Math.cos(a)*26;b.y=p.y+Math.sin(a)*26;}
-  b.previous=b.last=index(p);b.releaseUntil=G.el+.18;b.passFrom=shot?-1:index(p);b.vx=Math.cos(a)*speed;b.vy=Math.sin(a)*speed;p.cd=shot?.6:.45;
+  const a=Math.atan2(y-p.y,x-p.x),speed=F.kickSpeed;p.a=a;
+  b.previous=b.last=index(p);b.releaseUntil=G.el+.18;b.kickUntil=G.el+F.ballCooldown;b.passFrom=shot?-1:index(p);b.vx=Math.cos(a)*speed;b.vy=Math.sin(a)*speed;p.cd=F.kickCooldown;
   m.stats.kicks=(m.stats.kicks||0)+1;if(shot)m.stats.shots=(m.stats.shots||0)+1;else{m.stats.passes++;if(receiver){p.mgBrain.lastPassTo=index(receiver);p.mgBrain.lastPassAt=G.el;if(!human(p)&&human(receiver))m.stats.humanPasses=(m.stats.humanPasses||0)+1;}}
   snd('step',p.x,p.y);return true;
  }
@@ -5832,10 +5830,10 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
    brain.keeperSense=(brain.keeperSense||0)-dt;if(brain.keeperSense<=0){brain.keeperSense=.12+Math.random()*.08;const goalX=own?F.keeperX:D.WIDTH-F.keeperX,toward=own?b.vx<0:b.vx>0,eta=toward?(goalX-b.x)/b.vx:0,aim=eta>0&&eta<1.2?b.y+b.vy*eta:b.y;brain.keeperY=D.clamp(aim,D.HEIGHT/2-68,D.HEIGHT/2+68);}
    A.go(p,{x:own?F.keeperX:D.WIDTH-F.keeperX,y:brain.keeperY??D.HEIGHT/2},dt);p.a=Math.atan2(b.y-p.y,b.x-p.x);
    const incoming=(b.x-p.x)*b.vx+(b.y-p.y)*b.vy<0&&Math.hypot(b.vx,b.vy)>160;
-   if(distance(p,b)<40&&!incoming&&G.el>=(brain.playAt||0)){const receiver=passTarget(p,true);A.action(p,receiver?.x??p.x+direction*230,receiver?.y??D.HEIGHT/2+(p.y>D.HEIGHT/2?-130:130));brain.playAt=G.el+.35;}return;
+   if(distance(p,b)<F.kickRange&&!incoming&&G.el>=(brain.playAt||0)){const receiver=passTarget(p,true);A.action(p,receiver?.x??p.x+direction*230,receiver?.y??D.HEIGHT/2+(p.y>D.HEIGHT/2?-130:130));brain.playAt=G.el+.35;}return;
   }
   const goal={x:own?D.WIDTH-30:30,y:D.HEIGHT/2},goalDistance=distance(p,goal);
-  if(distance(p,b)<40&&G.el>=(brain.playAt||0)){
+  if(distance(p,b)<F.kickRange&&G.el>=(brain.playAt||0)){
    const receiver=passTarget(p,pressure),keeper=enemies.find(q=>q.mgKeeper),lane=enemies.some(q=>!q.mgKeeper&&distance(p,q)<110&&D.segmentCircle(b,goal,q,24)!==null);
    if(goalDistance<315&&!lane){const side=keeper&&keeper.y<D.HEIGHT/2?1:-1;A.action(p,goal.x,goal.y+side*(58+Math.random()*12),true);}
    else if(receiver)A.action(p,receiver.x,receiver.y);

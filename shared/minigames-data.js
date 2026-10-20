@@ -2,12 +2,12 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else{root.SzMiniData=api;api.install({MAPN,GRS,MAPS,WINS,FLRS,SITES,SPW,LB,SCL,FL,WC,FLG,WCG,BGC,MAP_BRIEFINGS});}})(globalThis,function(){
  'use strict';
  const WIDTH=1280,HEIGHT=832,RADIUS=12,FOOTBALL_GOALS=10,keys=['grenade','bomb','snow','football'];
- const FOOTBALL={keeperX:112,drag:1.35,shotSpeed:560,passMin:220,passMax:420,maxSpeed:600};
+ const FOOTBALL={keeperX:112,drag:.65,kickSpeed:820,kickRange:52,kickCooldown:.35,ballCooldown:.45,maxSpeed:900};
  const specs={
   grenade:{name:'mg_dodgeyard',title:'Granatowy zbijak',description:'Rzucaj granatami na drugą połowę i unikaj wybuchów. Środka boiska nie można przekroczyć.',control:'LPM — rzuć granat · E — zryw',duration:100,material:'industrial',floor:'#647585',wall:'#b9c5cb',dark:'#14232f',accent:'#ecb85b',covers:[[192,192,96,32],[192,608,96,32],[992,192,96,32],[992,608,96,32]]},
   bomb:{name:'mg_bombtag',title:'Berek z bombą',description:'Dotknij innego gracza, aby przekazać bombę. Przekazanie nie resetuje zapalnika. Przetrwaj do końca.',control:'Dotknij gracza — przekaż bombę · E — zryw',duration:135,material:'industrial',floor:'#667875',wall:'#c3b59b',dark:'#172a29',accent:'#f18369',covers:[[384,208,64,112],[832,208,64,112],[384,512,64,112],[832,512,64,112]]},
   snow:{name:'mg_snowfield',title:'Bitwa na śnieżki',description:'Celuj śnieżkami w przeciwników. Trafienie spowalnia, a po eliminacji wracasz do gry. Pierwsza drużyna do 15 punktów wygrywa.',control:'LPM — rzuć śnieżkę · E — zryw',duration:100,material:'industrial',floor:'#bacdd7',wall:'#edf4f4',dark:'#182d40',accent:'#b7efff',covers:[[288,192,128,48],[864,192,128,48],[288,592,128,48],[864,592,128,48],[608,320,64,64],[608,448,64,64]]},
-  football:{name:'mg_stadium',title:'Piłka nożna',description:'Podawaj i strzelaj do bramki przeciwnika na osobnym stadionie. Pierwsza drużyna do 10 goli wygrywa.',control:'LPM — podanie · PPM — strzał · E — sprint',duration:0,material:'forest',floor:'#43805c',wall:'#b5c8bb',dark:'#102b24',accent:'#f3dfad',covers:[]}
+  football:{name:'mg_stadium',title:'Piłka nożna',description:'Podawaj i strzelaj do bramki przeciwnika na osobnym stadionie. Pierwsza drużyna do 10 goli wygrywa.',control:'LPM — kopnij piłkę · E — sprint',duration:0,material:'forest',floor:'#43805c',wall:'#b5c8bb',dark:'#102b24',accent:'#f3dfad',covers:[]}
  };
  const iconPaths={grenade:'M12 10h8v4l4 4v8l-5 4h-6l-5-4v-8l4-4Zm2-6h8v4h-8Zm8 2h5v7M10 22h12',bomb:'M16 12a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0-7v7m0-7 5-3m1 5 4-1m-1 7 4 1',snow:'M16 2v28M4 9l24 14M4 23 28 9M12 5l4 4 4-4M12 27l4-4 4 4M4 14l6-1-1-6m18 11-6 1 1 6M4 18l6 1-1 6m18-11-6-1 1-6',football:'M16 3a13 13 0 1 0 0 26 13 13 0 0 0 0-26Zm0 8 6 4-2 7h-8l-2-7ZM16 3v8M3 14l7 1m2 7-4 5m12-5 4 5m-2-12 7-1'};
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
