@@ -1,5 +1,9 @@
 # Hide and Seek
 
+The ordinary Hide and Seek menu card has been replaced by Minigames. This
+document describes the retained round engine and legacy test scenarios;
+Prop Hunt continues to use its own rules on these arenas.
+
 The test build adds a non-ranked, host-authoritative hide-and-seek mode with
 three original arenas: `hs_warehouse`, `hs_garden`, and `hs_motel`.
 

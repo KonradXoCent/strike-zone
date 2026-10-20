@@ -8,7 +8,7 @@ let finished=false;process.on('beforeExit',()=>{if(!finished&&!process.exitCode)
  const broker=live?null:await startPresenceFixture();
  // Keep the production translation API used by the server browser, while
  // omitting account/chat integrations which are outside this transport fixture.
- const locale=['locale-data.js','locale.js','prop-hunt-data.js','hide-seek.js','prop-hunt.js'].map(file=>'<script>'+fs.readFileSync(repo+'/shared/'+file,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>').join('\n')+'<script>window.szLocale=SzI18n.create("pl").mount();</script>';
+ const locale=['locale-data.js','locale.js','prop-hunt-data.js','hide-seek.js','prop-hunt.js','minigames.js','minigames-view.js'].map(file=>'<script>'+fs.readFileSync(repo+'/shared/'+file,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>').join('\n')+'<script>window.szLocale=SzI18n.create("pl").mount();</script>';
  let html=fs.readFileSync(repo+'/game-source/index.html','utf8').replace(/<script src="https:\/\/cdn\.jsdelivr\.net[^\"]+"><\/script>/,'<script src="supabase.js"></script>').replace('\nsbInit();','\n// Authentication is isolated in this transport test.').replace(/<!-- SZ SHARED UI START -->[\s\S]*?<!-- SZ SHARED UI END -->/,()=>locale);
  fs.copyFileSync(repo+'/node_modules/@supabase/supabase-js/dist/umd/supabase.js',tmp+'/supabase.js');fs.writeFileSync(tmp+'/index.html',html);fs.writeFileSync(tmp+'/package.json',JSON.stringify({main:'main.cjs'}));fs.writeFileSync(tmp+'/main.cjs',`const{app,BrowserWindow}=require('electron');app.setPath('userData',${JSON.stringify(tmp+'/profile')});app.whenReady().then(()=>{for(let i=0;i<2;i++){const w=new BrowserWindow({width:1200,height:800,webPreferences:{partition:'network-'+i,backgroundThrottling:false}});w.loadFile(${JSON.stringify(tmp+'/index.html')});}});`);
  const args=[tmp,'--no-sandbox','--ozone-platform=headless','--headless','--disable-gpu'];if(live&&process.env.HTTPS_PROXY)args.push('--proxy-server='+process.env.HTTPS_PROXY,'--ignore-certificate-errors');
@@ -22,10 +22,10 @@ let finished=false;process.on('beforeExit',()=>{if(!finished&&!process.exitCode)
    },{i,url:broker?.endpoint?.replace(/^ws/,'http')||null});
    if(broker)await p.evaluate(endpoint=>{sb.realtime.endPoint=endpoint;},broker.endpoint);
   }
-  const modes=(process.env.SZ_NETWORK_MODES?.split(',')||['tdm','classic','ctf','dm','gungame','retake','br','zombie','coop','snipers','deagle','pistols','shotguns','knife','hns','prophunt']);
+  const modes=(process.env.SZ_NETWORK_MODES?.split(',')||['tdm','classic','ctf','dm','gungame','retake','br','zombie','coop','snipers','deagle','pistols','shotguns','knife','prophunt','minigames']);
   for(const entry of ['code','server']){
    for(const mode of modes){console.log('RUN',entry,mode);
-    await host.evaluate(mode=>{sel.mode=mode;sel.map=mode==='br'?6:mode==='zombie'?9:['hns','prophunt'].includes(mode)?SzHideSeekMaps.ids[0]:2;sel.team='CT';sel.comp=false;},mode);await guest.evaluate(()=>{sel.team='T';});
+    await host.evaluate(mode=>{sel.mode=mode;sel.map=mode==='minigames'?SzMiniData.ids.grenade:mode==='br'?6:mode==='zombie'?9:['hns','prophunt'].includes(mode)?SzHideSeekMaps.ids[0]:2;sel.team='CT';sel.comp=false;},mode);await guest.evaluate(()=>{sel.team='T';});
     if(entry==='code'){await host.evaluate(()=>mkLobby());const code=await host.evaluate(()=>L?.code);assert.ok(code);await guest.evaluate(c=>mkLobby(c),code);}
     else{await host.evaluate(()=>{T='srv';srvRender();$('sm').value=sel.mode;SzHideSeek.serverMaps();$('sp').value=String(sel.map);$('sn').value='QA isolated server';});await host.evaluate(()=>mkServer());await host.waitForFunction(()=>!!SV.own);await host.evaluate(()=>pubSrv());
      
@@ -43,6 +43,7 @@ let finished=false;process.on('beforeExit',()=>{if(!finished&&!process.exitCode)
      await guest.evaluate(()=>LC.send({type:'broadcast',event:'g',payload:{t:'snap',v:2,c:NET.cid,sid:NET.session,hns:{round:99,seekerTeam:'CT'}}}));assert.equal(await host.evaluate(()=>G.hns.round),1);
      console.log('PASS host-only Hide and Seek capture, role switch, respawn and blocked client state/weapon messages');
     }
+    if(mode==='minigames')await require('./test-support/minigames-network.cjs')(host,guest);
     if(mode==='prophunt')await require('./test-support/prop-hunt-network.cjs')(host,guest);
     if(mode==='classic'){await host.evaluate(()=>{const p=G.ps.find(p=>p.rh);G.paused=true;p.bomb=true;p.pl=1.3;netSnap();});await guest.waitForFunction(()=>G.me.bomb&&Math.abs(G.me.pl-1.3)<.1);assert.equal(await guest.evaluate(()=>{draw();return true;}),true);console.log('PASS remote bomb carrier renders planting progress');}
     if(mode==='tdm'){

@@ -57,6 +57,35 @@ Start rundy: 3 szukających i 7 ukrywających się. Znalezieni dołączają do s
 Znaleziono cię — dołączasz do szukających.|You were found — joining the hunters.
 Wygrane rundy:|Rounds won:
 Rundy / złapani|Rounds / found
+Minigry|Minigames
+MINIGRY|MINIGAMES
+Granatowy zbijak|Grenade dodgeball
+Berek z bombą|Bomb tag
+Bitwa na śnieżki|Snowball fight
+Piłka nożna|Football
+Rzucaj granatami na drugą połowę i unikaj wybuchów. Środka boiska nie można przekroczyć.|Throw grenades onto the other half and dodge explosions. Players cannot cross the centre.
+LPM — rzuć granat · E — zryw|LMB — throw grenade · E — dash
+LPM — akcja · E — zryw|LMB — action · E — dash
+Dotknij innego gracza, aby przekazać bombę. Przekazanie nie resetuje zapalnika. Przetrwaj do końca.|Touch another player to pass the bomb. Passing does not reset its fuse. Be the last survivor.
+Dotknij gracza — przekaż bombę · E — zryw|Touch a player — pass the bomb · E — dash
+Celuj śnieżkami w przeciwników. Trafienie spowalnia, a po eliminacji wracasz do gry. Pierwsza drużyna do 15 punktów wygrywa.|Hit opponents with snowballs. Hits slow them down and eliminated players respawn. First team to 15 points wins.
+LPM — rzuć śnieżkę · E — zryw|LMB — throw snowball · E — dash
+Podawaj i strzelaj do bramki przeciwnika na osobnym stadionie. Pierwsza drużyna do 3 goli wygrywa.|Pass and shoot into the opposing goal in a dedicated stadium. First team to 3 goals wins.
+LPM — kopnij piłkę · E — sprint|LMB — kick ball · E — sprint
+Głosuj na minigrę|Vote for a minigame
+Jedna gra, cztery areny. Gracze i boty wybierają pierwszą minigrę.|One mode, four arenas. Players and bots vote for the first minigame.
+Po meczu następna minigra zostanie wylosowana.|The next minigame is randomly selected after the match.
+Głosy|Votes
+Losowanie następnej minigry|Drawing the next minigame
+Kolejna gra rozpocznie się automatycznie.|The next game will start automatically.
+Pozostało graczy:|Players remaining:
+Masz bombę!|You have the bomb!
+Obserwujesz grę|Spectating
+Drużyna niebieska wygrywa|Blue team wins
+Drużyna pomarańczowa wygrywa|Orange team wins
+Następna minigra za|Next minigame in
+GOL!|GOAL!
+Granatowy zbijak, berek z bombą, śnieżki i piłka nożna. Głosowanie i losowa rotacja.|Grenade dodgeball, bomb tag, snowballs and football. Voting and random rotation.
 Gotowy|Ready
 E — zryw|E — dash
 LPM lub dotknięcie — złap przeciwnika|Left click or touch — catch an opponent

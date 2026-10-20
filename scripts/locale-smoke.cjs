@@ -35,6 +35,15 @@ fs.writeFileSync(tmp+'/package.json',JSON.stringify({main:'main.cjs'}));fs.write
   await snap(language,'profile-stats',()=>openStats());await page.evaluate(()=>pmClose());
   for(const archetype of['clean','informed','skilled','assist','tracking','spin'])await snap(language,'overwatch-result:'+archetype,archetype=>{tab('ow');OW.archetype=archetype;OW.done=true;OW.result={skip:false,correct:true,reward:30,xp:10};owRender();},archetype);
   for(const mode of await page.evaluate(()=>MODES.map(m=>m[0]))){await snap(language,'hud:'+mode,mode=>{sel.map=mode==='br'?6:mode==='zombie'?9:2;sel.mode=mode;sel.team='CT';begin0();if(G.intro)skipIntro();G.paused=true;draw();},mode);await snap(language,'scoreboard:'+mode,()=>{keys.tab=1;draw();keys.tab=0;});await page.evaluate(()=>quit());}
+  await snap(language,'minigame-vote',()=>{sel.mode='minigames';sel.map=SzMiniData.ids.grenade;sel.team='CT';begin0();G.paused=true;draw();});
+  for(const kind of['grenade','bomb','snow','football']){
+   await snap(language,'minigame-warmup:'+kind,kind=>{SzMiniGames.beginGame(kind);draw();},kind);
+   await snap(language,'minigame-live:'+kind,()=>{G.mg.phase='live';G.ph='live';if(G.mg.kind==='bomb'){G.mg.bomb.carrier=G.ps.indexOf(G.me);G.mg.bomb.fuse=9;}draw();});
+   await snap(language,'minigame-scoreboard:'+kind,()=>{keys.tab=1;draw();keys.tab=0;});
+   await snap(language,'minigame-result:'+kind,()=>{SzMiniGames.finish(G.mg.kind==='bomb'?'ffa':'CT',G.mg.kind==='bomb'?G.ps.indexOf(G.me):null);draw();});
+   await snap(language,'minigame-roulette:'+kind,()=>{SzMiniGames.startRoll();G.mg.phaseElapsed=2;draw();});
+  }
+  await page.evaluate(()=>quit());
   await page.evaluate(()=>{sel.map=2;sel.mode='tdm';sel.team='CT';begin0();if(G.intro)skipIntro();G.paused=true;});
   await snap(language,'pause',()=>{G.paused=false;togglePause();});await snap(language,'pause-settings',()=>pauseSettings());
   await page.evaluate(()=>{G.paused=false;G.ph='buy';G.bo=1;$('ov').style.display='none';});

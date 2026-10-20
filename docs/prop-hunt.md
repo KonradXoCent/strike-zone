@@ -4,7 +4,9 @@ Prop Hunt is a separate, non-ranked variant of Hide and Seek. Both modes keep
 the three dedicated arenas and the six-round schedule: 30 seconds to hide, up
 to 150 seconds to hunt and an approximate area cue every 25 seconds. Prop Hunt
 starts each round with three hunters and seven hiders. Initial hunter slots
-rotate across the roster between rounds; conversion does not change that order. The ordinary Hide and Seek mode remains selectable.
+rotate across the roster between rounds; conversion does not change that order.
+The ordinary Hide and Seek card has been replaced by Minigames; its shared
+round engine is retained for Prop Hunt and compatibility.
 
 ## Forms and controls
 
@@ -37,7 +39,12 @@ and firearm damage from other systems are disabled in this mode.
 
 Hiding players have no visibility fog: scenery and actors remain visible through
 walls and beyond the hunter sight radius within the camera view. Hunter
-visibility and bot perception still use line of sight.
+visibility and bot perception extend to 760 world pixels (previously 500),
+with walls still blocking sight. Static scenery no longer disappears behind
+other props; intervening props still obscure disguised players. Pistol range
+remains 500. During play, two compact 44-pixel HUD panels replace the large
+instruction panels. The full scoreboard is available on Tab, and mouse capture
+help is a small button in the corner.
 
 Movement uses the locked form's oriented footprint, with conservative rectangular
 clearance for an elliptical rock. Rotation and transformation cannot clip a

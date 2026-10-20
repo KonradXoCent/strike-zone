@@ -1,7 +1,7 @@
 /* Prop Hunt variant: shared round rules, anonymous visual observations, and
    host-owned form changes, geometry, ammunition and hit decisions. */
 (function(root){'use strict';
- const D=SzPropData,H=SzHideSeek,CACHE=new Map(),WORLDS=new Map(),RANGE=500,DAMAGE=25,PENALTY=5;
+ const D=SzPropData,H=SzHideSeek,CACHE=new Map(),WORLDS=new Map(),RANGE=500,DAMAGE=25,PENALTY=5,SIGHT=760;
  const active=()=>!!G&&sel.mode==='prophunt',seeker=p=>p.team===G.hns.seekerTeam,t=s=>szLocale.t(s),distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
  function ensure(g=G){if(g.propWorld?.map===sel.map)return g.propWorld;const grid=GRS[sel.map];let world=WORLDS.get(sel.map);if(!world||world.grid!==grid){const objects=D.layout(grid),nav=D.navGrid(grid,objects);world={map:sel.map,grid,objects,nav,hidingPlaces:D.hidingPlaces(grid,objects,nav)};WORLDS.set(sel.map,world);}g.propWorld=world;return world;}
  const radius=p=>seeker(p)?12:D.radius(p.propForm);
@@ -21,8 +21,8 @@
   for(const p of g.ps)if(!seeker(p)&&!p.human&&!p.rh)p.hnsBrain.goal=hidingSpot(p);
  }
  function effect(kind,p){G.hns.phEffects.push({kind,x:p.x,y:p.y,left:.45});G.hns.phEffects=G.hns.phEffects.slice(-16);}
- function canSee(a,b,skip){if(G.ph==='buy'&&seeker(a)||distance(a,b)>H.SIGHT||!los(a,b))return false;const angle=Math.atan2(b.y-a.y,b.x-a.x),max=distance(a,b)-D.radius(b.form||b.propForm)-2;return !ensure().objects.some(o=>o!==skip&&o!==b&&D.ray(a,angle,o,max)!==null);}
- function canRender(viewer,target,skip){return !seeker(G.me)||canSee(viewer,target,skip);}
+ function canSee(a,b,skip){if(G.ph==='buy'&&seeker(a)||distance(a,b)>SIGHT||!los(a,b))return false;const angle=Math.atan2(b.y-a.y,b.x-a.x),max=distance(a,b)-D.radius(b.form||b.propForm)-2;return !ensure().objects.some(o=>o!==skip&&o!==b&&D.ray(a,angle,o,max)!==null);}
+ function canRender(viewer,target,skip){return !seeker(G.me)||(skip===target?distance(viewer,target)<=SIGHT&&los(viewer,target):canSee(viewer,target,skip));}
  function nearest(p,aim){const w=ensure(),list=w.objects.filter(o=>distance(p,o)<112&&canSee(p,o,o));if(!list.length)return null;return list.sort((a,b)=>(aim&&distance(aim,a)<42?distance(aim,a):distance(p,a)+50)-(aim&&distance(aim,b)<42?distance(aim,b):distance(p,b)+50))[0];}
  function transform(p,object){if(!active()||G.client||G.paused||!p.alive||seeker(p)||G.ph==='end'||p.propMorph>0)return false;const w=ensure();if(!w.objects.includes(object)||distance(p,object)>112||!canSee(p,object,object))return false;const old=p.propForm;p.propForm=object.form;if(occupied(p,p.x,p.y,G.ps,object.a)){p.propForm=old;if(p.human)toast(t('Za mało miejsca na ten przedmiot.'));return false;}p.propAngle=object.a;p.propMorph=3;p.propLocked=true;effect('morph',p);return true;}
  function reload(p){if(!seeker(p)||p.rl>0||(p.ammo[p.cur]||0)>=12)return;p.rl=1.4;}
@@ -99,7 +99,7 @@
  }
  function drawObject(o){const image=sprite(o.form);if(!image)return;cx.save();cx.translate(o.x,o.y);cx.rotate(o.a||0);cx.drawImage(image,-24,-24,48,48);cx.restore();}
  function drawWorld(viewer){const world=ensure();for(const o of world.objects)if(canRender(viewer,o,o))drawObject(o);if(G.me.alive&&!seeker(G.me)){const source=nearest(G.me,{x:mouse.x/VIEW_ZOOM+cam.x,y:mouse.y/VIEW_ZOOM+cam.y});if(source&&canSee(viewer,source,source)){cx.strokeStyle='#a6e8d480';cx.lineWidth=1.2;cx.setLineDash([3,4]);cx.beginPath();cx.arc(source.x,source.y,D.radius(source.form)+5,0,7);cx.stroke();cx.setLineDash([]);}}
-  for(const q of G.tr){if(seeker(G.me)&&(Math.min(distance(viewer,{x:q.x,y:q.y}),distance(viewer,{x:q.x2,y:q.y2}))>H.SIGHT||!los(viewer,{x:q.x,y:q.y})&&!los(viewer,{x:q.x2,y:q.y2})))continue;cx.strokeStyle=q.c;cx.lineWidth=1.5;cx.beginPath();cx.moveTo(q.x,q.y);cx.lineTo(q.x2,q.y2);cx.stroke();}
+  for(const q of G.tr){if(seeker(G.me)&&(Math.min(distance(viewer,{x:q.x,y:q.y}),distance(viewer,{x:q.x2,y:q.y2}))>SIGHT||!los(viewer,{x:q.x,y:q.y})&&!los(viewer,{x:q.x2,y:q.y2})))continue;cx.strokeStyle=q.c;cx.lineWidth=1.5;cx.beginPath();cx.moveTo(q.x,q.y);cx.lineTo(q.x2,q.y2);cx.stroke();}
   for(const q of G.hns.phEffects||[])if(canRender(viewer,q)){cx.strokeStyle=q.kind==='morph'?'#8df4d2':q.kind==='hit'?'#ebc083':'#d77d6f';cx.globalAlpha=Math.max(0,q.left/.45);cx.lineWidth=2;cx.beginPath();cx.arc(q.x,q.y,13+(1-q.left/.45)*20,0,7);cx.stroke();cx.globalAlpha=1;}
  }
  function drawActor(p){if(seeker(p))return false;drawObject({form:p.propForm,x:p.x,y:p.y,a:p.propAngle});if(p===G.me){cx.fillStyle='#a6e9d6';cx.textAlign='center';cx.font='11px system-ui';H.literal(cx,t('Ty'),p.x,p.y-radius(p)-8);}return true;}
@@ -109,8 +109,15 @@
   else{const source=nearest(p,{x:mouse.x/VIEW_ZOOM+cam.x,y:mouse.y/VIEW_ZOOM+cam.y}),form=D.models[p.propForm];fitText(t('Przebranie:')+' '+t(form?.name||'Przedmiot')+' · F — '+t(p.propLocked?'Obrót zablokowany':'Obrót swobodny'),x+14,520,w-28);fitText('R — '+(p.propMorph>0?t('Przemiana za')+' '+Math.ceil(p.propMorph)+'s':source?t('Zamień w')+' '+t(D.models[source.form].name):t('Podejdź do przedmiotu'))+' · '+t('E — zryw')+' '+(p.hnsCooldown>0?Math.ceil(p.hnsCooldown)+'s':t('Gotowy')),x+14,538,w-28);}
   if(seeker(p)&&G.el<(p.phHitUntil||0)){cx.strokeStyle='#baf4da';cx.lineWidth=2;for(const[a,b]of[[1,1],[-1,1],[1,-1],[-1,-1]]){cx.beginPath();cx.moveTo(mouse.x+a*7,mouse.y+b*7);cx.lineTo(mouse.x+a*13,mouse.y+b*13);cx.stroke();}}
  }
+ function drawCompactHUD(blind){const g=G,p=g.me,w=Math.min(350,VW-24),x=(VW-w)/2;H.panel(x,8,w,44);cx.textAlign='left';cx.fillStyle='#e7f3ed';cx.font='bold 11px system-ui';cx.fillText(t('Prop Hunt'),x+12,26);cx.textAlign='right';cx.fillStyle='#efd39c';cx.fillText(t('Runda')+' '+(g.hns.round+1)+' / '+H.ROUNDS+' · '+Math.max(0,Math.ceil(g.t))+'s',x+w-12,26);cx.textAlign='center';cx.fillStyle='#aec9cd';cx.font='11px system-ui';cx.fillText(t('Ukrywający się')+': '+g.ps.filter(q=>q.alive&&!seeker(q)).length+' / '+g.hns.initialHiders+' · '+t('Szukający')+': '+g.ps.filter(q=>q.alive&&seeker(q)).length,VW/2,43);
+  if(blind){H.panel(Math.max(12,VW/2-200),246,Math.min(400,VW-24),100);cx.font='bold 18px system-ui';cx.fillStyle='#efcf92';cx.fillText(t('POCZEKAJ NA SYGNAŁ'),VW/2,280);cx.font='12px system-ui';cx.fillStyle='#c3d2d5';cx.fillText(t('Ukrywający się wybierają swoje kryjówki.'),VW/2,307);}
+  H.panel(12,582,Math.min(300,VW-24),44);cx.textAlign='left';cx.font='bold 12px system-ui';cx.fillStyle=G.el<(p.phPenaltyUntil||0)?'#ff9186':'#e1f0e8';const role=t(seeker(p)?'SZUKAJĄCY':'UKRYWAJĄCY SIĘ');cx.fillText(Math.ceil(p.hp)+' HP · '+role+(seeker(p)?' · '+(p.rl>0?t('Przeładowanie…'):(p.ammo[p.cur]||0)+' / 12'):''),24,600);cx.font='10px system-ui';cx.fillStyle='#a8c3c5';cx.fillText(seeker(p)?t('LPM — strzał · R — przeładuj'):t(D.models[p.propForm]?.name||'Przedmiot')+' · R / F / E',24,617);
+  cx.textAlign='right';cx.fillStyle='#adc2c8';cx.font='10px system-ui';cx.fillText(t('TAB — tabela wyników'),VW-14,570);if(g.el<p.phConvertedUntil){cx.textAlign='center';cx.fillStyle='#efcf92';cx.fillText(t('Znaleziono cię — dołączasz do szukających.'),VW/2,76);}
+  if(g.ph==='end'&&!g.over){cx.textAlign='center';cx.fillStyle='#f1dcb3';cx.font='bold 18px system-ui';cx.fillText(t(g.hns.winner===g.hns.seekerTeam?'Szukający wygrali rundę':'Ukrywający się wygrali rundę'),VW/2,95);}
+  for(let i=0;i<Math.min(3,g.hns.events.length);i++){const e=g.hns.events[i];cx.textAlign='right';cx.font='10px system-ui';cx.fillStyle='#d9c8aa';H.literal(cx,e.by+' '+t(e.action)+' '+e.who,VW-14,76+i*15);}if(ST_().fps){cx.textAlign='left';cx.fillStyle='#9cbba9';cx.font='10px system-ui';cx.fillText(Math.round(FPSV)+' FPS',12,20);}if(ST_().chat)drawChat(g);if(!blind&&p.alive){drawCross(cx,mouse.x,mouse.y);if(seeker(p)&&G.el<(p.phHitUntil||0)){cx.strokeStyle='#baf4da';cx.lineWidth=2;for(const[a,b]of[[1,1],[-1,1],[1,-1],[-1,-1]]){cx.beginPath();cx.moveTo(mouse.x+a*7,mouse.y+b*7);cx.lineTo(mouse.x+a*13,mouse.y+b*13);cx.stroke();}}}
+ }
  function clientTick(dt){G.tr=G.tr.filter(q=>(q.t-=dt)>0);for(const p of G.ps){p.propMorph=Math.max(0,(p.propMorph||0)-dt);afterPlayer(p);}}
  const originalMove=mv;mv=function(p,dx,dy){return active()&&G.propWorld?move(p,dx,dy):originalMove(p,dx,dy);};
  MODES.push(['prophunt','Prop Hunt']);MI.push('◇');MD.push('Become scenery, blend in and survive the hunters');SLOTS.prophunt=10;
- root.SzPropHunt={active,ensure,assignRoles,recordRound,matchResult,convert,initRound,input,tickPlayer,afterPlayer,tickWorld,bot,shoot,speed,canSee,canRender,drawWorld,drawActor,drawHUD,clientTick,serialize,restore,transform,nearest,observe,move,occupied,sprite,constants:{RANGE,DAMAGE,PENALTY}};
+ root.SzPropHunt={active,ensure,assignRoles,recordRound,matchResult,convert,initRound,input,tickPlayer,afterPlayer,tickWorld,bot,shoot,speed,canSee,canRender,drawWorld,drawActor,drawHUD,drawCompactHUD,clientTick,serialize,restore,transform,nearest,observe,move,occupied,sprite,constants:{RANGE,DAMAGE,PENALTY,SIGHT}};
 })(globalThis);
