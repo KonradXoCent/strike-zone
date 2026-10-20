@@ -1,4 +1,5 @@
 (function(root){const pairs=`
+Polski|Polish
 W toku|In progress
 Noc nagród|Night of rewards
 Dyniowa skrytka|Pumpkin Cache
