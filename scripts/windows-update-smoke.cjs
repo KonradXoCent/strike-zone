@@ -10,6 +10,7 @@ const { startPresenceFixture, connectPresenceFixture } = require('./test-support
 
 const root = path.join(__dirname, '..');
 const version = require('../package.json').version;
+// Keep the bootstrap version aligned with the installer downloaded by windows-release.yml.
 const baseVersion = '1.5.2';
 const installDir = path.join(process.env.RUNNER_TEMP || process.env.TEMP, 'StrikeZoneUpdateSmoke');
 const installedExe = path.join(installDir, 'StrikeZone.exe');
