@@ -20,6 +20,8 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm test
       - run: npm run check:ui
+      - name: Test Zombie grenades, football safety, original Halloween music and bonus-code recovery
+        run: npm run test:seasonal
       - name: Test Halloween progression, event cases, exclusive items, rendering and expiry
         run: npm run test:halloween
       - name: Audit Polish and English interface screens

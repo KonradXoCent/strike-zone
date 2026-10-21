@@ -1,4 +1,28 @@
 (function(root){const pairs=`
+Granat zamrażający|Freeze Grenade
+Zamraża zombie na 3 s w promieniu 150.|Freezes zombies for 3 s within a radius of 150.
+6 cukierków za minutę aktywnej gry · 30 za ukończony mecz · 45 za wygrany.|6 candies per minute of active play · 30 per completed match · 45 per win.
+Kod bonusowy|Bonus code
+Wpisz kod i odbierz nagrodę. Każdy kod działa raz na konto.|Enter a code to claim a reward. Each code works once per account.
+Twój kod|Your code
+Wpisz kod|Enter code
+Odbierz nagrodę|Claim reward
+Zaloguj się, aby odebrać kod.|Sign in to redeem a code.
+Ten kod nie istnieje lub ma niepoprawny format.|This code does not exist or has an invalid format.
+Ten kod nie jest teraz aktywny.|This code is not currently active.
+Ten kod wygasł.|This code has expired.
+Limit użyć tego kodu został wyczerpany.|This code has reached its redemption limit.
+Zapis konta zmienił się. Odświeżono dane — spróbuj ponownie.|Your account save changed. Data has been refreshed — please try again.
+Nie znaleziono profilu przypisanego do tego kodu.|The profile assigned to this code could not be found.
+Nie udało się potwierdzić odbioru. Sprawdź połączenie i dokończ operację.|The claim could not be confirmed. Check your connection and complete the operation.
+Dokończ odbiór nagrody|Complete your reward claim
+Sprawdzamy zapis poprzedniej próby. Ponowne sprawdzenie nie przyzna nagrody dwa razy.|We are checking your previous attempt. Checking again will not award the reward twice.
+Sprawdź i dokończ odbiór|Check and complete claim
+Odebrano {n} cukierków!|Claimed {n} candies!
+Odebrano pieniądze: {n}$.|Claimed money: {n}$.
+Odebrano skrzynki: {item} × {n}!|Claimed cases: {item} × {n}!
+Odebrano klucze: {item} × {n}!|Claimed keys: {item} × {n}!
+Ten kod został już wykorzystany na twoim koncie.|This code has already been redeemed on your account.
 Halloweenowa mapa nie jest już dostępna.|The Halloween map is no longer available.
 Nawiedzony cmentarz z ruinami kaplicy, kryptami i bocznymi alejkami. Mapa wydarzenia dostępna do 30 listopada 2026.|A haunted cemetery with a ruined chapel, crypts and side alleys. This event map is available through 30 November 2026.
 Kaplica ma trzy wejścia. Pilnuj boków i trzymaj się drużyny.|The chapel has three entrances. Watch the flanks and stay with your team.

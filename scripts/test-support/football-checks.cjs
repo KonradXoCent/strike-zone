@@ -20,7 +20,7 @@ module.exports=async function verifyFootball(page){
    mgBoot('football');const target=remote?G.ps.find(p=>p!==G.me&&p.team==='CT'&&!p.mgKeeper):G.me,bot=G.ps.find(p=>p!==G.me&&p!==target&&p.team==='CT'&&!p.mgKeeper),other=G.ps.find(p=>p!==G.me&&p!==target&&p!==bot&&p.team==='CT'&&!p.mgKeeper);
    for(const p of G.ps){p.rh=false;p.human=p===G.me;p.x=p.team==='CT'?150:1050;p.y=110;p.mgBrain.fire=Infinity;}
    if(remote)target.rh=true;
-   Object.assign(target,{x:440,y:550,inp:{},lastIn:performance.now()});Object.assign(bot,{x:500,y:416,cd:0});bot.mgBrain.fire=0;Object.assign(other,{x:650,y:270});G.mg.ball={...SzFootball.ball(),x:525,y:416};upd(.02);
+   Object.assign(target,{x:480,y:550,inp:{},lastIn:performance.now()});Object.assign(bot,{x:500,y:416,cd:0});bot.mgBrain.fire=0;Object.assign(other,{x:650,y:270});G.mg.ball={...SzFootball.ball(),x:525,y:416};upd(.02);
    return G.mg.stats.humanPasses===1&&G.mg.ball.passFrom===G.ps.indexOf(bot)&&G.mg.ball.vx<0&&G.mg.ball.vy>0;
   };
   const localHumanPass=botPass(false),remoteHumanPass=botPass(true);quit();return{keeperPositions,free,pass,passSpeed,received,keepsRolling,intercepted,shot,shotSpeed,range,cooldown,tooFar,rightIgnored,leftKicks,saved,reset,localHumanPass,remoteHumanPass};
@@ -28,5 +28,5 @@ module.exports=async function verifyFootball(page){
  assert.deepEqual(result.keeperPositions,[{team:'CT',x:112,y:416},{team:'T',x:1168,y:416}]);
  for(const key of['free','pass','received','keepsRolling','intercepted','shot','range','cooldown','tooFar','rightIgnored','leftKicks','saved','reset','localHumanPass','remoteHumanPass'])assert.equal(result[key],true,key+': '+JSON.stringify(result));
  assert.equal(result.passSpeed,820);assert.equal(result.shotSpeed,820);
- console.log('PASS football: centred keepers, free rolling ball after contact and reception, interceptions, original 820 px/s kicks, 52 px range and kick cooldown, goalkeeper deflections, and bot passes to open local and remote humans including a backpass');
+ console.log('PASS football: centred keepers, free rolling ball after contact and reception, interceptions, original 820 px/s kicks, 52 px range and kick cooldown, goalkeeper deflections, and bot passes to open local and remote humans including a safe backpass');
 };
