@@ -45,16 +45,21 @@ Przykłady dla SQL Editor — uruchom tylko te, które chcesz udostępnić:
 ```sql
 -- 2500 dolarów
 insert into public.bonus_codes(code,reward_type,reward_amount)
-values ('WELCOME2500','money',2500);
+values ('WELCOME2500','money',2500)
+on conflict (normalized_code) do nothing;
 
 -- 2 skrzynki Alpha
 insert into public.bonus_codes(code,reward_type,reward_amount,reward_item)
-values ('ALPHACASE','case',2,'alpha');
+values ('ALPHACASE','case',2,'alpha')
+on conflict (normalized_code) do nothing;
 
 -- 1 klucz do Glove Case
 insert into public.bonus_codes(code,reward_type,reward_amount,reward_item)
-values ('GLOVEKEY','key',1,'gloves');
+values ('GLOVEKEY','key',1,'gloves')
+on conflict (normalized_code) do nothing;
 ```
+
+Jeśli kod o tej nazwie już istnieje, przykłady nie zmieniają jego ustawień. Istniejący kod edytuj w Table Editor. Nie używaj starego pola `reward_candies` — aktualne pola nagród to `reward_type`, `reward_amount` i `reward_item`.
 
 Aby wycofać kod, ustaw `active=false`. Historia znajduje się w `bonus_code_redemptions`: konto, profil, nazwa kodu, typ, ilość, identyfikator przedmiotu i czas odbioru. Edycja kodu lub nagrody nie resetuje historii: konto, które już go wykorzystało, nie otrzyma ponownej nagrody.
 

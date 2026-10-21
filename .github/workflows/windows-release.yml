@@ -84,12 +84,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/publish-release.cjs
-      - name: Download previous public 1.5.1 installer
+      - name: Download previous public 1.5.2 installer
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: pwsh
-        run: gh release download v1.5.1 --repo "$env:GITHUB_REPOSITORY" --pattern "StrikeZone-Setup-1.5.1.exe" --dir release
-      - name: Test installed 1.5.1 update, launcher accounts and Escape on Windows
+        run: gh release download v1.5.2 --repo "$env:GITHUB_REPOSITORY" --pattern "StrikeZone-Setup-1.5.2.exe" --dir release
+      - name: Test installed 1.5.2 update, launcher accounts and Escape on Windows
         run: node scripts/windows-update-smoke.cjs
       - name: Attach Windows update test report
         if: always()

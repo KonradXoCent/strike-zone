@@ -4,8 +4,14 @@ Gra na Windows z launcherem, kontem Supabase i obowiązkowymi aktualizacjami.
 
 **[Pobierz aktualne wydanie](https://github.com/KonradXoCent/strike-zone/releases/latest)**
 
-Wersja **1.5.2**: zainstaluj `StrikeZone-Setup-1.5.2.exe` lub zaktualizuj wersję
-1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0, 1.4.1, 1.5.0 lub 1.5.1 przez launcher — razem z samym launcherem.
+Wersja **1.5.3**: zainstaluj `StrikeZone-Setup-1.5.3.exe` lub zaktualizuj wersję
+1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0, 1.4.1, 1.5.0, 1.5.1 lub 1.5.2 przez launcher — razem z samym launcherem.
+
+Nowości 1.5.3: bezpieczne granaty ludzi i granat zamrażający w Zombie Mode,
+boty unikające samobójczych strzałów w piłce, więcej cukierków, pięć oryginalnych
+muzyk MVP Halloween i kody bonusowe zarządzane w Supabase. `HALLOWEEN` daje
+80 cukierków raz na konto; inne kody mogą dawać pieniądze, skrzynki lub klucze.
+Instrukcja dodawania kodów: [docs/bonus-codes.md](docs/bonus-codes.md).
 
 Nowości 1.5.2: Prop Hunt z botami, Minigry i osobna Piłka nożna do 10 goli.
 Halloween do 30 listopada: cukierki za grę i zadania, trzy skrzynki, 23 sezonowe
@@ -68,8 +74,8 @@ dodają publiczne awatary, Warsztat i wiadomości, bez zastępowania istniejący
 ani zapisów gry. Szczegóły: [docs/community-workshop.md](docs/community-workshop.md)
 i [docs/settings-chat-network.md](docs/settings-chat-network.md).
 
-GitHub Actions buduje wydanie, instaluje wcześniejszą publiczną 1.5.1 i sprawdza
-aktualizację do 1.5.2, zachowanie danych, logowanie, rejestrację, profil, wspólną
+GitHub Actions buduje wydanie, instaluje wcześniejszą publiczną 1.5.2 i sprawdza
+aktualizację do 1.5.3, zachowanie danych, logowanie, rejestrację, profil, wspólną
 sesję gry oraz wyjście przez Escape. Raport `update-smoke-report.json` jest
 w wydaniu. Testy kont używają odizolowanych odpowiedzi HTTP, bez zmian prawdziwych kont.
 

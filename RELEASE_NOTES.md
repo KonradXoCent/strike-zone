@@ -1,3 +1,29 @@
+Strike Zone 2D 1.5.3 — Zombie Mode, nagrody Halloween i kody bonusowe
+
+- Zombie Mode: granaty wybuchowe i Molotovy ludzi nie zadają obrażeń własnej drużynie, także gdy rzucający później zostanie zainfekowany. Granat dymny zastępuje granat zamrażający: zatrzymuje widoczne zombie w promieniu 150 na 3 sekundy, gasi ich ogień i działa również we wspólnym meczu.
+- Piłka nożna: boty ustawiają się za piłką i wybijają ją bezpiecznie, gdy planowany strzał grozi golem do własnej bramki. Dotychczasowa siła kopnięcia gracza pozostaje zachowana.
+- Więcej cukierków: 6 za minutę aktywnej gry oraz 30 za ukończony mecz lub 45 za wygrany. Większe nagrody z zadań dziennych i wydarzeniowych; ceny skrzynek pozostają 60, 240 i 35 cukierków.
+- Pięć oryginalnych halloweenowych muzyk MVP o długości około 13–18 sekund, z dzwonami, organami, chórem i upiornymi melodiami.
+- Kody bonusowe w Profilu i panelu Halloween na stronie Graj. HALLOWEEN daje 80 cukierków raz na konto do końca wydarzenia. Tylko ten kod daje cukierki; pozostałe kody mogą przyznawać pieniądze, wybraną skrzynkę lub pasujący klucz. Właściciel dodaje kody i ustawia nagrody w Supabase bez aktualizacji gry.
+- Odbiór nagrody jest zapisywany raz na konto. Po utracie połączenia gra odzyskuje wynik bez ponownego naliczenia; odznaki zdobyte dzięki nagrodzie pieniężnej również zapisują się w chmurze. Komunikaty obsługują polski i angielski.
+
+W obecnym launcherze pobierz aktualizację **1.5.3**, następnie zainstaluj ją i uruchom aplikację ponownie. Gra i launcher aktualizują się razem, zachowując konto, ekwipunek i dane lokalne. Nowa instalacja: **StrikeZone-Setup-1.5.3.exe**.
+Instrukcja dodawania kodów: [docs/bonus-codes.md](https://github.com/KonradXoCent/strike-zone/blob/main/docs/bonus-codes.md). Publiczna gra korzysta z konta zalogowanego w launcherze.
+
+English
+
+- Zombie Mode: human HE grenades and Molotovs no longer damage human teammates, including fire thrown before the owner was infected. The Smoke slot becomes a Freeze Grenade that stops visible zombies within radius 150 for 3 seconds, extinguishes them and synchronizes in shared matches.
+- Football bots approach from behind the ball and choose a safe clearance when a planned kick risks an own goal. The player's existing kick strength is preserved.
+- More candies: 6 per active minute, plus 30 for a completed match or 45 for a win. Daily and event quests grant larger rewards; case prices remain 60, 240 and 35 candies.
+- Five original Halloween MVP arrangements, approximately 13–18 seconds each, featuring bells, organ, choir and haunting melodies.
+- Bonus codes are available in Profile and the Halloween panel on Play. HALLOWEEN grants 80 candies once per account until the event ends. Only this code grants candies; other codes can grant money, a selected case or its matching key. New codes and rewards are managed in Supabase without a game update.
+- Claims are recorded once per account. Connection recovery restores the result without duplicate credit, and badges unlocked by a money reward persist in the cloud. Messages support Polish and English.
+
+Download **1.5.3** in the existing launcher, then install and restart. The game and launcher update together while preserving accounts, inventories and local data. New installation: **StrikeZone-Setup-1.5.3.exe**.
+Code administration: [docs/bonus-codes.md](https://github.com/KonradXoCent/strike-zone/blob/main/docs/bonus-codes.md). The public game uses the launcher account session.
+
+---
+
 Strike Zone 2D 1.5.2 — Halloween, Prop Hunt i Minigry
 
 - Halloween 2026 do 30 listopada, godz. 23:59 czasu polskiego: sezonowy panel nad lobby, dynie, nietoperze, księżyc i pajęczyny w menu gry oraz launcherze. Dekoracje dopasowują się do małych ekranów i wyłączą się po wydarzeniu; motywy launchera pozostają dostępne.

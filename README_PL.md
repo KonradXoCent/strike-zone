@@ -1,9 +1,11 @@
-# Strike Zone 2D — 1.5.2
+# Strike Zone 2D — 1.5.3
 
-Pobierz `StrikeZone-Setup-1.5.2.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
-Posiadacze wersji 1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0, 1.4.1, 1.5.0 i 1.5.1 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
+Pobierz `StrikeZone-Setup-1.5.3.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
+Posiadacze wersji 1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0, 1.4.1, 1.5.0, 1.5.1 i 1.5.2 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
 
-Pełna lista zmian 1.5.2: [RELEASE_NOTES.md](RELEASE_NOTES.md).
+Pełna lista zmian 1.5.3: [RELEASE_NOTES.md](RELEASE_NOTES.md).
+
+Wersja 1.5.3 poprawia granaty w Zombie Mode i samobójcze strzały botów w piłce nożnej, zwiększa nagrody w cukierkach i dodaje pięć oryginalnych muzyk MVP Halloween. Granat zamrażający zastępuje dymny w Zombie Mode. Kod `HALLOWEEN` daje 80 cukierków raz na konto; kolejne kody można dodawać w Supabase z nagrodą pieniężną, skrzynką lub kluczem, bez nowej wersji gry. Instrukcja: [docs/bonus-codes.md](docs/bonus-codes.md).
 
 Wersja 1.5.2 dodaje Prop Hunt, Minigry, osobną Piłkę nożną do 10 goli oraz wydarzenie Halloween do 30 listopada 2026. Cukierki, zadania i trzy skrzynki wydarzenia obejmują 23 sezonowe przedmioty, a Zombie Mode otrzymuje mapę cmentarną. Menu i launcher mają wspólne sezonowe dekoracje. Overwatch nagradza do 10 poprawnych ocen dziennie.
 
@@ -208,7 +210,7 @@ Sprawdza także blokadę 4/5, odblokowanie po piątym projekcie, zakup, animacj�
 otwierania, wyposażenie zdobytego przedmiotu i jego odczyt po przeładowaniu.
 Obejmuje też niedostępny health endpoint, ograniczenie skryptów `data:`, zerwanie
 sieci oraz żądanie, które nie odpowiada aż do przerwania po limicie czasu.
-Workflow Windows instaluje prawdziwą publiczną 1.5.1 i aktualizuje ją do bieżącej wersji.
+Workflow Windows instaluje prawdziwą publiczną 1.5.2 i aktualizuje ją do bieżącej wersji.
 Następnie sprawdza błędne hasło, rejestrację z potwierdzeniem e-maila i bez niego,
 odczyt nicku i awatara, tę samą sesję w grze, brak osobnych kontrolek logowania,
 Escape, zapis postępu, zmiany profilu, wylogowanie oraz izolację dwóch kont.
