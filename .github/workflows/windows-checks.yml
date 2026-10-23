@@ -47,6 +47,8 @@ jobs:
         run: npm run test:community
       - run: npm run test:social
       - run: npm run test:gameplay
+      - name: Test standalone sign-in and cloud persistence of owned team loadouts
+        run: npm run test:preview
       - name: Build standalone HTML test preview
         run: node scripts/prepare-preview.cjs test-preview/Strike-Zone-Test.html
       - name: Upload standalone HTML test preview
