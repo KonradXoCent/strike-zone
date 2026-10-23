@@ -6,7 +6,7 @@
   const t=s=>root.szLocale?.t(s)||s,canvas=$('cv'),game=$('game');let pending=false,failed=false,wasLocked=false,expectedExit=false,requestId=0,timeout,gestureTimer,gesture='',escapeUntil=0,rect=canvas.getBoundingClientRect();
   const enabled=()=>ST_().pointerLock!==0,locked=()=>document.pointerLockElement===canvas;
   const visible=id=>{const e=$(id);return !!e&&!e.hidden&&e.style.display!==''&&e.style.display!=='none';};
-  function playable(){return !!G&&!game.hidden&&!G.paused&&!G.intro&&!G.over&&!visible('buy')&&!visible('ov')&&!visible('pm')&&!root.document.querySelector('dialog[open]')&&!document.querySelector('#br-map:not([hidden])');}
+  function playable(){return !!G&&!G.spectator&&!game.hidden&&!G.paused&&!G.intro&&!G.over&&!visible('buy')&&!visible('ov')&&!visible('pm')&&!root.document.querySelector('dialog[open]')&&!document.querySelector('#br-map:not([hidden])');}
   function clear(){keys={};mouse.d=mouse.r=0;if(G?.client)netSend({t:'in',k:{w:false,a:false,s:false,d:false,e:false},an:G.me.a||0,nd:G.me.nd||null,f:false});}
   function release(){requestId++;pending=false;clearTimeout(timeout);if(locked()&&!expectedExit){expectedExit=true;document.exitPointerLock?.();}clear();}
   const hint=document.createElement('button');hint.id='sz-mouse-capture';hint.type='button';hint.hidden=true;hint.dataset.noTranslate='';game.append(hint);

@@ -50,7 +50,7 @@
   try{await rpc('settings',args);if(epoch!==state.epoch)return;syncing=null;sequence++;await communityRefresh();communityNotice(t('Zapisano zasady awansu map.'));}
   catch{communityNotice(t('Nie udało się zapisać zasad awansu. Sprawdź wartości i połączenie.'),true);button.disabled=false;}
  });
- function makeRun(g){account();const ref=g?.communityMapRef;if(!g||!SBU||g.client||g.creatorTest||CREATOR_TEST||!ref)return;
+ function makeRun(g){account();const ref=g?.communityMapRef;if(!g||!SBU||g.client||g.spectator||g.creatorTest||CREATOR_TEST||!ref)return;
   const bots=Math.min(10,g.ps.filter(p=>!p.human&&!p.rh&&!p.rid).length);
   const run={id:crypto.randomUUID(),uid:SBU.id,epoch:state.epoch,release:ref.release,mode:sel.mode,bots,seconds:0,started:false,busy:false,done:false,retryAt:0};g.workshopRun=run;state.runs.add(run);progress(run);
  }
@@ -61,7 +61,7 @@
   }catch{run.retryAt=Date.now()+10000;}finally{run.busy=false;if(run.done)state.runs.delete(run);}
  }
  const begin=begin0;begin0=function(){begin();if(G)makeRun(G);};
- const update=upd;upd=function(dt){const g=G,run=g?.workshopRun;if(run&&!g.paused&&!g.over&&!g.intro)run.seconds+=Math.max(0,Math.min(Number(dt)||0,.25));return update(dt);};
+ const update=upd;upd=function(dt){const g=G,run=g?.workshopRun;if(run&&!g.spectator&&!g.paused&&!g.over&&!g.intro)run.seconds+=Math.max(0,Math.min(Number(dt)||0,.25));return update(dt);};
  const end=endG;endG=function(...args){if(G?.workshopRun)progress(G.workshopRun);COMMUNITY.explicitSelection=null;return end(...args);};
  const leave=quit;quit=function(){const run=G?.workshopRun;if(run){if(run.seconds>=60)progress(run);else{run.done=true;state.runs.delete(run);}}COMMUNITY.explicitSelection=null;return leave();};
  setInterval(()=>{account();for(const run of state.runs)progress(run);},1000);

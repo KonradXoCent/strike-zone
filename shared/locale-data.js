@@ -1,4 +1,34 @@
 (function(root){const pairs=`
+Obserwator|Spectator
+Obserwatorzy|Spectators
+Zmień drużynę|Change team
+Graj w drużynie lub obserwuj mecz. Boty uzupełniają wolne miejsca.|Join a team or watch the match. Bots fill empty slots.
+Obie drużyny · X-ray · Podgląd mapy|Both teams · X-ray · Map overview
+Brak wolnych miejsc w tej drużynie.|No free slots on this team.
+żywych|alive
+Kolor HUD|HUD color
+Wybierz kolor zdrowia, amunicji i elementów interfejsu.|Choose the color of health, ammunition and interface elements.
+Własny kolor|Custom color
+Błękitny|Light blue
+Żółty|Yellow
+Fioletowy|Purple
+Czerwony|Red
+Niebieski|Blue
+Biały|White
+Zielony|Green
+Sterowanie obserwatorem|Spectator controls
+Poprzedni gracz|Previous player
+Następny gracz|Next player
+Boty głosują na minigrę|Bots are voting for a minigame
+Rozgrzewka|Warmup
+Koniec rundy|Round finished
+SPACJA — skocz z samolotu|SPACE — jump from the plane
+LPM — rzuć granat|LMB — throw grenade
+Przytrzymaj E na bombsite, aby podłożyć bombę|Hold E on a bombsite to plant the bomb
+Przytrzymaj E przy bombie, aby rozbroić|Hold E near the bomb to defuse
+Prośba o broń|Weapon request
+E — podnieś|E — pick up
+B — menu zakupów|B — buy menu
 1–5: kolumna · 1–9 lub 0: przedmiot · B: zamknij|1–5: column · 1–9 or 0: item · B: close
 HE / wybuchowy|HE / explosive
 Granaty|Grenades

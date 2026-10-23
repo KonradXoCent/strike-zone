@@ -28,6 +28,8 @@ jobs:
         run: npm run test:locale
       - name: Test minigames votes, physics, bots and arcade rotation
         run: npm run test:minigames
+      - name: Test colored match HUD, observer roles, cameras and passive progression
+        run: npm run test:spectator
       - run: npm run test:network
       - run: npm run test:launcher
       - run: npm run test:friends

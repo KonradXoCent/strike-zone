@@ -36,7 +36,8 @@
     "test:prop-hunt": "npm run prepare:game && node scripts/prop-hunt-smoke.cjs",
     "test:minigames": "npm run prepare:game && node scripts/minigames-smoke.cjs",
     "test:halloween": "npm run prepare:game && node scripts/halloween-smoke.cjs",
-    "test:seasonal": "npm run prepare:game && node scripts/seasonal-smoke.cjs"
+    "test:seasonal": "npm run prepare:game && node scripts/seasonal-smoke.cjs",
+    "test:spectator": "node scripts/spectator-smoke.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",
