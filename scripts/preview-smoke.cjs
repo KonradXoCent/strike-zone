@@ -150,12 +150,12 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
     await author.locator('[data-forge-equip]').click();
     await author.waitForFunction(()=>!!communityOwnId('knife')&&!COMMUNITY.busy);
     if(process.env.STRIKEZONE_PREVIEW_SHOTS)await author.screenshot({path:path.join(process.env.STRIKEZONE_PREVIEW_SHOTS,'forge-owned.png')});
-    const instance=await author.evaluate(()=>P().communityLoadout.knife.owned);
+    const instance=await author.evaluate(()=>communityOwnRef('knife').owned);
     assert.equal(await author.evaluate(id=>FORGE.owned.some(o=>o.id===id),instance),true);
     await author.evaluate(()=>window.szDesktopFlush());await author.reload();
     await author.waitForFunction(()=>FORGE.ready&&FORGE.owned.length===1&&!!communityOwnId('knife'));
     assert.equal(await author.evaluate(()=>P().wallet),walletBefore-2500);
-    assert.equal(await author.evaluate(()=>P().communityLoadout.knife.owned),instance);
+    assert.equal(await author.evaluate(()=>communityOwnRef('knife').owned),instance);
     console.log('PASS 4/5 lock, fifth approval, paid case purchase, centered reel, owned inventory, equip and reload');
     await author.click('[data-preview-action=logout]');
     await author.waitForFunction(() => !SBU && !COMMUNITY.admin && !COMMUNITY.mine.length);
