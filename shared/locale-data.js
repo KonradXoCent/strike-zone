@@ -1,4 +1,44 @@
 (function(root){const pairs=`
+1–5: kolumna · 1–9 lub 0: przedmiot · B: zamknij|1–5: column · 1–9 or 0: item · B: close
+HE / wybuchowy|HE / explosive
+Granaty|Grenades
+Wybierz klasę|Choose class
+WYPOSAŻENIE DRUŻYNY|TEAM LOADOUT
+Wyposażenie|Equipment
+Gotowy na następną rundę.|Ready for the next round.
+Drużyna wyposażenia|Loadout team
+Podgląd wyposażenia|Loadout preview
+Domyślny wygląd|Default finish
+Domyślne rękawiczki|Default gloves
+Broń średnia|Mid-tier
+Wybierz miejsce, a następnie skin z ekwipunku.|Select a slot, then a skin from your inventory.
+Skiny zapisują się osobno dla CT i T.|Skins are saved separately for CT and T.
+Przywróć domyślny wygląd|Restore default finish
+Pokaż cały ekwipunek|Show all inventory
+Menu zakupów|Buy menu
+Zwróć przedmiot|Refund item
+Poproś drużynę o broń|Request a weapon from your team
+Poproś|Request
+Kamizelka kuloodporna|Kevlar vest
+Zestaw rozbrajający|Defuse kit
+Mina zbliżeniowa|Proximity mine
+Granat dymny|Smoke Grenade
+Granat wybuchowy|HE Grenade
+Granat błyskowy|Flashbang
+Mołotow|Molotov
+Czas zakupów|Buy time remaining
+Zakupy podczas meczu|Purchases during the match
+PODGLĄD BRONI|WEAPON PREVIEW
+Obrażenia|Damage
+Magazynek|Magazine
+Jeden granat każdego typu.|One grenade of each type.
+Ochrona przed obrażeniami.|Protection from damage.
+Skraca czas rozbrajania bomby.|Reduces bomb defuse time.
+Maksymalnie 3 miny.|Up to 3 mines.
+Kup dla sojusznika|Buy for teammate
+Najedź, aby obejrzeć · Kliknij, aby kupić|Hover to preview · Click to buy
+Strzałka pod przedmiotem zwraca zakup z tej rundy.|The arrow below an item refunds a purchase from this round.
+Bezpłatnie|Free
 Granat zamrażający|Freeze Grenade
 Zamraża zombie na 3 s w promieniu 150.|Freezes zombies for 3 s within a radius of 150.
 6 cukierków za minutę aktywnej gry · 30 za ukończony mecz · 45 za wygrany.|6 candies per minute of active play · 30 per completed match · 45 per win.

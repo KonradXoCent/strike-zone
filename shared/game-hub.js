@@ -59,7 +59,7 @@
  function mount(){
   const t=s=>root.szLocale?.t(s)||s,esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const number=n=>Math.max(0,Number(n)||0).toLocaleString(root.szLocale?.language==='en'?'en-US':'pl-PL');
-  const state={owner:null,query:'',type:'all',passPage:null},art=new WeakMap();
+  const state={owner:null,query:'',type:'all',weapon:null,passPage:null},art=new WeakMap();
   const isEnglish=()=>root.szLocale?.language==='en',mapLabel=i=>root.szLocale.mapName(MAPN[i]),mapTitle=i=>root.szLocale.mapNameHTML(MAPN[i]);
   function title(mode,ranked=false){return t(ranked?'Competitive Ranked':(MODES.find(m=>m[0]===mode)?.[1]||mode));}
   function artwork(map){const g=GRS[map];if(g&&art.get(g)?.language===szLocale.language)return art.get(g).uri;let uri='';
@@ -67,7 +67,7 @@
    if(!uri&&g){const c=document.createElement('canvas');c.width=600;c.height=260;const q=c.getContext('2d'),cell=Math.min(568/g.cols,228/g.rows),ox=(600-g.cols*cell)/2,oy=(260-g.rows*cell)/2;q.fillStyle='#101d29';q.fillRect(0,0,600,260);for(let i=0;i<g.d.length;i++){q.fillStyle=['#45545b','#a4b1b0','#ab8350','#77a2ad'][g.d[i]]||'#263d44';q.fillRect(ox+(i%g.cols)*cell,oy+Math.floor(i/g.cols)*cell,cell+.2,cell+.2);}uri=c.toDataURL();}
    if(g&&uri)art.set(g,{language:szLocale.language,uri});return uri;
   }
-  function inventoryOwner(){const owner=SBU?.id||DB.cur;if(state.owner!==owner){state.owner=owner;state.query='';state.type='all';state.passPage=null;}}
+  function inventoryOwner(){const owner=SBU?.id||DB.cur;if(state.owner!==owner){state.owner=owner;state.query='';state.type='all';state.weapon=null;state.passPage=null;}}
   function standardMeta(id){const s=sk(id),weapon=s.w;return{category:category(weapon,W[weapon]),search:[id,s.n,s.name,W[weapon]?.n,t(W[weapon]?.n||''),weapon==='knife'?KNIFE_MODELS[s.model||'classic']:'',s.st?'StatTrak':''].join(' ')};}
   function communityMeta(o){const p=o.payload;return{category:category(p.weapon,W[p.weapon]),search:[p.weapon,p.name,W[p.weapon]?.n,t(W[p.weapon]?.n||''),p.weapon==='knife'?KNIFE_MODELS[p.model]:'',o.stattrak?'StatTrak':''].join(' ')};}
   function toolbarHTML(){return `<div class="hub-inventory-search"><label for="hub-skin-search">${icon('search')}<span class="hub-sr">${esc(t('Szukaj skina lub broni'))}</span><input id="hub-skin-search" type="search" maxlength="120" autocomplete="off" placeholder="${esc(t('Szukaj skina lub broni…'))}" value="${esc(state.query)}" oninput="SzGameHub.search(this.value)"></label><label class="hub-type-label" for="hub-skin-type"><span>${esc(t('Typ broni'))}</span><select id="hub-skin-type" onchange="SzGameHub.type(this.value)">${categories.map(([id,label])=>`<option value="${id}" ${id===state.type?'selected':''}>${esc(t(label))}</option>`).join('')}</select></label><span id="hub-skin-count" aria-live="polite"></span></div>`;}
@@ -79,11 +79,11 @@
    const tabs=main.querySelector('.w-tabs');if(tabs)main.prepend(tabs);tabs?.after(toolbar);toolbar.after(empty);empty.after(section);const forge=$('forge-area');if(forge)section.after(forge);
    for(const card of main.querySelectorAll('[data-inventory-id]')){card.querySelector('b')?.setAttribute('data-user-content','');}
    for(const card of main.querySelectorAll('#forge-owned .forge-skin')){card.querySelector('b')?.setAttribute('data-user-content','');}
-   filterInventory();
+   filterInventory();root.SzLoadout?.refresh();
   }
   function filterInventory(){if(T!=='inv'||INV!=='w'||!$('hub-inventory-toolbar'))return;const counts=new Map();for(const id of (globalThis.SzHalloween?SzHalloween.inventoryProfile(P()):P()).skins)counts.set(id,(counts.get(id)||0)+1);let total=0,shown=0,standard=0,community=0;
-   for(const card of $('main').querySelectorAll('[data-inventory-id]')){const id=card.dataset.inventoryId,quantity=counts.get(id)||0,show=matches(standardMeta(id),state.query,state.type);card.hidden=!show;total+=quantity;if(show){shown+=quantity;standard++;}}
-   for(const card of $('main').querySelectorAll('#forge-owned .forge-skin')){const id=card.querySelector('[data-forge-equip]')?.dataset.forgeEquip,o=FORGE.owned.find(o=>o.id===id);if(!o)continue;const show=matches(communityMeta(o),state.query,state.type);card.hidden=!show;total++;if(show){shown++;community++;}}
+   for(const card of $('main').querySelectorAll('[data-inventory-id]')){const id=card.dataset.inventoryId,quantity=counts.get(id)||0,show=(!state.weapon||sk(id).w===state.weapon)&&matches(standardMeta(id),state.query,state.type);card.hidden=!show;total+=quantity;if(show){shown+=quantity;standard++;}}
+   for(const card of $('main').querySelectorAll('#forge-owned .forge-skin')){const id=card.querySelector('[data-forge-equip]')?.dataset.forgeEquip,o=FORGE.owned.find(o=>o.id===id);if(!o)continue;const show=(!state.weapon||o.payload.weapon===state.weapon)&&matches(communityMeta(o),state.query,state.type);card.hidden=!show;total++;if(show){shown++;community++;}}
    $('hub-skin-count').textContent=t('Wyniki:')+' '+number(shown)+' / '+number(total);$('inventory-skins').hidden=standard===0;const owned=$('forge-owned');if(owned)owned.hidden=community===0;$('hub-inventory-empty').hidden=shown>0;
   }
   function rewardLabel(r){if(r.cash)return '$'+number(r.cash);const name=CS[r.c||r.k]?.n||r.c||r.k||'';return(r.c&&r.k?t('Skrzynka i klucz'):r.k?t('Klucz'):t('Skrzynka'))+' · '+name;}
@@ -113,9 +113,10 @@
   const oldForge=forgeMount;forgeMount=function(){const r=oldForge();enhanceInventory();return r;};
   const oldTab2=tab2;tab2=function(kind){if(kind!=='bp')return oldTab2(kind);T=kind;hdr();renderPass();};
   lobUI=renderLobby;playFlow=renderModes;mvUI=renderVote;
-  root.SzGameHub.search=value=>{state.query=String(value||'').slice(0,120);filterInventory();};
-  root.SzGameHub.type=value=>{state.type=categories.some(([key])=>key===value)?value:'all';filterInventory();};
-  root.SzGameHub.clear=()=>{state.query='';state.type='all';enhanceInventory(true);$('hub-skin-search')?.focus();};
+  root.SzGameHub.search=value=>{state.weapon=null;root.SzLoadout?.clearSelection();state.query=String(value||'').slice(0,120);filterInventory();};
+  root.SzGameHub.type=value=>{state.weapon=null;root.SzLoadout?.clearSelection();state.type=categories.some(([key])=>key===value)?value:'all';filterInventory();};
+  root.SzGameHub.clear=()=>{state.query='';state.type='all';state.weapon=null;root.SzLoadout?.clearSelection();enhanceInventory(true);$('hub-skin-search')?.focus();};
+  root.SzGameHub.loadoutWeapon=k=>{state.weapon=k;state.query='';state.type='all';enhanceInventory(true);};
   root.SzGameHub.passPage=page=>{state.passPage=page===null?null:Math.max(0,Math.min(5,Number(page)||0));renderPass();};
   root.SzGameHub.setMap=value=>{setLobMap(value);lobUI();};
   root.SzGameHub.copyCode=async()=>{if(!L)return;const value=L.code;try{await navigator.clipboard.writeText(value);if($('hub-code-status'))$('hub-code-status').textContent=t('Skopiowano');}catch{const field=document.createElement('input');field.value=value;field.style.position='fixed';field.style.opacity='0';document.body.append(field);field.select();const ok=document.execCommand('copy');field.remove();if($('hub-code-status'))$('hub-code-status').textContent=t(ok?'Skopiowano':'Zaznacz i skopiuj kod');}};
