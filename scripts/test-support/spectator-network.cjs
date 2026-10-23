@@ -6,6 +6,7 @@ module.exports=async function(host,guest,mode){
  const before=await host.evaluate(()=>({count:G.ps.length,slot:G.ps.findIndex(p=>p.rh)}));assert.ok(before.slot>=0);
  await guest.evaluate(()=>SzSpectator.changeTeam('SPEC'));
  await host.waitForFunction(()=>Object.keys(G.observers||{}).length===1&&!G.ps.some(p=>p.rh));await guest.waitForFunction(()=>G.spectator&&G.observerConfirmed&&!G.netWaiting&&!G.ps.includes(G.me));
+ await guest.evaluate(()=>{G.killCam={left:3};killcamElement.hidden=false;G.bo=1;$('buy').style.display='flex';});await host.evaluate(()=>netSnap());await guest.waitForFunction(()=>!G.killCam&&killcamElement.hidden&&$('buy').style.display==='none');
  assert.equal(await host.evaluate(()=>G.ps.length),before.count);assert.equal(await guest.evaluate(()=>G.ps.length),before.count);assert.equal(await host.evaluate(slot=>!G.ps[slot].human&&!G.ps[slot].rh,before.slot),true);
  await host.evaluate(()=>{window.__observerCommands=0;window.__observerBefore=JSON.stringify(G.ps.map(p=>[p.x,p.y,p.hp,p.armor,p.money,p.cur,p.pri,p.sec,p.ammo,p.g,p.inp]));window.__observerReceiver=hostRecv;hostRecv=function(p){if(p.probe)window.__observerCommands++;return window.__observerReceiver(p);};});
  const profile=await guest.evaluate(()=>JSON.stringify(P()));
@@ -19,5 +20,6 @@ module.exports=async function(host,guest,mode){
  // A freshly created client joining as SPEC must acknowledge registration even
  // though its cid will never appear in an actor slot (the normal hello loop).
  await guest.evaluate(()=>quit());await host.waitForFunction(()=>Object.keys(G.observers||{}).length===0);await guest.evaluate(()=>netSend({t:'join'}));await guest.waitForFunction(()=>G?.client&&G.spectator&&G.observerConfirmed&&!G.netWaiting,null,{timeout:15000});assert.equal(await guest.evaluate(()=>NET.joinTimer),null);assert.equal(await guest.evaluate(()=>G.ps.some(p=>p.human)),false);await guest.evaluate(()=>{clientTick(.05);draw();});
+ if(mode==='football'){const profiles=[await host.evaluate(()=>JSON.stringify(P())),await guest.evaluate(()=>JSON.stringify(P()))];await host.evaluate(()=>{G.over=false;G.mg.phase='live';G.mg.result=null;G.sc={CT:10,T:4};SzMiniGames.finish('CT');netSnap();});await guest.waitForFunction(()=>G.over&&$('ov').style.display==='flex'&&!!$('ov').querySelector('button'));assert.equal(await host.evaluate(()=>JSON.stringify(P())),profiles[0]);assert.equal(await guest.evaluate(()=>JSON.stringify(P())),profiles[1]);console.log('PASS spectator host and guest football result stays accessible without rewards');}
  console.log('PASS spectator SDK',mode,'same world, no slot, ignored combat/votes, role transfer without healing, host observer and fresh SPEC join');
 };
