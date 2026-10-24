@@ -3571,6 +3571,15 @@ mkServer=async function(){sel.mode=$('sm').value;sel.map=+$('sp').value;if(!mapS
 
 </style>
 <style>
+#sz-arcade-board{position:absolute;inset:5% 3%;z-index:45;display:grid;place-items:center;pointer-events:none;color:#e5f0f0;font:12px system-ui;font-variant-numeric:tabular-nums}#sz-arcade-board[hidden],#sz-arcade-notice[hidden],#sz-goal-replay[hidden]{display:none}.ar-table{width:min(960px,100%);max-height:100%;display:flex;flex-direction:column;background:linear-gradient(120deg,#102431f5,#0b1926f5);border:1px solid #a7c5d344;border-radius:13px;overflow:hidden;box-shadow:0 20px 70px #0009;color:#e5eff0;font:12px system-ui;text-shadow:none;box-sizing:border-box}.ar-table *{box-sizing:border-box}.ar-table>header{position:static;padding:19px 22px;display:flex;align-items:center;gap:13px;border:0;border-bottom:1px solid #c3d8de22;background:#19334155;min-height:0;letter-spacing:normal}.ar-table header>svg{width:33px;height:33px;color:#ead29f;flex-shrink:0}.ar-table header small{display:block;font-size:9px;letter-spacing:2px;color:#a5bdc7;text-transform:uppercase}.ar-table h2{font:600 22px system-ui;margin:5px 0 0;letter-spacing:.2px}.ar-match-score{margin-left:auto;font-size:32px;color:#efdbac;font-weight:650;white-space:nowrap}.ar-table-body{min-height:0;overflow:auto;padding:16px;scrollbar-width:thin}.ar-table-teams{display:grid;grid-template-columns:1fr 1fr;gap:14px}.ar-team{border:1px solid #8acbff35;border-radius:7px;overflow:hidden;min-width:0;--ar-team:#94d4ff;background:#23557b12}.ar-team.t{--ar-team:#edc583;border-color:#d9b67535;background:#ad742111}.ar-team-title{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;color:var(--ar-team);background:linear-gradient(100deg,#aaccee12,transparent);border-bottom:1px solid #bdd7dd18}.ar-team-title>strong{font-size:11px;font-weight:600;letter-spacing:.5px}.ar-team-title>b{font:650 22px system-ui!important;color:var(--ar-team)}.ar-team table{border-collapse:collapse;width:100%;table-layout:fixed}.ar-team th{font-size:8px;letter-spacing:.5px;color:#a1b8c2;font-weight:500;padding:10px 3px;text-align:center;border-bottom:1px solid #aec2d51a}.ar-team td{padding:11px 3px;font-size:12px;text-align:center;border-bottom:1px solid #aec2d510}.ar-team th:first-child,.ar-team td:first-child{width:44%;text-align:left;padding-left:12px}.ar-player-cell{display:flex;align-items:center;gap:9px;width:100%}.ar-player-dot{width:6px;height:6px;border-radius:50%;background:#92cff2;flex-shrink:0}.ar-player-dot.t{background:#e9c180}.ar-player-name{display:block;min-width:0;flex:1}.ar-player-name strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;font-weight:550;color:#dfebed}.ar-player-name small{display:block;font-size:7px;color:#8eacb9;margin-top:3px}.ar-player-name .ar-own-goal{color:#e0aa8b}.ar-self{background:#b9dde814}.ar-self td:first-child{box-shadow:inset 2px 0 #e6d09e}.ar-eliminated .ar-player-name{opacity:.5}.ar-eliminated .ar-player-dot{background:#536b7c}.ar-carrier{background:#cb80512a}.ar-table>footer{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:0;padding:12px 19px;border-top:1px solid #bdd7dd20;background:#06121c44;color:#9ab4c0;font-size:9px;letter-spacing:0}.ar-table footer kbd{font:9px system-ui;color:#c8d8de}.ar-table footer button{pointer-events:auto;font:12px system-ui;padding:10px 15px;color:#efd7a0;background:#a37c2630;border:1px solid #cbaa7255;border-radius:6px;text-transform:none;letter-spacing:0}.ar-ffa th:first-child{width:60%}.ar-ffa td:first-child{min-width:0}.ar-ffa th:last-child,.ar-ffa td:last-child{font-size:10px;white-space:nowrap}.ar-final{max-width:960px;max-height:calc(100vh - 40px);text-align:left}#ov:has([data-arcade-final]){padding:20px;background:#07131df0;overflow:auto}#ov .ar-table b{font-size:inherit}#ov .ar-team-title b{font-size:22px}.ar-final>header h2{font-size:22px}.ar-final .ar-match-score{font-size:32px}
+#sz-arcade-notice{position:absolute;top:103px;left:50%;transform:translateX(-50%);z-index:12;pointer-events:none;max-width:90%;width:max-content;font:12px system-ui;color:#eaf3ef}.ar-phase{display:flex;align-items:center;gap:14px;padding:12px 17px;border:1px solid #b5c6ca44;border-radius:8px;background:linear-gradient(105deg,#122633ef,#12212cec);box-shadow:0 5px 25px #0004}.ar-phase-count{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;border:1px solid #adc9dd55;color:#e8d29e;font-size:22px}.ar-phase strong{display:block;font-size:15px;font-weight:600;color:#e8d5a5}.ar-phase small{display:block;margin-top:5px;color:#b6cbd0;font-size:10px}.ar-phase>b{font-size:23px;color:#f1d397;margin-left:15px;white-space:nowrap}.ar-phase.goal{border-color:#e5ba6a77}.ar-phase.result{border-color:#8fc2d277}
+#sz-goal-replay{position:absolute;inset:0;z-index:36;pointer-events:none;color:#f3efe2;font:12px system-ui;box-shadow:inset 0 0 90px #05111c33}#sz-goal-replay>header,#sz-goal-replay>footer{position:absolute;left:0;right:0;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:20px 28px;background:linear-gradient(#071421ec,#081722bc);border:0;letter-spacing:0;text-transform:none;height:auto;min-height:0}#sz-goal-replay>header{top:0;border-top:3px solid #e4bf7b;border-bottom:1px solid #d2bd8d44;font-size:11px;text-transform:uppercase;letter-spacing:2px}#sz-goal-replay>footer{bottom:4px;background:linear-gradient(0deg,#071421f5,#081722cf);border-top:1px solid #d2bd8d33}#sz-goal-replay footer>div small{display:block;color:#b4c8cf;font-size:9px;letter-spacing:2px;text-transform:uppercase}#sz-goal-replay footer strong{display:block;margin-top:5px;font-size:23px}#sz-goal-replay footer>div>span{display:block;margin-top:7px;color:#c1d3d6;font-size:10px}.ar-replay-label{display:flex;gap:8px;align-items:center}.ar-replay-label i{width:6px;height:6px;border-radius:50%;background:#e5b971;box-shadow:0 0 12px #efc88966}.ar-replay-score{font-size:26px;color:#d4e0de;letter-spacing:5px}.ar-replay-score b:first-child{color:#9dd7ff}.ar-replay-score b:last-child{color:#f0c886}#sz-goal-replay button{pointer-events:auto;color:#f0d8a3;border:1px solid #d2b37766;background:#131e29d9;padding:10px 14px;font:11px system-ui;border-radius:5px;letter-spacing:0;text-transform:none}#sz-goal-replay kbd{font:10px system-ui;border:1px solid #a0b7be55;padding:3px 6px;margin-left:8px;color:#bbced3}.ar-replay-progress{position:absolute;left:0;right:0;bottom:0;height:4px;background:#162b38}.ar-replay-progress i{display:block;height:100%;background:linear-gradient(90deg,#8dc4e9,#efc981)}body:has(#sz-goal-replay:not([hidden])) #sz-mouse-capture,body:has(#sz-goal-replay:not([hidden])) #mb,body:has(#sz-goal-replay:not([hidden])) #visual-game-controls{display:none!important}
+@media(max-width:650px){#sz-arcade-board{inset:3% 2%}.ar-table>header{padding:12px;gap:9px}.ar-table h2{font-size:16px}.ar-table header small{font-size:7px;letter-spacing:1px}.ar-table header>svg{width:24px;height:24px}.ar-match-score{font-size:24px}.ar-table-body{padding:9px}.ar-table-teams{grid-template-columns:1fr;gap:10px}.ar-team-title{padding:8px 10px}.ar-team-title strong{font-size:10px}.ar-team-title b{font-size:18px!important}.ar-team td{padding:7px 3px;font-size:11px}.ar-team th{padding:7px 3px;font-size:8px}.ar-player-name strong{font-size:10px}.ar-team td:first-child,.ar-team th:first-child{padding-left:9px}.ar-table footer{padding:10px;font-size:8px;gap:8px}.ar-table footer kbd{font-size:8px}.ar-final{max-height:calc(100vh - 20px)}#ov:has([data-arcade-final]){padding:10px}#sz-arcade-notice{top:84px;max-width:94%;width:94%}.ar-phase{padding:9px 11px;gap:10px}.ar-phase-count{width:29px;height:29px;font-size:18px;flex-shrink:0}.ar-phase strong{font-size:12px}.ar-phase small{font-size:8px;line-height:1.5}.ar-phase>b{font-size:20px;margin-left:auto}#sz-goal-replay>header{padding:15px 13px;gap:10px;font-size:8px;letter-spacing:1px}#sz-goal-replay header>span:last-child{display:none}.ar-replay-score{font-size:22px}#sz-goal-replay>footer{padding:14px 13px;gap:10px}#sz-goal-replay footer strong{font-size:17px}#sz-goal-replay footer>div small{font-size:8px}#sz-goal-replay button{font-size:10px;padding:8px}#sz-goal-replay kbd{margin-left:3px;font-size:8px}}
+@media(max-height:550px){#sz-arcade-board{inset:3% 4%}.ar-table>header{padding:10px 14px}.ar-table h2{font-size:16px}.ar-match-score{font-size:25px}.ar-team td{padding:7px 3px}.ar-team th{padding:7px 3px}.ar-team-title{padding:7px 10px}.ar-table-body{padding:10px}.ar-table>footer{padding:9px 12px}#sz-goal-replay>header{padding:12px 20px}#sz-goal-replay>footer{padding:12px 20px}#sz-goal-replay footer strong{font-size:18px}}
+body:has(#sz-goal-replay:not([hidden])) .sz-chat-trigger,body:has(#sz-goal-replay:not([hidden])) #toast{display:none!important}
+
+</style>
+<style>
 /* A static menu treatment; gameplay canvases and map materials are unchanged. */
 body.sz-halloween #menu{background:radial-gradient(ellipse at 88% 3%,#4b2e4266,transparent 42%),linear-gradient(125deg,#111b25,#1b1b2b 72%,#24202d)}
 body.sz-halloween #menu>header{border-bottom-color:#b87d4444}body.sz-halloween nav button.on{color:#f4cb95;border-color:#c98b4b88;background:#6c492344}
@@ -3642,6 +3651,11 @@ body:has(#sz-match-hud:not([hidden])) .sz-chat-trigger{bottom:154px;right:14px;f
 
 @media(max-width:650px){#game:has(#sz-match-hud[data-mode=football]:not([hidden])) #sz-mouse-capture,#game:has(#sz-match-hud[data-mode=prophunt]:not([hidden])) #sz-mouse-capture{bottom:178px}}
 
+.mh-arcade-top .mh-mode-clock>b{font-size:22px;line-height:1}.mh-arcade-top .mh-mode-clock>small{max-width:145px;text-align:center;line-height:1.4;font-size:8px}.mh-fuse{display:block;font:650 24px system-ui;margin-top:4px;color:#ffd395}.mh-fuse.urgent{color:#ff9b83}.mh-carrier-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px!important;letter-spacing:0!important}.mh-bomb-top .mh-mode-side.t{gap:9px}.mh-has-bomb{border-bottom-color:#f0a17b!important}.mh-arcade-hits{border-left:1px solid #a2b8c526;padding-left:10px}#sz-match-hud[data-mode=grenade] .mh-context,#sz-match-hud[data-mode=snow] .mh-context,#sz-match-hud[data-mode=bomb] .mh-context,#sz-match-hud[data-mode=zombie] .mh-context{display:none}
+#sz-match-hud .mh-zombie-top{border-color:#8eae785e;background:linear-gradient(100deg,#132b2cf5,#122325eb,#283023ed);padding-bottom:3px;clip-path:polygon(0 0,100% 0,100% 83%,97% 100%,3% 100%,0 83%)}.mh-zombie-top .mh-mode-clock>b{font-size:25px;line-height:1.2;color:#daf1ae}.mh-zombie-top .mh-mode-clock>svg{color:#b5ce93}.mh-zombie-top .mh-mode-side.t{color:#d1b391;background:linear-gradient(-110deg,#9c62352c,transparent)}.mh-zombie-top .mh-mode-clock small{font-size:8px;letter-spacing:1px;text-transform:uppercase}.mh-infection-meter{position:absolute;left:5%;right:5%;bottom:0;height:3px;background:#79afac29;overflow:hidden}.mh-infection-meter>i{display:block;height:100%;background:linear-gradient(90deg,#a6c976,#d99479)}#sz-match-hud[data-mode=zombie] .mh-zombie-bottom{width:min(1090px,95%);max-width:95%;grid-template-columns:minmax(135px,.8fr) minmax(160px,1fr) minmax(330px,2.5fr);border-bottom-color:#a9c880;background:linear-gradient(100deg,#142628ed,#162b2bef);box-shadow:0 10px 30px #0004}.mh-zombie-bottom .mh-mode-role{color:#b7d8ba}.mh-zombie-bottom.mh-infected .mh-mode-role{color:#cbdba5}.mh-zombie-bottom.mh-infected{border-bottom-color:#c4ce88!important}.mh-zombie-bottom .mh-mode-stats{position:relative;padding-bottom:10px}.mh-zombie-health-track{position:absolute;left:14px;right:0;bottom:0;height:3px;background:#c5d7b51a}.mh-zombie-health-track>em{display:block;height:100%;background:var(--hud-accent)}.mh-zombie-armor{display:flex;align-items:center;gap:5px}.mh-zombie-armor svg{width:18px!important;height:18px!important}.mh-zombie-weapon{display:flex;flex:1.3;align-items:center;gap:8px;min-width:110px;padding-right:8px;border-right:1px solid #b1c7bd26}.mh-zombie-weapon>img{width:75px;height:37px;object-fit:contain}.mh-zombie-weapon>svg{width:30px!important;height:30px!important}.mh-zombie-weapon>span{min-width:0}.mh-zombie-weapon b{display:block;font-size:8px;color:#b8cfc8;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.mh-zombie-weapon strong{display:block;font-size:25px;font-weight:600;margin-top:4px}.mh-zombie-weapon strong small{font-size:12px;font-weight:400;opacity:.7}
+@media(max-width:900px){#sz-match-hud[data-mode=zombie] .mh-zombie-bottom{grid-template-columns:1fr 1.4fr}.mh-zombie-bottom .mh-mode-abilities{grid-column:1/-1}.mh-zombie-weapon{flex:1.2}.mh-arcade-top .mh-mode-side>span{font-size:8px}}
+@media(max-width:650px){.mh-arcade-top .mh-mode-clock>small{font-size:7px}.mh-arcade-top .mh-mode-clock>b{font-size:20px}.mh-zombie-top .mh-mode-clock>b{font-size:22px}.mh-zombie-top .mh-mode-side>svg{display:none}.mh-zombie-top .mh-mode-side>span{font-size:8px}.mh-zombie-weapon>img{width:55px;height:29px}.mh-zombie-weapon strong{font-size:22px}.mh-zombie-weapon b{font-size:7px}.mh-zombie-bottom .mh-ability{flex:1}.mh-carrier-name{max-width:52px!important;font-size:8px!important}.mh-fuse{font-size:20px}.mh-arcade-hits{padding-left:7px}#game:has(#sz-match-hud[data-mode=grenade]:not([hidden])) #sz-mouse-capture,#game:has(#sz-match-hud[data-mode=snow]:not([hidden])) #sz-mouse-capture,#game:has(#sz-match-hud[data-mode=bomb]:not([hidden])) #sz-mouse-capture,#game:has(#sz-match-hud[data-mode=zombie]:not([hidden])) #sz-mouse-capture{bottom:178px}}
+
 </style>
 <script>
 (function(root){'use strict';
@@ -3662,6 +3676,55 @@ body:has(#sz-match-hud:not([hidden])) .sz-chat-trigger{bottom:154px;right:14px;f
 </script>
 <script>
 (function(root){const pairs=`
+Asysty|Assists
+Rzuty|Throws
+Bomba|Bomb
+Gole|Goals
+Podania|Passes
+Obrony|Saves
+Przekazania|Transfers
+Wyeliminowany|Eliminated
+Gol samobójczy|Own goal
+Tabela wyników|Scoreboard
+Ostatni na arenie wygrywa|Last player standing wins
+Gole i asysty są naliczane przez hosta meczu.|Goals and assists are recorded by the match host.
+Wyniki bieżącej minigry|Current minigame scores
+Puść TAB, aby wrócić do gry|Release TAB to return to the game
+Zaraz zaczynamy|Starting soon
+Gol dla drużyny|Team goal
+Powtórka gola|Goal replay
+Strzelec gola|Goalscorer
+Asysta|Assist
+Pomiń|Skip
+Spacja|Space
+Pozostali gracze|Players remaining
+Do 15 punktów|First to 15 points
+Przekaż bombę|Pass the bomb
+Unikaj nosiciela|Avoid the carrier
+Uciekaj|Run away
+DOTYK|TOUCH
+Trzymaj dystans|Keep your distance
+Dotknij innego gracza|Touch another player
+Bomba nie zmienia czasu|The fuse keeps counting down
+Rzuć śnieżkę|Throw a snowball
+Rzuć granat|Throw a grenade
+Przygotowanie…|Preparing…
+Spowolnienie|Slowed
+Ocalali|Survivors
+Zakażeni|Infected
+Przygotowania|Preparation
+Przetrwaj|Survive
+ZAKAŻONY|INFECTED
+OCALAŁY|SURVIVOR
+Obrażenia|Damage
+Atak pazurami|Claw attack
+Zarażaj ocalałych|Infect the survivors
+Zamrożenie|Frozen
+Namierz ludzi|Find the humans
+W ekwipunku|In inventory
+Barykady|Barricades
+Zaopatrzenie|Supplies
+Broń i granaty|Weapons and grenades
 Odblokuj obrót|Unlock rotation
 LPM|LMB
 Włączone|Enabled
@@ -6128,6 +6191,28 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
 
 </script>
 <script>
+/* Small shared rules for arcade statistics and bounded, positional goal replays. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.SzArcadeRules=api;})(globalThis,function(){'use strict';
+ const STAT_KEYS=['goals','assists','ownGoals','passes','saves','throws','hits','eliminations','deaths','bombPasses'];
+ function stats(value={}){return Object.fromEntries(STAT_KEYS.map(k=>[k,Math.max(0,Math.min(1000000,Math.floor(Number(value?.[k])||0)))]));}
+ function touch(ball,index,team,time){const list=ball.touches=Array.isArray(ball.touches)?ball.touches:[],last=list[list.length-1];if(last?.i===index&&last.team===team)last.at=time;else list.push({i:index,team,at:time});if(list.length>8)list.shift();}
+ function creditGoal(players,ball,team,time){const scorer=Number.isInteger(ball.last)&&players[ball.last];if(!scorer||!['CT','T'].includes(scorer.team))return{scorer:-1,assist:-1,ownGoal:false};const result={scorer:ball.last,assist:-1,ownGoal:scorer.team!==team};if(result.ownGoal)return result;
+  const list=ball.touches||[],last=list[list.length-1];if(last?.i!==ball.last||last.team!==team)return result;
+  for(let i=list.length-2;i>=0;i--){const p=list[i];if(p.team!==team||!Number.isFinite(p.at)||time-p.at>10)break;if(p.i!==ball.last&&players[p.i]?.team===team){result.assist=p.i;break;}}return result;
+ }
+ class History{constructor(){this.frames=[];this.last=-Infinity;}reset(){this.frames=[];this.last=-Infinity;}record(time,ball,players,force=false){const at=Math.round(time*1000);if(!force&&at-this.last<95)return;const frame=[at,Math.round(ball.x*10),Math.round(ball.y*10)];for(const p of players)frame.push(Math.round(p.x*10),Math.round(p.y*10),Math.round(Math.atan2(Math.sin(p.a||0),Math.cos(p.a||0))*1000),p.alive?1:0);if(this.frames[this.frames.length-1]?.[0]===at)this.frames[this.frames.length-1]=frame;else this.frames.push(frame);this.last=at;while(this.frames.length>38||this.frames.length>1&&at-this.frames[0][0]>3500)this.frames.shift();}copy(){return this.frames.map(f=>f.slice());}}
+ function validClip(clip){if(!clip||!['CT','T'].includes(clip.team)||!clip.credit||!Number.isInteger(clip.credit.scorer)||!Number.isInteger(clip.credit.assist)||typeof clip.credit.ownGoal!=='boolean'||!clip.score||!Number.isInteger(clip.score.CT)||!Number.isInteger(clip.score.T)||clip.score.CT<0||clip.score.CT>10||clip.score.T<0||clip.score.T>10||typeof clip.id!=='string'||clip.id.length>120||!Number.isInteger(clip.serial)||!Array.isArray(clip.roster)||clip.roster.length<1||clip.roster.length>10||!Array.isArray(clip.frames)||clip.frames.length<2||clip.frames.length>38)return false;
+  if(clip.credit.scorer< -1||clip.credit.scorer>=clip.roster.length||clip.credit.assist< -1||clip.credit.assist>=clip.roster.length)return false;
+  if(!clip.roster.every(p=>p&&typeof p.name==='string'&&p.name.length<=40&&['CT','T'].includes(p.team)))return false;
+  let prior=-1;for(const f of clip.frames){if(!Array.isArray(f)||f.length!==3+4*clip.roster.length||!f.every(Number.isInteger)||f[0]<=prior)return false;prior=f[0];if(f[1]<-640||f[1]>13440||f[2]<-640||f[2]>8960)return false;for(let i=3;i<f.length;i+=4)if(f[i]<-640||f[i]>13440||f[i+1]<-640||f[i+1]>8960||Math.abs(f[i+2])>3142||![0,1].includes(f[i+3]))return false;}
+  const span=clip.frames[clip.frames.length-1][0]-clip.frames[0][0];return span>=100&&span<=3600;
+ }
+ function sample(clip,progress){const frames=clip.frames,start=frames[0][0],end=frames[frames.length-1][0],at=start+Math.max(0,Math.min(1,progress))*(end-start);let i=1;while(i<frames.length-1&&frames[i][0]<at)i++;const a=frames[i-1],b=frames[i],f=(at-a[0])/Math.max(1,b[0]-a[0]),out=a.map((n,k)=>n+(b[k]-n)*f);out[0]=at;for(let k=3;k<out.length;k+=4){const delta=Math.atan2(Math.sin((b[k+2]-a[k+2])/1000),Math.cos((b[k+2]-a[k+2])/1000));out[k+2]=a[k+2]+delta*1000*f;out[k+3]=f<1?a[k+3]:b[k+3];}return out;}
+ return{STAT_KEYS,stats,touch,creditGoal,History,validClip,sample};
+});
+
+</script>
+<script>
 /* Arcade session controller. Only the host owns votes, hits, ball physics,
    fuse transfers, results and the roulette choice. */
 (function(root){'use strict';
@@ -6140,9 +6225,9 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
  function resetPlayer(p,placed){combatReset(p);clearLifeEffects(p);p.team=p.mgHomeTeam;p.alive=true;p.hp=p.mh=100;p.armor=0;p.money=0;p.pri=p.sec=null;p.cur='knife';p.ammo={};p.g={};p.cd=p.rl=p.inv=0;p.out=false;p.bomb=false;p.ap=0;p.sm=1;p.cmd=null;p.pth=null;p.npt=0;p._goal=null;p.mgBrain=brain();p.mgRespawn=0;p.mgSlow=0;p.mgDash=0;p.mgDashCd=0;p.mgE=false;spawn(p,placed);}
  function setPhase(phase,time){G.mg.phase=phase;G.mg.time=time;G.mg.phaseElapsed=0;G.ph=phase==='live'?'live':['result','roulette'].includes(phase)?'end':'buy';G.t=time;root.SzMiniGames.view?.sync();}
  function init(){const g=G;g.over=false;g.nobuy=1;g.bo=0;g.bomb=null;g.tr=[];g.feed=[];g.dr=[];g.rq=[];g.gl=[];g.sm=[];g.fi=[];g.msg=g.msg2='';g.intro=null;g.mgRewarded=new Set();g.mgSeenSerial=null;g.mg={kind:D.keys.find(k=>D.ids[k]===sel.map)||'grenade',phase:'vote',time:10,phaseElapsed:0,serial:0,votes:{},botVoteAt:1,bag:[],projectiles:[],effects:[],events:[],stats:{throws:0,passes:0,goals:0,hits:0,eliminations:0},nextKind:null,ball:SzFootball.ball(),bomb:{carrier:-1,fuse:13,lock:0,previous:-1}};arena(g.mg.kind);if(g.mg.kind==='football')SzFootball.assignRoles();
-  const placed=[];g.ps.forEach(p=>{p.mgHomeTeam=p.team;p.mgPoints=p.mgTotal=0;resetPlayer(p,placed);placed.push(p);});g.sc={CT:0,T:0};if(standalone())beginGame('football');else setPhase('vote',10);
+  const placed=[];g.ps.forEach(p=>{p.mgHomeTeam=p.team;p.mgPoints=p.mgTotal=0;p.mgStats=SzArcadeRules.stats();resetPlayer(p,placed);placed.push(p);});g.sc={CT:0,T:0};if(standalone())beginGame('football');else setPhase('vote',10);
  }
- function beginGame(kind){if(!D.specs[kind]||G.client||standalone()&&kind!=='football')return false;const m=G.mg;m.kind=kind;m.serial++;m.projectiles=[];m.effects=[];m.events=[];m.stats={throws:0,passes:0,goals:0,hits:0,eliminations:0};m.result=null;m.nextKind=null;m.ball=SzFootball.ball();m.bomb={carrier:-1,fuse:13,lock:0,previous:-1};arena(kind);if(kind==='football')SzFootball.assignRoles();else for(const p of G.ps)p.mgKeeper=false;G.sc={CT:0,T:0};const placed=[];for(const p of G.ps){p.mgPoints=0;resetPlayer(p,placed);placed.push(p);}G.mgSeenSerial=m.serial;setPhase('warmup',3);return true;}
+ function beginGame(kind){if(!D.specs[kind]||G.client||standalone()&&kind!=='football')return false;const m=G.mg;m.kind=kind;m.serial++;m.goalReplay=null;root.SzFootballReplay?.reset();m.projectiles=[];m.effects=[];m.events=[];m.stats={throws:0,passes:0,goals:0,hits:0,eliminations:0};m.result=null;m.nextKind=null;m.ball=SzFootball.ball();m.bomb={carrier:-1,fuse:13,lock:0,previous:-1};arena(kind);if(kind==='football')SzFootball.assignRoles();else for(const p of G.ps)p.mgKeeper=false;G.sc={CT:0,T:0};const placed=[];for(const p of G.ps){p.mgPoints=0;p.mgStats=SzArcadeRules.stats();resetPlayer(p,placed);placed.push(p);}G.mgSeenSerial=m.serial;setPhase('warmup',3);return true;}
  function vote(kind,p=G.me){if(!active()||G.spectator&&p===G.me||standalone()||G.mg.phase!=='vote'||!D.specs[kind])return false;if(G.client){netSend({t:'mg_vote',kind,serial:G.mg.serial});return true;}G.mg.votes[index(p)]=kind;root.SzMiniGames.view?.sync();return true;}
  function finishVote(){const votes=D.keys.map(kind=>({kind,n:Object.values(G.mg.votes).filter(k=>k===kind).length})),max=Math.max(...votes.map(v=>v.n)),ties=votes.filter(v=>v.n===max);beginGame(ties[Math.floor(Math.random()*ties.length)].kind);}
  function fx(kind,p,r=40){G.mg.effects.push({kind,x:p.x,y:p.y,r,left:.6});G.mg.effects=G.mg.effects.slice(-32);}
@@ -6156,22 +6241,26 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
  function action(p,x,y,shot=false){const m=G.mg;if(G.client||G.paused||m.phase!=='live'||!p.alive||p.cd>0||!Number.isFinite(x)||!Number.isFinite(y))return false;x=D.clamp(x,40,WW-40);y=D.clamp(y,40,WH-40);const a=Math.atan2(y-p.y,x-p.x);p.a=a;
   if(m.kind==='football')return SzFootball.kick(p,x,y,shot);
   if(m.kind==='bomb')return passBomb(p);
-  const range=m.kind==='grenade'?660:850,d=Math.min(range,Math.hypot(x-p.x,y-p.y)),id=++m.projectileId|| (m.projectileId=1);p.cd=m.kind==='grenade'?1.65:.6;m.stats.throws++;p.mgThrows=(p.mgThrows||0)+1;
+  const range=m.kind==='grenade'?660:850,d=Math.min(range,Math.hypot(x-p.x,y-p.y)),id=++m.projectileId|| (m.projectileId=1);p.cd=m.kind==='grenade'?1.65:.6;m.stats.throws++;p.mgThrows=(p.mgThrows||0)+1;p.mgStats.throws++;
   if(m.kind==='grenade'){const to={x:p.x+Math.cos(a)*d,y:p.y+Math.sin(a)*d};m.projectiles.push({id,kind:'he',owner:index(p),team:p.team,x:p.x,y:p.y,sx:p.x,sy:p.y,tx:to.x,ty:to.y,age:0,flight:.65,fuse:1.35});}
   else m.projectiles.push({id,kind:'snow',owner:index(p),team:p.team,x:p.x+Math.cos(a)*20,y:p.y+Math.sin(a)*20,vx:Math.cos(a)*580,vy:Math.sin(a)*580,left:1.6});
   return true;
  }
- function passBomb(p){const m=G.mg,b=m.bomb;if(m.kind!=='bomb'||b.carrier!==index(p)||b.lock>0)return false;const target=alive().filter(q=>q!==p&&index(q)!==b.previous&&dist(p,q)<38&&los(p,q)).sort((a,c)=>dist(p,a)-dist(p,c))[0];if(!target)return false;const old=b.carrier;b.carrier=index(target);b.previous=old;b.lock=.9;p.mgPoints++;p.mgTotal++;m.stats.passes++;fx('pass',target,30);return true;}
+ function passBomb(p){const m=G.mg,b=m.bomb;if(m.kind!=='bomb'||b.carrier!==index(p)||b.lock>0)return false;const target=alive().filter(q=>q!==p&&index(q)!==b.previous&&dist(p,q)<38&&los(p,q)).sort((a,c)=>dist(p,a)-dist(p,c))[0];if(!target)return false;const old=b.carrier;b.carrier=index(target);b.previous=old;b.lock=.9;p.mgPoints++;p.mgTotal++;p.mgStats.bombPasses++;m.stats.passes++;fx('pass',target,30);return true;}
  function chooseCarrier(){const list=alive();if(list.length<=1){finish(list.length?'ffa':'draw',list.length?index(list[0]):null);return;}G.mg.bomb={carrier:index(list[Math.floor(Math.random()*list.length)]),fuse:13,lock:1,previous:-1};}
- function eliminate(p,by){if(!p.alive)return;p.alive=false;p.hp=0;G.mg.stats.eliminations++;if(by){by.mgPoints++;by.mgTotal++;if(G.mg.kind==='snow'){G.sc[by.team]++;p.mgRespawn=G.el+3;}}fx(G.mg.kind==='snow'?'snow':'blast',p,70);}
- function explode(q){fx('blast',q,115);for(const p of alive())if(p.team!==q.team&&dist(p,q)<115&&los(q,p)){const damage=dist(p,q)<82?100:60;p.hp=Math.max(0,p.hp-damage);G.mg.stats.hits++;if(!p.hp)eliminate(p,G.ps[q.owner]);}}
+ function eliminate(p,by){if(!p.alive)return;p.alive=false;p.hp=0;p.mgStats.deaths++;G.mg.stats.eliminations++;if(by){by.mgStats.eliminations++;by.mgPoints++;by.mgTotal++;if(G.mg.kind==='snow'){G.sc[by.team]++;p.mgRespawn=G.el+3;}}fx(G.mg.kind==='snow'?'snow':'blast',p,70);}
+ function explode(q){fx('blast',q,115);for(const p of alive())if(p.team!==q.team&&dist(p,q)<115&&los(q,p)){const damage=dist(p,q)<82?100:60;p.hp=Math.max(0,p.hp-damage);G.mg.stats.hits++;if(G.ps[q.owner])G.ps[q.owner].mgStats.hits++;if(!p.hp)eliminate(p,G.ps[q.owner]);}}
  function projectiles(dt){const m=G.mg,keep=[];for(const q of m.projectiles){if(q.kind==='he'){q.age+=dt;const f=Math.min(1,q.age/q.flight);q.x=q.sx+(q.tx-q.sx)*f;q.y=q.sy+(q.ty-q.sy)*f;q.fuse-=dt;if(q.fuse<=0){explode(q);continue;}keep.push(q);continue;}
    const from={x:q.x,y:q.y},to={x:q.x+q.vx*dt,y:q.y+q.vy*dt},steps=Math.max(1,Math.ceil(dist(from,to)/4));let wall=2;for(let i=1;i<=steps;i++)if(hitW(from.x+(to.x-from.x)*i/steps,from.y+(to.y-from.y)*i/steps)){wall=i/steps;break;}
    let target=null,near=wall;for(const p of alive())if(p.team!==q.team){const f=D.segmentCircle(from,to,p,18);if(f!==null&&f<near){near=f;target=p;}}
-   if(target){target.hp=Math.max(0,target.hp-34);target.mgSlow=.65;m.stats.hits++;fx('snow',target,24);if(!target.hp)eliminate(target,G.ps[q.owner]);continue;}q.x=to.x;q.y=to.y;q.left-=dt;if(wall<=1){fx('snow',q,18);continue;}if(q.left>0)keep.push(q);
+   if(target){target.hp=Math.max(0,target.hp-34);target.mgSlow=.65;m.stats.hits++;if(G.ps[q.owner])G.ps[q.owner].mgStats.hits++;fx('snow',target,24);if(!target.hp)eliminate(target,G.ps[q.owner]);continue;}q.x=to.x;q.y=to.y;q.left-=dt;if(wall<=1){fx('snow',q,18);continue;}if(q.left>0)keep.push(q);
   }m.projectiles=keep.slice(-80);
  }
- function goal(team){const m=G.mg;G.sc[team]++;m.stats.goals++;m.events=[{kind:'goal',team,left:3}];if(G.sc[team]>=D.FOOTBALL_GOALS){finish(team);return;}m.ball=SzFootball.ball();const placed=[];for(const p of G.ps){spawn(p,placed);placed.push(p);}setPhase('goal',3);}
+ function goal(team){const m=G.mg,credit=SzArcadeRules.creditGoal(G.ps,m.ball,team,G.el);G.sc[team]++;m.stats.goals++;
+  if(credit.scorer>=0){const p=G.ps[credit.scorer];if(credit.ownGoal)p.mgStats.ownGoals++;else{p.mgStats.goals++;p.mgPoints++;p.mgTotal++;}if(credit.assist>=0)G.ps[credit.assist].mgStats.assists++;}
+  m.events=[{kind:'goal',team,scorer:credit.scorer,ownGoal:credit.ownGoal,left:5}];root.SzFootballReplay?.goal(team,credit);
+  if(G.sc[team]>=D.FOOTBALL_GOALS){finish(team);return;}m.ball=SzFootball.ball();const placed=[];for(const p of G.ps){spawn(p,placed);placed.push(p);}setPhase('goal',m.goalReplay?.available?5:3);
+ }
  function ballTick(dt){const scored=SzFootball.step(dt);if(scored)goal(scored);}
  function bot(p,dt){const m=G.mg,b=p.mgBrain;b.sense-=dt;b.fire-=dt;const enemies=alive().filter(q=>q!==p&&(m.kind==='bomb'||q.team!==p.team)&&los(p,q)).sort((a,c)=>dist(p,a)-dist(p,c)),enemy=enemies[0];
   if(m.kind==='football')return SzFootball.bot(p,dt);
@@ -6188,7 +6277,7 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
    }else bot(p,dt);
   }
   for(const p of g.ps){p.mgVx=(p.x-p.mgStepX)/dt;p.mgVy=(p.y-p.mgStepY)/dt;}if(m.kind==='bomb'){const b=m.bomb;b.lock=Math.max(0,b.lock-dt);if(b.lock<=0)b.previous=-1;b.fuse-=dt;const carrier=g.ps[b.carrier];if(carrier?.alive){if(b.fuse<=0){eliminate(carrier);chooseCarrier();}else passBomb(carrier);}else chooseCarrier();}
-  else if(m.kind==='football'){m.resumeTime=m.time;ballTick(dt);}else projectiles(dt);
+  else if(m.kind==='football'){m.resumeTime=m.time;ballTick(dt);root.SzFootballReplay?.record();}else projectiles(dt);
   if(m.phase!=='live')return;if(m.kind==='grenade'){const ct=alive().filter(p=>p.team==='CT').length,tt=alive().length-ct;if(!ct||!tt){finish(ct?'CT':tt?'T':'draw');return;}}
   if(m.kind==='snow'&&(g.sc.CT>=15||g.sc.T>=15)){finish(g.sc.CT>=15?'CT':'T');return;}
   if(m.time<=0&&m.kind!=='football'){if(m.kind==='bomb'){const list=alive();finish(list.length===1?'ffa':'draw',list.length===1?index(list[0]):null);}else{const value=team=>m.kind==='grenade'?alive().filter(p=>p.team===team).length*1000+alive().filter(p=>p.team===team).reduce((n,p)=>n+p.hp,0):g.sc[team],ct=value('CT'),tt=value('T');finish(ct===tt?'draw':ct>tt?'CT':'T');}}
@@ -6210,9 +6299,9 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
  const oldFire=fire;fire=function(p){return active()?action(p,p.x+Math.cos(p.a)*600,p.y+Math.sin(p.a)*600):oldFire(p);};
  const oldDamage=dmg;dmg=function(...args){if(!active())return oldDamage(...args);};
  const oldCheat=cheatInit;cheatInit=function(){if(active()){G.cheat=null;return;}return oldCheat();};
- const oldSend=netSend;netSend=function(message){if(active()&&message.t==='snap'){if(G.client)return;message={...message,mg:snapshot(),p:message.p.map((r,i)=>({...r,mg:{points:G.ps[i].mgPoints||0,total:G.ps[i].mgTotal||0,dash:G.ps[i].mgDash||0,slow:G.ps[i].mgSlow||0,home:G.ps[i].mgHomeTeam,keeper:!!G.ps[i].mgKeeper}}))};}return oldSend(message);};
+ const oldSend=netSend;netSend=function(message){if(active()&&message.t==='snap'){if(G.client)return;message={...message,mg:snapshot(),p:message.p.map((r,i)=>({...r,mg:{points:G.ps[i].mgPoints||0,total:G.ps[i].mgTotal||0,dash:G.ps[i].mgDash||0,slow:G.ps[i].mgSlow||0,home:G.ps[i].mgHomeTeam,keeper:!!G.ps[i].mgKeeper,stats:SzArcadeRules.stats(G.ps[i].mgStats),dashCd:G.ps[i].mgDashCd||0,respawn:G.ps[i].mgRespawn||0}}))};}return oldSend(message);};
  const oldReceive=hostRecv;hostRecv=function(message){if(!active())return oldReceive(message);if(!['hello','in','bye','mg_vote'].includes(message?.t))return;const accepted=!G.client&&message.c!==NET.cid&&roomPeer(message.c)&&message.sid===NET.session;if(!accepted)return;if(message.t==='mg_vote'){const p=G.ps.find(q=>q.rid===message.c);if(p&&message.serial===G.mg.serial)vote(message.kind,p);return;}const result=oldReceive(message),p=G.ps.find(q=>q.rid===message.c);if(message.t==='in'&&p?.inp){p.inp.mgX=Number.isFinite(message.mg?.x)?D.clamp(message.mg.x,0,WW):undefined;p.inp.mgY=Number.isFinite(message.mg?.y)?D.clamp(message.mg.y,0,WH):undefined;}return result;};
- const oldApply=applySnap;applySnap=function(s){if(!active()||!G.client||s.sid!==NET.session||!s.mg||!D.specs[s.mg.kind])return oldApply(s);if(G.mgArena!==D.ids[s.mg.kind])arena(s.mg.kind);const result=oldApply({...s,ov:0});G.mg=JSON.parse(JSON.stringify(s.mg));G.nobuy=1;G.over=standalone()&&G.mg.phase==='result';if(G.over)G.voting=1;G.mgRewarded=G.mgRewarded||new Set();for(const row of s.p||[]){const p=G.ps[row.i];if(p&&row.mg){p.mgPoints=row.mg.points;p.mgTotal=row.mg.total;p.mgDash=row.mg.dash;p.mgSlow=row.mg.slow;p.mgHomeTeam=row.mg.home;p.mgKeeper=!!row.mg.keeper;}}if(['warmup','live','goal'].includes(G.mg.phase))G.mgSeenSerial=G.mg.serial;if(G.mg.phase==='result')award();root.SzMiniGames.view?.sync();return result;};
+ const oldApply=applySnap;applySnap=function(s){if(!active()||!G.client||s.sid!==NET.session||!s.mg||!D.specs[s.mg.kind])return oldApply(s);if(G.mgArena!==D.ids[s.mg.kind])arena(s.mg.kind);const result=oldApply({...s,ov:0});G.mg=JSON.parse(JSON.stringify(s.mg));G.nobuy=1;G.over=standalone()&&G.mg.phase==='result';if(G.over)G.voting=1;G.mgRewarded=G.mgRewarded||new Set();for(const row of s.p||[]){const p=G.ps[row.i];if(p&&row.mg){p.mgPoints=row.mg.points;p.mgTotal=row.mg.total;p.mgDash=row.mg.dash;p.mgSlow=row.mg.slow;p.mgHomeTeam=row.mg.home;p.mgKeeper=!!row.mg.keeper;p.mgStats=SzArcadeRules.stats(row.mg.stats);p.mgDashCd=Number(row.mg.dashCd)||0;p.mgRespawn=Number(row.mg.respawn)||0;}}if(['warmup','live','goal'].includes(G.mg.phase))G.mgSeenSerial=G.mg.serial;if(G.mg.phase==='result')award();root.SzMiniGames.view?.sync();return result;};
  const oldClose=pmClose;pmClose=function(){if(active()&&G.mg?.phase==='vote')return quit();return oldClose();};
  const oldQuit=quit;quit=function(){if(active()){$('pm').style.display='none';root.SzMiniGames.view?.clear();}return oldQuit();};
  root.SzMiniGames={active,standalone,arena,init,beginGame,vote,finishVote,finish,startRoll,award,move,go,dash,action,passBomb,chooseCarrier,tick,clientStep,velocity,snapshot,view:null};
@@ -6224,7 +6313,7 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
 (function(root){'use strict';
  const A=SzMiniGames,D=SzMiniData,F=D.FOOTBALL;
  const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),index=p=>G.ps.indexOf(p),players=()=>G.ps.filter(p=>p.alive),human=p=>!!(p.human||p.rh);
- function ball(){return{x:D.WIDTH/2,y:D.HEIGHT/2,vx:0,vy:0,last:-1,previous:-1,releaseUntil:0,kickUntil:0,passFrom:-1};}
+ function ball(){return{x:D.WIDTH/2,y:D.HEIGHT/2,vx:0,vy:0,last:-1,previous:-1,releaseUntil:0,kickUntil:0,passFrom:-1,touches:[]};}
  function assignRoles(){for(const team of['CT','T']){const peers=G.ps.filter(p=>(p.mgHomeTeam||p.team)===team);peers.forEach((p,i)=>{p.mgKeeper=i===peers.length-1;p.mgPitchRole=i;});}}
  function spawnPoint(p){const own=(p.mgHomeTeam||p.team)==='CT',formation=[[360,320],[260,180],[360,512],[260,652]],point=p.mgKeeper?[F.keeperX,D.HEIGHT/2]:formation[(p.mgPitchRole||0)%4];return{x:own?point[0]:D.WIDTH-point[0],y:point[1]};}
  function ownGoalRisk(p,x,y){const b=G.mg.ball,a=Math.atan2(y-b.y,x-b.x),sample={x:b.x,y:b.y,vx:Math.cos(a)*F.kickSpeed,vy:Math.sin(a)*F.kickSpeed};for(let i=0;i<66;i++){const goal=D.stepBall(sample,1/30);if(goal)return goal!==p.team;}return false;}
@@ -6233,15 +6322,15 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   const receiver=!shot?players().filter(q=>q!==p&&q.team===p.team&&distance(q,{x,y})<44&&distance(p,q)<350).sort((a,c)=>distance(a,{x,y})-distance(c,{x,y}))[0]:null;
   const origin=human(p)?p:b,a=Math.atan2(y-origin.y,x-origin.x),speed=F.kickSpeed;p.a=a;
   b.previous=b.last=index(p);b.releaseUntil=G.el+.18;b.kickUntil=G.el+F.ballCooldown;b.passFrom=shot?-1:index(p);b.vx=Math.cos(a)*speed;b.vy=Math.sin(a)*speed;p.cd=F.kickCooldown;
-  m.stats.kicks=(m.stats.kicks||0)+1;if(shot)m.stats.shots=(m.stats.shots||0)+1;else{m.stats.passes++;if(receiver){p.mgBrain.lastPassTo=index(receiver);p.mgBrain.lastPassAt=G.el;if(!human(p)&&human(receiver))m.stats.humanPasses=(m.stats.humanPasses||0)+1;}}
+  SzArcadeRules.touch(b,index(p),p.team,G.el);m.stats.kicks=(m.stats.kicks||0)+1;if(shot)m.stats.shots=(m.stats.shots||0)+1;else{m.stats.passes++;if(receiver){p.mgBrain.lastPassTo=index(receiver);p.mgBrain.lastPassAt=G.el;if(!human(p)&&human(receiver))m.stats.humanPasses=(m.stats.humanPasses||0)+1;}}
   snd('step',p.x,p.y);return true;
  }
  function contact(p){const m=G.mg,b=m.ball,last=G.ps[b.last],from=G.ps[b.passFrom],speed=Math.hypot(b.vx,b.vy);let nx=b.x-p.x,ny=b.y-p.y,n=Math.hypot(nx,ny);
   if(n<.01){nx=speed?-b.vx/speed:Math.cos(p.a);ny=speed?-b.vy/speed:Math.sin(p.a);}else{nx/=n;ny/=n;}
   m.stats.contacts=(m.stats.contacts||0)+1;
-  if(from&&from!==p&&from.team===p.team){m.stats.completedPasses=(m.stats.completedPasses||0)+1;if(human(p))m.stats.completedHumanPasses=(m.stats.completedHumanPasses||0)+1;}
-  if(last&&last!==p&&last.team!==p.team){m.stats.interceptions=(m.stats.interceptions||0)+1;if(p.mgKeeper&&speed>160)m.stats.saves=(m.stats.saves||0)+1;}
-  b.passFrom=-1;b.previous=b.last=index(p);b.releaseUntil=G.el+.07;
+  if(from&&from!==p&&from.team===p.team){from.mgStats.passes++;m.stats.completedPasses=(m.stats.completedPasses||0)+1;if(human(p))m.stats.completedHumanPasses=(m.stats.completedHumanPasses||0)+1;}
+  if(last&&last!==p&&last.team!==p.team){m.stats.interceptions=(m.stats.interceptions||0)+1;if(p.mgKeeper&&speed>160){m.stats.saves=(m.stats.saves||0)+1;p.mgStats.saves++;}}
+  SzArcadeRules.touch(b,index(p),p.team,G.el);b.passFrom=-1;b.previous=b.last=index(p);b.releaseUntil=G.el+.07;
   b.x=D.clamp(p.x+nx*26,60,D.WIDTH-60);b.y=D.clamp(p.y+ny*26,76,D.HEIGHT-76);
   const pvx=p.mgVx||0,pvy=p.mgVy||0,closing=(b.vx-pvx)*nx+(b.vy-pvy)*ny;
   if(closing<0){b.vx-=1.45*closing*nx;b.vy-=1.45*closing*ny;}
@@ -6314,14 +6403,14 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   if(m.kind==='football')ball(m.ball.x,m.ball.y);for(const e of m.effects){const f=1-e.left/.6;cx.globalAlpha=Math.max(0,1-f);cx.fillStyle=e.kind==='snow'?'#efffff77':e.kind==='pass'?'#f1d78055':'#f28d3944';cx.strokeStyle=e.kind==='snow'?'#cceefc':'#ffb366';cx.lineWidth=3;cx.beginPath();cx.arc(e.x,e.y,Math.max(1,e.r*(.3+f*.7)),0,7);cx.fill();cx.stroke();cx.globalAlpha=1;}cx.restore();
 }
  function draw(){const g=G,m=g.mg;if(!m){cx.fillStyle='#11242e';cx.fillRect(0,0,VW,640);return;}sync();const p=g.me,viewer=p.alive?p:aliveViewer();world(viewer);
-  if(!(m.kind==='football'&&root.SzMatchHud?.enabled())){const w=Math.min(380,VW-24),x=(VW-w)/2;SzHideSeek.panel(x,8,w,44);cx.fillStyle='#e7f0ed';cx.textAlign='left';cx.font='bold 12px system-ui';cx.fillText(t(D.specs[m.kind].title),x+12,27);cx.textAlign='right';cx.fillStyle='#edca8b';cx.fillText(m.kind==='football'?t('Do 10 goli'):Math.ceil(m.time)+'s',x+w-12,27);cx.textAlign='center';cx.fillStyle='#abc4ca';cx.font='11px system-ui';cx.fillText(m.kind==='bomb'?t('Pozostało graczy:')+' '+g.ps.filter(a=>a.alive).length:'CT '+g.sc.CT+' : '+g.sc.T+' T'+(m.kind==='grenade'?' · '+g.ps.filter(a=>a.alive&&a.team==='CT').length+' / '+g.ps.filter(a=>a.alive&&a.team==='T').length:''),VW/2,43);
+  if(!root.SzMatchHud?.enabled()){const w=Math.min(380,VW-24),x=(VW-w)/2;SzHideSeek.panel(x,8,w,44);cx.fillStyle='#e7f0ed';cx.textAlign='left';cx.font='bold 12px system-ui';cx.fillText(t(D.specs[m.kind].title),x+12,27);cx.textAlign='right';cx.fillStyle='#edca8b';cx.fillText(m.kind==='football'?t('Do 10 goli'):Math.ceil(m.time)+'s',x+w-12,27);cx.textAlign='center';cx.fillStyle='#abc4ca';cx.font='11px system-ui';cx.fillText(m.kind==='bomb'?t('Pozostało graczy:')+' '+g.ps.filter(a=>a.alive).length:'CT '+g.sc.CT+' : '+g.sc.T+' T'+(m.kind==='grenade'?' · '+g.ps.filter(a=>a.alive&&a.team==='CT').length+' / '+g.ps.filter(a=>a.alive&&a.team==='T').length:''),VW/2,43);
   }if(!root.SzMatchHud?.enabled()){SzHideSeek.panel(12,584,Math.min(330,VW-24),42);cx.textAlign='left';cx.fillStyle='#dcefe7';cx.font='bold 12px system-ui';cx.fillText(p.alive?Math.ceil(p.hp)+' HP · '+t(m.kind==='bomb'&&m.bomb.carrier===g.ps.indexOf(p)?'Masz bombę!':m.kind==='football'&&p.mgKeeper?'BRAMKARZ':A.standalone()?'Piłka nożna':'MINIGRY'):t('Obserwujesz grę'),24,601);cx.font='10px system-ui';cx.fillStyle='#a7c4ca';cx.fillText(t(D.specs[m.kind].control),24,617);cx.textAlign='right';cx.fillText(t('TAB — tabela wyników'),VW-14,570);
-  }if(['warmup','goal'].includes(m.phase)){cx.textAlign='center';cx.fillStyle='#f7dfa8';cx.font='bold 38px system-ui';cx.fillText(m.phase==='goal'?t('GOL!'):String(Math.max(1,Math.ceil(m.time))),VW/2,260);cx.font='13px system-ui';paragraph(t(D.specs[m.kind].description),290);}
-  if(m.phase==='result'&&!A.standalone()){SzHideSeek.panel(VW/2-Math.min(270,VW/2-12),210,Math.min(540,VW-24),145);cx.textAlign='center';cx.fillStyle='#f4d69d';cx.font='bold 23px system-ui';const result=m.result,won=result.player!=null?g.ps[result.player]:null;cx.fillText(result.team==='draw'?t('Remis'):won?nm(won):t(result.team==='CT'?'Drużyna niebieska wygrywa':'Drużyna pomarańczowa wygrywa'),VW/2,255);cx.fillStyle='#bed0d5';cx.font='13px system-ui';cx.fillText(t('Następna minigra za')+' '+Math.ceil(m.time)+'s',VW/2,288);if(g.mgAward?.serial===m.serial)cx.fillText('+$'+g.mgAward.cash,VW/2,321);}
-  if(m.phase==='roulette')roulette();if(keys.tab)board();if(ST_().chat)drawChat(g);if(p.alive&&m.phase==='live'&&m.kind!=='bomb')drawCross(cx,mouse.x,mouse.y);
+  }if(['warmup','goal'].includes(m.phase)&&!root.SzArcadeUI){cx.textAlign='center';cx.fillStyle='#f7dfa8';cx.font='bold 38px system-ui';cx.fillText(m.phase==='goal'?t('GOL!'):String(Math.max(1,Math.ceil(m.time))),VW/2,260);cx.font='13px system-ui';paragraph(t(D.specs[m.kind].description),290);}
+  if(m.phase==='result'&&!A.standalone()&&!root.SzArcadeUI){SzHideSeek.panel(VW/2-Math.min(270,VW/2-12),210,Math.min(540,VW-24),145);cx.textAlign='center';cx.fillStyle='#f4d69d';cx.font='bold 23px system-ui';const result=m.result,won=result.player!=null?g.ps[result.player]:null;cx.fillText(result.team==='draw'?t('Remis'):won?nm(won):t(result.team==='CT'?'Drużyna niebieska wygrywa':'Drużyna pomarańczowa wygrywa'),VW/2,255);cx.fillStyle='#bed0d5';cx.font='13px system-ui';cx.fillText(t('Następna minigra za')+' '+Math.ceil(m.time)+'s',VW/2,288);if(g.mgAward?.serial===m.serial)cx.fillText('+$'+g.mgAward.cash,VW/2,321);}
+  if(m.phase==='roulette')roulette();if(keys.tab&&!root.SzArcadeUI)board();if(ST_().chat)drawChat(g);if(p.alive&&m.phase==='live'&&m.kind!=='bomb')drawCross(cx,mouse.x,mouse.y);
  }
  function aliveViewer(){return G.ps.find(p=>p.alive)||G.me;}
- A.view={draw,world,sync,clear,terrain,icon};document.addEventListener('sz-language',()=>{voteKey='';sync();});
+ A.view={draw,world,sync,clear,terrain,icon,drawBall:ball};document.addEventListener('sz-language',()=>{voteKey='';sync();});
 })(globalThis);
 
 </script>
@@ -7349,7 +7438,7 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
  function result(){if(!G)return;G.observerResultSeen=true;G.over=true;G.voting=1;const o=$('ov');o.style.display='flex';o.innerHTML='<b>'+esc(t('Koniec meczu'))+'</b><div class="sz-observer-result">CT '+(G.sc.CT||0)+' : '+(G.sc.T||0)+' T</div><button class="pri" onclick="quit()">'+esc(t('Wróć do menu'))+'</button>';}
  function draw(){const g=G,p=target(g);g.me.x=p.x;g.me.y=p.y;g.me.a=p.a;for(const id of['br-panel','br-action','br-map'])$(id).hidden=true;BR_MAP_OPEN=false;const zoom=g.observerOverview?Math.min(VW/WW,640/WH)*.94:VIEW_ZOOM;g.observerZoom=zoom;const fog=FOG;try{FOG=false;if(g.mg){SzMiniGames.view.sync();SzMiniGames.view.world(p,zoom);}else drawMatchWorld(g,p,false,zoom);}finally{FOG=fog;}
   if(g.observerXray!==false){cx.save();cx.scale(zoom,zoom);cx.translate(-cam.x,-cam.y);for(const a of list(g)){const color=a.team==='CT'?'#83cfff':'#f1c274';cx.strokeStyle=a===p?'#fff':color;cx.fillStyle=color+'33';cx.lineWidth=(a===p?2.6:1.6)/Math.max(.55,zoom);cx.beginPath();cx.arc(a.x,a.y,sel.mode==='prophunt'&&a.team!==g.hns?.seekerTeam?19:17,0,7);cx.fill();cx.stroke();cx.textAlign='center';cx.font='bold '+Math.max(10,11/zoom)+'px system-ui';cx.fillStyle=color;cx.strokeStyle='#061019';cx.lineWidth=3;const name=nm(a);cx.strokeText(name,a.x,a.y-27);SzHideSeek.literal(cx,name,a.x,a.y-27);}cx.restore();}
-  if(keys.tab){cx.save();cx.translate((VW-1000)/2,0);if(ffa())dmBoard(g);else scoreboard(g);cx.restore();}if(ST_().chat)drawChat(g);
+  if(keys.tab&&!(g.mg&&root.SzArcadeUI)){cx.save();cx.translate((VW-1000)/2,0);if(ffa())dmBoard(g);else scoreboard(g);cx.restore();}if(ST_().chat)drawChat(g);
  }
  teamPick=function(){return selectTeam(false);};
  const oldSpecList=specList,oldTarget=specTarget,oldNext=specNext;specList=function(g){return g.spectator?list(g):oldSpecList(g);};specTarget=function(g){return g.spectator?target(g):oldTarget(g);};specNext=function(n){return active()?next(n):oldNext(n);};
@@ -7380,6 +7469,91 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
 
 </script>
 <script>
+/* Replays record positions at 10 Hz, never simulate a second goal. Clips travel
+   once per goal; ordinary authoritative snapshots contain only a small ID. */
+(function(root){'use strict';
+ const A=SzMiniGames,D=SzMiniData,R=SzArcadeRules,t=s=>szLocale.t(s),esc=s=>workshopEscape(String(s));
+ const overlay=document.createElement('section');overlay.id='sz-goal-replay';overlay.hidden=true;overlay.dataset.noTranslate='';$('game').append(overlay);
+ let owner=null,serial=-1,history=new R.History(),cache=new Map(),sent=new Map(),playback=null,signature='',requestAt=0;
+ function reset(){owner=G;serial=G?.mg?.serial??-1;history.reset();cache.clear();sent.clear();playback=null;signature='';requestAt=0;overlay.hidden=true;}
+ function football(){return A.active()&&G.mg?.kind==='football';}
+ function ensure(){if(owner!==G||serial!==(G?.mg?.serial??-1))reset();return football();}
+ function remember(clip){cache.set(clip.id,clip);while(cache.size>2)cache.delete(cache.keys().next().value);}
+ function record(){if(ensure()&&!G.client&&G.mg.phase==='live')history.record(G.el,G.mg.ball,G.ps);}
+ function goal(team,credit){if(!ensure()||G.client)return;const m=G.mg;history.record(G.el,m.ball,G.ps,true);
+  const clip={id:m.serial+':'+(G.sc.CT+G.sc.T)+':'+Math.round(G.el*1000),serial:m.serial,team,credit:{...credit},score:{...G.sc},roster:G.ps.map(p=>({name:String(nm(p)).slice(0,40),team:p.team,keeper:!!p.mgKeeper})),frames:history.copy()},available=R.validClip(clip);
+  m.goalReplay={id:clip.id,available,team,scorer:credit.scorer,assist:credit.assist,ownGoal:credit.ownGoal,score:clip.score};
+  if(available){remember(clip);if(L?.host&&NET.session)netSend({t:'mg_replay',clip});}
+  history.reset();
+ }
+ function context(){if(!ensure())return null;const m=G.mg,meta=m.goalReplay;if(!meta||!['goal','result'].includes(m.phase)){if(playback)playback.complete=true;return null;}if(!meta.available)return null;
+  if(!playback||playback.id!==meta.id){playback={id:meta.id,elapsed:Math.max(0,Number(m.phaseElapsed)||0),last:performance.now(),skipped:false,complete:false};signature='';}
+  return{m,meta,clip:cache.get(meta.id),p:playback};
+ }
+ function duration(clip){return Math.min(3.9,(clip.frames.at(-1)[0]-clip.frames[0][0])/900);}
+ function active(){const c=context();return !!(c?.clip&&!G.paused&&!c.p.skipped&&!c.p.complete&&c.p.elapsed>=.25&&c.p.elapsed<.25+duration(c.clip));}
+ function skip(){const c=context();if(!c)return;c.p.skipped=true;overlay.hidden=true;mouse.d=mouse.r=0;keys[' ']=0;}
+ function render(){const c=context();if(!c){overlay.hidden=true;return false;}const {m,meta,clip,p}=c,now=performance.now();if(!G.paused)p.elapsed+=Math.max(0,(now-p.last)/1000);p.last=now;
+  if(G.client&&!G.over&&Math.abs(p.elapsed-m.phaseElapsed)>.35)p.elapsed=m.phaseElapsed;
+  if(!clip&&G.client&&now-requestAt>800){requestAt=now;netSend({t:'mg_replay_get',id:meta.id,serial:m.serial});}
+  const visible=active();overlay.hidden=!visible;if(!visible)return false;
+  const progress=Math.max(0,Math.min(1,(p.elapsed-.25)/duration(clip))),frame=R.sample(clip,progress),zoom=Math.min(VW/D.WIDTH,640/D.HEIGHT)*1.1,vw=VW/zoom,vh=640/zoom;
+  const sx=D.clamp(frame[1]/10-vw/2,Math.min(0,(D.WIDTH-vw)/2),Math.max(0,D.WIDTH-vw)),sy=D.clamp(frame[2]/10-vh/2,Math.min(0,(D.HEIGHT-vh)/2),Math.max(0,D.HEIGHT-vh));
+  cx.fillStyle='#081a20';cx.fillRect(0,0,VW,640);cx.save();cx.scale(zoom,zoom);cx.translate(-sx,-sy);cx.drawImage(A.view.terrain('football'),0,0);
+  for(let i=0;i<clip.roster.length;i++){const at=3+i*4;if(!frame[at+3])continue;const info=clip.roster[i],ghost={x:frame[at]/10,y:frame[at+1]/10,a:frame[at+2]/1000,alive:true,human:false,team:info.team,cur:'knife',g:{}};drawBody(ghost);if(info.keeper||i===clip.credit.scorer){cx.beginPath();cx.arc(ghost.x,ghost.y,info.keeper?20:23,0,7);cx.strokeStyle=i===clip.credit.scorer?'#ffe0a0':'#e8d6a0';cx.lineWidth=i===clip.credit.scorer?2.2:1;cx.stroke();}cx.font='10px system-ui';cx.textAlign='center';cx.fillStyle=info.team==='CT'?'#a8d6fa':'#f5cf91';SzHideSeek.literal(cx,info.name,ghost.x,ghost.y+29);}
+  cx.strokeStyle='#f1d99877';cx.lineWidth=2;cx.beginPath();const trail=clip.frames.filter(f=>f[0]<=frame[0]&&f[0]>frame[0]-450);trail.forEach((f,i)=>i?cx.lineTo(f[1]/10,f[2]/10):cx.moveTo(f[1]/10,f[2]/10));cx.lineTo(frame[1]/10,frame[2]/10);cx.stroke();A.view.drawBall(frame[1]/10,frame[2]/10);cx.restore();
+  const key=clip.id+'|'+szLocale.language;if(signature!==key){signature=key;const scorer=clip.roster[clip.credit.scorer]?.name,assist=clip.roster[clip.credit.assist]?.name;overlay.innerHTML='<header><span class="ar-replay-label"><i></i>'+esc(t('Powtórka gola'))+'</span><span class="ar-replay-score"><b>'+clip.score.CT+'</b> : <b>'+clip.score.T+'</b></span><span>'+esc(t('Piłka nożna'))+'</span></header><footer><div><small>'+esc(t(clip.credit.ownGoal?'Gol samobójczy':scorer?'Strzelec gola':'Gol dla drużyny'))+'</small><strong data-user-content>'+esc(scorer||t(clip.team==='CT'?'Drużyna niebieska':'Drużyna pomarańczowa'))+'</strong>'+(assist?'<span>'+esc(t('Asysta'))+' · <b data-user-content>'+esc(assist)+'</b></span>':'')+'</div><button type="button" data-skip-goal-replay>'+esc(t('Pomiń'))+' <kbd>'+esc(t('Spacja'))+'</kbd></button></footer><div class="ar-replay-progress"><i></i></div>';overlay.querySelector('button').onclick=skip;}
+  overlay.querySelector('.ar-replay-progress i').style.width=progress*100+'%';return true;
+ }
+ const receive=netRecv;netRecv=function(p){if(p?.v===2&&G&&p.c!==NET.cid&&p.sid===NET.session&&ensure()){
+  if(p.t==='mg_replay'&&G.client&&acceptHost(p)&&(!p.to||p.to===NET.cid)){if(R.validClip(p.clip)&&p.clip.serial===G.mg.serial)remember(p.clip);return;}
+  if(p.t==='mg_replay_get'&&!G.client&&NET.host&&roomPeer(p.c)){const clip=cache.get(p.id),now=performance.now();if(clip&&clip.id===G.mg.goalReplay?.id&&p.serial===G.mg.serial&&now-(sent.get(p.c)||-Infinity)>1000){sent.set(p.c,now);netSend({t:'mg_replay',to:p.c,clip});}return;}
+ }return receive(p);};
+ const draw=root.draw;root.draw=function(...args){if(render()){A.view.sync();return;}return draw(...args);};
+ const quitBefore=quit;quit=function(...args){reset();return quitBefore(...args);};
+ addEventListener('keydown',event=>{if((event.code==='Space'||event.key===' ')&&active()&&!event.target.closest?.('input,textarea,dialog')){event.preventDefault();event.stopImmediatePropagation();skip();}},true);
+ root.SzFootballReplay={record,goal,reset,active,skip,render,clip:()=>cache.get(G?.mg?.goalReplay?.id)||null};
+})(globalThis);
+
+</script>
+<script>
+/* Mode-aware scoreboards and small phase notices, shared by arcade and football. */
+(function(root){'use strict';
+ const A=SzMiniGames,D=SzMiniData,R=SzArcadeRules,t=s=>szLocale.t(s),esc=s=>workshopEscape(String(s)),game=$('game');
+ const board=document.createElement('div'),notice=document.createElement('div');board.id='sz-arcade-board';notice.id='sz-arcade-notice';for(const e of[board,notice]){e.hidden=true;e.dataset.noTranslate='';game.append(e);}let last=0,signature='',noticeSignature='',resultSignature='';
+ const active=()=>A.active()&&!game.hidden&&!!G.mg;
+ function columns(kind){return kind==='football'?[['goals','Gole'],['assists','Asysty'],['passes','Podania'],['saves','Obrony']]:kind==='bomb'?[['bombPasses','Przekazania'],['status','Status']]:[['eliminations','Eliminacje'],['hits','Trafienia'],['throws','Rzuty']];}
+ function tableHTML(final=false){const g=G,m=g.mg,kind=m.kind,cols=columns(kind),football=kind==='football',ffa=kind==='bomb';
+  const order=players=>players.slice().sort((a,b)=>Number(b.alive)-Number(a.alive)||(football?(b.mgStats?.goals||0)-(a.mgStats?.goals||0)||(b.mgStats?.assists||0)-(a.mgStats?.assists||0):(b.mgPoints||0)-(a.mgPoints||0))||nm(a).localeCompare(nm(b)));
+  function row(p){const st=R.stats(p.mgStats),i=g.ps.indexOf(p),own=p===g.me,carrier=ffa&&m.bomb.carrier===i&&p.alive;
+   const role=football&&p.mgKeeper?'<small>'+esc(t('BRAMKARZ'))+'</small>':!p.alive?'<small>'+esc(t('Wyeliminowany'))+'</small>':'';
+   const ownGoal=st.ownGoals?'<small class="ar-own-goal">'+st.ownGoals+' × '+esc(t('Gol samobójczy'))+'</small>':'';
+   const cells=cols.map(([key])=>'<td data-arcade-stat="'+key+'">'+(key==='status'?esc(t(p.alive?(carrier?'Masz bombę!':'W grze'):'Wyeliminowany')):st[key])+'</td>').join('');
+   return '<tr class="'+(own?'ar-self ':'')+(!p.alive?'ar-eliminated ':'')+(carrier?'ar-carrier':'')+'" data-arcade-player="'+i+'"><td><div class="ar-player-cell"><span class="ar-player-dot '+(p.team==='CT'?'ct':'t')+'"></span><span class="ar-player-name"><strong data-user-content>'+esc(nm(p))+'</strong>'+role+ownGoal+'</span></div></td>'+cells+'</tr>';
+  }
+  function team(team){const list=order(g.ps.filter(p=>p.team===team));return '<section class="ar-team '+(team==='CT'?'ct':'t')+'"><div class="ar-team-title"><strong>'+esc(t(team==='CT'?'Drużyna niebieska':'Drużyna pomarańczowa'))+'</strong><b>'+(football||kind==='snow'?g.sc[team]:list.filter(p=>p.alive).length)+'</b></div>'+grid(list)+'</section>';}
+  function grid(list){return '<table><thead><tr><th>'+esc(t('Gracz'))+'</th>'+cols.map(([,name])=>'<th>'+esc(t(name))+'</th>').join('')+'</tr></thead><tbody>'+list.map(row).join('')+'</tbody></table>';}
+  return '<section class="ar-table '+(final?'ar-final':'')+'"'+(final?' data-arcade-final':'')+'><header>'+A.view.icon(kind)+'<div><small>'+esc(t(final?'Koniec meczu':'Tabela wyników'))+'</small><h2>'+esc(t(D.specs[kind].title))+'</h2></div><span class="ar-match-score">'+(ffa?g.ps.filter(p=>p.alive).length+' / '+g.ps.length:kind==='grenade'?g.ps.filter(p=>p.alive&&p.team==='CT').length+' : '+g.ps.filter(p=>p.alive&&p.team==='T').length:g.sc.CT+' : '+g.sc.T)+'</span></header><div class="ar-table-body">'+(ffa?'<section class="ar-team ar-ffa"><div class="ar-team-title"><strong>'+esc(t('Ostatni na arenie wygrywa'))+'</strong></div>'+grid(order(g.ps))+'</section>':'<div class="ar-table-teams">'+team('CT')+team('T')+'</div>')+'</div><footer><span>'+esc(t(football?'Gole i asysty są naliczane przez hosta meczu.':'Wyniki bieżącej minigry'))+'</span>'+(final?'<button type="button" onclick="quit()">'+esc(t('Wróć do menu'))+'</button>':'<kbd>'+esc(t('Puść TAB, aby wrócić do gry'))+'</kbd>')+'</footer></section>';
+ }
+ function phaseHTML(){const g=G,m=g.mg,warmup=m.phase==='warmup',goal=m.phase==='goal',result=m.phase==='result',meta=m.goalReplay,scorer=meta&&g.ps[meta.scorer];
+  let title=warmup?'Zaraz zaczynamy':goal?'GOL!':m.result?.team==='draw'?'Remis':m.result?.player!=null?null:m.result?.team==='CT'?'Drużyna niebieska wygrywa':'Drużyna pomarańczowa wygrywa';
+  const who=!title&&m.result?.player!=null?nm(g.ps[m.result.player]):null,subtitle=warmup?t(D.specs[m.kind].control):goal?(scorer?'<span data-user-content>'+esc(nm(scorer))+'</span>'+(meta.ownGoal?' · '+esc(t('Gol samobójczy')):''):esc(t('Gol dla drużyny'))):esc(t('Następna minigra za'));
+  return '<div class="ar-phase '+(goal?'goal':result?'result':'')+'"><span class="ar-phase-count">'+Math.max(1,Math.ceil(m.time))+'</span><div><strong'+(who?' data-user-content':'')+'>'+esc(who||t(title))+'</strong><small>'+subtitle+'</small></div>'+(goal?'<b>'+g.sc.CT+' : '+g.sc.T+'</b>':'')+'</div>';
+ }
+ function update(force=false){if(!active()){board.hidden=notice.hidden=true;signature=noticeSignature=resultSignature='';return;}const g=G,m=g.mg,shown=!!keys.tab&&!g.paused&&!g.intro&&!g.netWaiting&&!['vote','roulette'].includes(m.phase)&&!g.over;board.hidden=!shown;const now=performance.now();if(!force&&now-last<100)return;last=now;
+  if(shown){const html=tableHTML();if(html!==signature){signature=html;board.innerHTML=html;}}
+  const showNotice=!shown&&!g.paused&&!g.over&&!g.netWaiting&&!SzFootballReplay.active()&&(m.phase==='warmup'||m.phase==='goal'||m.phase==='result'&&!A.standalone());notice.hidden=!showNotice;if(showNotice){const html=phaseHTML();if(html!==noticeSignature){noticeSignature=html;notice.innerHTML=html;}}
+  if(A.standalone()&&m.phase==='result'&&g.over){const html=tableHTML(true),o=$('ov');if(resultSignature!==html||!o.querySelector('[data-arcade-final]')){resultSignature=html;o.innerHTML=html;o.style.display='flex';}}
+ }
+ const draw=root.draw;root.draw=function(...args){const result=draw(...args);update();return result;};
+ addEventListener('keydown',event=>{if(event.key==='Tab'&&active()&&!G.paused&&!G.over&&!['vote','roulette'].includes(G.mg.phase)&&!event.target.closest?.('input,textarea,dialog')){event.preventDefault();event.stopImmediatePropagation();keys.tab=1;update(true);root.SzMatchHud?.update(true);}},true);
+ addEventListener('keyup',event=>{if(event.key==='Tab'){keys.tab=0;if(active()){event.preventDefault();update(true);root.SzMatchHud?.update(true);}}},true);
+ document.addEventListener('sz-language',()=>{signature=noticeSignature=resultSignature='';update(true);});
+ root.SzArcadeUI={active,update,tableHTML};
+})(globalThis);
+
+</script>
+<script>
 /* CS-style match HUD. DOM values refresh at 10 Hz; map geometry and weapon
    thumbnails are cached, while the simulation and aiming stay on the canvas. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else{root.SzMatchHud=api;api.mount(root);}})(globalThis,function(){'use strict';
@@ -7395,7 +7569,7 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   const number=n=>Math.max(0,Math.floor(Number(n)||0)),side=p=>p.team==='CT'?'CT':p.team==='T'?'T':p.homeTeam==='CT'?'CT':'T';
   function portrait(p){const image=p.human?P().avimg:p.rid?(FR.on?.[roomPeer(p.rid)?.uid]||[]).map(a=>a.avimg).find(Boolean):null;const safe=friendAvatarImage(image);return safe?'<img src="'+esc(safe)+'" alt="">':icon(p.alive?'person':'skull');}
   function row(p,i){const selected=G.spectator&&p===SzSpectator.target(),team=side(p);return '<button type="button" class="mh-roster-player '+(!p.alive?'dead ':'')+(selected?'selected':'')+'" data-observe="'+i+'" style="--team:'+(team==='CT'?'#83cfff':'#edc17a')+'" '+(!p.alive?'disabled':'')+'><span class="mh-player-num">'+((i+1)%10||0)+'</span><span class="mh-avatar">'+portrait(p)+'</span><span class="mh-roster-detail"><b>'+esc(nm(p))+'</b><small>$'+number(p.money)+' <em>'+number(p.k)+' / '+number(p.d)+' / '+number(p.as)+'</em></small><span class="mh-health-track"><i style="width:'+Math.min(100,number(p.hp)/(p.mh||100)*100)+'%"></i></span></span><span class="mh-roster-weapon">'+weapon(p)+'</span><span class="mh-roster-hp">'+number(p.alive?Math.ceil(p.hp):0)+'<small>'+icon('shield')+number(p.armor)+'</small></span></button>';}
-  function top(g,spec){if(g.mg?.kind==='football'||sel.mode==='prophunt')return modeTop(g,spec);const ffa=SzSpectator.ffa(),a=g.ps.filter(p=>side(p)==='CT'),b=g.ps.filter(p=>side(p)==='T'),mini=!!g.mg,prop=sel.mode==='prophunt',timer=clock(g.bomb?g.bomb.t:g.mg?.time??g.t),round=number(g.hns?.round??g.rn)+1;
+  function top(g,spec){if(g.mg&&g.mg.kind!=='football')return arcadeTop(g);if(sel.mode==='zombie')return zombieTop(g);if(g.mg?.kind==='football'||sel.mode==='prophunt')return modeTop(g,spec);const ffa=SzSpectator.ffa(),a=g.ps.filter(p=>side(p)==='CT'),b=g.ps.filter(p=>side(p)==='T'),mini=!!g.mg,prop=sel.mode==='prophunt',timer=clock(g.bomb?g.bomb.t:g.mg?.time??g.t),round=number(g.hns?.round??g.rn)+1;
    function teamLabel(team){if(ffa)return 'Gracze';if(g.hns)return team===g.hns.seekerTeam?'Szukający':'Ukrywający się';if(g.mg)return team==='CT'?'Drużyna niebieska':'Drużyna pomarańczowa';if(sel.mode==='zombie')return team==='CT'?'Ludzie':'Zombie';return team==='CT'?'Antyterroryści':'Terroryści';}function cards(players){return players.slice(0,5).map(p=>'<span class="mh-top-player '+(!p.alive?'dead':'')+'" title="'+esc(nm(p))+'"><span>'+portrait(p)+'</span><i style="width:'+Math.min(100,number(p.hp)/(p.mh||100)*100)+'%"></i></span>').join('');}
    const label=mini?t(SzMiniData.specs[g.mg.kind].title):sel.mode==='zombie'?t('Zombie'):prop?t('Prop Hunt'):t('Runda')+' '+round;
    return '<header class="mh-top '+(!spec&&(mini||prop)?'mh-top-native':'')+'"><div class="mh-top-team ct">'+(spec?'<b>'+esc(t(teamLabel('CT')))+'</b><small>'+a.filter(p=>p.alive).length+' '+esc(t('żywych'))+'</small>':cards(a))+'</div><div class="mh-score"><div><strong class="ct">'+number(ffa?g.ps.filter(p=>p.alive).length:g.sc.CT)+'</strong><span class="'+(g.bomb?'bomb':g.t<15?'urgent':'')+'">'+timer+'</span><strong class="t">'+(ffa?icon('person'):number(g.sc.T))+'</strong></div><small>'+esc(label)+'</small></div><div class="mh-top-team t">'+(spec?'<b>'+esc(t(teamLabel('T')))+'</b><small>'+b.filter(p=>p.alive).length+' '+esc(t('żywych'))+'</small>':cards(b))+'</div></header>';
@@ -7403,11 +7577,32 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   function context(g,p){if(g.spectator)return g.mg?t(g.mg.phase==='vote'?'Boty głosują na minigrę':g.mg.phase==='roulette'?'Losowanie następnej minigry':g.mg.phase==='goal'?'GOL!':g.mg.phase==='warmup'?'Rozgrzewka':'Obserwujesz grę'):t(g.ph==='buy'?'Rozgrzewka':g.ph==='end'?'Koniec rundy':'Obserwujesz grę');if(g.mg)return t(SzMiniData.specs[g.mg.kind].control);if(sel.mode==='prophunt'){if(!p.alive)return t('Obserwujesz grę');if(p.team===g.hns.seekerTeam)return t('LPM — strzał · R — przeładuj');return t(SzPropData.models[p.propForm]?.name||'Przedmiot')+' · R / F / E';}
    if(!p.alive)return t(['dm','tdm','ctf','gungame'].includes(MODE())?'Odrodzenie…':'Obserwujesz grę')+' · ← / →';if(p.ap===1)return t('SPACJA — skocz z samolotu');if(p.ap===2)return t('Spadochron — steruj WASD');if(p.nd)return t(NADE_NAMES[p.nd]||p.nd)+' · '+t('LPM — rzuć granat');if(p.rl>0)return t('Przeładowanie…');if(p.bomb&&!g.bomb&&g.ph==='live')return t('Przytrzymaj E na bombsite, aby podłożyć bombę');if(g.bomb&&p.team==='CT')return t('Przytrzymaj E przy bombie, aby rozbroić');const rq=(g.rq||[]).find(r=>g.el<r.u);if(rq&&g.ph==='buy')return nm(rq.from)+' · '+t('Prośba o broń')+' '+W[rq.k].n+' · Y';const item=(g.dr||[]).find(d=>Math.hypot(d.x-p.x,d.y-p.y)<48);return item?t('E — podnieś')+' '+(W[item.k]?.n||item.k):g.ph==='buy'&&!g.nobuy?t('B — menu zakupów'):'';
   }
-  function bottom(g,p,spec){if(g.mg?.kind==='football'||sel.mode==='prophunt')return modeBottom(g,p,spec);const w=W[p.cur]||W.knife,hp=p.alive?Math.ceil(p.hp):0,pr=p.rl>0?1-p.rl/1.5:p.pl>0?p.pl/3:g.bomb&&p.team==='CT'?g.bomb.df/5:0,ammo=p.cur!=='knife'&&w.mag?'<b>'+number(p.ammo?.[p.cur])+'</b><span>/ '+number(MODE()==='br'?p.reserve?.[p.cur]:w.mag)+'</span>':'<b class="mh-melee">'+esc(t(g.mg?.kind==='football'?'Piłka nożna':p.nd?NADE_NAMES[p.nd]:w.n))+'</b>';
+  function bottom(g,p,spec){if(g.mg&&g.mg.kind!=='football')return arcadeBottom(g,p,spec);if(sel.mode==='zombie')return zombieBottom(g,p,spec);if(g.mg?.kind==='football'||sel.mode==='prophunt')return modeBottom(g,p,spec);const w=W[p.cur]||W.knife,hp=p.alive?Math.ceil(p.hp):0,pr=p.rl>0?1-p.rl/1.5:p.pl>0?p.pl/3:g.bomb&&p.team==='CT'?g.bomb.df/5:0,ammo=p.cur!=='knife'&&w.mag?'<b>'+number(p.ammo?.[p.cur])+'</b><span>/ '+number(MODE()==='br'?p.reserve?.[p.cur]:w.mag)+'</span>':'<b class="mh-melee">'+esc(t(g.mg?.kind==='football'?'Piłka nożna':p.nd?NADE_NAMES[p.nd]:w.n))+'</b>';
    const grenades=Object.keys(p.g||{}).filter(k=>p.g[k]).map(k=>'<span title="'+esc(t(NADE_NAMES[k]||k))+'" class="'+(p.nd===k?'active':'')+'">'+esc(({smoke:'SMK',flash:'FB',frag:'HE',molo:'MOL'})[k]||k)+'</span>').join('');
    return '<section class="mh-bottom"><div class="mh-left"><span class="mh-cash">$'+number(p.money)+'</span><div class="mh-vitals"><span class="mh-hp '+(hp<=25?'low':'')+'">'+icon('heart')+'<b>'+number(hp)+'</b></span><i></i><span class="mh-armor">'+icon('shield')+'<b>'+number(p.armor)+'</b></span></div><div class="mh-hp-line"><i style="width:'+Math.min(100,hp/(p.mh||100)*100)+'%"></i></div></div><div class="mh-center">'+(spec?'<div class="mh-target-name"><small>'+esc(t('Obserwujesz'))+'</small><b>'+esc(nm(p))+'</b><span>'+number(p.k)+' K · '+number(p.d)+' D · '+number(p.as)+' A</span></div>':'<div class="mh-crest" title="'+esc(p.team)+'"><span class="sz-brand"></span></div>')+'</div><div class="mh-right"><div class="mh-held">'+weapon(p)+'<span>'+esc(heldName(p))+'</span></div><div class="mh-ammo">'+ammo+'</div><div class="mh-equipment">'+grenades+(p.kit?'<span title="'+esc(t('Zestaw do rozbrajania'))+'">'+icon('kit')+'</span>':'')+(p.bomb&&!g.bomb?'<span>C4</span>':'')+'</div></div></section><div class="mh-context">'+esc(context(g,p))+(pr>0?'<span class="mh-action-track"><i style="width:'+Math.min(100,Math.max(0,pr*100))+'%"></i></span>':'')+'</div>';
   }
   function ballIcon(){return '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="16" cy="16" r="13"/><path d="m16 9 7 5-3 8h-8l-3-8Zm0 0V3m7 11 5-4m-8 12 4 5m-12-5-4 5m1-13-5-4"/></svg>';}
+  function ability(key,label,detail,cooldown=0,max=1){cooldown=Math.max(0,Number(cooldown)||0);max=Number(max)>0?Number(max):1;return '<div class="mh-ability '+(cooldown>0?'cooling':'ready')+'"><kbd>'+esc(t(key))+'</kbd><span><b>'+esc(t(label))+'</b><small>'+esc(detail)+'</small></span><i><em style="width:'+Math.max(0,Math.min(100,100-cooldown/max*100))+'%"></em></i></div>';}
+  function arcadeTop(g){const m=g.mg,alive=g.ps.filter(p=>p.alive),ffa=m.kind==='bomb',carrier=g.ps[m.bomb.carrier],ct=alive.filter(p=>p.team==='CT').length,tt=alive.filter(p=>p.team==='T').length;
+   return '<header class="mh-top mh-mode-top mh-arcade-top '+(ffa?'mh-bomb-top':'')+'"><div class="mh-mode-side ct"><span>'+esc(t(ffa?'Pozostali gracze':'Drużyna niebieska'))+'</span><strong>'+(ffa?alive.length:m.kind==='snow'?number(g.sc.CT):ct)+'</strong></div><div class="mh-mode-clock">'+SzMiniGames.view.icon(m.kind)+'<b>'+clock(m.time)+'</b><small>'+esc(t(m.kind==='snow'?'Do 15 punktów':SzMiniData.specs[m.kind].title))+'</small></div><div class="mh-mode-side t">'+(ffa?'<span>'+esc(t('Bomba'))+'<b class="mh-fuse '+(m.bomb.fuse<4?'urgent':'')+'">'+Math.max(0,Math.ceil(m.bomb.fuse))+'s</b></span><span class="mh-carrier-name" data-user-content>'+esc(carrier?nm(carrier):'—')+'</span>':'<strong>'+(m.kind==='snow'?number(g.sc.T):tt)+'</strong><span>'+esc(t('Drużyna pomarańczowa'))+'</span>')+'</div></header>';
+  }
+  function arcadeBottom(g,p,spec){if(!p)return '';const m=g.mg,st=SzArcadeRules.stats(p.mgStats),carrier=m.kind==='bomb'&&m.bomb.carrier===g.ps.indexOf(p),hp=p.alive?Math.ceil(p.hp):0,respawn=m.kind==='snow'&&!p.alive?Math.max(0,Math.ceil((p.mgRespawn||0)-g.el)):0;
+   const role=spec?'<small>'+esc(t('Obserwujesz'))+'</small><b data-user-content>'+esc(nm(p))+'</b>':'<small>'+esc(t(SzMiniData.specs[m.kind].title))+'</small><b>'+esc(t(!p.alive?'Wyeliminowany':m.kind==='bomb'?(carrier?'Masz bombę!':'Uciekaj'):'Zawodnik'))+'</b>';
+   let stats=icon('heart')+'<b class="mh-mode-health '+(hp<=25?'low':'')+'">'+number(hp)+' <small>HP</small></b><span><b>'+number(st.eliminations)+'</b><small>'+esc(t('Eliminacje'))+'</small></span>',actions;
+   if(m.kind==='bomb'){stats=SzMiniGames.view.icon('bomb')+'<span><b>'+esc(t(carrier?'Przekaż bombę':'Unikaj nosiciela'))+'</b><small>'+number(st.bombPasses)+' · '+esc(t('Przekazania'))+'</small></span>';actions=ability('DOTYK',carrier?'Przekaż bombę':'Trzymaj dystans',t(carrier?'Dotknij innego gracza':'Bomba nie zmienia czasu'),carrier?m.bomb.lock:0,.9);}
+   else{stats+='<span class="mh-arcade-hits"><b>'+st.hits+'</b><small>'+esc(t('Trafienia'))+'</small></span>';actions=ability('LPM',m.kind==='snow'?'Rzuć śnieżkę':'Rzuć granat',t(!p.alive?(respawn?'Odrodzenie…':'Obserwujesz grę'):p.cd>0?'Przygotowanie…':'Gotowy'),p.cd,m.kind==='snow'?.6:1.65);}
+   actions+=ability('E',m.kind==='snow'?'Zryw':'Sprint',respawn?respawn+'s':p.mgDashCd>0?Math.ceil(p.mgDashCd)+'s':t(p.mgSlow>0?'Spowolnienie':'Gotowy'),p.mgDashCd,7);
+   return '<section class="mh-bottom mh-mode-bottom mh-arcade-bottom '+(carrier?'mh-has-bomb':'')+'"><div class="mh-mode-role '+(p.team==='CT'?'ct':'t')+'">'+SzMiniGames.view.icon(m.kind)+'<span>'+role+'</span></div><div class="mh-mode-stats">'+stats+'</div><div class="mh-mode-abilities">'+actions+'</div></section>';
+  }
+  function zombieTop(g){const humans=g.ps.filter(p=>p.alive&&p.team==='CT').length,zombies=g.ps.filter(p=>p.team==='T').length,percent=zombies/Math.max(1,g.ps.length)*100;
+   return '<header class="mh-top mh-mode-top mh-zombie-top"><div class="mh-mode-side ct">'+icon('shield')+'<span>'+esc(t('Ocalali'))+'</span><strong>'+humans+'</strong></div><div class="mh-mode-clock">'+icon('skull')+'<b>'+clock(g.t)+'</b><small>'+esc(t(g.ph==='buy'?'Przygotowania':'Przetrwaj'))+'</small></div><div class="mh-mode-side t"><strong>'+zombies+'</strong><span>'+esc(t('Zakażeni'))+'</span>'+icon('skull')+'</div><div class="mh-infection-meter"><i style="width:'+percent+'%"></i></div></header>';
+  }
+  function zombieBottom(g,p,spec){if(!p)return '';const infected=p.team==='T',hp=p.alive?Math.ceil(p.hp):0,cls=(infected?ZCL:HCL).find(c=>c[0]===(infected?p.zc:p.hc)),role=spec?'<small>'+esc(t('Obserwujesz'))+'</small><b data-user-content>'+esc(nm(p))+'</b>':'<small>'+esc(t(cls?.[1]||'Zombie'))+'</small><b>'+esc(t(infected?'ZAKAŻONY':'OCALAŁY'))+'</b>';
+   const stats=icon('heart')+'<b class="mh-mode-health '+(hp<26?'low':'')+'">'+number(hp)+' <small>/ '+number(p.mh)+'</small></b>'+(!infected?'<span class="mh-zombie-armor">'+icon('shield')+'<b>'+number(p.armor)+'</b></span>':'<span><b>'+number(p.zd)+'</b><small>'+esc(t('Obrażenia'))+'</small></span>')+'<i class="mh-zombie-health-track"><em style="width:'+Math.max(0,Math.min(100,hp/Math.max(1,p.mh)*100))+'%"></em></i>';
+   let actions;if(infected){actions=ability('LPM','Atak pazurami',t(p.alive?'Zarażaj ocalałych':'Odrodzenie…')+(!p.alive?' '+Math.ceil(p.rsp??8)+'s':''),p.cd,1)+ability('—',p.zFreeze>0?'Zamrożenie':'Polowanie',p.zFreeze>0?Math.ceil(p.zFreeze)+'s':t('Namierz ludzi'),p.zFreeze,SzZombieRules.FREEZE_SECONDS);}
+   else{const w=W[p.cur]||W.knife;actions='<div class="mh-zombie-weapon">'+(p.nd?icon('bomb'):weapon(p))+'<span><b>'+esc(heldName(p))+'</b><strong>'+(!p.nd?number(p.ammo?.[p.cur])+' <small>/ '+number(w.mag)+'</small>':number(p.g?.[p.nd])+' ×')+'</strong></span></div>'+ability('4','Granat zamrażający',t('W ekwipunku')+': '+number(p.g?.smoke))+(p.hc==='builder'?ability('Q / X','Barykady',number(g.bw?.length)+' / 12'):ability('B','Zaopatrzenie',t('Broń i granaty')));}
+   return '<section class="mh-bottom mh-mode-bottom mh-zombie-bottom '+(infected?'mh-infected':'mh-survivor')+'"><div class="mh-mode-role">'+icon(infected?'skull':'shield')+'<span>'+role+'</span></div><div class="mh-mode-stats">'+stats+'</div><div class="mh-mode-abilities">'+actions+'</div></section>';
+  }
   function modeTop(g,spec){const football=g.mg?.kind==='football';
    if(football)return '<header class="mh-top mh-mode-top mh-football-top"><div class="mh-mode-side ct"><span>'+esc(t('Drużyna niebieska'))+'</span><strong>'+number(g.sc.CT)+'</strong></div><div class="mh-mode-clock">'+ballIcon()+'<b>'+esc(t('Do 10 goli'))+'</b><small>'+clock(g.el)+'</small></div><div class="mh-mode-side t"><strong>'+number(g.sc.T)+'</strong><span>'+esc(t('Drużyna pomarańczowa'))+'</span></div></header>';
    const seekers=g.ps.filter(p=>p.alive&&p.team===g.hns.seekerTeam).length,hiders=g.ps.filter(p=>p.alive&&p.team!==g.hns.seekerTeam).length;
@@ -7415,7 +7610,6 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   }
   function modeBottom(g,p,spec){if(!p)return '';const football=g.mg?.kind==='football',hunter=!football&&p.team===g.hns.seekerTeam;
    const who=spec?'<small>'+esc(t('Obserwujesz'))+'</small><b data-user-content>'+esc(nm(p))+'</b>':'<small>'+esc(t(football?(p.team==='CT'?'Drużyna niebieska':'Drużyna pomarańczowa'):hunter?'Polowanie':'Kamuflaż'))+'</small><b>'+esc(t(football?(p.mgKeeper?'BRAMKARZ':'Zawodnik'):hunter?'SZUKAJĄCY':'UKRYWAJĄCY SIĘ'))+'</b>';
-   function ability(key,label,detail,cooldown=0,max=1){return '<div class="mh-ability '+(cooldown>0?'cooling':'ready')+'"><kbd>'+esc(t(key))+'</kbd><span><b>'+esc(t(label))+'</b><small>'+esc(detail)+'</small></span><i><em style="width:'+Math.max(0,Math.min(100,100-cooldown/max*100))+'%"></em></i></div>';}
    let stats,actions;
    if(football){const b=g.mg.ball,near=b&&Math.hypot(b.x-p.x,b.y-p.y)<=SzMiniData.FOOTBALL.kickRange;
     stats=ballIcon()+'<span><b>'+esc(t(near?'Piłka w zasięgu':'Podejdź do piłki'))+'</b><small>'+esc(t('Celuj w bramkę przeciwnika'))+'</small></span>';
@@ -7430,10 +7624,10 @@ const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='o
   }
   function heldName(p){if(p.nd)return t(NADE_NAMES[p.nd]||p.nd);try{const id=heldSkinId(p);return id?itName(id):W[p.cur]?.n||'';}catch{return W[p.cur]?.n||'';}}
   function controls(){return '<nav class="mh-observer-controls" aria-label="'+esc(t('Sterowanie obserwatorem'))+'"><button type="button" data-spec-prev aria-label="'+esc(t('Poprzedni gracz'))+'">'+icon('arrow')+'</button><button type="button" data-spec-xray aria-pressed="'+(G.observerXray!==false)+'">'+icon('eye')+'X-ray <kbd>X</kbd></button><button type="button" data-spec-map aria-pressed="'+!!G.observerOverview+'">'+icon('map')+esc(t('Mapa'))+' <kbd>M</kbd></button><button type="button" data-spec-team>'+esc(t('Zmień drużynę'))+'</button><button type="button" data-spec-next aria-label="'+esc(t('Następny gracz'))+'">'+icon('arrow')+'</button></nav>';}
-  function update(force=false){const g=G,spec=!!g?.spectator,hide=!enabled()||!!g.intro||!!g.netWaiting||!!g.paused||!!g.over||!!g.killCam||spec&&!SzSpectator.active();hud.hidden=hide;if(hide)return;const now=performance.now();if(!force&&now-last<100)return;last=now;hud.style.setProperty('--hud-accent',color(ST_().hudColor));hud.style.zoom=Math.max(.7,Math.min(1.3,Number(ST_().hud)||1));hud.dataset.spectator=spec?'true':'false';const p=spec?SzSpectator.target():g.me;
+  function update(force=false){const g=G,spec=!!g?.spectator,hide=!enabled()||!!g.intro||!!g.netWaiting||!!g.paused||!!g.over||!!g.killCam||!!root.SzFootballReplay?.active()||!!g.mg&&!!keys.tab||spec&&!SzSpectator.active();hud.hidden=hide;if(hide)return;const now=performance.now();if(!force&&now-last<100)return;last=now;hud.style.setProperty('--hud-accent',color(ST_().hudColor));hud.style.zoom=Math.max(.7,Math.min(1.3,Number(ST_().hud)||1));hud.dataset.spectator=spec?'true':'false';const p=spec?SzSpectator.target():g.me;
    // Retain controls while a button is held/focused by updating their content only
    // when the displayed state changes, never on every animation frame.
-   hud.dataset.mode=g.mg?.kind==='football'?'football':sel.mode==='prophunt'?'prophunt':'standard';
+   hud.dataset.mode=g.mg?.kind||(['prophunt','zombie'].includes(sel.mode)?sel.mode:'standard');
    const message=spec?'':g.msg?'<div class="mh-message">'+esc(t(g.msg))+(g.msg2?'<small>'+esc(t(g.msg2))+'</small>':'')+'</div>':'';
    const html=top(g,spec)+message+bottom(g,p,spec)+(spec?'<aside class="mh-map"><div><b>'+esc(szLocale.mapName(MAPN[sel.map]||''))+'</b><span>'+esc(t('Obserwator'))+'</span></div><canvas width="280" height="220"></canvas></aside><aside class="mh-roster ct">'+g.ps.map((p,i)=>side(p)==='CT'?row(p,i):'').join('')+'</aside><aside class="mh-roster t">'+g.ps.map((p,i)=>side(p)==='T'?row(p,i):'').join('')+'</aside><div class="mh-killfeed">'+g.feed.slice(0,5).filter(f=>f.k&&f.v).map(f=>'<div><b>'+esc(nm(f.k))+'</b><span>'+esc(f.w||'')+'</span><b>'+esc(nm(f.v))+'</b></div>').join('')+'</div>'+controls():'');
    if(signature!==html){const focus=document.activeElement?.closest('#sz-match-hud button'),attr=focus?Array.from(focus.attributes).find(a=>a.name.startsWith('data-')):null;hud.innerHTML=html;signature=html;if(spec){for(const b of hud.querySelectorAll('[data-observe]'))b.onclick=()=>SzSpectator.choose(Number(b.dataset.observe));hud.querySelector('[data-spec-prev]').onclick=()=>SzSpectator.next(-1);hud.querySelector('[data-spec-next]').onclick=()=>SzSpectator.next(1);hud.querySelector('[data-spec-xray]').onclick=()=>SzSpectator.xray();hud.querySelector('[data-spec-map]').onclick=()=>SzSpectator.overview();hud.querySelector('[data-spec-team]').onclick=()=>SzSpectator.selectTeam(true);}if(attr)hud.querySelector('['+attr.name+(attr.value?'="'+attr.value+'"':'')+']')?.focus({preventScroll:true});}if(spec)minimap();

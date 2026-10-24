@@ -39,7 +39,8 @@
     "test:seasonal": "npm run prepare:game && node scripts/seasonal-smoke.cjs",
     "test:spectator": "node scripts/spectator-smoke.cjs",
     "test:launcher-social": "npm run prepare:game && node scripts/launcher-social-smoke.cjs",
-    "test:modes-hud": "node scripts/modes-hud-smoke.cjs"
+    "test:modes-hud": "node scripts/modes-hud-smoke.cjs",
+    "test:arcade-ui": "npm run prepare:game && node scripts/arcade-presentation-smoke.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",

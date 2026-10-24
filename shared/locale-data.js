@@ -1,4 +1,53 @@
 (function(root){const pairs=`
+Asysty|Assists
+Rzuty|Throws
+Bomba|Bomb
+Gole|Goals
+Podania|Passes
+Obrony|Saves
+Przekazania|Transfers
+Wyeliminowany|Eliminated
+Gol samobójczy|Own goal
+Tabela wyników|Scoreboard
+Ostatni na arenie wygrywa|Last player standing wins
+Gole i asysty są naliczane przez hosta meczu.|Goals and assists are recorded by the match host.
+Wyniki bieżącej minigry|Current minigame scores
+Puść TAB, aby wrócić do gry|Release TAB to return to the game
+Zaraz zaczynamy|Starting soon
+Gol dla drużyny|Team goal
+Powtórka gola|Goal replay
+Strzelec gola|Goalscorer
+Asysta|Assist
+Pomiń|Skip
+Spacja|Space
+Pozostali gracze|Players remaining
+Do 15 punktów|First to 15 points
+Przekaż bombę|Pass the bomb
+Unikaj nosiciela|Avoid the carrier
+Uciekaj|Run away
+DOTYK|TOUCH
+Trzymaj dystans|Keep your distance
+Dotknij innego gracza|Touch another player
+Bomba nie zmienia czasu|The fuse keeps counting down
+Rzuć śnieżkę|Throw a snowball
+Rzuć granat|Throw a grenade
+Przygotowanie…|Preparing…
+Spowolnienie|Slowed
+Ocalali|Survivors
+Zakażeni|Infected
+Przygotowania|Preparation
+Przetrwaj|Survive
+ZAKAŻONY|INFECTED
+OCALAŁY|SURVIVOR
+Obrażenia|Damage
+Atak pazurami|Claw attack
+Zarażaj ocalałych|Infect the survivors
+Zamrożenie|Frozen
+Namierz ludzi|Find the humans
+W ekwipunku|In inventory
+Barykady|Barricades
+Zaopatrzenie|Supplies
+Broń i granaty|Weapons and grenades
 Odblokuj obrót|Unlock rotation
 LPM|LMB
 Włączone|Enabled

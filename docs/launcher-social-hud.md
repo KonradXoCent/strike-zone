@@ -41,7 +41,7 @@ cooldown. Both clients refresh persistent requests every eight seconds.
 
 ## Test builds
 
-`node scripts/build.cjs --test --test-revision=2` produces a separate Windows Test
+`node scripts/build.cjs --test --test-revision=3` produces a separate Windows Test
 app, shortcut and local session directory. It uses real Supabase accounts but has
 no public update gate, so an unpublished preview is playable without replacing the
 stable application. The regular release build retains mandatory updates.

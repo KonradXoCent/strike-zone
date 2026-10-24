@@ -2,7 +2,7 @@
 (function(root){'use strict';
  const A=SzMiniGames,D=SzMiniData,F=D.FOOTBALL;
  const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),index=p=>G.ps.indexOf(p),players=()=>G.ps.filter(p=>p.alive),human=p=>!!(p.human||p.rh);
- function ball(){return{x:D.WIDTH/2,y:D.HEIGHT/2,vx:0,vy:0,last:-1,previous:-1,releaseUntil:0,kickUntil:0,passFrom:-1};}
+ function ball(){return{x:D.WIDTH/2,y:D.HEIGHT/2,vx:0,vy:0,last:-1,previous:-1,releaseUntil:0,kickUntil:0,passFrom:-1,touches:[]};}
  function assignRoles(){for(const team of['CT','T']){const peers=G.ps.filter(p=>(p.mgHomeTeam||p.team)===team);peers.forEach((p,i)=>{p.mgKeeper=i===peers.length-1;p.mgPitchRole=i;});}}
  function spawnPoint(p){const own=(p.mgHomeTeam||p.team)==='CT',formation=[[360,320],[260,180],[360,512],[260,652]],point=p.mgKeeper?[F.keeperX,D.HEIGHT/2]:formation[(p.mgPitchRole||0)%4];return{x:own?point[0]:D.WIDTH-point[0],y:point[1]};}
  function ownGoalRisk(p,x,y){const b=G.mg.ball,a=Math.atan2(y-b.y,x-b.x),sample={x:b.x,y:b.y,vx:Math.cos(a)*F.kickSpeed,vy:Math.sin(a)*F.kickSpeed};for(let i=0;i<66;i++){const goal=D.stepBall(sample,1/30);if(goal)return goal!==p.team;}return false;}
@@ -11,15 +11,15 @@
   const receiver=!shot?players().filter(q=>q!==p&&q.team===p.team&&distance(q,{x,y})<44&&distance(p,q)<350).sort((a,c)=>distance(a,{x,y})-distance(c,{x,y}))[0]:null;
   const origin=human(p)?p:b,a=Math.atan2(y-origin.y,x-origin.x),speed=F.kickSpeed;p.a=a;
   b.previous=b.last=index(p);b.releaseUntil=G.el+.18;b.kickUntil=G.el+F.ballCooldown;b.passFrom=shot?-1:index(p);b.vx=Math.cos(a)*speed;b.vy=Math.sin(a)*speed;p.cd=F.kickCooldown;
-  m.stats.kicks=(m.stats.kicks||0)+1;if(shot)m.stats.shots=(m.stats.shots||0)+1;else{m.stats.passes++;if(receiver){p.mgBrain.lastPassTo=index(receiver);p.mgBrain.lastPassAt=G.el;if(!human(p)&&human(receiver))m.stats.humanPasses=(m.stats.humanPasses||0)+1;}}
+  SzArcadeRules.touch(b,index(p),p.team,G.el);m.stats.kicks=(m.stats.kicks||0)+1;if(shot)m.stats.shots=(m.stats.shots||0)+1;else{m.stats.passes++;if(receiver){p.mgBrain.lastPassTo=index(receiver);p.mgBrain.lastPassAt=G.el;if(!human(p)&&human(receiver))m.stats.humanPasses=(m.stats.humanPasses||0)+1;}}
   snd('step',p.x,p.y);return true;
  }
  function contact(p){const m=G.mg,b=m.ball,last=G.ps[b.last],from=G.ps[b.passFrom],speed=Math.hypot(b.vx,b.vy);let nx=b.x-p.x,ny=b.y-p.y,n=Math.hypot(nx,ny);
   if(n<.01){nx=speed?-b.vx/speed:Math.cos(p.a);ny=speed?-b.vy/speed:Math.sin(p.a);}else{nx/=n;ny/=n;}
   m.stats.contacts=(m.stats.contacts||0)+1;
-  if(from&&from!==p&&from.team===p.team){m.stats.completedPasses=(m.stats.completedPasses||0)+1;if(human(p))m.stats.completedHumanPasses=(m.stats.completedHumanPasses||0)+1;}
-  if(last&&last!==p&&last.team!==p.team){m.stats.interceptions=(m.stats.interceptions||0)+1;if(p.mgKeeper&&speed>160)m.stats.saves=(m.stats.saves||0)+1;}
-  b.passFrom=-1;b.previous=b.last=index(p);b.releaseUntil=G.el+.07;
+  if(from&&from!==p&&from.team===p.team){from.mgStats.passes++;m.stats.completedPasses=(m.stats.completedPasses||0)+1;if(human(p))m.stats.completedHumanPasses=(m.stats.completedHumanPasses||0)+1;}
+  if(last&&last!==p&&last.team!==p.team){m.stats.interceptions=(m.stats.interceptions||0)+1;if(p.mgKeeper&&speed>160){m.stats.saves=(m.stats.saves||0)+1;p.mgStats.saves++;}}
+  SzArcadeRules.touch(b,index(p),p.team,G.el);b.passFrom=-1;b.previous=b.last=index(p);b.releaseUntil=G.el+.07;
   b.x=D.clamp(p.x+nx*26,60,D.WIDTH-60);b.y=D.clamp(p.y+ny*26,76,D.HEIGHT-76);
   const pvx=p.mgVx||0,pvy=p.mgVy||0,closing=(b.vx-pvx)*nx+(b.vy-pvy)*ny;
   if(closing<0){b.vx-=1.45*closing*nx;b.vy-=1.45*closing*ny;}

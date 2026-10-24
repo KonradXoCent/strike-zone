@@ -28,6 +28,8 @@ jobs:
         run: npm run test:locale
       - name: Test minigames votes, physics, bots and arcade rotation
         run: npm run test:minigames
+      - name: Test minigame and Zombie HUDs, football statistics, replay and responsive scoreboards
+        run: npm run test:arcade-ui
       - name: Test colored match HUD, observer roles, cameras and passive progression
         run: npm run test:spectator
       - run: npm run test:network
@@ -65,7 +67,7 @@ jobs:
           if-no-files-found: error
           retention-days: 90
       - name: Build isolated Windows launcher preview
-        run: npm run prepare:game && node scripts/build.cjs --test --test-revision=2
+        run: npm run prepare:game && node scripts/build.cjs --test --test-revision=3
       - name: Upload Windows launcher preview
         uses: actions/upload-artifact@v7.0.2
         with:
