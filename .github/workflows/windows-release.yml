@@ -44,10 +44,20 @@ jobs:
         run: npm run test:halloween
       - name: Test minigames votes, physics, bots and arcade rotation
         run: npm run test:minigames
+      - name: Test arcade and Zombie HUDs, football scoreboards and goal replays
+        run: npm run test:arcade-ui
+      - name: Test spectator teams and passive progression
+        run: npm run test:spectator
+      - name: Test football and Prop Hunt HUD layouts
+        run: npm run test:modes-hud
+      - name: Test team loadouts and buy/refund menu
+        run: npm run test:loadout
       - name: Test launcher accounts and friends on Windows before publishing
         run: npm run test:launcher
       - name: Test in-game avatars, presence and online-only trade invitations
         run: npm run test:friends
+      - name: Test mutual invitations, launcher startup and fullscreen
+        run: npm run test:launcher-social
       - name: Test inventory filters, pass, lobby and game selectors
         run: npm run test:hub
       - name: Test community map bots, counters, likes and promotion
@@ -70,6 +80,8 @@ jobs:
         run: npm run test:social
       - name: Test two SDK clients through lobby and running server list
         run: npm run test:network
+      - name: Test gameplay and standalone account persistence
+        run: npm run test:gameplay && npm run test:preview
       - name: Build current Windows installer
         if: ${{ !startsWith(github.event.head_commit.message, 'test:') }}
         run: npm run dist:win
@@ -84,12 +96,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/publish-release.cjs
-      - name: Download previous public 1.5.2 installer
+      - name: Download previous public 1.5.3 installer
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: pwsh
-        run: gh release download v1.5.2 --repo "$env:GITHUB_REPOSITORY" --pattern "StrikeZone-Setup-1.5.2.exe" --dir release
-      - name: Test installed 1.5.2 update, launcher accounts and Escape on Windows
+        run: gh release download v1.5.3 --repo "$env:GITHUB_REPOSITORY" --pattern "StrikeZone-Setup-1.5.3.exe" --dir release
+      - name: Test installed 1.5.3 update, launcher accounts and Escape on Windows
         run: node scripts/windows-update-smoke.cjs
       - name: Attach Windows update test report
         if: always()

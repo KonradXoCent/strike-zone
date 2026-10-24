@@ -1,3 +1,29 @@
+Strike Zone 2D 1.5.4 — nowy HUD, powtórki goli i launcher
+
+- Nowy HUD meczu inspirowany CS2: zdrowie, pancerz, amunicja i wyposażenie oraz zapisany wybór koloru interfejsu. Osobne HUD-y dla Piłki nożnej, Prop Hunt, Zbijaka granatami, Berka z bombą, Śnieżek i Zombie Mode. HUD Zombie Mode dopasowuje informacje do ocalałego lub zakażonego.
+- Piłka nożna: wspólny wygląd w osobnym trybie i Minigrach, tabela z golami, asystami, podaniami i obronami oraz krótkie powtórki goli z pomijaniem spacją. Gol po odbiciu od bramkarza należy do strzelca; celowe kopnięcie do własnej bramki nadal jest samobójem. Mecze pozostają do 10 goli.
+- Drużyna Obserwator dla graczy, bez zajmowania miejsc zawodników: śledzenie obu drużyn, X-ray, minimapa, podgląd całej mapy i osobny interfejs. Boty wypełniają drużyny grające; bierna obserwacja nie przyznaje nagród.
+- Wyposażanie skinów i zestawów broni dla CT/T oraz nowe menu zakupów z możliwością zwrotu dostępnych do oddania zakupów. Boty ostrożnie korzystają z noża podczas bezpiecznego przemieszczania się.
+- Launcher: zapamiętywane uruchamianie gry na pełnym ekranie, dopracowane motywy Nocny, Leśny i Piaskowy, dekoracje Halloween oraz nowe tło postaci CT/T na ekranach uruchamiania i wczytywania gry.
+- Zaproszenia do znajomych po nicku w grze i launcherze: po akceptacji obie osoby automatycznie mają się na liście. Oczekujące zaproszenia są zachowane również dla odbiorców offline.
+- Obsługa PL/EN i dopasowanie nowych paneli do mniejszych okien oraz ustawionej skali HUD-u. Synchronizacja tabel i powtórek w lobby i na serwerach.
+
+W obecnym launcherze pobierz aktualizację **1.5.4**, następnie zainstaluj ją i uruchom aplikację ponownie. Gra i launcher aktualizują się razem, zachowując konto, ekwipunek i dane lokalne. Nowa instalacja: **StrikeZone-Setup-1.5.4.exe**. Publiczna gra korzysta z logowania w launcherze.
+
+English
+
+- New CS2-inspired match HUD with health, armor, ammunition, equipment and a saved accent color. Dedicated interfaces for Football, Prop Hunt, Grenade Dodgeball, Bomb Tag, Snowballs and Zombie Mode, including separate survivor and infected information.
+- Football shares its HUD between standalone and Minigames modes. Team scoreboards show goals, assists, completed passes and goalkeeper saves. Short recorded goal replays can be skipped with Space. A defending goalkeeper's passive deflection preserves the opposing goalscorer; a deliberate kick into one's own goal remains an own goal. Matches still end at ten goals.
+- Human-only Spectator role with both-team cameras, X-ray, minimap, overview and a dedicated interface. Spectators occupy no playing slot, bots fill the teams, and passive viewing earns no progression.
+- Team-specific weapon/skin loadouts, a redesigned buy menu with eligible purchase refunds, and cautious knife travel for bots in safe situations.
+- Launcher improvements: saved fullscreen startup, refined Night/Forest/Sand themes, Halloween decorations and original CT/T loading artwork.
+- Nickname-based friend invitations in both clients. Recipient acceptance adds both players to each other's lists, and pending invitations persist for offline recipients.
+- Polish/English labels and responsive HUD panels, with synchronized football tables and replays in lobbies and hosted servers.
+
+Download **1.5.4** in the existing launcher, then install and restart. The launcher and game update together while preserving accounts, inventories and local data. New installation: **StrikeZone-Setup-1.5.4.exe**. The public game uses the launcher account session.
+
+---
+
 Strike Zone 2D 1.5.3 — Zombie Mode, nagrody Halloween i kody bonusowe
 
 - Zombie Mode: granaty wybuchowe i Molotovy ludzi nie zadają obrażeń własnej drużynie, także gdy rzucający później zostanie zainfekowany. Granat dymny zastępuje granat zamrażający: zatrzymuje widoczne zombie w promieniu 150 na 3 sekundy, gasi ich ogień i działa również we wspólnym meczu.
