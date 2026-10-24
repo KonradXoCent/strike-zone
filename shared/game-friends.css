@@ -20,3 +20,4 @@
 .sz-friends-list .sz-friend-copy{flex:1;min-width:100px}
 .sz-friends-list .sz-friend-actions{display:flex;padding:0;margin-left:auto}
 .sz-friends-hint{padding:14px;color:#9aa6b8;font-size:12px;line-height:1.5}
+.sz-pending-friends{margin:18px 0;padding:15px;border:1px solid #91b5d333;background:#13273977}.sz-pending-friends h4{margin:0 0 12px;color:#e5c68a;font-size:12px}.sz-pending-friends article{display:flex;gap:8px;align-items:center;padding:8px 0}.sz-pending-friends article>span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}.sz-pending-friends button{font-size:11px;padding:7px 10px}.sz-friend-request-alert{width:100%;padding:10px;font-size:10px;color:#f0cc8b;border-color:#c49e5b55;background:#a77b2422;margin-bottom:10px}

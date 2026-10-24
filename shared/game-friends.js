@@ -2,8 +2,9 @@
    Presence is trusted only after subscription and a synchronized roster. */
 (function(){'use strict';
  const t=value=>szLocale.t(value),html=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let owner=null,profiles=new Map(),request=0;
- function account(){const uid=SBU?.id||null;if(uid!==owner){owner=uid;profiles=new Map();request++;}return uid;}
+ let owner=null,profiles=new Map(),request=0,pendingRoster={incoming:[],outgoing:[]},seenRequests=new Set();
+ function account(){const uid=SBU?.id||null;if(uid!==owner){owner=uid;profiles=new Map();pendingRoster={incoming:[],outgoing:[]};seenRequests=new Set();request++;}return uid;}
+ function invitations(){return Object.entries(pendingRoster).map(([kind,list])=>list.length?`<section class="sz-pending-friends"><h4>${html(t(kind==='incoming'?'Otrzymane zaproszenia':'Wysłane zaproszenia'))} <small>${list.length}</small></h4>${list.map(row=>`<article><span data-user-content>${html(row.name)}</span>${(kind==='incoming'?[['accept','Akceptuj'],['decline','Odrzuć']]:[['cancel','Anuluj']]).map(([action,label])=>`<button type="button" data-friend-action="request-${action}" data-request-id="${html(row.id)}">${html(t(label))}</button>`).join('')}</article>`).join('')}</section>`:'').join('');}
  function info(friend){
   account();const known=!!SBU&&FR.uid===SBU.id&&FR.status==='SUBSCRIBED'&&FR.synced;
   const peers=known&&Array.isArray(FR.on[friend.friend_id])?FR.on[friend.friend_id]:[];
@@ -21,13 +22,13 @@
  friBar=function(){
   const e=$('frl');if(!e)return;account();
   if(!SBU){e.innerHTML=hint('Zaloguj się, aby zobaczyć znajomych');return;}
-  e.innerHTML=(FR.uid===SBU.id?FR.list:[]).map(friend=>{const f=info(friend),open=FRO===f.id;return `<div class="fr sz-friend${open?' open':''}" role="button" tabindex="0" aria-expanded="${open}" data-friend-action="toggle" data-friend-id="${html(f.id)}">${identity(f)}</div>${actions(f)}`;}).join('')||hint('Brak znajomych — dodaj ich w zakładce Znajomi.');
+  e.innerHTML=(pendingRoster.incoming.length?`<button type="button" class="sz-friend-request-alert" data-friend-action="open-requests">${html(t('Otrzymane zaproszenia'))} <b>${pendingRoster.incoming.length}</b></button>`:'')+((FR.uid===SBU.id?FR.list:[]).map(friend=>{const f=info(friend),open=FRO===f.id;return `<div class="fr sz-friend${open?' open':''}" role="button" tabindex="0" aria-expanded="${open}" data-friend-action="toggle" data-friend-id="${html(f.id)}">${identity(f)}</div>${actions(f)}`;}).join('')||hint('Brak znajomych — dodaj ich w zakładce Znajomi.'));
  };
  friRender=function(){
   friBar();const m=$('main');if(!m||T!=='friends')return;
   if(!sb||!SBU){m.innerHTML=`<div class="box"><h3>${html(t('Znajomi'))}</h3>${hint('Zaloguj się, aby zobaczyć znajomych')}</div>`;return;}
   const input=$('fn'),draft=input?.value||'',focused=document.activeElement===input,caret=input?.selectionStart;
-  m.innerHTML=`<div class="box"><h3>${html(t('Znajomi'))}</h3>${TRQ?`<div class="box"><b data-user-content>${html(TRQ.from)}</b> ${html(t('chce się wymienić'))} <button class="pri" data-friend-action="accept">${html(t('Akceptuj'))}</button></div>`:''}${FRI?`<div class="box"><b data-user-content>${html(FRI.from)}</b> ${html(t('zaprasza do lobby'))} <button class="pri" data-friend-action="join-invitation">${html(t('Dołącz'))}</button></div>`:''}<input id="fn" placeholder="${html(t('nick'))}" maxlength="14"> <button class="pri" data-friend-action="add">${html(t('Dodaj znajomego'))}</button> <small>${html(t(FR.msg))}</small><div class="sz-friends-list">${(FR.uid===SBU.id?FR.list:[]).map(friend=>{const f=info(friend);return `<article>${identity(f)}${actions(f,true)}</article>`;}).join('')||hint('Brak znajomych — dodaj ich w zakładce Znajomi.')}</div></div>`;
+  m.innerHTML=`<div class="box"><h3>${html(t('Znajomi'))}</h3>${TRQ?`<div class="box"><b data-user-content>${html(TRQ.from)}</b> ${html(t('chce się wymienić'))} <button class="pri" data-friend-action="accept">${html(t('Akceptuj'))}</button></div>`:''}${FRI?`<div class="box"><b data-user-content>${html(FRI.from)}</b> ${html(t('zaprasza do lobby'))} <button class="pri" data-friend-action="join-invitation">${html(t('Dołącz'))}</button></div>`:''}<input id="fn" placeholder="${html(t('Zaproś gracza po nicku'))}" maxlength="14"> <button class="pri" data-friend-action="add">${html(t('Wyślij zaproszenie'))}</button> <small>${html(t(FR.msg))}</small>${invitations()}<div class="sz-friends-list">${(FR.uid===SBU.id?FR.list:[]).map(friend=>{const f=info(friend);return `<article>${identity(f)}${actions(f,true)}</article>`;}).join('')||hint('Brak znajomych — dodaj ich w zakładce Znajomi.')}</div></div>`;
   $('fn').value=draft;if(focused){$('fn').focus();$('fn').setSelectionRange(caret,caret);}
  };
  const load=friLoad;
@@ -41,12 +42,16 @@
     if(!result.error)for(const row of result.data||[])if(ids.includes(row.user_id))next.set(row.user_id,{name:row.name,avimg:friendAvatarImage(row.avimg)});
    }catch{/* Keep the last verified avatar if the public profile request fails. */}
   }
-  profiles=next;friRefreshUI();
+  profiles=next;
+  try{const data=await SzFriendships.call(sb,'list');if(uid!==SBU?.id||epoch!==request)return;pendingRoster={incoming:data.incoming||[],outgoing:data.outgoing||[]};
+   const fresh=pendingRoster.incoming.filter(row=>!seenRequests.has(row.id));for(const row of fresh)seenRequests.add(row.id);if(fresh.length)toast(t('Masz nowe zaproszenie do znajomych.'));
+  }catch{if(uid===SBU?.id&&epoch===request)FR.msg='Nie udało się wczytać zaproszeń. Spróbuj ponownie.';}
+  friRefreshUI();
  };
  document.addEventListener('click',event=>{
   const b=event.target.closest('[data-friend-action]');if(!b||b.disabled||!b.closest('#frl,#main'))return;
   const action=b.dataset.friendAction,id=b.dataset.friendId,friend=FR.list.find(f=>f.friend_id===id);
-  if(action==='add'){friAdd();return;}if(action==='accept'){trAccept();return;}if(action==='join-invitation'){if(FRI)friJoin(FRI.code);return;}
+  if(action==='open-requests'){tab('friends');return;}if(action.startsWith('request-')){b.disabled=true;friendCommand(action.slice(8),{id:b.dataset.requestId});return;}if(action==='add'){friAdd();return;}if(action==='accept'){trAccept();return;}if(action==='join-invitation'){if(FRI)friJoin(FRI.code);return;}
   if(!friend||FR.uid!==SBU?.id)return;event.stopPropagation();
   if(action==='toggle'){friClick(id);return;}if(action==='delete'){friDel(id);return;}
   const f=info(friend);
@@ -57,5 +62,10 @@
  document.addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&event.target.matches('#frl [data-friend-action=toggle]')){event.preventDefault();event.target.click();}});
  document.addEventListener('error',event=>{if(event.target.matches?.('.sz-friend-avatar>img'))event.target.remove();},true);
  document.addEventListener('sz-language',()=>friRefreshUI());
+ async function friendCommand(action,args){const uid=account();if(!uid||!sb)return;try{await SzFriendships.call(sb,action,args);if(uid!==SBU?.id)return;FR.msg=action==='request'?'Zaproszenie wysłane. Czekamy na akceptację.':action==='accept'?'Zaproszenie zaakceptowane. Jesteście znajomymi.':'Lista znajomych została zaktualizowana.';}catch(error){if(uid!==SBU?.id)return;FR.msg=SzFriendships.message(error);}await friLoad();}
+ friAdd=()=>{const nickname=$('fn')?.value.trim();if(nickname)return friendCommand('request',{nickname});};
+ friDel=id=>friendCommand('remove',{id});
+ let polling=false;setInterval(async()=>{if(!sb||!SBU||polling)return;polling=true;try{await friLoad();}finally{polling=false;}},8000);
+ document.addEventListener('keydown',event=>{if(event.key==='Enter'&&event.target.id==='fn'){event.preventDefault();friAdd();}});
  friRefreshUI();
 })();

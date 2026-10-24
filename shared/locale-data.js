@@ -1,4 +1,171 @@
 (function(root){const pairs=`
+Asysty|Assists
+Rzuty|Throws
+Bomba|Bomb
+Gole|Goals
+Podania|Passes
+Obrony|Saves
+Przekazania|Transfers
+Wyeliminowany|Eliminated
+Gol samobójczy|Own goal
+Tabela wyników|Scoreboard
+Ostatni na arenie wygrywa|Last player standing wins
+Gole i asysty są naliczane przez hosta meczu.|Goals and assists are recorded by the match host.
+Wyniki bieżącej minigry|Current minigame scores
+Puść TAB, aby wrócić do gry|Release TAB to return to the game
+Zaraz zaczynamy|Starting soon
+Gol dla drużyny|Team goal
+Powtórka gola|Goal replay
+Strzelec gola|Goalscorer
+Asysta|Assist
+Pomiń|Skip
+Spacja|Space
+Pozostali gracze|Players remaining
+Do 15 punktów|First to 15 points
+Przekaż bombę|Pass the bomb
+Unikaj nosiciela|Avoid the carrier
+Uciekaj|Run away
+DOTYK|TOUCH
+Trzymaj dystans|Keep your distance
+Dotknij innego gracza|Touch another player
+Bomba nie zmienia czasu|The fuse keeps counting down
+Rzuć śnieżkę|Throw a snowball
+Rzuć granat|Throw a grenade
+Przygotowanie…|Preparing…
+Spowolnienie|Slowed
+Ocalali|Survivors
+Zakażeni|Infected
+Przygotowania|Preparation
+Przetrwaj|Survive
+ZAKAŻONY|INFECTED
+OCALAŁY|SURVIVOR
+Obrażenia|Damage
+Atak pazurami|Claw attack
+Zarażaj ocalałych|Infect the survivors
+Zamrożenie|Frozen
+Namierz ludzi|Find the humans
+W ekwipunku|In inventory
+Barykady|Barricades
+Zaopatrzenie|Supplies
+Broń i granaty|Weapons and grenades
+Odblokuj obrót|Unlock rotation
+LPM|LMB
+Włączone|Enabled
+Wyłączone|Disabled
+Witaj w Strike Zone|Welcome to Strike Zone
+Przygotuj się do gry|Get ready to play
+Wczytywanie|Loading
+Uruchamiamy launcher…|Starting the launcher…
+Uruchamianie gry|Game startup
+Uruchamiaj grę na pełnym ekranie|Start the game in fullscreen
+Możesz zmienić widok klawiszem F11.|You can change the display mode with F11.
+Otrzymane zaproszenia|Incoming requests
+Wysłane zaproszenia|Sent requests
+Zaproś gracza po nicku|Invite a player by nickname
+Wyślij zaproszenie|Send request
+Masz nowe zaproszenie do znajomych.|You have a new friend request.
+Nie udało się wczytać zaproszeń. Spróbuj ponownie.|Could not load friend requests. Try again.
+Zaproszenie wysłane. Czekamy na akceptację.|Request sent. Waiting for acceptance.
+Zaproszenie zaakceptowane. Jesteście znajomymi.|Request accepted. You are now friends.
+Lista znajomych została zaktualizowana.|Your friends list has been updated.
+Zaproś gracza po nicku. Po akceptacji pojawicie się na swoich listach znajomych.|Invite a player by nickname. After acceptance, you will appear on each other’s friends lists.
+Nie znaleziono gracza o tym nicku.|No player with this nickname was found.
+Ten nick ma kilka kont. Poproś gracza o ustawienie unikalnego nicku.|Multiple accounts use this nickname. Ask the player to choose a unique nickname.
+Nie możesz zaprosić siebie.|You cannot invite yourself.
+Ten gracz jest już Twoim znajomym.|This player is already your friend.
+Zaproszenie już oczekuje na odpowiedź.|This request is already waiting for a response.
+Masz już zaproszenie od tego gracza. Zaakceptuj je poniżej.|You already have a request from this player. Accept it below.
+Zbyt wiele zaproszeń. Spróbuj ponownie później.|Too many requests. Try again later.
+To zaproszenie nie jest już dostępne.|This request is no longer available.
+Nie możesz zmienić tego zaproszenia.|You cannot change this request.
+Zaloguj się, aby zarządzać znajomymi.|Sign in to manage friends.
+Nie udało się zaktualizować znajomych. Spróbuj ponownie.|Could not update friends. Try again.
+Czas ukrywania|Hiding time
+Polowanie|Hunt
+Kamuflaż|Camouflage
+Zawodnik|Outfield player
+Piłka w zasięgu|Ball within reach
+Podejdź do piłki|Get close to the ball
+Celuj w bramkę przeciwnika|Aim at the opposing goal
+Kopnij piłkę|Kick the ball
+Celuj kursorem|Aim with the cursor
+Sprint|Sprint
+Trafienia / strzały|Hits / shots
+Strzelaj|Shoot
+Przeładuj|Reload
+Przemiana|Transform
+Zablokuj obrót|Lock rotation
+Zryw|Dash
+Obserwator|Spectator
+Obserwatorzy|Spectators
+Zmień drużynę|Change team
+Graj w drużynie lub obserwuj mecz. Boty uzupełniają wolne miejsca.|Join a team or watch the match. Bots fill empty slots.
+Obie drużyny · X-ray · Podgląd mapy|Both teams · X-ray · Map overview
+Brak wolnych miejsc w tej drużynie.|No free slots on this team.
+żywych|alive
+Kolor HUD|HUD color
+Wybierz kolor zdrowia, amunicji i elementów interfejsu.|Choose the color of health, ammunition and interface elements.
+Własny kolor|Custom color
+Błękitny|Light blue
+Żółty|Yellow
+Fioletowy|Purple
+Czerwony|Red
+Niebieski|Blue
+Biały|White
+Zielony|Green
+Sterowanie obserwatorem|Spectator controls
+Poprzedni gracz|Previous player
+Następny gracz|Next player
+Boty głosują na minigrę|Bots are voting for a minigame
+Rozgrzewka|Warmup
+Koniec rundy|Round finished
+SPACJA — skocz z samolotu|SPACE — jump from the plane
+LPM — rzuć granat|LMB — throw grenade
+Przytrzymaj E na bombsite, aby podłożyć bombę|Hold E on a bombsite to plant the bomb
+Przytrzymaj E przy bombie, aby rozbroić|Hold E near the bomb to defuse
+Prośba o broń|Weapon request
+E — podnieś|E — pick up
+B — menu zakupów|B — buy menu
+1–5: kolumna · 1–9 lub 0: przedmiot · B: zamknij|1–5: column · 1–9 or 0: item · B: close
+HE / wybuchowy|HE / explosive
+Granaty|Grenades
+Wybierz klasę|Choose class
+WYPOSAŻENIE DRUŻYNY|TEAM LOADOUT
+Wyposażenie|Equipment
+Gotowy na następną rundę.|Ready for the next round.
+Drużyna wyposażenia|Loadout team
+Podgląd wyposażenia|Loadout preview
+Domyślny wygląd|Default finish
+Domyślne rękawiczki|Default gloves
+Broń średnia|Mid-tier
+Wybierz miejsce, a następnie skin z ekwipunku.|Select a slot, then a skin from your inventory.
+Skiny zapisują się osobno dla CT i T.|Skins are saved separately for CT and T.
+Przywróć domyślny wygląd|Restore default finish
+Pokaż cały ekwipunek|Show all inventory
+Menu zakupów|Buy menu
+Zwróć przedmiot|Refund item
+Poproś drużynę o broń|Request a weapon from your team
+Poproś|Request
+Kamizelka kuloodporna|Kevlar vest
+Zestaw rozbrajający|Defuse kit
+Mina zbliżeniowa|Proximity mine
+Granat dymny|Smoke Grenade
+Granat wybuchowy|HE Grenade
+Granat błyskowy|Flashbang
+Mołotow|Molotov
+Czas zakupów|Buy time remaining
+Zakupy podczas meczu|Purchases during the match
+PODGLĄD BRONI|WEAPON PREVIEW
+Obrażenia|Damage
+Magazynek|Magazine
+Jeden granat każdego typu.|One grenade of each type.
+Ochrona przed obrażeniami.|Protection from damage.
+Skraca czas rozbrajania bomby.|Reduces bomb defuse time.
+Maksymalnie 3 miny.|Up to 3 mines.
+Kup dla sojusznika|Buy for teammate
+Najedź, aby obejrzeć · Kliknij, aby kupić|Hover to preview · Click to buy
+Strzałka pod przedmiotem zwraca zakup z tej rundy.|The arrow below an item refunds a purchase from this round.
+Bezpłatnie|Free
 Granat zamrażający|Freeze Grenade
 Zamraża zombie na 3 s w promieniu 150.|Freezes zombies for 3 s within a radius of 150.
 6 cukierków za minutę aktywnej gry · 30 za ukończony mecz · 45 za wygrany.|6 candies per minute of active play · 30 per completed match · 45 per win.

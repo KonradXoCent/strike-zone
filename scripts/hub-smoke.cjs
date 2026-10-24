@@ -50,7 +50,7 @@ process.on('beforeExit',()=>{if(!completed&&!process.exitCode){console.error('Hu
   assert.equal(await page.locator('[data-inventory-id]:not([hidden])').count(),1);
   const before=await page.evaluate(()=>({wallet:P().wallet,skins:P().skins.length,owned:FORGE.owned.length,value:itemValue('awp:13')}));
   await page.locator('[data-inventory-id="awp:13"] button[onclick^="eq("]').click();
-  assert.equal(await page.evaluate(()=>P().eq.awp),'awp:13');assert.equal(await page.locator('#hub-skin-type').inputValue(),'snipers');
+  assert.equal(await page.evaluate(()=>eqOf({human:true,team:'CT'},'awp')),'awp:13');assert.equal(await page.locator('#hub-skin-type').inputValue(),'snipers');
   await page.locator('[data-inventory-id="awp:13"] button[onclick^="sell("]').click();
   const after=await page.evaluate(()=>({wallet:P().wallet,skins:P().skins.length,owned:FORGE.owned.length}));
   assert.equal(after.wallet,before.wallet+before.value);assert.equal(after.skins,before.skins-1);assert.equal(after.owned,before.owned);

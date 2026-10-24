@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('strikeZone', {
   onChat: callback => { const fn = (_event, value) => callback(value); ipcRenderer.on('social:state', fn); return () => ipcRenderer.removeListener('social:state', fn); },
   onPreferences: callback => { const fn = (_event, value) => callback(value); ipcRenderer.on('preferences:state', fn); return () => ipcRenderer.removeListener('preferences:state', fn); },
   refreshFriends: () => ipcRenderer.invoke('launcher:friends-refresh'),
+  friendAction: (action, args) => ipcRenderer.invoke('launcher:friend-action', action, args),
   play: () => ipcRenderer.invoke('launcher:play'),
   login: input => ipcRenderer.invoke('launcher:login', input),
   register: input => ipcRenderer.invoke('launcher:register', input),

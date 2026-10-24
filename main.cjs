@@ -12,11 +12,12 @@ const { Controller: SocialController } = require('./shared/social.js');
 const { preferences } = require('./core/preferences.cjs');
 const { createAuthStorage } = require('./core/auth-storage.cjs');
 const { launcherBounds } = require('./core/window-size.cjs');
+const desktopTest = require('./package.json').desktopTest === true;
 
 app.setName('Strike Zone 2D');
-app.setAppUserModelId('pl.konradxocent.strikezone.desktop');
+app.setAppUserModelId('pl.konradxocent.strikezone.desktop' + (desktopTest ? '.test' : ''));
 // Keep this path and the strikezone://app origin unchanged between releases.
-app.setPath('userData', path.join(app.getPath('appData'), 'StrikeZone2D'));
+app.setPath('userData', path.join(app.getPath('appData'), desktopTest ? 'StrikeZone2D-Test' : 'StrikeZone2D'));
 protocol.registerSchemesAsPrivileged([{ scheme: 'strikezone', privileges: {
   standard: true, secure: true, supportFetchAPI: true, corsEnabled: true
 } }]);
@@ -86,7 +87,9 @@ async function openGame() {
   if (!await account.validate()) return snapshot();
   if (!account.snapshot().authenticated || account.busy) return snapshot();
   if (game) { game.focus(); return snapshot(); }
+  const startFullscreen = prefs.get().fullscreen;
   game = new BrowserWindow({ width: 1440, height: 900, minWidth: 960, minHeight: 640,
+    fullscreen: startFullscreen,
     title: 'Strike Zone 2D', backgroundColor: '#10141b', autoHideMenuBar: true,
     icon: path.join(root, 'assets/icon.png'), show: false,
     webPreferences: { preload: path.join(root, 'game-preload.cjs'), contextIsolation: true,
@@ -96,7 +99,7 @@ async function openGame() {
   const win = game;
   friends.setGameRunning(true);
   protectWindow(win, GAME_URL);
-  win.once('ready-to-show', () => { win.maximize(); win.show(); launcher?.hide(); broadcast(); });
+  win.once('ready-to-show', () => { if (startFullscreen) win.setFullScreen(true); else win.maximize(); win.show(); launcher?.hide(); broadcast(); });
   win.webContents.on('before-input-event', (event, input) => {
     if (input.type !== 'keyDown') return;
     if (input.key === 'F11') { event.preventDefault(); win.setFullScreen(!win.isFullScreen()); }
@@ -131,6 +134,7 @@ else {
     let config;
     try { config = loadConfig([path.join(root, 'updates.json')]); }
     catch { config = { enabled: false, required: true }; configError = true; }
+    if (desktopTest) { config = { enabled: false, required: false }; configError = false; }
     controller = new UpdateController({ updater: require('electron-updater').autoUpdater,
       config, version: app.getVersion(), packaged: app.isPackaged });
     const client = require('@supabase/supabase-js').createClient(supabaseUrl, supabaseKey, {
@@ -179,6 +183,7 @@ else {
     });
     ipcMain.handle('launcher:state', event => { trusted(event, LAUNCHER_URL); return snapshot(); });
     ipcMain.handle('launcher:friends-refresh', async event => { trusted(event, LAUNCHER_URL); await friends.refresh(); return snapshot(); });
+    ipcMain.handle('launcher:friend-action', async (event, action, args) => { trusted(event, LAUNCHER_URL); await friends.command(action, args); return snapshot(); });
     ipcMain.handle('launcher:play', event => { trusted(event, LAUNCHER_URL); return openGame(); });
     ipcMain.handle('launcher:login', async (event, input) => { trusted(event, LAUNCHER_URL); if (!game) await account.credentials('signin', input); return snapshot(); });
     ipcMain.handle('launcher:register', async (event, input) => { trusted(event, LAUNCHER_URL); if (!game) await account.credentials('signup', input); return snapshot(); });
