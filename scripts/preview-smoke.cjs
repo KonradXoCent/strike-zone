@@ -140,12 +140,13 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
     await author.click('[data-forge-buy]');
     await author.waitForFunction(()=>FORGE.cases.length===1&&!FORGE.busy);
     assert.equal(await author.evaluate(()=>P().wallet),walletBefore-2500);
-    await author.evaluate(()=>{INV='w';tab('inv');});await author.click('[data-forge-open]');
+    await author.evaluate(()=>tab('shop'));await author.click('[data-forge-open]');
     await author.waitForFunction(()=>!!CASE_PRESENTATION&&!FORGE.busy);
     assert.equal(await author.evaluate(()=>FORGE.owned.length),1);
     await author.locator('.case-dismiss').click();
     if(process.env.STRIKEZONE_PREVIEW_SHOTS)await author.screenshot({path:path.join(process.env.STRIKEZONE_PREVIEW_SHOTS,'forge-reveal.png')});
     await author.locator('.case-continue').click();
+    assert.equal(await author.evaluate(()=>T),'shop');await author.evaluate(()=>{INV='w';tab('inv');});
     assert.equal(await author.locator('[data-forge-equip]').count(),1);
     await author.locator('[data-forge-equip]').click();
     await author.waitForFunction(()=>!!communityOwnId('knife')&&!COMMUNITY.busy);
