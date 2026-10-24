@@ -1,0 +1,2 @@
+'use strict';const{test}=require('node:test'),assert=require('node:assert/strict'),{compact}=require('../shared/money.js');
+test('compact prices retain useful precision and carry cleanly across suffixes',()=>{for(const[n,expected]of[[0,'0'],[999,'999'],[1000,'1K'],[1500,'1,5K'],[12345,'12,3K'],[999949,'999,9K'],[999950,'1M'],[1000000,'1M'],[2500000,'2,5M'],[-1500,'-1,5K'],[1000000000,'1B']])assert.equal(compact(n,'pl'),expected);assert.equal(compact(1500,'en'),'1.5K');assert.equal(compact(1000000000000,'en'),'1T');});

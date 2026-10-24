@@ -2143,6 +2143,9 @@ Każdy z|Each of
 Host|Host
 Tryby|Modes
 Maksymalnie|Maximum
+Rzadki przedmiot specjalny|Rare special item
+Losowy model noża i skin|Random knife model and finish
+Nie masz skrzynek z pasującym kluczem.|You have no cases with a matching key.
 minuta|minute
 sekund|seconds
 sekundy|seconds

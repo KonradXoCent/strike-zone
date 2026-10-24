@@ -1,0 +1,13 @@
+/* Currency presentation only. Inventory values, transactions and numeric inputs remain exact. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else{root.SzMoney=api;api.mount(root);}})(globalThis,function(){'use strict';
+ function compact(value,language='pl'){const n=Number(value);if(!Number.isFinite(n))return String(value);const abs=Math.abs(n),units=['','K','M','B','T'];let tier=0;while(tier<4&&abs>=1000**(tier+1))tier++;if(!tier)return String(n);let scaled=Math.round(abs/1000**tier*10)/10;if(scaled>=1000&&tier<4){scaled=1;tier++;}return(n<0?'-':'')+scaled.toLocaleString(language==='en'?'en-US':'pl-PL',{maximumFractionDigits:1,useGrouping:false})+units[tier];}
+ function mount(root){const doc=root.document,lang=()=>root.szLocale?.language||'pl',skip='script,style,textarea,input,select,option,[contenteditable],[data-user-content],[data-money-value],#nk,#nn,#sz-chat-panel,.sz-chat-message';
+  const pattern=/\$\s*(-?\d+(?:[ \u00a0\u202f]\d{3})*(?:[.,]\d{1,2})?)|(-?\d+(?:[ \u00a0\u202f]\d{3})*(?:[.,]\d{1,2})?)\s*\$/g;
+  function amount(raw){return Number(raw.replace(/[ \u00a0\u202f]/g,'').replace(',','.'));}
+  function scan(node){if(node.nodeType===3){const parent=node.parentElement;if(!parent||parent.closest(skip))return;const text=node.data,matches=[...text.matchAll(pattern)].filter(m=>Math.abs(amount(m[1]||m[2]))>=1000);if(!matches.length)return;const fragment=doc.createDocumentFragment();let end=0;for(const m of matches){fragment.append(text.slice(end,m.index));const n=amount(m[1]||m[2]),span=doc.createElement('span');span.dataset.moneyValue=String(n);span.dataset.moneySuffix=m[2]?'1':'0';span.dataset.noTranslate='';paint(span);fragment.append(span);end=m.index+m[0].length;}fragment.append(text.slice(end));node.replaceWith(fragment);}
+   else if(node.nodeType===1&&!node.matches(skip)){for(const child of[...node.childNodes])scan(child);}}
+  function paint(span){const n=Number(span.dataset.moneyValue),suffix=span.dataset.moneySuffix==='1',value=compact(n,lang()),exact=n.toLocaleString(lang()==='en'?'en-US':'pl-PL',{maximumFractionDigits:2});span.textContent=suffix?value+'$':'$'+value;span.title=suffix?exact+'$':'$'+exact;span.setAttribute('aria-label',span.title);}
+  scan(doc.body);const observer=new MutationObserver(records=>{for(const r of records){if(r.type==='childList'){for(const n of r.addedNodes)scan(n);}else scan(r.target);}});observer.observe(doc.body,{subtree:true,childList:true,characterData:true});doc.addEventListener('sz-language',()=>{for(const span of doc.querySelectorAll('[data-money-value]'))paint(span);scan(doc.body);});return{scan};
+ }
+ return{compact,mount};
+});

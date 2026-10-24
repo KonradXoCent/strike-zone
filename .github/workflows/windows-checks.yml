@@ -32,6 +32,10 @@ jobs:
         run: npm run test:arcade-ui
       - name: Test agent cases, ownership, team appearance and bounded content dialogs
         run: npm run test:agents
+      - name: Test expanded glove case, appearance, ownership and drop pool
+        run: npm run test:gloves
+      - name: Test compact prices and exact transactions
+        run: npm run test:money
       - name: Test colored match HUD, observer roles, cameras and passive progression
         run: npm run test:spectator
       - run: npm run test:network
