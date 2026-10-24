@@ -1,6 +1,7 @@
 'use strict';
 const { EventEmitter } = require('node:events');
 const { profileView } = require('./account.cjs');
+const Friendship = require('../shared/friendships.js');
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const AVATAR_LIMIT = 24000;
 
@@ -11,13 +12,14 @@ function publicProfile(input = {}) {
 }
 
 class FriendsController extends EventEmitter {
-  constructor(client, { heartbeatMs = 10000, refreshMs = 30000, retryMs = 4000 } = {}) {
+  constructor(client, { heartbeatMs = 10000, refreshMs = 8000, retryMs = 4000 } = {}) {
     super();
     Object.assign(this, { client, heartbeatMs, refreshMs, retryMs });
     this.uid = null; this.epoch = 0; this.channel = null; this.user = null;
     this.list = []; this.profiles = new Map(); this.phase = 'signed-out';
     this.synced = false; this.subscribed = false; this.refreshing = false;
     this.error = null; this.gameRunning = false;
+    this.requests = { incoming: [], outgoing: [] }; this.requestError = null;
   }
   changed() { this.emit('state'); }
   snapshot(owner = this.uid) {
@@ -36,7 +38,7 @@ class FriendsController extends EventEmitter {
         mode: typeof peer?.mode === 'string' ? peer.mode.replace(/[^a-z0-9_-]/gi, '').slice(0, 24) : null };
     }).sort((a, b) => Number(b.status === 'online') - Number(a.status === 'online') || a.name.localeCompare(b.name, 'pl'));
     return { phase: this.phase, list, online: list.filter(f => f.status === 'online').length,
-      refreshing: this.refreshing, error: this.error };
+      refreshing: this.refreshing, error: this.error, requests: this.requests, requestError: this.requestError, actionMessage: this.actionMessage || null };
   }
   setAccount(account) {
     const user = account?.authenticated && account.user;
@@ -124,11 +126,22 @@ class FriendsController extends EventEmitter {
       }
       this.list = list; this.profiles = profiles;
       this.error = avatarError ? 'Nie udało się odświeżyć części awatarów. Spróbuj ponownie.' : null;
+      if (this.client.rpc) {
+        try { const value = await Friendship.call(this.client, 'list'); if (epoch === this.epoch) { this.requests = { incoming: value.incoming || [], outgoing: value.outgoing || [] }; this.requestError = null; } }
+        catch (error) { if (epoch === this.epoch) this.requestError = Friendship.message(error); }
+      }
     } catch {
       if (epoch === this.epoch) this.error = 'Nie udało się odświeżyć znajomych. Spróbuj ponownie.';
     } finally {
       if (epoch === this.epoch) { this.refreshing = false; this.changed(); }
     }
+  }
+  async command(action, args) {
+    if (!this.uid) throw Error('FRIEND_LOGIN');
+    const epoch = this.epoch;
+    try { await Friendship.call(this.client, action, args); if (epoch === this.epoch) this.actionMessage = action === 'request' ? 'Zaproszenie wysłane. Czekamy na akceptację.' : action === 'accept' ? 'Zaproszenie zaakceptowane. Jesteście znajomymi.' : 'Lista znajomych została zaktualizowana.'; }
+    catch (error) { if (epoch === this.epoch) this.actionMessage = Friendship.message(error); }
+    if (epoch === this.epoch) { await this.refresh(); this.changed(); }
   }
   dispose() {
     this.epoch++;
@@ -137,6 +150,7 @@ class FriendsController extends EventEmitter {
     const old = this.channel; this.channel = null;
     this.uid = this.user = null; this.list = []; this.profiles = new Map();
     this.phase = 'signed-out'; this.subscribed = this.synced = this.refreshing = false; this.error = null;
+    this.requests = { incoming: [], outgoing: [] }; this.requestError = this.actionMessage = null;
     if (old) Promise.resolve(this.client.removeChannel(old)).catch(() => {});
   }
 }

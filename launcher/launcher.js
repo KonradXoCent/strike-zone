@@ -4,6 +4,7 @@ let current = null;
 let authMode = 'signin';
 let friendsSignature = null;
 let friendsOwner = null;
+let launcherReady = false;
 const api = window.strikeZone;
 const phaseCopy = {
   disabled: ['Wersja lokalna', 'Wydawca nie udostępnił jeszcze kanału aktualizacji. Możesz uruchomić zainstalowaną grę.'],
@@ -30,6 +31,8 @@ function render(state) {
   const phase = update.phase;
   const account = state.account || { phase: 'checking', authenticated: false, user: null };
   const loggedIn = account.authenticated;
+  if (account.phase !== 'checking') launcherReady = true;
+  $('launcher-loading').hidden = launcherReady;
   $('auth-gate').hidden = loggedIn;
   $('launch-status').hidden = !loggedIn;
   $('signed-out-status').hidden = loggedIn;
@@ -113,17 +116,21 @@ function renderFriends(state) {
   $('account-dot').title = ready ? 'Online' : 'Sprawdzanie połączenia';
   $('friends-refresh').disabled = !loggedIn || friends.refreshing;
   $('friends-search').disabled = !loggedIn;
+  $('friend-invite-form').hidden = !loggedIn;
+  $('friend-invite-nick').disabled = !loggedIn;
+  renderRequests(friends, loggedIn);
   $('friends-count').textContent = ready ? (friends.online || 0) + ' online' : '—';
   $('friends-dot').className = 'dot' + (ready ? '' : ' neutral');
   $('friends-connection').textContent = !loggedIn ? 'Zaloguj się, aby zobaczyć znajomych' : ready ? 'Status aktualizowany na żywo' : friends.phase === 'reconnecting' ? 'Ponowne łączenie ze znajomymi…' : 'Łączenie ze znajomymi…';
-  $('friends-notice').hidden = !friends.error; $('friends-notice').textContent = friends.error || '';
+  const friendNotice = friends.actionMessage || friends.requestError || friends.error;
+  $('friends-notice').hidden = !friendNotice; $('friends-notice').textContent = friendNotice || '';
   const query = $('friends-search').value.trim().toLocaleLowerCase('pl');
   const signature = JSON.stringify([friends, query]); if (signature === friendsSignature) return;
   friendsSignature = signature;
   const root = $('friends-list'), scroll = root.scrollTop, content = document.createDocumentFragment();
   const list = friends.list.filter(f => String(f.name).toLocaleLowerCase('pl').includes(query));
   if (!loggedIn) content.append(emptyFriends('Razem gra się lepiej', 'Po zalogowaniu zobaczysz tutaj znajomych ze swojej gry.'));
-  else if (!friends.list.length) content.append(emptyFriends(friends.refreshing ? 'Wczytujemy Twoją drużynę…' : friends.error ? 'Lista jest chwilowo niedostępna' : 'Zbierz swoją drużynę', friends.error ? 'Odśwież listę, aby spróbować ponownie.' : 'Dodaj znajomych w zakładce Znajomi w grze. Pojawią się również tutaj.'));
+  else if (!friends.list.length) content.append(emptyFriends(friends.refreshing ? 'Wczytujemy Twoją drużynę…' : friends.error ? 'Lista jest chwilowo niedostępna' : 'Zbierz swoją drużynę', friends.error ? 'Odśwież listę, aby spróbować ponownie.' : 'Zaproś gracza po nicku. Po akceptacji pojawicie się na swoich listach znajomych.'));
   else if (!list.length) content.append(emptyFriends('Nie znaleziono znajomego', 'Spróbuj wpisać inny nick.'));
   else for (const [status, label] of [['online', 'ONLINE'], ['offline', 'OFFLINE'], ['unknown', 'SPRAWDZANIE STATUSU']]) {
     const group = list.filter(f => f.status === status); if (!group.length) continue;
@@ -185,6 +192,21 @@ $('help').onclick = () => showDialog('Szybki start', 'Zaloguj się w launcherze 
 $('close-dialog').onclick = $('dialog-ok').onclick = () => $('details').close();
 $('details').addEventListener('click', event => { if (event.target === $('details')) { const r = $('details').getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) $('details').close(); } });
 api.onState(render);
-api.getState().then(render).catch(() => showDialog('Uruchom aplikację ponownie', 'Nie udało się wczytać stanu launchera.'));
+api.getState().then(render).catch(() => { $('launcher-loading').hidden = true; showDialog('Uruchom aplikację ponownie', 'Nie udało się wczytać stanu launchera.'); });
 SzSettings.mount();
 window.szMessages = SzChatView.mount({ command: (a, v) => api.chat(a, v), subscribe: fn => { api.onChat(fn); api.getChat().then(fn); }, getFriends: () => current?.friends?.list || [], locale: szLocale, ack: () => api.chatFocused(), notify: () => document.visibilityState === 'visible' });
+
+function renderRequests(friends, loggedIn) {
+  const box=$('friend-requests'), requests=friends.requests||{incoming:[],outgoing:[]};
+  const key=JSON.stringify([loggedIn,requests,szLocale.language]);if(box.dataset.key===key)return;box.dataset.key=key;box.replaceChildren();
+  if(!loggedIn)return;
+  for(const [kind,list] of Object.entries(requests)) {
+    if(!list.length)continue;
+    const heading=document.createElement('strong');heading.textContent=szLocale.t(kind==='incoming'?'Otrzymane zaproszenia':'Wysłane zaproszenia');box.append(heading);
+    for(const item of list){const row=document.createElement('article'),name=document.createElement('span');name.textContent=item.name;name.dataset.userContent='';row.append(name);
+      for(const [action,label]of(kind==='incoming'?[['accept','Akceptuj'],['decline','Odrzuć']]:[['cancel','Anuluj']])){const b=document.createElement('button');b.type='button';b.dataset.requestAction=action;b.dataset.requestId=item.id;b.textContent=szLocale.t(label);b.onclick=async()=>{b.disabled=true;await window.friendCommand(action,{id:item.id});};row.append(b);}box.append(row);
+    }
+  }
+}
+window.friendCommand=async(action,args)=>{try{render(await api.friendAction(action,args));}catch{showDialog('Nie udało się wykonać operacji','Spróbuj ponownie.');}};
+$('friend-invite-form').onsubmit=async event=>{event.preventDefault();const button=event.currentTarget.querySelector('button');button.disabled=true;try{await window.friendCommand('request',{nickname:$('friend-invite-nick').value.trim()});}finally{button.disabled=false;}};

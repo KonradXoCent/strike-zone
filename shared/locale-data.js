@@ -1,4 +1,52 @@
 (function(root){const pairs=`
+Odblokuj obrót|Unlock rotation
+LPM|LMB
+Włączone|Enabled
+Wyłączone|Disabled
+Witaj w Strike Zone|Welcome to Strike Zone
+Przygotuj się do gry|Get ready to play
+Wczytywanie|Loading
+Uruchamiamy launcher…|Starting the launcher…
+Uruchamianie gry|Game startup
+Uruchamiaj grę na pełnym ekranie|Start the game in fullscreen
+Możesz zmienić widok klawiszem F11.|You can change the display mode with F11.
+Otrzymane zaproszenia|Incoming requests
+Wysłane zaproszenia|Sent requests
+Zaproś gracza po nicku|Invite a player by nickname
+Wyślij zaproszenie|Send request
+Masz nowe zaproszenie do znajomych.|You have a new friend request.
+Nie udało się wczytać zaproszeń. Spróbuj ponownie.|Could not load friend requests. Try again.
+Zaproszenie wysłane. Czekamy na akceptację.|Request sent. Waiting for acceptance.
+Zaproszenie zaakceptowane. Jesteście znajomymi.|Request accepted. You are now friends.
+Lista znajomych została zaktualizowana.|Your friends list has been updated.
+Zaproś gracza po nicku. Po akceptacji pojawicie się na swoich listach znajomych.|Invite a player by nickname. After acceptance, you will appear on each other’s friends lists.
+Nie znaleziono gracza o tym nicku.|No player with this nickname was found.
+Ten nick ma kilka kont. Poproś gracza o ustawienie unikalnego nicku.|Multiple accounts use this nickname. Ask the player to choose a unique nickname.
+Nie możesz zaprosić siebie.|You cannot invite yourself.
+Ten gracz jest już Twoim znajomym.|This player is already your friend.
+Zaproszenie już oczekuje na odpowiedź.|This request is already waiting for a response.
+Masz już zaproszenie od tego gracza. Zaakceptuj je poniżej.|You already have a request from this player. Accept it below.
+Zbyt wiele zaproszeń. Spróbuj ponownie później.|Too many requests. Try again later.
+To zaproszenie nie jest już dostępne.|This request is no longer available.
+Nie możesz zmienić tego zaproszenia.|You cannot change this request.
+Zaloguj się, aby zarządzać znajomymi.|Sign in to manage friends.
+Nie udało się zaktualizować znajomych. Spróbuj ponownie.|Could not update friends. Try again.
+Czas ukrywania|Hiding time
+Polowanie|Hunt
+Kamuflaż|Camouflage
+Zawodnik|Outfield player
+Piłka w zasięgu|Ball within reach
+Podejdź do piłki|Get close to the ball
+Celuj w bramkę przeciwnika|Aim at the opposing goal
+Kopnij piłkę|Kick the ball
+Celuj kursorem|Aim with the cursor
+Sprint|Sprint
+Trafienia / strzały|Hits / shots
+Strzelaj|Shoot
+Przeładuj|Reload
+Przemiana|Transform
+Zablokuj obrót|Lock rotation
+Zryw|Dash
 Obserwator|Spectator
 Obserwatorzy|Spectators
 Zmień drużynę|Change team

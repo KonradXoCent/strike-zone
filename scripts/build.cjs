@@ -28,7 +28,12 @@ const config = {
     installerHeaderIcon: 'assets/icon.ico',
     artifactName: testBuild ? 'StrikeZone-Test-${version}.${ext}' : 'StrikeZone-Setup-${version}.${ext}' }
 };
-if (testBuild) config.extraMetadata = { version };
+if (testBuild) {
+  config.extraMetadata = { version, desktopTest: true };
+  config.appId += '.test'; config.productName = 'Strike Zone 2D Test';
+  config.win.executableName = 'StrikeZoneTest';
+  config.nsis.shortcutName = config.nsis.uninstallDisplayName = 'Strike Zone 2D Test';
+}
 if (channel.enabled) config.publish = [providerConfig(channel)];
 build({ projectDir: root, targets: Platform.WINDOWS.createTarget(['nsis'], Arch.x64),
   publish: 'never', config }).then(() => {
