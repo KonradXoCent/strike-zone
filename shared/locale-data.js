@@ -1,4 +1,15 @@
 (function(root){const pairs=`
+Agenci|Agents
+Skrzynka agentów|Agent Case
+Twoi agenci|Your agents
+Wszyscy agenci|All agents
+Domyślny agent|Default agent
+Zmień agenta|Change agent
+Skrzynki|Cases
+Klucze|Keys
+Wyposaż własnego agenta osobno dla CT i T.|Equip an owned agent separately for CT and T.
+Każde otwarcie daje jednego agenta CT lub T. Agenci zmieniają wyłącznie wygląd postaci.|Each opening grants one CT or T agent. Agents only change the character's appearance.
+
 Asysty|Assists
 Rzuty|Throws
 Bomba|Bomb
@@ -2132,6 +2143,9 @@ Każdy z|Each of
 Host|Host
 Tryby|Modes
 Maksymalnie|Maximum
+Rzadki przedmiot specjalny|Rare special item
+Losowy model noża i skin|Random knife model and finish
+Nie masz skrzynek z pasującym kluczem.|You have no cases with a matching key.
 minuta|minute
 sekund|seconds
 sekundy|seconds

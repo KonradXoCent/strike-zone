@@ -41,7 +41,8 @@ process.on('beforeExit',()=>{if(!completed&&!process.exitCode){console.error('Hu
   assert.equal(await page.locator('#forge-owned .forge-skin:not([hidden])').count(),1);
   assert.equal(await page.evaluate(()=>document.activeElement.id),'hub-skin-search');
   await page.fill('#hub-skin-search','not-a-skin');assert.equal(await page.locator('#hub-inventory-empty').isVisible(),true);
-  assert.equal(await page.locator('#main .card button[onclick^="open"]').count()>0,true);
+  assert.equal(await page.locator('#main .card button[onclick^="open"]').count(),0);
+  await page.evaluate(()=>{P().cs.alpha=1;P().ks.alpha=1;invSet('cases');});assert.equal(await page.locator('[data-owned-case="alpha"]').count(),1);await page.evaluate(()=>invSet('w'));
   await page.evaluate(()=>SzGameHub.clear());await shot('inventory-pl');
   await page.evaluate(()=>szLocale.set('en'));
   assert.deepEqual(await page.locator('#hub-skin-type option').allTextContents(),['All types','Knives','Pistols','Submachine guns','Rifles','Snipers','Shotguns','Machine guns']);

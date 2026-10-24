@@ -1,3 +1,25 @@
+Strike Zone 2D 1.5.5 — agenci, skrzynki i nowe rękawiczki
+
+- Nowa skrzynka agentów: 10 wyglądów postaci, po 5 dla CT i T. Osobna kolekcja agentów, wyposażanie dla każdej drużyny i wygląd widoczny w meczu wieloosobowym. Skrzynka kosztuje 5000$, klucz 1500$.
+- Nowa zakładka Skrzynki pokazuje wyłącznie posiadane skrzynki z pasującym kluczem. Zamykanie wyniku otwarcia pozostawia gracza w poprzedniej zakładce.
+- Wspólne złote pole rzadkiego przedmiotu specjalnego zamiast osobnych ikon noży, losowanie modelu i skina oraz animacja ujawnienia. Szanse na rzadkości i StatTrak pozostają bez zmian.
+- Glove Case zawiera 20 par rękawiczek, w tym 12 nowych wzorów z detalami widocznymi w ekwipunku i na rękach postaci.
+- Ekwipunek: wyposażenie CT/T, poniżej rękawiczki i skiny. Panel zakupu Community Forge pozostaje w sklepie.
+- Zwykłe skrzynki są 3 razy droższe; ceny ich kluczy, wydarzenia Halloween i Community Forge pozostają bez zmian.
+- Okna zawartości skrzynek mieszczą się na ekranie, mają wewnętrzne przewijanie i dostępny przycisk zamknięcia.
+- Skrócone ceny K/M/B z pełną wartością po najechaniu. Rozliczenia zakupów, sprzedaży i wymian korzystają z dokładnych kwot.
+
+English
+- New Agent Case with 10 character cosmetics, 5 CT and 5 T, separate team equipment and multiplayer appearance. Case: $5000; key: $1500.
+- Dedicated Cases inventory displays owned cases with matching keys. Closing a case reveal returns to the previous screen.
+- Knives share a gold rare-special tile, with a random model and finish and a reveal animation. Rarity and StatTrak odds are unchanged.
+- Glove Case now includes 20 pairs, with 12 new finishes visible in previews and on equipped hands.
+- Inventory order: CT/T loadout, gloves, skins. Community Forge purchasing stays in the shop.
+- Ordinary case prices tripled. Key prices, Halloween candy prices and Community Forge pricing are unchanged.
+- Bounded, scrollable case contents and compact K/M/B currency with exact-value tooltips. Transactions continue to use exact amounts.
+
+---
+
 Strike Zone 2D 1.5.4 — nowy HUD, powtórki goli i launcher
 
 - Nowy HUD meczu inspirowany CS2: zdrowie, pancerz, amunicja i wyposażenie oraz zapisany wybór koloru interfejsu. Osobne HUD-y dla Piłki nożnej, Prop Hunt, Zbijaka granatami, Berka z bombą, Śnieżek i Zombie Mode. HUD Zombie Mode dopasowuje informacje do ocalałego lub zakażonego.

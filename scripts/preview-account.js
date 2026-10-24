@@ -86,6 +86,7 @@
     const main = document.getElementById('main');
     if (!main) return;
     let el = document.getElementById('preview-session-banner');
+    if (T==='inv') { el?.remove(); return; }
     if (!el) { el = document.createElement('section'); el.id = 'preview-session-banner'; el.className = 'preview-session'; main.prepend(el); bannerKey = ''; }
     const ready = !!window.szDesktopCloudReady?.();
     const key = JSON.stringify([SBU?.id, ready, P().name, COMMUNITY.admin]);

@@ -140,12 +140,13 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
     await author.click('[data-forge-buy]');
     await author.waitForFunction(()=>FORGE.cases.length===1&&!FORGE.busy);
     assert.equal(await author.evaluate(()=>P().wallet),walletBefore-2500);
-    await author.evaluate(()=>{INV='w';tab('inv');});await author.click('[data-forge-open]');
+    await author.evaluate(()=>tab('shop'));await author.click('[data-forge-open]');
     await author.waitForFunction(()=>!!CASE_PRESENTATION&&!FORGE.busy);
     assert.equal(await author.evaluate(()=>FORGE.owned.length),1);
     await author.locator('.case-dismiss').click();
     if(process.env.STRIKEZONE_PREVIEW_SHOTS)await author.screenshot({path:path.join(process.env.STRIKEZONE_PREVIEW_SHOTS,'forge-reveal.png')});
     await author.locator('.case-continue').click();
+    assert.equal(await author.evaluate(()=>T),'shop');await author.evaluate(()=>{INV='w';tab('inv');});
     assert.equal(await author.locator('[data-forge-equip]').count(),1);
     await author.locator('[data-forge-equip]').click();
     await author.waitForFunction(()=>!!communityOwnId('knife')&&!COMMUNITY.busy);
@@ -157,13 +158,19 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
     assert.equal(await author.evaluate(()=>P().wallet),walletBefore-2500);
     assert.equal(await author.evaluate(()=>communityOwnRef('knife').owned),instance);
     console.log('PASS 4/5 lock, fifth approval, paid case purchase, centered reel, owned inventory, equip and reload');
+    await author.evaluate(async()=>{presentationCommit(p=>{p.cs.agents=1;p.ks.agents=1;});const random=workshopRandom;workshopRandom=()=>0;try{openC2(CI.indexOf('agents'));caseShowResult();caseClosePresentation();SzAgents.equip('agent:ct_vanguard','CT');}finally{workshopRandom=random;}await window.szDesktopFlush();});
+    const agentSave=(await asUser(U.author,tx=>tx.query('select json from public.saves where user_id=$1',[U.author]))).rows[0].json;
+    const agentDB=typeof agentSave==='string'?JSON.parse(agentSave):agentSave;assert.deepEqual(agentDB.profiles[agentDB.cur].agents,{items:['agent:ct_vanguard'],eq:{CT:'agent:ct_vanguard'}});
+    await author.reload();await author.waitForFunction(()=>window.szDesktopCloudReady()&&SzAgents.equipped('CT')?.id==='agent:ct_vanguard');assert.equal(await author.evaluate(()=>P().agents.items.length),1);
+    console.log('PASS real SDK agent reward and team equipment persist in the authenticated JSON save and survive reload');
+
     await author.click('[data-preview-action=logout]');
     await author.waitForFunction(() => !SBU && !COMMUNITY.admin && !COMMUNITY.mine.length);
     await author.click('[data-preview-action=login]'); await signIn(author, accounts[2]);
     assert.equal(await author.evaluate(() => P().name), accounts[2].name);
     assert.equal(await author.evaluate(() => COMMUNITY.mine.length), 0);
     assert.equal(await author.evaluate(() => COMMUNITY.admin), false);
-    assert.equal(await author.evaluate(()=>FORGE.owned.length),0);
+    assert.equal(await author.evaluate(()=>FORGE.owned.length),0);assert.equal(await author.evaluate(()=>SzAgents.equipped('CT')),null);
     console.log('PASS logout and a second account have separate profiles and no inherited moderation');
     const desktopSession = session(accounts[1]);
     await desktop.addInitScript(tokens => { window.strikeZoneDesktop = { getChat: async () => ({uid:null,threads:[],unread:0}), onChat() {}, getFriends: async () => ({list:[]}), onFriends() {}, getPreferences: async () => ({language:'pl',theme:'night'}), onPreferences() {}, session: async () => tokens, onSession() {}, profile: async () => {}, launcher: async () => {}, fullscreen: async () => {} }; }, { access_token: desktopSession.access_token, refresh_token: desktopSession.refresh_token });

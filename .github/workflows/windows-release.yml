@@ -46,6 +46,12 @@ jobs:
         run: npm run test:minigames
       - name: Test arcade and Zombie HUDs, football scoreboards and goal replays
         run: npm run test:arcade-ui
+      - name: Test agent cases, team cosmetics and bounded contents
+        run: npm run test:agents
+      - name: Test expanded glove case and saved equipment
+        run: npm run test:gloves
+      - name: Test compact prices and exact transactions
+        run: npm run test:money
       - name: Test spectator teams and passive progression
         run: npm run test:spectator
       - name: Test football and Prop Hunt HUD layouts
@@ -96,12 +102,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/publish-release.cjs
-      - name: Download previous public 1.5.3 installer
+      - name: Download previous public 1.5.4 installer
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: pwsh
-        run: gh release download v1.5.3 --repo "$env:GITHUB_REPOSITORY" --pattern "StrikeZone-Setup-1.5.3.exe" --dir release
-      - name: Test installed 1.5.3 update, launcher accounts and Escape on Windows
+        run: gh release download v1.5.4 --repo "$env:GITHUB_REPOSITORY" --pattern "StrikeZone-Setup-1.5.4.exe" --dir release
+      - name: Test installed 1.5.4 update, launcher accounts and Escape on Windows
         run: node scripts/windows-update-smoke.cjs
       - name: Attach Windows update test report
         if: always()
