@@ -40,7 +40,8 @@
     "test:spectator": "node scripts/spectator-smoke.cjs",
     "test:launcher-social": "npm run prepare:game && node scripts/launcher-social-smoke.cjs",
     "test:modes-hud": "node scripts/modes-hud-smoke.cjs",
-    "test:arcade-ui": "npm run prepare:game && node scripts/arcade-presentation-smoke.cjs"
+    "test:arcade-ui": "npm run prepare:game && node scripts/arcade-presentation-smoke.cjs",
+    "test:agents": "npm run prepare:game && node scripts/agents-smoke.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",
