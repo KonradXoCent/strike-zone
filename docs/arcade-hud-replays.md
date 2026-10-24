@@ -8,7 +8,7 @@ Zombie Mode shows the surviving humans, infected players and round timer. Human 
 
 Holding Tab opens two team tables with goals, assists, completed passes and goalkeeper saves. Own goals are indicated below the player's name and never increase that player's goal count. The same table is used at the end of a standalone football match. Other minigames show mode-specific hits, throws, eliminations or bomb transfers.
 
-The host credits a goal to the last player touching the ball. An assist requires an uninterrupted touch by another teammate in the preceding ten seconds. Passes count only when a teammate receives the ball. Statistics survive respawns and reset at the start of the next minigame. Existing football kick strength, free-ball behavior and the ten-goal target remain unchanged.
+The host credits a goal to the last player touching the ball, except that a passive deflection off the defending goalkeeper preserves the opposing scorer and any assist. A deliberate goalkeeper kick can still be an own goal. An assist requires an uninterrupted touch by another teammate in the preceding ten seconds. Passes count only when a teammate receives the ball. Statistics survive respawns and reset at the start of the next minigame. Existing football kick strength, free-ball behavior and the ten-goal target remain unchanged.
 
 ## Goal replays
 
@@ -21,6 +21,6 @@ Playback does not run game physics, change player positions, award goals again o
 - Unit tests cover scorer/assist and own-goal rules, bounded immutable history, packet validation and angle interpolation.
 - `npm run test:arcade-ui` checks both languages, 400/900/1440 px windows, HUD scales, real Tab input, actual pass/goal attribution, replay isolation and skipping, and the final goal with a single reward.
 - `npm run test:network` checks lobby-code and server-list entry with two actual Supabase SDK clients against an isolated local transport. The football checks verify remote goal attribution, clip delivery and recovery, scoreboard synchronization and rejected replay forgery. This validates client integration; it does not measure production Internet latency.
-- Existing minigame tests exercise complete bot matches and unchanged kicking physics. Windows CI runs the full regression suite and builds the isolated `1.5.3-test.3` launcher and standalone HTML preview.
+- Existing minigame tests exercise complete bot matches and unchanged kicking physics. Windows CI runs the full regression suite and builds the isolated `1.5.3-test.4` launcher and standalone HTML preview.
 
 No database migration or public release is required for these changes.

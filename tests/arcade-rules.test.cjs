@@ -5,3 +5,12 @@ test('replay buffers retain independent positional frames and stay under one sma
 test('replay sampling interpolates position and takes the short rotation across pi',()=>{const clip={frames:[[0,0,0,0,0,3100,1],[1000,100,200,200,400,-3100,1]]};const frame=R.sample(clip,.5);assert.equal(frame[1],50);assert.equal(frame[3],100);assert(Math.abs(frame[5]-Math.PI*1000)<1);assert.equal(R.sample(clip,1)[1],100);});
 test('invalid replay payloads cannot create unbounded frames or invalid positions',()=>{const history=new R.History(),p={x:100,y:200,a:0,alive:true};history.record(0,{x:100,y:200},[p]);history.record(1,{x:120,y:200},[p]);const clip={id:'1:1',serial:1,team:'CT',credit:{scorer:0,assist:-1,ownGoal:false},score:{CT:1,T:0},roster:[{name:'Player',team:'CT'}],frames:history.copy()};assert(R.validClip(clip));for(const bad of[{...clip,frames:Array(1000).fill(clip.frames[0])},{...clip,frames:[[0,0,0],[1000,0,0]]},{...clip,roster:[{name:'x'.repeat(10000),team:'CT'}]},{...clip,score:{CT:999,T:0}},{...clip,credit:null}])assert(!R.validClip(bad));const broken=structuredClone(clip);broken.frames[1][3]=Infinity;assert(!R.validClip(broken));});
 test('each game starts fresh statistics and filters unrecognized client properties',()=>{const a=R.stats(),b=R.stats();a.goals=2;assert.equal(b.goals,0);assert.deepEqual(Object.keys(R.stats({goals:3,assists:-1,hacked:999})),R.STAT_KEYS);assert.equal(R.stats({goals:3,assists:-1}).goals,3);assert.equal(R.stats({goals:3,assists:-1}).assists,0);});
+
+test('goalkeeper deflections preserve the opposing scorer and assist, while deliberate own-goal kicks count normally',()=>{
+ const players=[{team:'CT'},{team:'CT'},{team:'T',mgKeeper:true},{team:'CT',mgKeeper:true}];
+ const b={last:2};R.touch(b,0,'CT',1);R.touch(b,1,'CT',2);R.touch(b,2,'T',3,true);R.touch(b,2,'T',3.1,true);
+ assert.deepEqual(R.creditGoal(players,b,'CT',4),{scorer:1,assist:0,ownGoal:false});
+ R.touch(b,2,'T',4);assert.deepEqual(R.creditGoal(players,b,'CT',5),{scorer:2,assist:-1,ownGoal:true});
+ const reverse={last:3};R.touch(reverse,2,'T',1);R.touch(reverse,3,'CT',2,true);assert.deepEqual(R.creditGoal(players,reverse,'T',3),{scorer:2,assist:-1,ownGoal:false});
+ const unowned={last:2};R.touch(unowned,2,'T',2,true);assert.deepEqual(R.creditGoal(players,unowned,'CT',3),{scorer:2,assist:-1,ownGoal:true});
+});

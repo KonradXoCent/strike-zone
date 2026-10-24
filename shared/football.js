@@ -19,7 +19,7 @@
   m.stats.contacts=(m.stats.contacts||0)+1;
   if(from&&from!==p&&from.team===p.team){from.mgStats.passes++;m.stats.completedPasses=(m.stats.completedPasses||0)+1;if(human(p))m.stats.completedHumanPasses=(m.stats.completedHumanPasses||0)+1;}
   if(last&&last!==p&&last.team!==p.team){m.stats.interceptions=(m.stats.interceptions||0)+1;if(p.mgKeeper&&speed>160){m.stats.saves=(m.stats.saves||0)+1;p.mgStats.saves++;}}
-  SzArcadeRules.touch(b,index(p),p.team,G.el);b.passFrom=-1;b.previous=b.last=index(p);b.releaseUntil=G.el+.07;
+  SzArcadeRules.touch(b,index(p),p.team,G.el,!!p.mgKeeper);b.passFrom=-1;b.previous=b.last=index(p);b.releaseUntil=G.el+.07;
   b.x=D.clamp(p.x+nx*26,60,D.WIDTH-60);b.y=D.clamp(p.y+ny*26,76,D.HEIGHT-76);
   const pvx=p.mgVx||0,pvy=p.mgVy||0,closing=(b.vx-pvx)*nx+(b.vy-pvy)*ny;
   if(closing<0){b.vx-=1.45*closing*nx;b.vy-=1.45*closing*ny;}
