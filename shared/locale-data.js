@@ -1,4 +1,97 @@
 (function(root){const pairs=`
+Przedmioty nachodzą na ściany lub inne przedmioty.|Props overlap walls or other props.
+
+przedmiotów|props
+Punkty trybu nachodzą na siebie.|Mode objectives overlap.
+
+Moja mapa|My map
+Moja arena|My arena
+
+Wybierz tryb tworzonej mapy|Choose a mode for your map
+Moje boisko|My football pitch
+Moja arena zombie|My zombie arena
+Moja arena Prop Hunt|My Prop Hunt arena
+Edytor pokaże narzędzia i zasady wybranego trybu.|The editor will show tools and rules for your chosen mode.
+Boisko, bramki i spawny drużyn|Pitch, goals and team spawns
+Arena, osłony i spawny ludzi oraz zombie|Arena, cover and human and zombie spawns
+Przedmioty, kryjówki i spawny|Props, hiding places and spawns
+Ściany, spawny i bombsite’y|Walls, spawns and bombsites
+Ściany, osłony i spawny|Walls, cover and spawns
+Wybierz inny tryb|Choose another mode
+Spawnów i bombsite’ów|Spawns and bombsites
+Spawnów|Spawns
+punkty trybu|mode objectives
+Punkty trybu|Mode objectives
+Bramki są stałe. Ustaw spawny i zaprojektuj własny stadion.|Goals are fixed. Place spawns and design your own stadium.
+Osłona stała|Static cover
+Ustaw przedmiot|Place prop
+Ustaw co najmniej 24 przedmioty. Boty wybiorą wolne kryjówki obok podobnych przedmiotów.|Place at least 24 props. Bots will choose free hiding spots next to similar props.
+Spawn ludzi|Human spawn
+Bramki muszą pozostać na końcach boiska.|Goals must stay at the ends of the pitch.
+Limit przedmiotów to 160.|The prop limit is 160.
+Nieprawidłowy przedmiot.|Invalid prop.
+Przedmioty są dostępne w Prop Hunt.|Props are available in Prop Hunt.
+Każda drużyna potrzebuje spawnu na swojej połowie.|Each team needs a spawn in its own half.
+Dodaj co najmniej 24 przedmioty dwóch typów i zostaw 10 wolnych kryjówek.|Add at least 24 props of two types and leave 10 free hiding spots.
+Usuń przeszkody ze spawnów, bramek i środka boiska.|Remove obstacles from spawns, goals and the centre spot.
+Brak przejścia między punktami trybu.|No route between the mode objectives.
+Zbyt mało dostępnych kryjówek dla botów.|Not enough accessible hiding spots for bots.
+Mapa gotowa. Spawny i punkty trybu mają poprawne przejścia.|Map ready. Spawns and mode objectives have clear routes.
+
+B — sklep między falami|B — shop between waves
+
+Punkty|Points
+WASD — ruch · LPM — strzał · TAB — tabela wyników|WASD — move · LMB — shoot · TAB — scoreboard
+ZOMBIE / KOMPLEKS BADAWCZY|ZOMBIE / RESEARCH COMPLEX
+
+Dominacja|Domination
+Napad|Heist
+Przetrwanie falowe|Wave Survival
+Kontrola terenu|Territory control
+Atak i obrona|Attack and defence
+Przejmuj punkty A, B i C. Utrzymuj kontrolę, aby zdobyć 250 punktów.|Capture points A, B and C. Hold them to earn 250 points.
+Napastnicy kradną trzy torby ze skarbca i dostarczają je do ewakuacji. Obrońcy odzyskują porzucony łup.|Raiders steal three bags from the vault and deliver them to extraction. Defenders recover dropped loot.
+Przetrwaj wspólnie dziesięć coraz silniejszych fal. Polegli wracają między falami; wtedy kupujesz wyposażenie.|Survive ten increasingly strong waves together. Fallen survivors return between waves, when you can buy equipment.
+Przejmuj i utrzymuj punkty|Capture and hold the points
+Przejęcia|Captures
+Dostarczone|Delivered
+Odzyskane|Recovered
+Ocalali|Survivors
+Napastnicy|Attackers
+Obrońcy|Defenders
+Złodzieje|Raiders
+Neutralny|Neutral
+Sporne|Contested
+Dostarczony|Delivered
+W drodze|In transit
+Skarbiec|Vault
+Dostarcz łup do ewakuacji|Deliver the loot to extraction
+Ukradnij trzy torby i ewakuuj łup|Steal and extract three bags
+Broń skarbca i odzyskuj łup|Defend the vault and recover loot
+Pozostali przeciwnicy|Enemies remaining
+Kup wyposażenie i przygotuj się|Buy equipment and get ready
+Ukończone fale|Waves completed
+Fale|Waves
+Fala|Wave
+Współpraca|Cooperation
+Start za|Starting in
+EWAKUACJA|EXTRACTION
+PRZYGOTOWANIE|PREPARATION
+Leśna placówka|Forest outpost
+Pustynne ruiny|Desert ruins
+Terminal kontenerowy|Freight terminal
+Bank miejski|City bank
+Port przeładunkowy|Cargo harbor
+Skarbiec fortecy|Fortress vault
+Stacja polarna|Polar station
+Kompleks reaktora|Reactor complex
+Obóz na bagnach|Swamp camp
+
+Drużynę można wybrać przed rozpoczęciem meczu.|Choose your team before the match starts.
+Wygrane rundy|Rounds won
+Złapani|Caught
+Flagi|Flags
+
 Agenci|Agents
 Skrzynka agentów|Agent Case
 Twoi agenci|Your agents

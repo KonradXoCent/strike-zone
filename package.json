@@ -1,6 +1,6 @@
 {
   "name": "strike-zone-desktop",
-  "version": "1.5.5",
+  "version": "1.5.6",
   "description": "Strike Zone 2D — gra na Windows z launcherem i aktualizacjami",
   "author": "Konrad Xocent",
   "private": true,
@@ -43,7 +43,10 @@
     "test:arcade-ui": "npm run prepare:game && node scripts/arcade-presentation-smoke.cjs",
     "test:agents": "npm run prepare:game && node scripts/agents-smoke.cjs",
     "test:gloves": "npm run prepare:game && node scripts/gloves-smoke.cjs",
-    "test:money": "npm run prepare:game && node scripts/money-smoke.cjs"
+    "test:money": "npm run prepare:game && node scripts/money-smoke.cjs",
+    "test:creator-modes": "npm run prepare:game && node scripts/creator-modes-smoke.cjs",
+    "test:objectives": "npm run prepare:game && node scripts/objective-modes-smoke.cjs",
+    "test:match-presentation": "npm run prepare:game && node scripts/match-presentation-smoke.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",

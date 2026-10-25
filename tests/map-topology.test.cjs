@@ -8,3 +8,14 @@ test('B apartments and short have a solid separating wall',()=>{const m=maps.fin
 
 test('Nuke lower B is reached by stairs, not an artificial corridor across the upper layout',()=>{const m=maps.find(m=>m.id===5),p=r=>[(r[0]+r[2]/2)/2400*1024,(r[1]+r[3]/2)/2400*1024];assert.equal(m.links.length,3);for(const spawn of m.spawns){assert.equal(route(m,p(spawn),p(m.sites[1])),true);assert.equal(route(m,p(spawn),p(m.sites[1]),[0,0,1024,1024],false),false);}});
 test('Nuke stair endpoints have actor clearance on both levels',()=>{const m=maps.find(m=>m.id===5),{nd}=grid(m);for(const l of m.links)for(const p of[l.a,l.b]){const i=Math.floor(p[1]/m.cs)*m.cols+Math.floor(p[0]/m.cs);assert.equal(nd[i],0,l.name+': '+p);}});
+
+test('Ancient T-to-mid corner retains clearance along the whole turn, not just connectivity',()=>{
+ const m=maps.find(m=>m.id===1),{d}=grid(m),s=1024/m.cols;
+ const lane=[[355,635],[355,608],[380,581],[420,581]],radius=16; // 37.5 world units: more than an actor radius.
+ for(let k=1;k<lane.length;k++){const a=lane[k-1],b=lane[k],steps=Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1]));for(let i=0;i<=steps;i++){
+  const x=a[0]+(b[0]-a[0])*i/steps,y=a[1]+(b[1]-a[1])*i/steps;
+  for(let yy=Math.floor((y-radius)/s);yy<=Math.floor((y+radius)/s);yy++)for(let xx=Math.floor((x-radius)/s);xx<=Math.floor((x+radius)/s);xx++)if(d[yy*m.cols+xx]){
+   const px=Math.max(xx*s,Math.min(x,(xx+1)*s)),py=Math.max(yy*s,Math.min(y,(yy+1)*s));assert.ok(Math.hypot(px-x,py-y)>=radius,'Corner clips the movement envelope at '+x+','+y);
+  }
+ }}
+});

@@ -83,14 +83,14 @@
  }
  function navGrid(g,objects,r=MAX_RADIUS){const d=new Uint8Array(g.cols*g.rows);for(let y=0;y<g.rows;y++)for(let x=0;x<g.cols;x++)if(collides(g,objects,(x+.5)*g.cs,(y+.5)*g.cs,r))d[y*g.cols+x]=1;return{...g,d,nd:d};}
  function connected(g){const first=g.d.indexOf(0);if(first<0)return false;const seen=new Uint8Array(g.d.length),queue=[first];seen[first]=1;for(let j=0;j<queue.length;j++){const i=queue[j],x=i%g.cols,y=Math.floor(i/g.cols);for(const n of[x?i-1:-1,x<g.cols-1?i+1:-1,y?i-g.cols:-1,y<g.rows-1?i+g.cols:-1])if(n>=0&&!seen[n]&&!g.d[n]){seen[n]=1;queue.push(n);}}return g.d.every((v,i)=>v||seen[i]);}
- function layout(g){const objects=[];
+ function layout(g){if(g.workshopProps)return g.workshopProps.map(o=>({...o}));const objects=[];
   for(const spec of arrangements[g.source]||[]){const o=anchored(spec,objects.length);if(backed(g,o)&&propFits(g,o,objects))objects.push(o);}
   // One navigation build for the authored layout; incremental validation is
   // only a fallback for an edited arena that would otherwise seal a route.
   if(connected(navGrid(g,objects)))return objects;
   const safe=[];for(const o of objects)if(connected(navGrid(g,[...safe,o])))safe.push({...o,id:'scenery-'+safe.length});return safe;
  }
- function hidingPlaces(g,objects,nav=navGrid(g,objects)){const places=[];
+ function hidingPlaces(g,objects,nav=navGrid(g,objects)){if(g.workshopHides)return g.workshopHides.map(o=>({...o}));const places=[];
   for(const spec of vacancies[g.source]||[]){const o=anchored(spec,places.length);if(!backed(g,o)||!propFits(g,o,objects))continue;
    const sources=objects.filter(q=>q.form===o.form&&Math.hypot(q.x-o.x,q.y-o.y)<100).sort((a,b)=>Math.hypot(a.x-o.x,a.y-o.y)-Math.hypot(b.x-o.x,b.y-o.y));if(!sources.length)continue;
    const candidates=[];for(let y=Math.floor(o.y/g.cs)-6;y<=Math.floor(o.y/g.cs)+6;y++)for(let x=Math.floor(o.x/g.cs)-6;x<=Math.floor(o.x/g.cs)+6;x++){if(x<0||y<0||x>=g.cols||y>=g.rows||nav.d[y*g.cols+x])continue;const p={x:(x+.5)*g.cs,y:(y+.5)*g.cs};if(!collides(g,objects,p.x,p.y,MAX_RADIUS))candidates.push(p);}
@@ -100,10 +100,20 @@
  }
  // First match unchanged observations, then require two consecutive, mutually
  // closest movements. A newly revealed row of identical props is not movement.
+ // Uses anonymous visible observations only: never an entity ID or a hidden map list.
+ function contextSuspicion(o,seen){
+  const near=seen.filter(q=>q!==o&&Math.hypot(q.x-o.x,q.y-o.y)>2&&Math.hypot(q.x-o.x,q.y-o.y)<125);
+  const same=near.filter(q=>q.form===o.form);
+  if(same.length)return 0;
+  const counts={};for(const q of near)counts[q.form]=(counts[q.form]||0)+1;
+  const majority=Math.max(0,...Object.values(counts));
+  // Two or more matching neighbours make an odd item worth checking, not proof.
+  return majority>=2?Math.min(.9,.4+majority*.12):0;
+ }
  function trackObservations(seen,previous){const used=new Set(),tracks=seen.map(o=>{const i=previous.findIndex((q,j)=>!used.has(j)&&q.form===o.form&&Math.hypot(q.x-o.x,q.y-o.y)<1.5&&Math.abs(Math.atan2(Math.sin((q.a||0)-(o.a||0)),Math.cos((q.a||0)-(o.a||0))))<.08);if(i>=0)used.add(i);return{...o,motions:0,vx:0,vy:0,matched:i>=0};});
   for(const o of tracks){if(o.matched)continue;let index=-1,best=65;previous.forEach((q,i)=>{const d=Math.hypot(q.x-o.x,q.y-o.y);if(!used.has(i)&&q.form===o.form&&d<best){index=i;best=d;}});if(index<0)continue;const q=previous[index];if(tracks.some(other=>other!==o&&!other.matched&&other.form===o.form&&Math.hypot(other.x-q.x,other.y-q.y)<best-.01))continue;
    const vx=o.x-q.x,vy=o.y-q.y,moved=Math.hypot(vx,vy)>2,turned=Math.abs(Math.atan2(Math.sin((o.a||0)-(q.a||0)),Math.cos((o.a||0)-(q.a||0))))>.15,consistent=vx*(q.vx||0)+vy*(q.vy||0)>0||!moved&&turned;o.vx=vx;o.vy=vy;o.motions=moved||turned?consistent?(q.motions||0)+1:1:0;used.add(index);
   }return tracks;
  }
- return{models,pools,arrangements,vacancies,MAX_RADIUS,radius,solid,wallCollision,collides,bounds,objectCollision,overlaps,bodyWallCollision,bodyCollides,backed,propFits,ray,navGrid,connected,layout,hidingPlaces,trackObservations};
+ return{models,pools,arrangements,vacancies,MAX_RADIUS,radius,solid,wallCollision,collides,bounds,objectCollision,overlaps,bodyWallCollision,bodyCollides,backed,propFits,ray,navGrid,connected,layout,hidingPlaces,trackObservations,contextSuspicion};
 });

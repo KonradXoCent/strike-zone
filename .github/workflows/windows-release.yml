@@ -52,6 +52,12 @@ jobs:
         run: npm run test:gloves
       - name: Test compact prices and exact transactions
         run: npm run test:money
+      - name: Test mode-specific map editors and custom maps
+        run: npm run test:creator-modes
+      - name: Test Domination, Heist and Wave Survival on nine arenas
+        run: npm run test:objectives
+      - name: Test compact mode scoreboards, killfeed and match team locks
+        run: npm run test:match-presentation
       - name: Test spectator teams and passive progression
         run: npm run test:spectator
       - name: Test football and Prop Hunt HUD layouts

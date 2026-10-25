@@ -4,7 +4,7 @@
  const defaults={enabled:true,min_plays:50,min_likes:10,slots_per_mode:1};
  const state={owner:null,epoch:0,liked:new Set(),policy:{...defaults},busy:new Set(),mode:'all',sort:'popular',runs:new Set(),moderationVersion:0};
  const t=s=>szLocale.t(s),esc=workshopEscape,number=n=>Math.max(0,Number(n)||0).toLocaleString(szLocale.language==='en'?'en-US':'pl-PL');
- const modeName=mode=>t(({tdm:'Team Deathmatch',classic:'Rozbrajanie bomby',ctf:'Capture the Flag'})[mode]||'Team Deathmatch');
+ const modeName=mode=>t(({tdm:'Team Deathmatch',classic:'Rozbrajanie bomby',ctf:'Capture the Flag',football:'Piłka nożna',zombie:'Zombie',prophunt:'Prop Hunt'})[mode]||'Team Deathmatch');
  function noun(value,type){const n=Number(value)||0;if(szLocale.language==='en')return type==='plays'?(n===1?'play':'plays'):(n===1?'like':'likes');const form=n===1?0:n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?1:2;return(type==='plays'?['zagranie','zagrania','zagrań']:['polubienie','polubienia','polubień'])[form];}
  const heart='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>';
  function account(){const uid=SBU?.id||null;if(state.owner!==uid){state.owner=uid;state.epoch++;state.liked.clear();state.busy.clear();state.runs.clear();syncing=null;sequence++;}return uid;}
@@ -24,7 +24,7 @@
    if(document.querySelector('.cw-page'))communityRender();else limitHints();
   }})();syncing=task;try{await task;}finally{if(syncing===task)syncing=null;}
  }
- function filtersHTML(){return `<select id="cw-mode-filter" aria-label="${esc(t('Tryb mapy'))}" data-workshop-mode>${[['all','Wszystkie tryby'],['tdm','Team Deathmatch'],['classic','Rozbrajanie bomby'],['ctf','Capture the Flag']].map(([v,n])=>`<option value="${v}" ${state.mode===v?'selected':''}>${esc(t(n))}</option>`).join('')}</select><select data-workshop-sort aria-label="${esc(t('Sortowanie map'))}">${[['popular','Popularne'],['plays','Najwięcej zagrań'],['likes','Najwięcej polubień'],['newest','Najnowsze']].map(([v,n])=>`<option value="${v}" ${state.sort===v?'selected':''}>${esc(t(n))}</option>`).join('')}</select>`;}
+ function filtersHTML(){return `<select id="cw-mode-filter" aria-label="${esc(t('Tryb mapy'))}" data-workshop-mode>${[['all','Wszystkie tryby'],['tdm','Team Deathmatch'],['classic','Rozbrajanie bomby'],['ctf','Capture the Flag'],['football','Piłka nożna'],['zombie','Zombie'],['prophunt','Prop Hunt']].map(([v,n])=>`<option value="${v}" ${state.mode===v?'selected':''}>${esc(t(n))}</option>`).join('')}</select><select data-workshop-sort aria-label="${esc(t('Sortowanie map'))}">${[['popular','Popularne'],['plays','Najwięcej zagrań'],['likes','Najwięcej polubień'],['newest','Najnowsze']].map(([v,n])=>`<option value="${v}" ${state.sort===v?'selected':''}>${esc(t(n))}</option>`).join('')}</select>`;}
  function filter(rows,active){if(active!=='catalog')return rows;const out=rows.filter(r=>r.kind!=='map'||state.mode==='all'||(r.mode||'tdm')===state.mode);
   const score=r=>state.sort==='plays'?Number(r.plays)||0:state.sort==='likes'?r.likes||0:state.sort==='newest'?Date.parse(r.updated_at)||0:(r.likes||0)*state.policy.min_plays+(Number(r.plays)||0)*state.policy.min_likes;
   return out.slice().sort((a,b)=>score(b)-score(a)||String(a.id).localeCompare(String(b.id)));

@@ -1,3 +1,26 @@
+Strike Zone 2D 1.5.6 — nowe tryby, mapy i edytor
+
+- Trzy nowe tryby z botami i graczami: Dominacja, Napad i Przetrwanie falowe. Każdy ma trzy własne mapy, HUD oraz tabelę wyników.
+- Dominacja: większe areny, rozdzielone punkty A/B/C i dodatkowe osłony. Napad: kradzież i odzyskiwanie łupu. Przetrwanie: kooperacja przez dziesięć fal.
+- Wybór trybu przed edytorem map. Narzędzia dla Piłki nożnej, Zombie i Prop Hunt, rozstawianie propów oraz testy z botami. Zatwierdzone mapy zachowują swój tryb w Warsztacie i wspólnych meczach.
+- Mniejsze, odświeżone tabele wyników dopasowane do trybu oraz kompaktowy killfeed.
+- Boty Prop Hunt oceniają otoczenie rekwizytów. Blokada ręcznej zmiany drużyny podczas meczu we wszystkich trybach.
+- Poprawione ciasne przejście od spawnu T na mid Ancient.
+
+Pobierz aktualizację 1.5.6 w obecnym launcherze, następnie zainstaluj i uruchom ponownie. Konto i ekwipunek pozostają zachowane. Nowa instalacja: StrikeZone-Setup-1.5.6.exe. Logowanie w publicznej grze obsługuje launcher.
+
+English
+
+- Three new bot and multiplayer modes: Domination, Heist and Wave Survival. Each has three dedicated maps, a HUD and a scoreboard.
+- Larger Domination arenas with separated capture points and cover. Steal and recover loot in Heist, or cooperate through ten waves in Survival.
+- Choose a mode before creating a map. Football, Zombie and Prop Hunt tools, prop placement and bot practice. Approved Workshop maps retain their mode in shared matches.
+- Compact mode-specific scoreboards and killfeed, context-aware Prop Hunt bots, and locked manual team changes during matches.
+- Wider Ancient T-spawn-to-mid passage.
+
+Download 1.5.6 in the existing launcher, then install and restart. Accounts and inventories are preserved. New installation: StrikeZone-Setup-1.5.6.exe.
+
+---
+
 Strike Zone 2D 1.5.5 — agenci, skrzynki i nowe rękawiczki
 
 - Nowa skrzynka agentów: 10 wyglądów postaci, po 5 dla CT i T. Osobna kolekcja agentów, wyposażanie dla każdej drużyny i wygląd widoczny w meczu wieloosobowym. Skrzynka kosztuje 5000$, klucz 1500$.

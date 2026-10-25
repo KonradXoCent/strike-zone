@@ -20,6 +20,7 @@ await db.exec(fs.readFileSync(path.resolve(__dirname,'../../database/community-c
 for(const file of fs.readdirSync(path.resolve(__dirname,'../../supabase/migrations')).filter(n=>n.endsWith('_launcher_friends_and_workshop_limits.sql')))await db.exec(fs.readFileSync(path.resolve(__dirname,'../../supabase/migrations',file),'utf8'));
 await db.exec(fs.readFileSync(path.resolve(__dirname,'../../database/workshop-maps.sql'),'utf8'));
 await db.exec(fs.readFileSync(path.resolve(__dirname,'../../database/workshop-moderation.sql'),'utf8'));
+await db.exec(fs.readFileSync(path.resolve(__dirname,'../../database/creator-modes.sql'),'utf8'));
 let queue=Promise.resolve();function asUser(uid,fn,claims={}){const run=queue.then(()=>db.transaction(async tx=>{await tx.exec('set local role '+(uid?'authenticated':'anon'));await tx.query("select set_config('request.jwt.claims',$1,true)",[JSON.stringify({sub:uid,role:uid?'authenticated':'anon',...claims})]);return fn(tx);}));queue=run.catch(()=>{});return run;}
 return{db,asUser};}
 module.exports={createWorkshopDB,USERS,OWNER_CODE,mapProject,skinProject};
