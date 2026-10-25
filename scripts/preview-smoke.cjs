@@ -112,7 +112,7 @@ fs.writeFileSync(root + '/main.cjs', `const {app,BrowserWindow}=require('electro
     assert.equal(await author.evaluate(() => P().wallet), 4321);
     assert.equal(writes.length, 0, 'Login must read the existing save before uploading');
     assert.equal(await author.evaluate(() => COMMUNITY.admin), false);
-    await author.evaluate(() => { creatorTab('maps'); creatorState().map.name = 'Mapa z testowego logowania'; });
+    await author.evaluate(() => { creatorTab('maps'); SzCreatorModes.choose('tdm'); creatorState().map.name = 'Mapa z testowego logowania'; });
     await author.click('[data-cw-submit]');
     await author.waitForFunction(() => COMMUNITY.mine.length === 1 && !COMMUNITY.busy);
     const id = await author.evaluate(() => COMMUNITY.mine[0].id);
