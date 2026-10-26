@@ -16,17 +16,17 @@
  // Domination uses a larger, symmetric three-lane battlefield. Scale existing
  // masonry and add screens between lanes; all positions remain on the 16-unit grid.
  for(const s of specs)if(s.mode==='domination'){
-  s.width=2304;s.height=1536;
-  const scale=r=>r.map(v=>Math.round(v*1.5/16)*16);
+  s.width=3072;s.height=2048;
+  const scale=r=>r.map(v=>Math.round(v*2/16)*16);
   s.walls=s.walls.map(scale);s.covers=s.covers.map(scale);
-  s.walls.push([896,496,512,32],[896,1008,512,32]);
-  s.points=[{id:'A',x:1152,y:256},{id:'B',x:1152,y:768},{id:'C',x:1152,y:1280}];
+  s.walls.push([896,640,512,32],[896,1376,512,32]);
+  s.points=[{id:'A',x:512,y:384},{id:'B',x:2560,y:1024},{id:'C',x:512,y:1664}];
  }
  for(const s of specs)Object.assign(s,themes[s.theme],{description:s.mode==='domination'?'Przejmuj punkty A, B i C. Utrzymuj kontrolę, aby zdobyć 250 punktów.':s.mode==='heist'?'Napastnicy kradną trzy torby ze skarbca i dostarczają je do ewakuacji. Obrońcy odzyskują porzucony łup.':'Przetrwaj wspólnie dziesięć coraz silniejszych fal. Polegli wracają między falami; wtedy kupujesz wyposażenie.',label:s.title});
  function build(s){const width=s.width||W,height=s.height||H,cols=width/CS,rows=height/CS,d=new Uint8Array(cols*rows),paint=(r,v)=>{for(let y=r[1]/CS;y<(r[1]+r[3])/CS;y++)for(let x=r[0]/CS;x<(r[0]+r[2])/CS;x++)d[y*cols+x]=v;};for(const r of[[0,0,width,32],[0,height-32,width,32],[0,0,32,height],[width-32,0,32,height],...s.walls])paint(r,1);for(const r of s.covers)paint(r,2);
   return{cs:CS,cols,rows,d,nd:null,crates:[],windows:[],links:[],source:s.name,mode:s.mode,objectives:s.points||null,covers:s.covers.map((r,i)=>({name:'cover-'+i,material:s.theme==='industrial'||s.theme==='lab'?'metal':s.theme==='desert'?'stone':'wood',polygon:[[r[0],r[1]],[r[0]+r[2],r[1]],[r[0]+r[2],r[1]+r[3]],[r[0],r[1]+r[3]]]})),labels:[]};
  }
  const ids={domination:[],heist:[],survival:[]};
- function install(w){if(ids.domination.length)return ids;for(const s of specs){const i=w.MAPN.length;ids[s.mode].push(i);w.MAPN[i]=s.name;w.GRS[i]=build(s);w.MAPS[i]=[];w.WINS[i]=[];w.FLRS[i]=[];w.SITES[i]=[];w.SPW[i]=s.mode==='domination'?[[112,672,192,192],[2000,672,192,192]]:[s.mode==='survival'?[656,432,192,160]:[96,448,112,128],[1328,448,112,128]];w.LB[i]=[];w.SCL[i]=(s.width||W)/1000;w.FL[i]=w.FLG[i]=s.floor;w.WC[i]=w.WCG[i]=s.wall;w.BGC[i]=[s.floor,s.dark,s.accent];w.MAP_BRIEFINGS[i]={...s,tips:[s.description,'WASD — ruch · LPM — strzał · TAB — tabela wyników'],landmark:s.landmark};}return ids;}
+ function install(w){if(ids.domination.length)return ids;for(const s of specs){const i=w.MAPN.length;ids[s.mode].push(i);w.MAPN[i]=s.name;w.GRS[i]=build(s);w.MAPS[i]=[];w.WINS[i]=[];w.FLRS[i]=[];w.SITES[i]=[];w.SPW[i]=s.mode==='domination'?[[1440,96,192,192],[1440,1760,192,192]]:[s.mode==='survival'?[656,432,192,160]:[96,448,112,128],[1328,448,112,128]];w.LB[i]=[];w.SCL[i]=(s.width||W)/1000;w.FL[i]=w.FLG[i]=s.floor;w.WC[i]=w.WCG[i]=s.wall;w.BGC[i]=[s.floor,s.dark,s.accent];w.MAP_BRIEFINGS[i]={...s,tips:[s.description,'WASD — ruch · LPM — strzał · TAB — tabela wyników'],landmark:s.landmark};}return ids;}
  return{W,H,CS,specs,ids,build,install};
 });

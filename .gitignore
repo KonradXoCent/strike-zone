@@ -12,3 +12,7 @@ vendor/
 /locale-report.json*
 /test-output/
 /test-preview/
+
+/scripts/test-support/core-maps/preload-fixture.html
+
+/node_modules

@@ -83,15 +83,16 @@
  }
  function navGrid(g,objects,r=MAX_RADIUS){const d=new Uint8Array(g.cols*g.rows);for(let y=0;y<g.rows;y++)for(let x=0;x<g.cols;x++)if(collides(g,objects,(x+.5)*g.cs,(y+.5)*g.cs,r))d[y*g.cols+x]=1;return{...g,d,nd:d};}
  function connected(g){const first=g.d.indexOf(0);if(first<0)return false;const seen=new Uint8Array(g.d.length),queue=[first];seen[first]=1;for(let j=0;j<queue.length;j++){const i=queue[j],x=i%g.cols,y=Math.floor(i/g.cols);for(const n of[x?i-1:-1,x<g.cols-1?i+1:-1,y?i-g.cols:-1,y<g.rows-1?i+g.cols:-1])if(n>=0&&!seen[n]&&!g.d[n]){seen[n]=1;queue.push(n);}}return g.d.every((v,i)=>v||seen[i]);}
- function layout(g){if(g.workshopProps)return g.workshopProps.map(o=>({...o}));const objects=[];
-  for(const spec of arrangements[g.source]||[]){const o=anchored(spec,objects.length);if(backed(g,o)&&propFits(g,o,objects))objects.push(o);}
+ function roundRows(g,round){const objects=[],empty=[],pool=pools[g.source]||[];let n=0;for(const[form,face,edge,start,count,step,a=0,gap=-1]of rows[g.source]||[]){const vacancy=gap<0?-1:(gap+round*(1+n%2))%count,newForm=round&&pool.length?pool[(pool.indexOf(form)+round)%pool.length]:form;for(let i=0;i<count;i++)(i===vacancy?empty:objects).push([newForm,face,edge,start+i*step,a]);n++;}return{objects,empty};}
+ function layout(g,round=0){if(g.workshopProps)return g.workshopProps.map(o=>({...o}));const objects=[];
+  for(const spec of (round?roundRows(g,round).objects:arrangements[g.source])||[]){const o=anchored(spec,objects.length);if(backed(g,o)&&propFits(g,o,objects))objects.push(o);}
   // One navigation build for the authored layout; incremental validation is
   // only a fallback for an edited arena that would otherwise seal a route.
   if(connected(navGrid(g,objects)))return objects;
   const safe=[];for(const o of objects)if(connected(navGrid(g,[...safe,o])))safe.push({...o,id:'scenery-'+safe.length});return safe;
  }
- function hidingPlaces(g,objects,nav=navGrid(g,objects)){if(g.workshopHides)return g.workshopHides.map(o=>({...o}));const places=[];
-  for(const spec of vacancies[g.source]||[]){const o=anchored(spec,places.length);if(!backed(g,o)||!propFits(g,o,objects))continue;
+ function hidingPlaces(g,objects,nav=navGrid(g,objects),round=0){if(g.workshopHides)return g.workshopHides.map(o=>({...o}));const places=[];
+  for(const spec of (round?roundRows(g,round).empty:vacancies[g.source])||[]){const o=anchored(spec,places.length);if(!backed(g,o)||!propFits(g,o,objects))continue;
    const sources=objects.filter(q=>q.form===o.form&&Math.hypot(q.x-o.x,q.y-o.y)<100).sort((a,b)=>Math.hypot(a.x-o.x,a.y-o.y)-Math.hypot(b.x-o.x,b.y-o.y));if(!sources.length)continue;
    const candidates=[];for(let y=Math.floor(o.y/g.cs)-6;y<=Math.floor(o.y/g.cs)+6;y++)for(let x=Math.floor(o.x/g.cs)-6;x<=Math.floor(o.x/g.cs)+6;x++){if(x<0||y<0||x>=g.cols||y>=g.rows||nav.d[y*g.cols+x])continue;const p={x:(x+.5)*g.cs,y:(y+.5)*g.cs};if(!collides(g,objects,p.x,p.y,MAX_RADIUS))candidates.push(p);}
    const approach=candidates.sort((a,b)=>Math.hypot(a.x-o.x,a.y-o.y)-Math.hypot(b.x-o.x,b.y-o.y)).find(p=>{const steps=Math.ceil(Math.hypot(p.x-o.x,p.y-o.y)/3);for(let i=0;i<=steps;i++)if(bodyCollides(g,objects,{...o,x:o.x+(p.x-o.x)*i/steps,y:o.y+(p.y-o.y)*i/steps}))return false;return true;});

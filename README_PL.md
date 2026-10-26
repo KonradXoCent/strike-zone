@@ -1,19 +1,11 @@
-# Strike Zone 2D — 1.5.3
+# Strike Zone 2D — 1.5.7
 
-Pobierz `StrikeZone-Setup-1.5.3.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
-Posiadacze wersji 1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0, 1.4.1, 1.5.0, 1.5.1 i 1.5.2 aktualizują grę i launcher razem przez dotychczasowy launcher. Gracz nie potrzebuje Node.js.
+Pobierz `StrikeZone-Setup-1.5.7.exe` z [GitHub Releases](https://github.com/KonradXoCent/strike-zone/releases/latest).
+Dotychczasowy launcher otrzyma aktualizację 1.5.7. Wybierz pobranie, a potem instalację i ponowne uruchomienie. Konto i ekwipunek pozostają zachowane. Nazwa gry nadal brzmi **Strike Zone 2D**.
 
-Pełna lista zmian 1.5.3: [RELEASE_NOTES.md](RELEASE_NOTES.md).
+Wydanie dodaje buforowany wygląd 2.5D, edycję obecnych map przez właściciela, publikowanie niezależnych map i wersji oraz zniszczalne deski i kratki z odrębnymi dźwiękami. Zawiera także zatwierdzone poprawki piłki nożnej, dźwięków, zaproszeń i profilu oraz tryb walki na lasery.
 
-Wersja 1.5.3 poprawia granaty w Zombie Mode i samobójcze strzały botów w piłce nożnej, zwiększa nagrody w cukierkach i dodaje pięć oryginalnych muzyk MVP Halloween. Granat zamrażający zastępuje dymny w Zombie Mode. Kod `HALLOWEEN` daje 80 cukierków raz na konto; kolejne kody można dodawać w Supabase z nagrodą pieniężną, skrzynką lub kluczem, bez nowej wersji gry. Instrukcja: [docs/bonus-codes.md](docs/bonus-codes.md).
-
-Wersja 1.5.2 dodaje Prop Hunt, Minigry, osobną Piłkę nożną do 10 goli oraz wydarzenie Halloween do 30 listopada 2026. Cukierki, zadania i trzy skrzynki wydarzenia obejmują 23 sezonowe przedmioty, a Zombie Mode otrzymuje mapę cmentarną. Menu i launcher mają wspólne sezonowe dekoracje. Overwatch nagradza do 10 poprawnych ocen dziennie.
-
-Wersja 1.4.1 ujednolica logo launchera, menu, ekranów startowych oraz ikon aplikacji
-i instalatora: złota tarcza z literą Z na przezroczystym tle. `assets/icon.png` jest
-wspólnym źródłem dla interfejsu i osadzonego HTML, a `assets/icon.ico` zawiera siedem
-rozmiarów ikon Windows (16–256 px). Po zmianie obrazu uruchom
-`node scripts/embed-shared.cjs`; przygotowanie gry sprawdza zgodność logo.
+Pełna lista zmian: [RELEASE_NOTES.md](RELEASE_NOTES.md). Narzędzia właściciela: [docs/core-map-editor.md](docs/core-map-editor.md).
 
 ## W przygotowaniu: Hide and Seek i Prop Hunt
 

@@ -14,7 +14,7 @@
   SzArcadeRules.touch(b,index(p),p.team,G.el);m.stats.kicks=(m.stats.kicks||0)+1;if(shot)m.stats.shots=(m.stats.shots||0)+1;else{m.stats.passes++;if(receiver){p.mgBrain.lastPassTo=index(receiver);p.mgBrain.lastPassAt=G.el;if(!human(p)&&human(receiver))m.stats.humanPasses=(m.stats.humanPasses||0)+1;}}
   snd('step',p.x,p.y);return true;
  }
- function contact(p){const m=G.mg,b=m.ball,last=G.ps[b.last],from=G.ps[b.passFrom],speed=Math.hypot(b.vx,b.vy);let nx=b.x-p.x,ny=b.y-p.y,n=Math.hypot(nx,ny);
+ function contact(p){if(root.SzFootballRules?.receive(p))return;const m=G.mg,b=m.ball,last=G.ps[b.last],from=G.ps[b.passFrom],speed=Math.hypot(b.vx,b.vy);let nx=b.x-p.x,ny=b.y-p.y,n=Math.hypot(nx,ny);
   if(n<.01){nx=speed?-b.vx/speed:Math.cos(p.a);ny=speed?-b.vy/speed:Math.sin(p.a);}else{nx/=n;ny/=n;}
   m.stats.contacts=(m.stats.contacts||0)+1;
   if(from&&from!==p&&from.team===p.team){from.mgStats.passes++;m.stats.completedPasses=(m.stats.completedPasses||0)+1;if(human(p))m.stats.completedHumanPasses=(m.stats.completedHumanPasses||0)+1;}
@@ -26,8 +26,8 @@
   const push=Math.max(85,(pvx*nx+pvy*ny)*.7),away=b.vx*nx+b.vy*ny;if(away<push){b.vx+=(push-away)*nx;b.vy+=(push-away)*ny;}
  }
  function step(dt){const b=G.mg.ball,n=Math.max(1,Math.ceil(dt*120));for(let i=0;i<n;i++){const before={x:b.x,y:b.y},scored=D.stepBall(b,dt/n);let near=Infinity,touched=null;
-   for(const p of players()){if(index(p)===b.previous&&G.el<(b.releaseUntil||0))continue;const fraction=D.segmentCircle(before,b,p,24);if(fraction!==null&&fraction<near){near=fraction;touched=p;}}
-   if(touched)contact(touched);else if(scored)return scored;
+   for(const p of players()){if(root.SzFootballRules&&!root.SzFootballRules.canContact(p))continue;if(index(p)===b.previous&&G.el<(b.releaseUntil||0))continue;const fraction=D.segmentCircle(before,b,p,24);if(fraction!==null&&fraction<near){near=fraction;touched=p;}}
+   if(touched){contact(touched);if(b.owner>=0)return null;}else if(scored)return scored;
   }return null;
  }
  function predict(dt){D.stepBall(G.mg.ball,dt);}
@@ -40,7 +40,7 @@
  function bot(p,dt){const b=G.mg.ball,own=p.team==='CT',direction=own?1:-1,brain=p.mgBrain;if(brain.fire===Infinity)return;
   const peers=players().filter(q=>q.team===p.team&&!q.mgKeeper),enemies=players().filter(q=>q.team!==p.team),nearest=enemies.slice().sort((a,c)=>distance(p,a)-distance(p,c))[0],pressure=nearest&&distance(p,nearest)<100;
   if(p.mgKeeper){
-   brain.keeperSense=(brain.keeperSense||0)-dt;if(brain.keeperSense<=0){brain.keeperSense=.12+Math.random()*.08;const goalX=own?F.keeperX:D.WIDTH-F.keeperX,toward=own?b.vx<0:b.vx>0,eta=toward?(goalX-b.x)/b.vx:0,aim=eta>0&&eta<1.2?b.y+b.vy*eta:b.y;brain.keeperY=D.clamp(aim,D.HEIGHT/2-68,D.HEIGHT/2+68);}
+   brain.keeperSense=(brain.keeperSense||0)-dt;if(brain.keeperSense<=0){brain.keeperSense=.06+Math.random()*.03;const goalX=own?F.keeperX:D.WIDTH-F.keeperX,toward=own?b.vx<0:b.vx>0,eta=toward?(goalX-b.x)/b.vx:0,aim=eta>0&&eta<1.2?b.y+b.vy*eta:b.y;brain.keeperY=D.clamp(aim,D.HEIGHT/2-78,D.HEIGHT/2+78);}
    A.go(p,{x:own?F.keeperX:D.WIDTH-F.keeperX,y:brain.keeperY??D.HEIGHT/2},dt);p.a=Math.atan2(b.y-p.y,b.x-p.x);
    const incoming=(b.x-p.x)*b.vx+(b.y-p.y)*b.vy<0&&Math.hypot(b.vx,b.vy)>160;
    if(distance(p,b)<F.kickRange&&!incoming&&G.el>=(brain.playAt||0)){const receiver=passTarget(p,true);A.action(p,receiver?.x??p.x+direction*230,receiver?.y??D.HEIGHT/2+(p.y>D.HEIGHT/2?-130:130));brain.playAt=G.el+.35;}return;

@@ -1,3 +1,30 @@
+Strike Zone 2D 1.5.7 — wygląd 2.5D i publikowanie map
+
+- Wygląd 2.5D na wszystkich mapach: głębia ścian, osłon i postaci z buforowaniem grafiki. Nazwa gry pozostaje Strike Zone 2D. F8 porównuje wygląd, a ustawienie można zmienić w opcjach.
+- Warsztat właściciela: edycja istniejących map, przesuwanie ścian, skrzynek, okien, spawnów i bombsite’ów, cofanie zmian, szkice oraz testy z botami.
+- Dwa sposoby publikacji: nowa wersja obecnej mapy lub osobna mapa pod wybraną nazwą i w wybranych trybach. Nowe mecze pobierają aktualny układ; trwające zachowują swoją wersję. Wspólne mecze otrzymują właściwą geometrię i wersję mapy.
+- Zniszczalne drewniane deski i metalowe kratki, odnawiane co rundę. Osobne dźwięki drewna i metalu, aktualizacja przejść dla botów oraz wspólny stan przeszkód w lobby.
+- Piłka nożna: podania PPM, odbiór pod E, sprint pod lewym Shiftem, drybling, ochrona piłki trzymanej przez bramkarza, rzuty wolne i karne, rzadsze faule, sędzia oraz czytelna kara czasowa.
+- Walka na lasery z trzema arenami i botami. Dźwięki m.in. ulepszeń, kontraktów, skrzynek, piłki i tauntów Prop Hunt; odświeżone zaproszenia do lobby, prezentacja drużyny i profil gracza.
+- Poprawki PL/EN, w tym nagłówki narzędzi właściciela i ustawień wyglądu map.
+
+Aktualizacja 1.5.7 jest dostępna przez dotychczasowy launcher. Pobierz ją, a następnie zainstaluj i uruchom grę ponownie. Konto, ekwipunek i zapisane ustawienia pozostają zachowane. Logowanie w publicznej grze obsługuje launcher. Nowa instalacja: StrikeZone-Setup-1.5.7.exe.
+
+English
+
+- Cached 2.5D appearance across all maps, with depth for walls, cover and actors. The game is still named Strike Zone 2D. Compare with F8 or change the setting.
+- Edit existing native maps as the owner: drag walls, crates, windows, spawns and bombsites, undo changes, save drafts and test with bots.
+- Release a revision of an existing map, or publish a separate named map in compatible mode pools. New matches fetch the current layout; running matches retain their revision. Shared matches receive the matching geometry and definition.
+- Destructible wooden boards and metal vents reset each round, with distinct spatial break sounds, updated bot navigation and synchronized state.
+- Football adds deliberate RMB passes, E tackles, left Shift sprint, dribbling, protected goalkeeper possession, free kicks, penalties, less frequent fouls, a referee and timed suspensions.
+- Laser tag with three arenas and bots. More upgrade, contract, case, football and Prop Hunt sounds; updated lobby invitations, team entry and profiles.
+- Polish/English fixes for owner tools and map appearance controls.
+
+Update through the existing launcher, then install and restart. Accounts, inventories and saved settings are preserved. The public game uses the launcher account. New installation: StrikeZone-Setup-1.5.7.exe.
+
+
+---
+
 Strike Zone 2D 1.5.6 — nowe tryby, mapy i edytor
 
 - Trzy nowe tryby z botami i graczami: Dominacja, Napad i Przetrwanie falowe. Każdy ma trzy własne mapy, HUD oraz tabelę wyników.

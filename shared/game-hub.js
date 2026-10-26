@@ -7,6 +7,7 @@
  function fold(value){return String(value||'').toLocaleLowerCase('pl').replace(/ł/g,'l').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();}
  function matches(item,query,type='all'){return(type==='all'||item.category===type)&&fold(item.search).includes(fold(query));}
  const paths={
+  laser:'M3 12h16v8H3Zm4 8v8h6v-8m6-6h9v4h-9M23 8l5-4m-4 18 5 5M7 8h7',
   domination:'M5 27V6h22l-4 6 4 6H5m11 0v11M2 29h28',
   heist:'M5 8h22v20H5ZM10 8V4h12v4M12 16h8v5h-8m4-5v5',
   survival:'M4 27V12l12-8 12 8v15ZM11 27V16h10v11M16 9v3',

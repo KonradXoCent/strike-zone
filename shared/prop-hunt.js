@@ -3,7 +3,8 @@
 (function(root){'use strict';
  const D=SzPropData,H=SzHideSeek,CACHE=new Map(),WORLDS=new Map(),RANGE=500,DAMAGE=25,PENALTY=5,SIGHT=760;
  const active=()=>!!G&&sel.mode==='prophunt',seeker=p=>p.team===G.hns.seekerTeam,t=s=>szLocale.t(s),distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
- function ensure(g=G){if(g.propWorld?.map===sel.map)return g.propWorld;const grid=GRS[sel.map];let world=WORLDS.get(sel.map);if(!world||world.grid!==grid){const objects=D.layout(grid),nav=D.navGrid(grid,objects);world={map:sel.map,grid,objects,nav,hidingPlaces:D.hidingPlaces(grid,objects,nav)};WORLDS.set(sel.map,world);}g.propWorld=world;return world;}
+ function ensure(g=G){const round=g.hns?.round||0,key=sel.map+':'+round;if(g.propWorld?.key===key)return g.propWorld;const grid=GRS[sel.map];let world=WORLDS.get(key);if(!world||world.grid!==grid){const objects=D.layout(grid,round),nav=D.navGrid(grid,objects);world={key,map:sel.map,round,grid,objects,nav,hidingPlaces:D.hidingPlaces(grid,objects,nav,round)};WORLDS.set(key,world);if(WORLDS.size>16)WORLDS.delete(WORLDS.keys().next().value);}g.propWorld=world;return world;}
+
  const radius=p=>seeker(p)?12:D.radius(p.propForm);
  const body=(p,x=p.x,y=p.y,a=p.propAngle||0)=>seeker(p)?{x,y,w:24,h:24,shape:'circle'}:{x,y,a,form:p.propForm};
  function occupied(p,x,y,placed=G.ps,angle=p.propAngle||0){const w=ensure(),o=body(p,x,y,angle);return D.bodyCollides(w.grid,w.objects,o)||placed.some(q=>q!==p&&q.alive&&D.overlaps(o,body(q),1));}
@@ -71,7 +72,7 @@
   let end=RANGE;for(let d=2;d<=RANGE;d+=3)if(wallAt(p.x+Math.cos(p.a)*d,p.y+Math.sin(p.a)*d)){end=d;break;}let target=null,hit=end;
   for(const o of ensure().objects){const d=D.ray(p,p.a,o,end);if(d!==null&&d<hit){hit=d;target={object:o};}}
   for(const q of G.ps)if(q.alive&&!seeker(q)){const d=D.ray(p,p.a,{form:q.propForm,x:q.x,y:q.y,a:q.propAngle},end);if(d!==null&&d<hit){hit=d;target={player:q};}}
-  G.tr.push({x:p.x,y:p.y,x2:p.x+Math.cos(p.a)*hit,y2:p.y+Math.sin(p.a)*hit,c:target?.player?'#a8eed7':'#f4cb89',t:.12});
+  G.tr.push({x:p.x,y:p.y,x2:p.x+Math.cos(p.a)*hit,y2:p.y+Math.sin(p.a)*hit,c:target?.player?'#a8eed7':'#f4cb89',t:.12});globalThis.SzBreakables?.shot(p,G.tr[G.tr.length-1]);
   if(target?.player){const victim=target.player;victim.hp=Math.max(0,victim.hp-DAMAGE);victim.phDamagedAt=G.el;p.phHits++;p.phHitUntil=G.el+.22;p.phBrain.confirmed={x:victim.x,y:victim.y,until:G.el+4};effect('hit',victim);snd('hit',victim.x,victim.y);if(!victim.hp){H.eliminate(p,victim);p.phBrain.confirmed=p.phBrain.target=null;p.hnsBrain.goal=null;}}
   else if(target?.object){p.phWrong++;p.hp=Math.max(0,p.hp-PENALTY);p.phPenaltyUntil=G.el+.35;effect('wrong',target.object);if(p.phBrain){p.phBrain.target=null;p.phBrain.confirmed=null;p.hnsBrain.goal=null;p.phBrain.inspect=Math.max(p.phBrain.inspect,7);p.phBrain.checked.set(observationKey(target.object),Infinity);}if(!p.hp){p.alive=false;G.hns.events.unshift({by:nm(p),who:'',action:'trafił za dużo dekoracji',left:4});}}
   if(!G.ps.some(q=>q.alive&&seeker(q)))H.finishRound(G.hns.seekerTeam==='CT'?'T':'CT');return true;

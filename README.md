@@ -4,14 +4,15 @@ Gra na Windows z launcherem, kontem Supabase i obowiązkowymi aktualizacjami.
 
 **[Pobierz aktualne wydanie](https://github.com/KonradXoCent/strike-zone/releases/latest)**
 
-Wersja **1.5.3**: zainstaluj `StrikeZone-Setup-1.5.3.exe` lub zaktualizuj wersję
-1.0.1, 1.1.0, 1.2.0, 1.3.0, 1.4.0, 1.4.1, 1.5.0, 1.5.1 lub 1.5.2 przez launcher — razem z samym launcherem.
+Wersja **1.5.7**: zainstaluj `StrikeZone-Setup-1.5.7.exe` lub skorzystaj z aktualizacji w dotychczasowym launcherze. Konto, ekwipunek i ustawienia są zachowane; nazwa gry pozostaje **Strike Zone 2D**.
 
-Nowości 1.5.3: bezpieczne granaty ludzi i granat zamrażający w Zombie Mode,
-boty unikające samobójczych strzałów w piłce, więcej cukierków, pięć oryginalnych
-muzyk MVP Halloween i kody bonusowe zarządzane w Supabase. `HALLOWEEN` daje
-80 cukierków raz na konto; inne kody mogą dawać pieniądze, skrzynki lub klucze.
-Instrukcja dodawania kodów: [docs/bonus-codes.md](docs/bonus-codes.md).
+Nowości 1.5.7: buforowany wygląd 2.5D, edycja istniejących map przez właściciela,
+publikowanie nowych wersji i osobnych map z wyborem trybów oraz zniszczalne deski
+i kratki z odrębnymi dźwiękami. Zawiera także zatwierdzone poprawki piłki nożnej,
+dźwięków, zaproszeń i profilu oraz walkę na lasery na trzech arenach.
+
+Pełne zmiany: [RELEASE_NOTES.md](RELEASE_NOTES.md). Narzędzia właściciela i testy:
+[docs/core-map-editor.md](docs/core-map-editor.md).
 
 Nowości 1.5.2: Prop Hunt z botami, Minigry i osobna Piłka nożna do 10 goli.
 Halloween do 30 listopada: cukierki za grę i zadania, trzy skrzynki, 23 sezonowe

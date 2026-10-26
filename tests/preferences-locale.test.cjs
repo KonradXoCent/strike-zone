@@ -20,3 +20,5 @@ test('language auditing includes object values and nested tips and detects mixed
  for(const s of['Opis mapy','Dym','Przejście','Warsztat'])assert.ok(strings.includes(s),s);
  assert.equal(polishRemainder('Desert dziedziniec and tunele'),true);assert.equal(polishRemainder('Workshop maps and legitimate bombsite shots'),false);
 });
+
+test('owner editor headings translate as complete UI labels while map titles remain literal',()=>{const l=create('en');assert.equal(l.t('WARSZTAT / NARZĘDZIA WŁAŚCICIELA'),'WORKSHOP / OWNER TOOLS');assert.equal(l.t('WARSZTAT / MAPA GŁÓWNA'),'WORKSHOP / MAIN MAP');assert.equal(l.t('Warsztat / Mapa Autora QX'),'Workshop / Mapa Autora QX');});

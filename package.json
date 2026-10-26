@@ -1,6 +1,6 @@
 {
   "name": "strike-zone-desktop",
-  "version": "1.5.6",
+  "version": "1.5.7",
   "description": "Strike Zone 2D — gra na Windows z launcherem i aktualizacjami",
   "author": "Konrad Xocent",
   "private": true,
@@ -8,7 +8,7 @@
   "scripts": {
     "start": "npm run prepare:game && electron .",
     "prepare:game": "node scripts/prepare-game.cjs",
-    "test": "node --test tests/*.test.cjs",
+    "test": "npm run test:unit && npm run test:core-maps",
     "dist:win": "npm run prepare:game && node scripts/build.cjs",
     "dist:win:test": "npm run prepare:game && node scripts/build.cjs --test",
     "configure:updates": "node scripts/configure-updates.cjs",
@@ -46,7 +46,9 @@
     "test:money": "npm run prepare:game && node scripts/money-smoke.cjs",
     "test:creator-modes": "npm run prepare:game && node scripts/creator-modes-smoke.cjs",
     "test:objectives": "npm run prepare:game && node scripts/objective-modes-smoke.cjs",
-    "test:match-presentation": "npm run prepare:game && node scripts/match-presentation-smoke.cjs"
+    "test:match-presentation": "npm run prepare:game && node scripts/match-presentation-smoke.cjs",
+    "test:core-maps": "node scripts/core-maps-smoke.cjs",
+    "test:unit": "node --test tests/*.test.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",
@@ -54,9 +56,11 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.10",
+    "@napi-rs/canvas": "0.1.80",
     "acorn": "8.15.0",
     "electron": "44.7.2",
     "electron-builder": "26.15.3",
+    "jsdom": "26.1.0",
     "pe-library": "2.0.1",
     "playwright-core": "1.62.1",
     "resedit": "3.1.0"

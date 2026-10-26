@@ -7,4 +7,14 @@ for(const mode of['domination','heist','survival'])test(mode+' has three distinc
  assert.equal(new Set(hashes).size,3);
 });
 
-test('Domination spreads objectives behind separate sight screens on larger symmetric fields',()=>{for(const spec of M.specs.filter(s=>s.mode==='domination')){const g=M.build(spec);assert.equal(g.cols*g.cs,2304);assert.equal(g.rows*g.cs,1536);const z=g.objectives;assert.equal(z.length,3);for(let i=1;i<z.length;i++){assert.ok(Math.hypot(z[i].x-z[i-1].x,z[i].y-z[i-1].y)>=512);const x=z[i].x,mid=(z[i].y+z[i-1].y)/2;let blocked=false;for(let y=z[i-1].y;y<z[i].y;y+=8)if(g.d[Math.floor(y/16)*g.cols+Math.floor(x/16)])blocked=true;assert.ok(blocked,spec.name+' needs a sight screen between objectives');}}});
+test('Domination spreads objectives and prevents one zone from overlooking both other points',()=>{
+ for(const spec of M.specs.filter(s=>s.mode==='domination')){
+  const g=M.build(spec);assert.equal(g.cols*g.cs,3072);assert.equal(g.rows*g.cs,2048);const z=g.objectives;assert.equal(z.length,3);const screened=[0,0,0];
+  for(let i=0;i<z.length;i++)for(let j=i+1;j<z.length;j++){
+   const a=z[i],b=z[j],distance=Math.hypot(b.x-a.x,b.y-a.y);assert.ok(distance>=900,spec.name+' objectives need substantial separation');
+   let blocked=false;for(let d=8;d<distance;d+=8){const x=a.x+(b.x-a.x)*d/distance,y=a.y+(b.y-a.y)*d/distance;if(g.d[Math.floor(y/g.cs)*g.cols+Math.floor(x/g.cs)]){blocked=true;break;}}
+   if(blocked){screened[i]++;screened[j]++;}
+  }
+  assert.ok(screened.every(n=>n>=1),spec.name+' one point must not overlook both other objectives');
+ }
+});

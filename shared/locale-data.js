@@ -1,4 +1,102 @@
 (function(root){const pairs=`
+Deski · 90 HP|Boards · 90 HP
+Zniszczalna przeszkoda|Breakable barrier
+
+Porównaj wygląd|Compare visuals
+Przełącz wygląd map między 2D i 2.5D|Switch maps between 2D and 2.5D
+Głębia map 2.5D|2.5D map depth
+Głębia i cienie dopasowane do stylu każdej mapy. F8 przełącza wygląd podczas meczu.|Depth and shadows match each map’s style. F8 switches visuals during a match.
+Nieprawidłowa definicja nowej mapy.|Invalid map definition.
+Ta nazwa mapy jest już zajęta.|This map name is already in use.
+Rywalizacja 5v5|Competitive 5v5
+Tylko snajperki|Snipers only
+Tylko Deagle|Deagle only
+Walka nożami|Knife fight
+Ta wersja projektu nie pasuje do bieżącej mapy.|This project does not match the current base map.
+Wymiary i rozdzielczość mapy muszą pozostać oryginalne.|Map size and cell resolution must remain unchanged.
+Nieprawidłowa warstwa mapy.|Invalid map layer.
+Nieprawidłowa siatka mapy.|Invalid map grid.
+Ściana wychodzi poza mapę.|A wall extends beyond the map.
+Nieprawidłowe spawny.|Invalid spawns.
+Zachowaj oryginalne punkty trybu.|Keep the original mode objectives.
+Nieprawidłowy punkt lub okno.|Invalid site or window.
+Nieprawidłowa osłona.|Invalid cover.
+Maksymalnie 128 zniszczalnych przeszkód na mapie.|A map can contain up to 128 breakable barriers.
+Nieprawidłowa zniszczalna przeszkoda.|Invalid breakable barrier.
+Projekt jest zbyt duży.|The project is too large.
+Edycja map głównych jest dostępna tylko dla właściciela gry.|Only the game owner can edit the main map pool.
+Masz niezapisane zmiany mapy. Odrzucić je?|Discard unsaved map changes?
+Mapy główne|Main map pool
+TYLKO DLA WŁAŚCICIELA|OWNER ONLY
+Edytuj obecne mapy|Edit existing maps
+Otwórz Mirage, Ancient i pozostałe mapy z ich aktualnym układem.|Open Mirage, Ancient and the other maps with their current layouts.
+Twoja mapa · źródło:|Your map · based on
+Otwórz w edytorze|Open in editor
+WARSZTAT / NARZĘDZIA WŁAŚCICIELA|WORKSHOP / OWNER TOOLS
+Oryginalne mapy, gotowe do edycji. Układ i rozdzielczość pozostają takie jak w grze.|The original maps, ready to edit at their native size and resolution.
+Wczytano Twój zapisany szkic.|Your saved draft was loaded.
+Pierwszy spawn jest zablokowany.|The first spawn is blocked.
+Spawn lub bombsite nie ma dostępnego przejścia.|A spawn or bombsite has no accessible route.
+Zapisano szkic. Mapa graczy pozostaje w opublikowanej wersji.|Draft saved. Players still use the published version.
+Wyeksportowano projekt z oryginalną siatką.|The project was exported with its native grid.
+Plik jest zbyt duży.|The file is too large.
+Wybierz projekt tej samej mapy.|Choose a project for this map.
+Zaimportowano projekt.|Project imported.
+Zaloguj się ponownie na konto właściciela.|Sign in to the owner account again.
+Opublikowano wersję|Published version
+Pojawiła się nowsza wersja. Zachowaj szkic i otwórz mapę ponownie.|A newer version exists. Save your draft and reopen the map.
+Nie udało się opublikować mapy.|Could not publish the map.
+Brak uprawnień właściciela.|Owner permission required.
+Nazwa: 3–48 znaków. Użyj liter, cyfr, spacji, kropki, myślnika lub podkreślenia.|Use 3–48 letters, numbers, spaces, dots, hyphens or underscores.
+Ta nazwa jest już zajęta. Wpisz nazwę nowej mapy.|This name is already in use. Enter a new map name.
+Wybierz co najmniej jeden zgodny tryb gry.|Select at least one compatible game mode.
+Niepełna odpowiedź publikacji. Odśwież katalog map.|Incomplete release response. Refresh the map catalog.
+Ta nazwa jest już zajęta. Odśwież katalog lub podaj inną nazwę.|This name is already in use. Refresh the catalog or choose another name.
+Wybierz tryby zgodne z mapą źródłową.|Choose modes compatible with the source map.
+Osiągnięto limit osobnych map właściciela.|The owner map limit has been reached.
+Nie udało się wydać nowej mapy.|Could not release the new map.
+OSOBNA MAPA W PULI|SEPARATE MAP IN THE POOL
+Wydaj jako nową mapę|Release as a new map
+Tworzysz osobną mapę z bieżącego szkicu. Opublikowana mapa „|Create a separate map from this draft. The published
+” zachowa swój układ.|keeps its layout.
+Nazwa nowej mapy|New map name
+Dodaj do głównej puli tych trybów|Add to these main mode pools
+Geometria, okna, spawny i zniszczalne przeszkody zostaną zachowane. Kolejne wersje tej mapy wydasz niezależnie.|Geometry, windows, spawns and breakable barriers are preserved. Future revisions of this map are independent.
+Wydaj nową mapę|Release new map
+Opuść lobby przed testem mapy.|Leave the lobby before testing.
+Osłona|Cover
+Przesuń widok|Pan
+WARSZTAT / MAPA GŁÓWNA|WORKSHOP / MAIN MAP
+Edytujesz oryginalny układ. Dodaj lub usuń ściany bez budowania mapy od nowa.|Edit the existing layout. Add or remove walls without rebuilding the map.
+Opublikowana wersja:|Published revision:
+Wydaj nową wersję|Release new revision
+Edytor obecnej mapy|Existing map editor
+Narzędzia|Tools
+Rozmiar pędzla|Brush size
+Materiał osłony|Cover material
+Cofnij|Undo
+Ponów|Redo
+Usuń zaznaczoną przeszkodę|Delete selected obstacle
+Wybierz: kliknij i przeciągnij istniejący obiekt. Delete: usuń przeszkodę. Rolka: zoom · PPM: widok. Deski i kratki odradzają się co rundę.|Select: click and drag an existing object. Delete: erase obstacle. Wheel: zoom · RMB: pan. Boards and vents reset each round.
+Szkic i test|Draft and test
+Tryb testu|Test mode
+Zapisz szkic|Save draft
+Wersja dla graczy|Player version
+Wydaj nową wersję — zastąp tę mapę w przyszłych meczach. Wydaj jako nową mapę — dodaj osobną mapę i wybierz dla niej tryby.|Release a new revision to replace this map in future matches. Release as a new map to add a separate map and choose its modes.
+Przywróć układ źródłowy|Restore source layout
+Trwające mecze zachowują swoją wersję do końca.|Matches in progress retain their version until they finish.
+Przejścia są dostępne. Możesz testować mapę.|Routes are accessible. The map is ready to test.
+W tym miejscu jest już przeszkoda. Najpierw ją usuń.|There is already an obstacle here. Erase it first.
+Przeszkody nie mogą się nakładać podczas przesuwania.|Obstacles cannot overlap when moved.
+Spawn i bombsite możesz przesuwać. Te punkty są wymagane przez tryb gry.|Spawns and sites can be moved. The game mode requires these objectives.
+przeciągnij, aby przesunąć|drag to move
+niezapisane zmiany|unsaved changes
+Przywrócić oryginalną mapę „|Restore the original map “
+Opublikować zmiany mapy „|Publish changes to “
+”? Nowe mecze będą korzystać z tej wersji.|”? New matches will use this version.
+Wydano nową mapę „|Released map “
+”. Jest już w puli wybranych trybów. Jej kolejne wersje są niezależne od|”. It is now in the selected mode pools. Its revisions are independent of
+
 Przedmioty nachodzą na ściany lub inne przedmioty.|Props overlap walls or other props.
 
 przedmiotów|props
@@ -2244,6 +2342,85 @@ sekund|seconds
 sekundy|seconds
 godzin|hours
 dni|days
+Pustynny przekaźnik|Desert Relay
+Polarna sieć|Frost Grid
+Neonowy reaktor|Neon Core
+Laserowa arena drużynowa. Jedno trafienie eliminuje. Pierwsza drużyna do 50 punktów wygrywa.|Team laser arena. One hit eliminates. First team to 50 points wins.
+LPM — laser · Jedno trafienie eliminuje|LMB — laser · One hit eliminates
+Korzystaj z osłon. Odrodzenie po 3 sekundach.|Use cover. Respawn after 3 seconds.
+Opcje gry|Game options
+Bez limitu|Unlimited
+Wycisz grę w tle|Mute game in background
+Ogranicz animacje interfejsu|Reduce interface animations
+Pokazuj powtórki goli|Show goal replays
+Swobodna kamera|Free camera
+LPM / Spacja — strzał · PPM / P — podaj · E — odbiór · Lewy Shift — sprint|LMB / Space — shoot · RMB / P — pass · E — tackle · Left Shift — sprint
+Faul|Foul
+Sędzia|Referee
+Strzał|Shot
+Odbiór|Tackle
+PPM — podanie|RMB — pass
+Lewy Shift — sprint|Left Shift — sprint
+Rzut karny|Penalty kick
+Rzut wolny|Free kick
+Walka na lasery|Laser Battle
+Jedno trafienie eliminuje. Trzy areny, boty i wspólne mecze.|One hit eliminates. Three arenas, bots and multiplayer matches.
+Jedno trafienie eliminuje|One hit eliminates
+Do 50 punktów|First to 50 points
+Zabij 10 przeciwników granatami|Eliminate 10 enemies with HE grenades
+Zabij 100 przeciwników granatami|Eliminate 100 enemies with HE grenades
+Zabij 25 przeciwników Molotovem|Eliminate 25 enemies with Molotovs
+Zdobądź 50 trafień śmiertelnych w głowę|Get 50 headshot eliminations
+Zabij 25 przeciwników nożem|Eliminate 25 enemies with knives
+Strzel 10 goli|Score 10 goals
+Obroń 10 strzałów|Save 10 shots
+Wykonaj 10 tauntów w Prop Hunt|Use 10 taunts in Prop Hunt
+Możesz przypiąć maksymalnie 3 odznaki.|You can pin up to 3 badges.
+Przypnij do profilu maksymalnie 3 zdobyte odznaki.|Pin up to 3 earned badges to your profile.
+Zwycięstwa|Victories
+Awatar|Avatar
+Usuń własny awatar|Remove custom avatar
+Zaproszenie do lobby|Lobby invitation
+Znajomy musi być online.|Your friend must be online.
+Zaproszenie wysłane.|Invitation sent.
+Twoja drużyna|Your team
+Dołącz do meczu|Enter match
+Znajomy nie gra teraz meczu.|Your friend is not in a match.
+Prośba o obserwowanie wysłana.|Spectate request sent.
+Obserwowanie znajomych wymaga meczu online.|Spectating friends requires an online match.
+Nie udało się wczytać mapy.|Could not load the map.
+Czekasz na zakończenie pierwszej rundy.|Waiting for the first round to finish.
+Obserwacja rozpocznie się z opóźnieniem 120 s.|Spectating starts with a 120-second delay.
+Obserwowanie znajomego|Spectating a friend
+Obserwacja · opóźnienie 1 rundy|Spectating · one-round delay
+Obserwacja · opóźnienie 120 s|Spectating · 120-second delay
+Oglądaj · opóźnienie|Spectate · delayed
+Nie pamiętasz hasła?|Forgot password?
+Wyślemy link na adres podany przy zakładaniu konta.|We will send a link to the email address used to create the account.
+Ustaw nowe hasło|Set a new password
+Powtórz nowe hasło|Repeat new password
+Hasła nie są takie same.|Passwords do not match.
+Odzyskaj konto|Recover account
+Wyślij link odzyskiwania|Send recovery link
+Zapisz nowe hasło|Save new password
+Podaj prawidłowy adres e-mail.|Enter a valid email address.
+Jeśli konto istnieje, wysłaliśmy link odzyskiwania. Sprawdź pocztę i spam.|If the account exists, we sent a recovery link. Check your inbox and spam folder.
+Link odzyskiwania wygasł lub został już użyty.|The recovery link has expired or has already been used.
+Nowe hasło musi mieć co najmniej 8 znaków.|The new password must contain at least 8 characters.
+Hasło zmienione. Zaloguj się nowym hasłem.|Password changed. Sign in with your new password.
+Limit FPS|FPS limit
+Strzał laserowy|Laser shot
+Grenadier|Grenadier
+Mistrz wybuchów|Blast Master
+Podpalacz|Firestarter
+Strzelec wyborowy|Sharpshooter
+Ciche ostrze|Silent Blade
+Napastnik|Striker
+Pewne ręce|Safe Hands
+Ryzykant|Daredevil
+Nie udało się połączyć. Spróbuj ponownie.|Could not connect. Try again.
+Wyloguj się, aby użyć linku odzyskiwania.|Sign out to use the recovery link.
+Mecz znajomego został zakończony.|Your friend’s match has ended.
 `;
 const result=pairs.trim().split('\n').map(l=>l.split('|'));if(typeof module==='object'&&module.exports)module.exports=result;else root.SzLocalePairs=result;
 })(globalThis);
