@@ -25,6 +25,6 @@
  },200);
  const leave=lobLeave;lobLeave=function(){if(viewChannel){clearInterval(viewChannel.watchTimer);viewChannel=null;}label.hidden=true;return leave();};
  document.addEventListener('click',event=>{const button=event.target.closest('[data-watch-friend]');if(button)request(button.dataset.watchFriend);});
- const bar=friBar;friBar=function(){const r=bar();if(SBU&&FR.synced)for(const f of FR.list){if(!(FR.on[f.friend_id]||[]).some(p=>p.match))continue;const element=document.querySelector('#frl [data-friend-action="toggle"][data-friend-id="'+CSS.escape(f.friend_id)+'"]');if(element){const button=document.createElement('button');button.dataset.watchFriend=f.friend_id;button.className='sz-watch-friend';button.textContent=t('Oglądaj · opóźnienie');element.insertAdjacentElement('afterend',button);}}return r;};
+ const bar=friBar;friBar=function(){const r=bar();if(SBU&&FR.synced)for(const f of FR.list){if(!(FR.on[f.friend_id]||[]).some(p=>p.match))continue;const element=document.querySelector('#frl [data-friend-action="toggle"][data-friend-id="'+CSS.escape(f.friend_id)+'"]');if(element){const button=document.createElement('button');button.dataset.watchFriend=f.friend_id;button.className='sz-watch-friend';button.textContent=t('Oglądaj · opóźnienie');button.type='button';const actions=element.nextElementSibling;if(actions?.matches('.sz-friend-actions'))actions.append(button);}}return r;};
  root.SzWatch={capture,request,eligible,grant,get history(){return history;},get watchers(){return watchers;}};
 })(globalThis);
