@@ -32,10 +32,16 @@ async function run(){
  Q("netSend({t:'breakable_hit',id:SzBreakables.status().items[1].id,damage:99999})");assert.equal(H('SzBreakables.status().items[1].hp'),45);guest.netRecv({...brokenSnap,c:'forged-peer',seq:brokenSnap.seq+999,breakables:{round:1,hp:[0,0]}});assert.equal(Q('SzBreakables.status().items[1].hp'),45);
  H('newRound();netSnap();');assert.equal(H('SzBreakables.status().items[0].hp'),90);assert.equal(Q('SzBreakables.status().items[0].hp'),90);assert(Q('wallAt(506,450)'));assert.equal(Q('__breakSounds.length'),1,'round reset does not play breaking sound');
  console.log('PASS host-authoritative barrier HP, opened collision and navigation synchronize; sound plays once; forged damage is ignored; next-round reset is silent');
- Q('quit();__breakSounds=[];');
+ Q('quit();__breakSounds=[];');assert(Q('!L&&!LC'),'an explicit guest exit leaves the lobby');
  H("G.ph='live';G.paused=false;G.me.x=450;G.me.y=450;G.me.a=0;G.me.cur='ak';G.me.ammo.ak=100;G.me.rl=0;for(const p of G.ps)if(p!==G.me){p.x=100;p.y=100;p.inv=999;}for(let n=0;n<6&&SzBreakables.status().items[0].hp>0;n++){G.me.cd=0;fire(G.me);}");
  Q(`L={host:false,code:'QATEST',team:'CT'};LP=${JSON.stringify(peers)};NET.host=0;NET.session=${JSON.stringify(sid)};NET.hostCid=${JSON.stringify(hid)};NET.seenSeq=-1;loadScreen=cb=>cb();LC={send(o){__route(o.payload);return Promise.resolve('ok');},track(){return Promise.resolve('ok')}};`);
  H('netStartMessage();netSnap();');assert.equal(Q('SzBreakables.status().items[0].hp'),0);assert.equal(Q('__breakSounds.length'),0,'late join is silent for barriers already broken');assert.deepEqual(h.errors,[]);assert.deepEqual(g.errors,[]);
  console.log('PASS a late join receives the current broken state without replaying historical destruction sounds');
+ Q('globalThis.__retainedLobby=LC');const beforeSession=Q('NET.session');
+ H("sel.map=13;sel.mode='tdm';begin0();if(G.intro)skipIntro();G.paused=false;G.ph='live';netSnap();");await tick();
+ assert.notEqual(Q('NET.session'),beforeSession);assert.equal(Q('NET.session'),H('NET.session'));assert.equal(Q('sel.map'),13);assert(Q('G.client&&!G.netWaiting&&L&&!L.host&&LC===__retainedLobby&&!!roomHost()'),'automatic map changes retain the guest room and consume snapshots');assert.equal(Q('G.me.rid'),gid);
+ const staleStart=toGuest.filter(p=>p.t==='start').at(-1);H('quit()');await tick();assert(Q('!G&&!L&&!LC'),'the host can end a match after the automatic map change');guest.netRecv(staleStart);assert(Q('!G&&!L'),'late start packets cannot revive a departed match');assert.deepEqual(h.errors,[]);assert.deepEqual(g.errors,[]);
+ console.log('PASS automatic map/session changes preserve the lobby, new snapshots and remote slot; host end and explicit exits leave cleanly and reject late starts');
+
 }
 run().then(()=>{h.dom.window.close();g.dom.window.close();process.exit(0)}).catch(e=>{console.error(e.stack);console.error('Host errors:',h.errors,'Guest errors:',g.errors);h.dom.window.close();g.dom.window.close();process.exit(1)});
