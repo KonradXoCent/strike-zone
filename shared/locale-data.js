@@ -1,4 +1,19 @@
 (function(root){const pairs=`
+Maksymalnie 96 drzwi na mapie.|A map can contain up to 96 doors.
+Nieprawidłowe drzwi.|Invalid door.
+Drzwi drewniane|Wooden door
+Drzwi metalowe|Metal door
+Test bez botów|Test without bots
+Test z botami|Test with bots
+N — noclip w teście · E — otwórz / zamknij drzwi.|N — test noclip · E — open / close doors.
+Drzwi|Door
+Drzwi są zablokowane. Odsuń się od skrzydła.|The door is blocked. Move away from its swing.
+bez botów|no bots
+z botami|with bots
+Broń do testu|Test weapon
+WASD — ruch · N — noclip · E — drzwi|WASD — move · N — noclip · E — doors
+TEST MAPY|MAP TEST
+Wróć do edytora|Back to editor
 Deski · 90 HP|Boards · 90 HP
 Zniszczalna przeszkoda|Breakable barrier
 

@@ -7,20 +7,21 @@
  function release(){if(!state)return;walls=walls.filter(w=>!w.szBreakable);if(GR===state.navGR)GR=state.baseGR;textures.clear();state=null;}
  function rebuild(){const s=state;if(!s||G!==s.game)return;walls=walls.filter(w=>!w.szBreakable);
   for(const b of s.items)if(b.hp>0){const r=b.rect.slice();r.szBreakable=b.id;walls.push(r);}s.wallList=walls;
+  const geometry=[...s.items.filter(b=>b.hp>0).map(b=>b.rect),...(root.SzDoors?.collisionRects()||[])];
   if(GR){if(GR!==s.navGR){s.baseGR=GR;s.navGR={...GR,flow:new Map()};}const g=s.baseGR,d=new Uint8Array(g.d);
-   for(const b of s.items)if(b.hp>0){const r=b.rect;for(let y=Math.max(0,Math.floor(r[1]/g.cs));y<Math.min(g.rows,Math.ceil((r[1]+r[3])/g.cs));y++)for(let x=Math.max(0,Math.floor(r[0]/g.cs));x<Math.min(g.cols,Math.ceil((r[0]+r[2])/g.cs));x++)d[y*g.cols+x]=1;}
+   for(const r of geometry){for(let y=Math.max(0,Math.floor(r[1]/g.cs));y<Math.min(g.rows,Math.ceil((r[1]+r[3])/g.cs));y++)for(let x=Math.max(0,Math.floor(r[0]/g.cs));x<Math.min(g.cols,Math.ceil((r[0]+r[2])/g.cs));x++)d[y*g.cols+x]=1;}
    s.navGR.nd=mkNd({...g,d});s.navGR.flow=new Map();s.navGR.flowQueue=null;
    // Rebuild stair endpoints against the runtime navigation mask, without
    // changing the static render grid or mutating the published map.
    if(g.links?.length){s.navGR.links=structuredClone(g.links);try{s.navGR.linkEdges=mapLinkGraph(s.navGR,s.navGR.nd);}catch{s.navGR.links=g.links;s.navGR.linkEdges=g.linkEdges;}}
    GR=s.navGR;
-  }else{buildNav();if(NV){const n=NV;for(const b of s.items)if(b.hp>0){const r=b.rect;for(let y=Math.max(0,Math.floor((r[1]-R)/n.cs));y<Math.min(n.rows,Math.ceil((r[1]+r[3]+R)/n.cs));y++)for(let x=Math.max(0,Math.floor((r[0]-R)/n.cs));x<Math.min(n.cols,Math.ceil((r[0]+r[2]+R)/n.cs));x++)n.d[y*n.cols+x]=1;}n.flow=new Map();}}
+  }else{buildNav();if(NV){const n=NV;for(const r of geometry){for(let y=Math.max(0,Math.floor((r[1]-R)/n.cs));y<Math.min(n.rows,Math.ceil((r[1]+r[3]+R)/n.cs));y++)for(let x=Math.max(0,Math.floor((r[0]-R)/n.cs));x<Math.min(n.cols,Math.ceil((r[0]+r[2]+R)/n.cs));x++)n.d[y*n.cols+x]=1;}n.flow=new Map();}}
   for(const p of G.ps||[]){p.pth=null;p.npt=0;p._breakTarget=null;p._breakAim=null;}
  }
  function attach(){const s=state;if(!s?.items.length)return;walls=walls.filter(w=>!w.szBreakable);for(const b of s.items)if(b.hp>0){const r=b.rect.slice();r.szBreakable=b.id;walls.push(r);}s.wallList=walls;}
  function reset(){const s=state;if(!s||G?.client)return;s.epoch++;s.round=roundKey(G);s.items.forEach(b=>b.hp=b.maxHP);rebuild();for(const p of G.ps||[])if(p.alive&&s.items.some(b=>b.hp>0&&Math.abs(p.x-center(b).x)<b.rect[2]/2+R&&Math.abs(p.y-center(b).y)<b.rect[3]/2+R))unstick(p);}
  function ensure(){if(!G){release();return null;}if(!state||state.game!==G||state.map!==sel.map){release();const defs=root.SzCoreMaps.breakablesAt(sel.map);state={game:G,map:sel.map,round:roundKey(G),epoch:1,synced:false,items:defs.map(b=>({...b,maxHP:b.hp})),baseGR:GR,navGR:null,wallList:walls};if(defs.length)rebuild();}
-  else{if(state.items.length&&GR!==state.navGR)rebuild();else if(state.items.length&&walls!==state.wallList)attach();if(!G.client&&G.ph!=='end'&&state.round!==roundKey(G))reset();}return state;
+  else{const dynamic=state.items.length||root.SzDoors?.collisionRects().length;if(dynamic&&GR!==state.navGR)rebuild();else if(dynamic&&walls!==state.wallList)attach();if(!G.client&&G.ph!=='end'&&state.round!==roundKey(G))reset();}return state;
  }
  function playBreak(b){const p=center(b);snd(b.material==='wood'?'breakWood':'breakVent',p.x,p.y);}
  function damage(b,amount){if(!b||b.hp<=0||!Number.isFinite(amount)||amount<=0||G?.client||G?.paused||G?.over||G?.ph!=='live')return;const before=b.hp;b.hp=Math.max(0,b.hp-amount);if(before>0&&!b.hp){playBreak(b);rebuild();}}
@@ -57,5 +58,5 @@
  const send=netSend;netSend=function(m){const s=ensure();if(s&&G&&!G.client&&m.t==='snap'&&s.items.length)m={...m,breakables:{round:s.epoch,hp:s.items.map(b=>Math.ceil(b.hp))}};return send(m);};
  const receive=netRecv;netRecv=function(m){const r=receive(m);if(m?.t==='start')ensure();return r;};
  const apply=applySnap;applySnap=function(m){const valid=G?.client&&m.sid===NET.session,r=apply(m);if(!valid)return r;const s=ensure(),wire=m.breakables;if(!G?.client||!s?.items.length||!wire||!Number.isSafeInteger(wire.round)||wire.round<1||!Array.isArray(wire.hp)||wire.hp.length!==s.items.length||wire.hp.some((hp,i)=>!Number.isInteger(hp)||hp<0||hp>s.items[i].maxHP))return r;const same=s.synced&&s.epoch===wire.round;let changed=false;for(let i=0;i<s.items.length;i++){const b=s.items[i],hp=wire.hp[i];if(same&&b.hp>0&&hp===0)playBreak(b);if((b.hp>0)!==(hp>0))changed=true;b.hp=hp;}s.epoch=wire.round;s.synced=true;if(changed)rebuild();else attach();return r;};
- root.SzBreakables={shot,drawPlan,status:()=>state?{map:state.map,round:state.epoch,items:state.items.map(b=>({id:b.id,material:b.material,hp:b.hp,maxHP:b.maxHP,rect:b.rect.slice()})),textures:textures.size}:null};
+ root.SzBreakables={shot,drawPlan,rebuild,ensure,tick(dt){ensure();fireTick(dt);},status:()=>state?{map:state.map,round:state.epoch,items:state.items.map(b=>({id:b.id,material:b.material,hp:b.hp,maxHP:b.maxHP,rect:b.rect.slice()})),textures:textures.size}:null};
 })(globalThis);
