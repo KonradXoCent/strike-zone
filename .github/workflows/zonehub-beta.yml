@@ -26,6 +26,15 @@ jobs:
         run: npm run test:platform
       - name: Test live catalog arrival, independent game updates and account handoffs
         run: npm run test:platform-ui
+      - name: Verify actual public Strike Zone download and redirects
+        run: node scripts/zone-hub-live-smoke.cjs
+      - name: Test Royale progression, inventory privacy and server matchmaking
+        run: node --test tests/royale*.test.cjs
+      - name: Verify Royale party matches, public squads and appearance
+        run: |
+          npm run test:royale
+          node scripts/royale-squads-smoke.cjs
+          node scripts/royale-view-smoke.cjs
       - name: Build the lightweight platform and separate game packages
         run: npm run dist:platform
       - name: Verify both actual Windows game packages
