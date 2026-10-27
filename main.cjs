@@ -74,7 +74,7 @@ function protectWindow(win, expectedUrl) {
 function createLauncher() {
   launcher = new BrowserWindow({ ...launcherBounds(screen.getDisplayNearestPoint(screen.getCursorScreenPoint()).workArea),
     title: 'Strike Zone 2D — Launcher', titleBarStyle: 'hidden', backgroundColor: '#101418',
-    icon: path.join(root, 'assets/icon.png'), show: false,
+    icon: path.join(root,royaleStandalone?'assets/royale-icon.png':'assets/icon.png'), show: false,
     webPreferences: { preload: path.join(root, 'preload.cjs'), contextIsolation: true,
       nodeIntegration: false, sandbox: true, webSecurity: true, spellcheck: false }
   });
@@ -96,7 +96,7 @@ async function openGame() {
   game = new BrowserWindow({ width: 1440, height: 900, minWidth: 960, minHeight: 640,
     fullscreen: startFullscreen,
     title: productName, backgroundColor: '#10141b', autoHideMenuBar: true,
-    icon: path.join(root, 'assets/icon.png'), show: false,
+    icon: path.join(root,royaleStandalone?'assets/royale-icon.png':'assets/icon.png'), show: false,
     webPreferences: { preload: path.join(root, 'game-preload.cjs'), contextIsolation: true,
       nodeIntegration: false, sandbox: true, webSecurity: true, spellcheck: false,
       backgroundThrottling: false }
