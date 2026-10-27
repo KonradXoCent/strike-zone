@@ -24,3 +24,6 @@ vendor/
 /dist-royale/
 /platform/zonehub-royale-seed.json
 /game/royale.html
+
+assets/royale-icon.png
+assets/royale-icon.ico
