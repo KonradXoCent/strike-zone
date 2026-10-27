@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
 const root=path.resolve(__dirname,'..'),repo=process.env.GITHUB_REPOSITORY||'KonradXoCent/strike-zone',version=require('../platform/package.json').version,target=process.env.GITHUB_SHA;
 const gh=(args)=>execFileSync('gh',args,{cwd:root,encoding:'utf8',maxBuffer:16*1024*1024,stdio:['ignore','pipe','pipe']});
 const hash=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
-function get(tag){try{return JSON.parse(gh(['api',`repos/${repo}/releases/tags/${tag}`]));}catch(e){if(String(e.stderr).includes('404'))return null;throw e;}}
+function get(tag){try{return JSON.parse(gh(['api',`repos/${repo}/releases/tags/${tag}`]));}catch(e){if(String(e.stderr).includes('404'))return JSON.parse(gh(['api',`repos/${repo}/releases?per_page=100`])).find(r=>r.tag_name===tag)||null;throw e;}}
 function ensure(tag,title,notes){let release=get(tag);if(!release){assert(target,'GITHUB_SHA required');const file=root+'/dist-platform/release-notes-'+tag+'.md';fs.writeFileSync(file,notes);gh(['release','create',tag,'--repo',repo,'--target',target,'--draft','--prerelease','--title',title,'--notes-file',file]);release=get(tag);}return release;}
 function upload(release,files){for(const file of files){const name=path.basename(file),existing=release.assets.find(a=>a.name===name);if(existing&&!release.draft){assert.equal(existing.digest,'sha256:'+hash(file),'Published asset differs: '+name);continue;}gh(['release','upload',release.tag_name,file,'--repo',repo,...(release.draft?['--clobber']:[])]);}}
 function publish(release){if(release.draft)gh(['api','--method','PATCH',`repos/${repo}/releases/${release.id}`,'-F','draft=false','-F','prerelease=true','-f','make_latest=false']);}
