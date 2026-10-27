@@ -14,4 +14,6 @@ Zone Hub passes the verified session through the existing authenticated Windows 
 - `npm run test:platform-ui` checks password recovery, both library games, friends, private/public inventories, two-client atomic trades and secure account handoff into both games.
 - `node scripts/zone-hub-install-smoke.cjs --bundled` installs and opens each actual bundled ASAR archive inside Electron after packaging. Ordinary Node tests cannot reproduce Electron's ASAR filesystem interception.
 
+`node scripts/zone-hub-install-smoke.cjs --bundled --live-feed` optionally repeats the full temporary installation against the real public GitHub release feed, without accessing any player account. The normal CI fixture stays deterministic. Public release lists have a separate bounded size allowance from small package manifests.
+
 These are controlled integration checks, not a measurement of Internet latency or a large-player load test. This is an unpublished beta; the existing live Strike Zone release remains unchanged.
