@@ -1,6 +1,6 @@
 'use strict';
 const {app,BrowserWindow,ipcMain,protocol,net,Menu,session,safeStorage,screen}=require('electron'),fs=require('node:fs'),path=require('node:path'),{pathToFileURL}=require('node:url'),crypto=require('node:crypto');
-const {AccountController}=require('../core/account.cjs'),{FriendsController}=require('../core/friends.cjs'),{createAuthStorage}=require('../core/auth-storage.cjs'),{PasswordRecovery}=require('../core/password-recovery.cjs'),{Packages}=require('./core/packages.cjs'),{ManagedGame}=require('./core/game.cjs'),{HubUpdates}=require('./core/updates.cjs'),catalog=require('./core/catalog.cjs');
+const {AccountController}=require('../core/account.cjs'),{FriendsController}=require('../core/friends.cjs'),{createAuthStorage}=require('../core/auth-storage.cjs'),{PasswordRecovery}=require('../core/password-recovery.cjs'),{Packages}=require('./core/packages.cjs'),{ManagedGame}=require('./core/game.cjs'),{HubUpdates}=require('./core/updates.cjs'),catalog=require('./core/catalog.cjs'),packageFetch=require('./core/network.cjs').createNetFetch(net);
 const ROOT=path.join(__dirname,'..'),UI_URL='zonehub://app/platform/ui/index.html',VERSION=require('./package.json').version;
 app.setName('Zone Hub');app.setAppUserModelId('pl.konradxocent.zonehub');app.setPath('userData',path.join(app.getPath('appData'),'ZoneHub'));protocol.registerSchemesAsPrivileged([{scheme:'zonehub',privileges:{standard:true,secure:true,supportFetchAPI:true,corsEnabled:true}}]);
 let win,account,friends,client,hubUpdates,recovery,home=null,trades=[],accountId=null,epoch=0,run=null,heartbeat=null,communityTimer=null,quitting=false,authStarted=false,error=null,selectedGame='strike-zone';
@@ -16,7 +16,7 @@ function wireRuntime(id,r){r.packages.on('state',publish);r.managed.on('state',s
 function registerGame(spec,check=false){
  const previous=runtimes.get(spec.id);if(previous){previous.spec.title=spec.title;const keys=['executable','manifestName','releasePrefix'];if(keys.every(k=>previous.spec[k]===spec[k])||previous.packages.busy||previous.managed.child||previous.managed.starting)return;previous.spec=spec;Object.assign(previous.packages,{executableName:spec.executable,manifestName:spec.manifestName,releasePrefix:spec.releasePrefix,catalog:null});previous.packages.patch({checked:false});previous.packages.check();return;}
  const resources=app.isPackaged?process.resourcesPath:ROOT;let seed=null;if(spec.seed)try{seed=JSON.parse(fs.readFileSync(path.join(app.isPackaged?resources:__dirname,spec.seed),'utf8'));}catch{}
- const packages=new Packages({root:path.join(app.getPath('userData'),'games',spec.id),seed,resources,game:spec.id,executable:spec.executable,manifestName:spec.manifestName,releasePrefix:spec.releasePrefix,fetch:(u,o)=>net.fetch(u,o)}),managed=new ManagedGame({packages,account,getPreferences:()=>preferences}),r={spec,packages,managed,wasReady:false};runtimes.set(spec.id,r);wireRuntime(spec.id,r);if(check)packages.check();
+ const packages=new Packages({root:path.join(app.getPath('userData'),'games',spec.id),seed,resources,game:spec.id,executable:spec.executable,manifestName:spec.manifestName,releasePrefix:spec.releasePrefix,fetch:packageFetch}),managed=new ManagedGame({packages,account,getPreferences:()=>preferences}),r={spec,packages,managed,wasReady:false};runtimes.set(spec.id,r);wireRuntime(spec.id,r);if(check)packages.check();
 }
 function syncCatalog(rows){for(const row of Array.isArray(rows)?rows:[]){const spec=catalog.resolveRecord(row);if(spec)registerGame(spec,true);}}
 
@@ -39,6 +39,7 @@ async function command(action,args={}){
  if(['trade_create','trade_pick','trade_confirm','trade_cancel'].includes(action)){const result=await rpc(action,args);if(result.status==='completed')inventory();await refresh();return result;}
  if(['edit_profile','comment','delete_comment','add_game'].includes(action)){await rpc(action,args);await refresh();return snapshot();}
  const id=args.game_id||selectedGame,current=active(id);
+ if(action==='check-game'){await current.packages.check();return snapshot();}
  if(action==='install'){if(!home?.library?.some(g=>g.game_id===id))throw Error('HUB_LIBRARY');current.packages.install().catch(e=>{error=e.message;publish();});return snapshot();}
  if(action==='cancel'){current.packages.cancel();return snapshot();}if(action==='uninstall'){await current.packages.uninstall();return snapshot();}
  if(action==='play'){if(!home?.library?.some(g=>g.game_id===id))throw Error('HUB_LIBRARY');if([...runtimes].some(([key,r])=>key!==id&&(r.managed.child||r.managed.starting)))throw Error('HUB_GAME_RUNNING');await current.managed.start();return snapshot();}
