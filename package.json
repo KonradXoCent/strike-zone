@@ -48,7 +48,13 @@
     "test:objectives": "npm run prepare:game && node scripts/objective-modes-smoke.cjs",
     "test:match-presentation": "npm run prepare:game && node scripts/match-presentation-smoke.cjs",
     "test:core-maps": "node scripts/core-maps-smoke.cjs",
-    "test:unit": "node --test tests/*.test.cjs"
+    "test:unit": "node --test tests/*.test.cjs",
+    "pretest": "node scripts/ensure-generated.cjs",
+    "start:platform": "electron platform/main.cjs",
+    "dist:platform": "node scripts/ensure-generated.cjs && npm run prepare:game && node scripts/build-platform.cjs",
+    "dist:managed": "npm run prepare:game && node scripts/build-managed.cjs",
+    "test:platform": "node --test tests/zone-hub*.test.cjs",
+    "test:platform-ui": "node scripts/zone-hub-smoke.cjs && node scripts/zone-hub-handoff-smoke.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",

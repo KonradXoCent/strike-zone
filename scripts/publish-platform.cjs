@@ -1,0 +1,3 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),{execFileSync}=require('node:child_process'),root=path.join(__dirname,'..'),version=require('../platform/package.json').version,tag='zonehub-v'+version;
+if(!/^\d+\.\d+\.\d+$/.test(version))throw Error('Invalid version');const files=['ZoneHub-Beta-'+version+'.exe','ZoneHub-Beta-'+version+'.exe.blockmap','zonehub.yml'].map(n=>path.join(root,'dist-platform',n));for(const f of files)if(!fs.existsSync(f))throw Error('Build Zone Hub first: '+path.basename(f));execFileSync('gh',['release','create',tag,...files,'--repo','KonradXoCent/strike-zone','--title','Zone Hub Beta '+version,'--notes-file','platform/RELEASE_NOTES.md','--prerelease','--latest=false'],{cwd:root,stdio:'inherit'});

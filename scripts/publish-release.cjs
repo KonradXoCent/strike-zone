@@ -13,7 +13,7 @@ let exists = false;
 try { gh(['release', 'view', tag, '--repo', repo], { stdio: 'ignore' }); exists = true; } catch {}
 if (!exists) gh(['release', 'create', tag, '--repo', repo, '--draft', '--target', process.env.GITHUB_SHA,
   '--title', title, '--notes-file', 'RELEASE_NOTES.md']);
-const names = [`StrikeZone-Setup-${version}.exe`, `StrikeZone-Setup-${version}.exe.blockmap`, 'latest.yml'];
+const names = [`StrikeZone-Setup-${version}.exe`, `StrikeZone-Setup-${version}.exe.blockmap`, 'latest.yml', `StrikeZone-Platform-${version}.zip`, 'zonehub-game-manifest.json'];
 for (const name of names) {
   const file = path.join(root, 'release', name);
   if (!fs.existsSync(file)) throw new Error('Missing release artifact ' + name);

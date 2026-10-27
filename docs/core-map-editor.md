@@ -61,3 +61,7 @@ and an in-memory packet bus. It covers all 34 native layouts and their copies,
 edits, publication, frozen revisions, cold joins, minigame transitions, bot
 state, destruction, distinct audio graphs and refresh before loading. It makes
 no writes to live accounts or the public map catalog.
+
+## Rotating selected elements
+
+Use **R** for a clockwise 90° turn and **Shift+R** for a counterclockwise turn, or the two rotation buttons. The tools rotate native cell walls, covers, windows, spawns, sites, breakable barriers and doors. Rotation rejects overlaps and out-of-map geometry and supports undo, redo, drafts and export. Doors preserve their hinge and all four orientations through published revisions and multiplayer map snapshots.

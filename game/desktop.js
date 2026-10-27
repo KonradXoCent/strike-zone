@@ -33,6 +33,7 @@
           if (!saved.profiles || typeof saved.profiles !== 'object' || !Object.keys(saved.profiles).length) {
             throw new Error('The cloud save is invalid. Nothing was overwritten.');
           }
+          if(readOwner()===userId&&saved.zhEpoch&&saved.zhEpoch!==DB.zhEpoch)window.SzHubInventory?.apply(saved);
           if (readOwner() !== userId || (saved.ts || 0) > (DB.ts || 0)) {
             // Preserve the previous local profile for recovery before changing accounts.
             try { localStorage.setItem('sz2-before-cloud', JSON.stringify(DB)); } catch {}
@@ -78,7 +79,7 @@
       CL.msg = 'Cloud saved ' + new Date().toLocaleTimeString();
       lbPush();
       return true;
-    } catch (error) { CL.msg = 'Cloud save failed: ' + (error.message || error); return false; }
+    } catch (error) {if(await window.SzHubInventory?.recover(error))return flushAccount();CL.msg='Cloud save failed: '+(error.message||error);return false;}
   }
   async function flush() {
     if(window.szCloudEconomyLocked?.())return false;

@@ -1,6 +1,7 @@
 'use strict';
 const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('strikeZoneDesktop', {
+  onInventory: callback => { const fn=()=>callback();ipcRenderer.on('game:inventory',fn);return()=>ipcRenderer.removeListener('game:inventory',fn); },
   getPreferences: () => ipcRenderer.invoke('game:preferences'),
   setPreferences: value => ipcRenderer.invoke('game:preferences-set', value),
   getChat: () => ipcRenderer.invoke('game:chat-state'),
