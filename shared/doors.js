@@ -2,8 +2,7 @@
 (function(root){'use strict';
  let state=null;const sprites=new Map(),clamp=(n,a,b)=>Math.max(a,Math.min(b,n)),t=(pl,en)=>szLocale.language==='en'?en:pl;
  const round=()=>[G.rn||0,G.hns?.round||0,G.mg?.serial||0].join(':');
- function geometry(b,open=b.open){const r=b.rect,horizontal=r[2]>=r[3],length=Math.max(r[2],r[3]),thick=Math.min(r[2],r[3]),x=horizontal?r[0]:r[0]+r[2],y=r[1],base=horizontal?0:Math.PI/2;
-  return {x,y,length,thick,angle:base+(open?Math.PI/2:0),base,rect:!open?r.slice():horizontal?[x-thick,y,thick,length]:[x-length,y-thick,length,thick]};}
+ function geometry(b,open=b.open){const r=b.rect,degrees=b.rotation??(r[2]>=r[3]?0:90),base=degrees*Math.PI/180,length=Math.max(r[2],r[3]),thick=Math.min(r[2],r[3]),x=r[0]+([90,180].includes(degrees)?r[2]:0),y=r[1]+([180,270].includes(degrees)?r[3]:0),angle=base+(open?Math.PI/2:0),cos=Math.round(Math.cos(angle)),sin=Math.round(Math.sin(angle)),points=[[0,0],[length,0],[0,thick],[length,thick]].map(([a,z])=>[x+a*cos-z*sin,y+a*sin+z*cos]),xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);return{x,y,length,thick,angle,base,rect:!open?r.slice():[Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys)]};}
  const contains=(r,x,y)=>x>r[0]&&y>r[1]&&x<r[0]+r[2]&&y<r[1]+r[3];
  const distance=(p,r)=>Math.hypot(p.x-clamp(p.x,r[0],r[0]+r[2]),p.y-clamp(p.y,r[1],r[1]+r[3]));
  function collisionRects(){return state?.game===G&&state.map===sel.map?state.items.map(b=>geometry(b).rect):[];}
