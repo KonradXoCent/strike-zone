@@ -1,4 +1,11 @@
 (function(root){const pairs=`
+Najpierw zaznacz element do obrócenia.|Select an element to rotate first.
+Po obrocie element wychodzi poza mapę.|The rotated element would extend beyond the map.
+Brak miejsca na obrót. Usuń przeszkodę lub przesuń element.|There is no room to rotate. Move the element or erase the obstacle.
+Zarządzane przez Zone Hub|Managed by Zone Hub
+Instalacjami i wymaganymi aktualizacjami zarządza Twoja biblioteka.|Installations and required updates are handled in your library.
+Zalogowano przez Zone Hub|Signed in through Zone Hub
+Wybierz: kliknij i przeciągnij istniejący obiekt. R: obróć o 90° · Shift+R: w lewo. Delete: usuń przeszkodę. Rolka: zoom · PPM: widok. Deski i kratki odradzają się co rundę.|Select: click and drag an existing object. R: rotate 90° · Shift+R: left. Delete: erase obstacle. Wheel: zoom · RMB: pan. Boards and vents reset each round.
 Maksymalnie 96 drzwi na mapie.|A map can contain up to 96 doors.
 Nieprawidłowe drzwi.|Invalid door.
 Drzwi drewniane|Wooden door
