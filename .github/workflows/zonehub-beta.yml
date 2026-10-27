@@ -51,7 +51,7 @@ jobs:
           if-no-files-found: error
           retention-days: 90
       - name: Publish the tested beta updater and online game packages
-        if: startsWith(github.event.head_commit.message, 'release: Zone Hub beta ')
+        if: "startsWith(github.event.head_commit.message, 'release: Zone Hub beta ')"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
