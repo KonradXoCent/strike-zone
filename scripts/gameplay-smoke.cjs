@@ -22,7 +22,10 @@ fs.writeFileSync(root+'/qa-boot/main.cjs',`const {app,BrowserWindow}=require('el
  const network=[];
  for(const mode of ['tdm','classic','ctf','dm','gungame','retake','br','zombie','coop','snipers','deagle','pistols','shotguns','knife']){
   if(!await guest.evaluate(()=>!!L)){await guest.evaluate(c=>mkLobby(c),code);await host.waitForFunction(()=>lobPeers().length===2);}
-  await host.evaluate(mode=>{sel.mode=mode;sel.map=mode==='br'?6:mode==='zombie'?9:2;sel.comp=false;L.team='CT';},mode);await host.evaluate(()=>lobStart());await guest.waitForFunction(()=>G?.client&&G.ps.some(p=>p.human)&&!G.netWaiting,{timeout:15000});await guest.locator('.sz-guest-team [data-skip]').click();await guest.waitForFunction(()=>!G.guestPresentation&&!G.paused);
+  await host.evaluate(mode=>{sel.mode=mode;sel.map=mode==='br'?6:mode==='zombie'?9:2;sel.comp=false;L.team='CT';},mode);await host.evaluate(()=>lobStart());await guest.waitForFunction(()=>G?.client&&G.ps.some(p=>p.human)&&!G.netWaiting,{timeout:15000});// The presentation also completes on its timer. A slow snapshot/paint can
+  // finish that timer between the visible check and Playwright's click.
+  if(await guest.evaluate(()=>!!G.guestPresentation))try{await guest.locator('.sz-guest-team [data-skip]').click({timeout:1500});}catch(error){if(!await guest.evaluate(()=>!!G&&!G.guestPresentation&&!G.paused))throw error;}
+  await guest.waitForFunction(()=>!!G&&!G.guestPresentation&&!G.paused);
   const hs=await host.evaluate(()=>({mode:sel.mode,sid:NET.session,count:G.ps.length,remote:G.ps.filter(p=>p.rh).map(p=>({rid:p.rid,team:p.team}))}));const gs=await guest.evaluate(()=>({mode:sel.mode,sid:NET.session,count:G.ps.length,me:G.me.rid,host:G.ps.find(p=>p.rid===NET.hostCid)?.rname,alive:G.me.alive}));assert.equal(gs.mode,mode);assert.equal(gs.sid,hs.sid);assert.equal(gs.count,hs.count);assert.equal(hs.remote.length,1);assert.equal(gs.me,await guest.evaluate(()=>NET.cid));
   if(mode==='classic'){const old=gs.sid;await host.evaluate(()=>{sel.map=13;begin0();if(G.intro)skipIntro();});await guest.waitForFunction(old=>G?.client&&NET.session!==old&&sel.map===13,old);assert.equal(await guest.evaluate(()=>GR===GRS[13]),true);console.log('PASS next map shares a new session');}
   if(mode==='br'){
