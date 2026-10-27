@@ -1,0 +1,2 @@
+'use strict';
+const {contextBridge,ipcRenderer}=require('electron');contextBridge.exposeInMainWorld('zoneHub',{state:()=>ipcRenderer.invoke('hub:state'),command:async(action,args={})=>{const r=await ipcRenderer.invoke('hub:command',action,args);if(!r.ok)throw Error(r.error);return r.value;},onState:cb=>{const fn=(_e,s)=>cb(s);ipcRenderer.on('hub:state',fn);return()=>ipcRenderer.removeListener('hub:state',fn);}});

@@ -97,12 +97,16 @@ jobs:
       - name: Build current Windows installer
         if: ${{ !startsWith(github.event.head_commit.message, 'test:') }}
         run: npm run dist:win
+      - name: Build the platform-managed game package
+        if: ${{ !startsWith(github.event.head_commit.message, 'test:') }}
+        run: npm run dist:managed
       - name: Stage current release artifacts
         if: ${{ !startsWith(github.event.head_commit.message, 'test:') }}
         shell: pwsh
         run: |
           New-Item release -ItemType Directory -Force | Out-Null
           Copy-Item dist/*.exe, dist/*.blockmap, dist/latest.yml release/
+          Copy-Item dist-managed/StrikeZone-Platform-*.zip, dist-managed/zonehub-game-manifest.json release/
       - name: Publish release
         if: ${{ !startsWith(github.event.head_commit.message, 'test:') }}
         env:

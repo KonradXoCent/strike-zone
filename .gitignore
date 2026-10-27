@@ -16,3 +16,7 @@ vendor/
 /scripts/test-support/core-maps/preload-fixture.html
 
 /node_modules
+
+/dist-platform/
+/dist-managed/
+/platform/zonehub-seed.json
