@@ -1,0 +1,59 @@
+name: Zone Hub update verification and beta channel
+on:
+  push:
+    branches: [feature/zonehub-online-updates]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: zonehub-beta
+  cancel-in-progress: true
+jobs:
+  platform:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/ensure-generated.cjs
+      - run: npm run prepare:game
+      - name: Test remote catalog, mandatory game updates, privacy and trade rules
+        run: npm run test:platform
+      - name: Test live catalog arrival, independent game updates and account handoffs
+        run: npm run test:platform-ui
+      - name: Build the lightweight platform and separate game packages
+        run: npm run dist:platform
+      - name: Verify both actual Windows game packages
+        run: node scripts/zone-hub-install-smoke.cjs --bundled
+      - uses: actions/download-artifact@v7
+        with:
+          name: Zone-Hub-Beta
+          run-id: 40536550230
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: previous-platform
+      - name: Test the installed 0.1.1 self-update, login and game preservation
+        run: node scripts/zone-hub-windows-update-smoke.cjs
+      - name: Validate every file before beta publication
+        run: node scripts/publish-zonehub.cjs --verify-only
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: Zone-Hub-Online-Update
+          path: |
+            dist-platform/ZoneHub-Beta-*.exe
+            dist-platform/*.blockmap
+            dist-platform/zonehub.yml
+            dist-platform/installed-update-report.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Publish the tested beta updater and online game packages
+        if: startsWith(github.event.head_commit.message, 'release: Zone Hub beta ')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: node scripts/publish-zonehub.cjs
