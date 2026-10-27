@@ -35,10 +35,10 @@ jobs:
             git push origin HEAD:feature/rotation-zonehub
           }
 
-      - run: npm test
-      - run: npm run check:ui
       - name: Test Zone Hub accounts, profiles, public inventories, trades and launcher handoff
         run: npm run prepare:game && npm run test:platform-ui
+      - run: npm test
+      - run: npm run check:ui
       - name: Test Zombie grenades, football safety, original Halloween music and bonus-code recovery
         run: npm run test:seasonal
       - name: Test Halloween progression, event cases, exclusive items, rendering and expiry
