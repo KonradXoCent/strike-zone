@@ -13,7 +13,7 @@ async function createChannel(){
   if(accepted||sockets.size>8){socket.destroy();return;}let pending='';socket.setTimeout(2500,()=>socket.destroy());
   const receive=chunk=>{
    pending+=chunk.toString();if(pending.length>1024){socket.destroy();return;}const at=pending.indexOf('\n');if(at<0)return;
-   let value;try{value=JSON.parse(pending.slice(0,at));}catch{socket.destroy();return;}
+   let value;try{value=JSON.parse(pending.slice(0,at));}catch{socket.destroy();return;}if(!value||typeof value!=='object'){socket.destroy();return;}
    const key=typeof value.proof==='string'?Buffer.from(value.proof):Buffer.alloc(0),expected=Buffer.from(proof);
    if(accepted||value.type!=='hello'||key.length!==expected.length||!crypto.timingSafeEqual(key,expected)){socket.destroy();return;}
    accepted=true;clearTimeout(timer);socket.setTimeout(0);socket.pause();socket.removeListener('data',receive);
