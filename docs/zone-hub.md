@@ -8,7 +8,7 @@ Zone Hub is a separate Windows application. Strike Zone 2D retains its existing 
 2. Sign in with the existing Strike Zone email and password, or register an account.
 3. Add the free Strike Zone game to the cloud library and install its verified game package.
 4. Check the game's latest published version before each launch. Mandatory updates block Play.
-5. Start the existing Strike Zone launcher. An anonymous pipe passes the verified account session; the launcher and game need no second sign-in. The parent refreshes the session, while child clients keep it in memory.
+5. Start the existing Strike Zone launcher. A private OS pipe passes the verified account session; the launcher and game need no second sign-in. The parent refreshes the session, while child clients keep it in memory.
 
 The managed game has an isolated desktop storage path, so the ordinary installed launcher and its updater retain their existing behavior. Installing game updates replaces only the managed game package. Profiles and cloud saves are retained by uninstalling the game.
 
@@ -26,7 +26,7 @@ No paid checkout, payment processor, third-party title or invented game is inclu
 
 - `npm ci`
 - `npm test` and `npm run check:ui`
-- `npm run prepare:game && npm run test:platform-ui` exercises real desktop sign-in, public/private inventories, two clients trading against PostgreSQL rules, and game handoff over inherited pipes.
+- `npm run prepare:game && npm run test:platform-ui` exercises real desktop sign-in, public/private inventories, two clients trading against PostgreSQL rules, and game handoff over private OS pipes.
 - `npm run dist:platform` builds `dist-platform/ZoneHub-Beta-0.1.0.exe`, including a seed game package for testing before the new game release is public.
 - Database source: `database/zone-hub.sql`, `zone-hub-achievements.sql`, `zone-hub-community.sql`, and `zone-hub-items.sql`.
 
