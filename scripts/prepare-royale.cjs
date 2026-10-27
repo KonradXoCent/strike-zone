@@ -5,7 +5,7 @@ function decorate(html,{inline=false}={}){
  html=html.replace(/<title>[^<]*<\/title>/,'<title>Zone Royale · Battle Royale</title>');
  const css=inline?'<style>'+royaleCSS()+'</style>':'<link rel="stylesheet" href="./royale.css">';
  const js0=inline?'<script>'+fs.readFileSync(path.join(root,'game/royale.js'),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'<script src="./royale.js"></script>';
- const additions=['../shared/royale-data.js','royale-visuals.js','royale-expansion.js'];const tag=file=>inline?'<script>'+fs.readFileSync(path.join(root,'game',file),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'<script src=\"'+(file.startsWith('../')?file:'./'+file)+'\"></script>';const js=additions.slice(0,2).map(tag).join('')+js0+tag(additions[2]);
+ const additions=['../shared/royale-data.js','royale-visuals.js','royale-expansion.js'];const tag=file=>inline?'<script>'+fs.readFileSync(path.join(root,'game',file),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'<script src=\"'+(file.startsWith('../')?file:'./'+file)+'\"></script>';const js=additions.slice(0,2).map(tag).join('')+js0+tag(additions[2])+tag('royale-matchmaking.js');
  html=html.replace('</head>',()=>css+'<script>window.SZ_ROYALE=true;</script></head>');
  // In squad modes allies do not count as threats while scavenging or healing.
  html=html.replaceAll('e!==p&&e.alive&&!e.ap','e!==p&&e.team!==p.team&&e.alive&&!e.ap');
