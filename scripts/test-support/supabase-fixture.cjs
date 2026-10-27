@@ -3,7 +3,7 @@ const http = require('node:http');
 const { randomUUID } = require('node:crypto');
 const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jM5kAAAAASUVORK5CYII=';
 async function startFixture({ friends = [], profiles = [], userId = randomUUID(), chatRPC = null, bonusRPC = null, friendsRPC = null, friendsRead = null, hubRPC = null } = {}) {
-  const users = new Map(), saves = new Map(), writes = [];
+  const users = new Map(), saves = new Map(), writes = [], recoveries=[];
   const email = 'desktop-smoke@example.test', password = 'SmokePass123!';
   const user = { id: userId, email, aud: 'authenticated', role: 'authenticated', email_confirmed_at: new Date().toISOString(), user_metadata: { nickname: 'KonradQA' }, app_metadata: { provider: 'email' }, identities: [] };
   users.set(email, user);
@@ -30,6 +30,7 @@ async function startFixture({ friends = [], profiles = [], userId = randomUUID()
         if (refreshUser) value = session(refreshUser); else { status = 400; value = { msg: 'Invalid refresh token' }; }
       } else if (found && data.password === password) value = session(found);
       else { status = 400; value = { code: 'invalid_credentials', msg: 'Invalid login credentials' }; }
+    } else if (u.pathname.endsWith('/recover')) { recoveries.push({email:data.email,redirectTo:u.searchParams.get('redirect_to')});value={};
     } else if (u.pathname.endsWith('/user')) {
       if (actor) value = actor; else { status = 401; value = { msg: 'Invalid token' }; }
     } else if (u.pathname.endsWith('/signup')) {
@@ -49,7 +50,7 @@ async function startFixture({ friends = [], profiles = [], userId = randomUUID()
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   // Chromium may preconnect without sending HTTP headers. Such sockets survive
   // server.close() and otherwise leave GUI checks waiting indefinitely at cleanup.
-  return { base: 'http://127.0.0.1:' + server.address().port, request, user, users, email, password, writes, saves, close: () => new Promise(resolve => { server.close(resolve); server.closeAllConnections(); }) };
+  return { base: 'http://127.0.0.1:' + server.address().port, request, user, users, email, password, writes, saves, recoveries, close: () => new Promise(resolve => { server.close(resolve); server.closeAllConnections(); }) };
 }
 async function connectFixture(electron, fixture) {
   // Inject only through the debugger in this test, never via a production flag or IPC API.

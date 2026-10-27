@@ -1,5 +1,5 @@
 'use strict';
-const fs=require('node:fs'),fsp=fs.promises,path=require('node:path'),zlib=require('node:zlib'),{pipeline}=require('node:stream/promises'),{Transform,Readable}=require('node:stream');
+const fs=require('./file-system.cjs'),fsp=fs.promises,path=require('node:path'),zlib=require('node:zlib'),{pipeline}=require('node:stream/promises'),{Transform,Readable}=require('node:stream');
 const crcTable=Array.from({length:256},(_,n)=>{for(let i=0;i<8;i++)n=n&1?0xedb88320^(n>>>1):n>>>1;return n>>>0;});
 function crcStep(crc,b){for(const n of b)crc=crcTable[(crc^n)&255]^(crc>>>8);return crc;}
 function safeEntry(name){if(!name||name.length>240||/[\x00-\x1f\\:]/.test(name)||name.startsWith('/')||name.split('/').some(p=>p==='..'||p==='.'||/[. ]$/.test(p)||/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\.|$)/i.test(p)))throw Error('PACKAGE_PATH');return name;}

@@ -30,4 +30,5 @@ html = html.replace('</body>', '<script src="./desktop.js"></script><script src=
 fs.writeFileSync(path.join(root, 'game/index.html'), html);
 fs.copyFileSync(path.join(root, 'node_modules/@supabase/supabase-js/LICENSE'), path.join(root, 'vendor/SUPABASE-LICENSE.txt'));
 fs.writeFileSync(path.join(root, 'game/source-sha256.txt'), crypto.createHash('sha256').update(source).digest('hex') + '\n');
+require('./prepare-royale.cjs').prepare();
 console.log('Gra przygotowana. Supabase SDK 2.45.4 dołączone lokalnie.');

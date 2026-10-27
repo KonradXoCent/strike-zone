@@ -20,3 +20,7 @@ vendor/
 /dist-platform/
 /dist-managed/
 /platform/zonehub-seed.json
+
+/dist-royale/
+/platform/zonehub-royale-seed.json
+/game/royale.html

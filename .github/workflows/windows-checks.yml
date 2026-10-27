@@ -37,6 +37,10 @@ jobs:
 
       - name: Test Zone Hub accounts, profiles, public inventories, trades and launcher handoff
         run: npm run prepare:game && npm run test:platform-ui
+      - name: Test Zone Royale islands, wardrobe, ready checks and shared BR simulation
+        run: npm run test:royale
+      - name: Test gameplay, guest presentations and shared match input
+        run: npm run test:gameplay
       - run: npm test
       - run: npm run check:ui
       - name: Test Zombie grenades, football safety, original Halloween music and bonus-code recovery
@@ -79,7 +83,6 @@ jobs:
       - name: Test Workshop submissions, shared lobbies and skin ownership
         run: npm run test:community
       - run: npm run test:social
-      - run: npm run test:gameplay
       - name: Test standalone sign-in and cloud persistence of owned team loadouts
         run: npm run test:preview
       - name: Build standalone HTML test preview
@@ -103,6 +106,8 @@ jobs:
 
       - name: Build Zone Hub Windows beta
         run: npm run dist:platform
+      - name: Verify both bundled games install under real Electron ASAR handling
+        run: node scripts/zone-hub-install-smoke.cjs --bundled
       - name: Upload Zone Hub Windows beta
         uses: actions/upload-artifact@v7.0.2
         with:

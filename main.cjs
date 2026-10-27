@@ -16,11 +16,13 @@ const platformManaged=process.argv.includes('--zonehub-managed');
 const platformBridge=platformManaged?new(require('./core/platform-bridge.cjs').PlatformBridge)():null;
 if(require('./package.json').platformOnly===true&&!platformManaged)app.exit(1);
 const desktopTest = require('./package.json').desktopTest === true;
+const royaleStandalone=require('./package.json').brStandalone===true;
+const productName=royaleStandalone?'Zone Royale':'Strike Zone 2D';
 
-app.setName('Strike Zone 2D');
-app.setAppUserModelId('pl.konradxocent.strikezone.desktop' + (platformManaged?'.zonehub':desktopTest?'.test':''));
+app.setName(productName);
+app.setAppUserModelId((royaleStandalone?'pl.konradxocent.zoneroyale':'pl.konradxocent.strikezone.desktop') + (platformManaged?'.zonehub':desktopTest?'.test':''));
 // Keep this path and the strikezone://app origin unchanged between releases.
-app.setPath('userData', path.join(app.getPath('appData'), platformManaged?'StrikeZone2D-Managed':desktopTest?'StrikeZone2D-Test':'StrikeZone2D'));
+app.setPath('userData', path.join(app.getPath('appData'), royaleStandalone?'ZoneRoyale-Managed':platformManaged?'StrikeZone2D-Managed':desktopTest?'StrikeZone2D-Test':'StrikeZone2D'));
 protocol.registerSchemesAsPrivileged([{ scheme: 'strikezone', privileges: {
   standard: true, secure: true, supportFetchAPI: true, corsEnabled: true
 } }]);
@@ -37,7 +39,7 @@ let backend = { phase: 'checking' };
 let configError = false;
 const root = __dirname;
 const LAUNCHER_URL = 'strikezone://app/launcher/index.html';
-const GAME_URL = 'strikezone://app/game/index.html';
+const GAME_URL = 'strikezone://app/game/'+(royaleStandalone?'royale.html':'index.html');
 const gameSource = fs.readFileSync(path.join(root, 'game/index.html'), 'utf8');
 const supabaseUrl = gameSource.match(/const SB_URL='(https:\/\/[a-z0-9]+\.supabase\.co)'/)?.[1];
 const supabaseKey = gameSource.match(/SB_KEY='([^']+)'/)?.[1];
@@ -77,7 +79,7 @@ function createLauncher() {
       nodeIntegration: false, sandbox: true, webSecurity: true, spellcheck: false }
   });
   protectWindow(launcher, LAUNCHER_URL);
-  launcher.once('ready-to-show', () => launcher.show());
+  launcher.once('ready-to-show', () => {if(!royaleStandalone)launcher.show();});
   launcher.webContents.on('did-finish-load', () => { broadcast(); checkBackend(); controller.check(); });
   launcher.on('closed', () => { launcher = null; if (game) closeGame().finally(() => app.quit()); });
   launcher.loadURL(LAUNCHER_URL);
@@ -93,7 +95,7 @@ async function openGame() {
   const startFullscreen = prefs.get().fullscreen;
   game = new BrowserWindow({ width: 1440, height: 900, minWidth: 960, minHeight: 640,
     fullscreen: startFullscreen,
-    title: 'Strike Zone 2D', backgroundColor: '#10141b', autoHideMenuBar: true,
+    title: productName, backgroundColor: '#10141b', autoHideMenuBar: true,
     icon: path.join(root, 'assets/icon.png'), show: false,
     webPreferences: { preload: path.join(root, 'game-preload.cjs'), contextIsolation: true,
       nodeIntegration: false, sandbox: true, webSecurity: true, spellcheck: false,
@@ -109,7 +111,7 @@ async function openGame() {
     if (input.control && input.shift && input.key.toLowerCase() === 'l') { event.preventDefault(); closeGame(); }
   });
   win.on('close', event => { if (!win.__mayClose) { event.preventDefault(); closeGame(); } });
-  win.on('closed', () => { game = null;platformBridge?.send('game',{running:false});friends.setGameRunning(false); friends.refresh(); launcher?.show(); launcher?.focus(); broadcast(); controller.check(); });
+  win.on('closed', () => { game = null;platformBridge?.send('game',{running:false});friends.setGameRunning(false); friends.refresh();if(royaleStandalone){app.quit();return;}launcher?.show();launcher?.focus();broadcast();controller.check(); });
   win.loadURL(GAME_URL);
   broadcast();
   return snapshot();
@@ -216,7 +218,7 @@ else {
       platformBridge.on('preferences',p=>{const next=prefs.set({language:p.language==='en'?'en':'pl',fullscreen:p.fullscreen===true});toBoth('preferences:state',next);broadcast();});
       platformBridge.on('logout',()=>closeGame().finally(()=>app.quit()));platformBridge.on('disconnect',()=>closeGame().finally(()=>app.quit()));platformBridge.send('ready',{userId:account.snapshot().user.id});
     }
-    createLauncher();if(!platformManaged)account.init();
+    createLauncher();if(!platformManaged)account.init();if(royaleStandalone)await openGame();
     setInterval(() => { if (!game && launcher?.isVisible()) controller.check(); }, 120000).unref();
   }).catch(() => { app.exit(1); });
   app.on('window-all-closed', () => app.quit());

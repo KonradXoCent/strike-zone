@@ -35,3 +35,11 @@ No paid checkout, payment processor, third-party title or invented game is inclu
 The normal game release pipeline additionally builds `StrikeZone-Platform-VERSION.zip` and `zonehub-game-manifest.json`. The manifest pins its byte length and SHA-256. Downloaded ZIPs reject path traversal, duplicate Windows filenames, symlinks, oversized extraction and invalid CRCs. Extraction happens in staging before committing the installed-version pointer; a failed update keeps the earlier installation.
 
 Platform releases have a separate version in `platform/package.json` and tags `zonehub-vVERSION`. After approving a tested platform build, explicitly run `node scripts/publish-platform.cjs`; it uploads the NSIS installer, blockmap and `zonehub.yml` under that tag. Ordinary game releases do not change the platform application version. Never publish a beta build just to refresh the game.
+# Beta 0.1.1 additions
+
+Fixed the installation failure after a completed download: Electron's virtual ASAR filesystem intercepted writes to `resources/app.asar`. Package extraction and package bookkeeping now use `original-fs` inside Electron and ordinary Node fs in CLI tests. SHA256, CRC, path checks and staging/rollback protections remain enforced. A native regression installs a real ASAR, including both full bundled game packages after a release build.
+
+The login screen includes email password recovery. It calls Supabase `resetPasswordForEmail` without replacing the project's existing Site URL or recovery template, so the already-configured email link and reset page remain in use. Requests are throttled and the result does not disclose whether an address has an account. Automated tests use an isolated mail API; they do not email actual users.
+
+The store and library support Strike Zone 2D and the separate Zone Royale BR beta, with independent install/update/playtime states. Shared accounts and cosmetics are described in [zone-royale.md](zone-royale.md).
+
