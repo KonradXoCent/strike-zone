@@ -3,7 +3,7 @@ on:
   pull_request:
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: windows-checks-${{ github.ref }}
   cancel-in-progress: true
@@ -18,6 +18,21 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci --no-audit --no-fund
+      - name: Rebuild the embedded game and platform item atlas
+        run: node scripts/ensure-generated.cjs
+      - name: Persist generated assets on this feature branch
+        if: github.event_name == 'pull_request' && github.head_ref == 'feature/rotation-zonehub' && github.event.pull_request.head.repo.full_name == github.repository
+        shell: pwsh
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add game-source/index.html shared/locale-data.js platform/ui/items.js platform/ui/items.css platform/ui/items.webp
+          git diff --cached --quiet
+          if ($LASTEXITCODE -ne 0) {
+            git commit -m "Build embedded game and Zone Hub item atlas"
+            git push origin HEAD:feature/rotation-zonehub
+          }
+
       - run: npm test
       - run: npm run check:ui
       - name: Test Zone Hub accounts, profiles, public inventories, trades and launcher handoff

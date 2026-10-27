@@ -12,12 +12,15 @@ const { Controller: SocialController } = require('./shared/social.js');
 const { preferences } = require('./core/preferences.cjs');
 const { createAuthStorage } = require('./core/auth-storage.cjs');
 const { launcherBounds } = require('./core/window-size.cjs');
+const platformManaged=process.argv.includes('--zonehub-managed');
+const platformBridge=platformManaged?new(require('./core/platform-bridge.cjs').PlatformBridge)():null;
+if(require('./package.json').platformOnly===true&&!platformManaged)app.exit(1);
 const desktopTest = require('./package.json').desktopTest === true;
 
 app.setName('Strike Zone 2D');
-app.setAppUserModelId('pl.konradxocent.strikezone.desktop' + (desktopTest ? '.test' : ''));
+app.setAppUserModelId('pl.konradxocent.strikezone.desktop' + (platformManaged?'.zonehub':desktopTest?'.test':''));
 // Keep this path and the strikezone://app origin unchanged between releases.
-app.setPath('userData', path.join(app.getPath('appData'), desktopTest ? 'StrikeZone2D-Test' : 'StrikeZone2D'));
+app.setPath('userData', path.join(app.getPath('appData'), platformManaged?'StrikeZone2D-Managed':desktopTest?'StrikeZone2D-Test':'StrikeZone2D'));
 protocol.registerSchemesAsPrivileged([{ scheme: 'strikezone', privileges: {
   standard: true, secure: true, supportFetchAPI: true, corsEnabled: true
 } }]);
@@ -41,7 +44,7 @@ const supabaseKey = gameSource.match(/SB_KEY='([^']+)'/)?.[1];
 
 function snapshot() {
   const user = account.snapshot();
-  return { update: controller.snapshot(), account: user, friends: friends.snapshot(user.authenticated ? user.user.id : null), preferences: prefs.get(), backend, configError, gameRunning: !!game };
+  return { update: controller.snapshot(), account: user, friends: friends.snapshot(user.authenticated ? user.user.id : null), preferences: prefs.get(), backend, configError, gameRunning: !!game,platformManaged };
 }
 function broadcast() {
   if (launcher && !launcher.isDestroyed()) launcher.webContents.send('launcher:state', snapshot());
@@ -97,7 +100,7 @@ async function openGame() {
       backgroundThrottling: false }
   });
   const win = game;
-  friends.setGameRunning(true);
+  friends.setGameRunning(true);platformBridge?.send('game',{running:true});
   protectWindow(win, GAME_URL);
   win.once('ready-to-show', () => { if (startFullscreen) win.setFullScreen(true); else win.maximize(); win.show(); launcher?.hide(); broadcast(); });
   win.webContents.on('before-input-event', (event, input) => {
@@ -106,7 +109,7 @@ async function openGame() {
     if (input.control && input.shift && input.key.toLowerCase() === 'l') { event.preventDefault(); closeGame(); }
   });
   win.on('close', event => { if (!win.__mayClose) { event.preventDefault(); closeGame(); } });
-  win.on('closed', () => { game = null; friends.setGameRunning(false); friends.refresh(); launcher?.show(); launcher?.focus(); broadcast(); controller.check(); });
+  win.on('closed', () => { game = null;platformBridge?.send('game',{running:false});friends.setGameRunning(false); friends.refresh(); launcher?.show(); launcher?.focus(); broadcast(); controller.check(); });
   win.loadURL(GAME_URL);
   broadcast();
   return snapshot();
@@ -134,16 +137,17 @@ else {
     let config;
     try { config = loadConfig([path.join(root, 'updates.json')]); }
     catch { config = { enabled: false, required: true }; configError = true; }
-    if (desktopTest) { config = { enabled: false, required: false }; configError = false; }
+    if (desktopTest||platformManaged) { config = { enabled: false, required: false }; configError = false; }
     controller = new UpdateController({ updater: require('electron-updater').autoUpdater,
       config, version: app.getVersion(), packaged: app.isPackaged });
     const client = require('@supabase/supabase-js').createClient(supabaseUrl, supabaseKey, {
-      auth: { storage: createAuthStorage(path.join(app.getPath('userData'), 'account-session.json'), safeStorage),
-        storageKey: 'strikezone-desktop-account', persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
+      auth: { storage:platformManaged?undefined:createAuthStorage(path.join(app.getPath('userData'),'account-session.json'),safeStorage),
+        storageKey: 'strikezone-desktop-account', persistSession:!platformManaged,autoRefreshToken:!platformManaged, detectSessionInUrl: false },
       global: { fetch: (url, options) => net.fetch(url, { ...options, signal: options?.signal || AbortSignal.timeout(15000) }) }
     });
     account = new AccountController(client);
     friends = new FriendsController(client);
+    fs.mkdirSync(app.getPath('userData'),{recursive:true});
     prefs = preferences(path.join(app.getPath('userData'), 'desktop-preferences.json'));
     social = new SocialController(client);
     const toBoth = (channel, value) => { for (const win of [launcher, game]) if (win && !win.isDestroyed()) win.webContents.send(channel, value); };
@@ -185,9 +189,9 @@ else {
     ipcMain.handle('launcher:friends-refresh', async event => { trusted(event, LAUNCHER_URL); await friends.refresh(); return snapshot(); });
     ipcMain.handle('launcher:friend-action', async (event, action, args) => { trusted(event, LAUNCHER_URL); await friends.command(action, args); return snapshot(); });
     ipcMain.handle('launcher:play', event => { trusted(event, LAUNCHER_URL); return openGame(); });
-    ipcMain.handle('launcher:login', async (event, input) => { trusted(event, LAUNCHER_URL); if (!game) await account.credentials('signin', input); return snapshot(); });
-    ipcMain.handle('launcher:register', async (event, input) => { trusted(event, LAUNCHER_URL); if (!game) await account.credentials('signup', input); return snapshot(); });
-    ipcMain.handle('launcher:logout', async event => { trusted(event, LAUNCHER_URL); await closeGame(); await account.signOut(); return snapshot(); });
+    ipcMain.handle('launcher:login', async (event, input) => { trusted(event, LAUNCHER_URL); if(!game&&!platformManaged)await account.credentials('signin',input); return snapshot(); });
+    ipcMain.handle('launcher:register', async (event, input) => { trusted(event, LAUNCHER_URL); if(!game&&!platformManaged)await account.credentials('signup',input); return snapshot(); });
+    ipcMain.handle('launcher:logout', async event => { trusted(event, LAUNCHER_URL); await closeGame();if(platformManaged){platformBridge.send('logout-request');app.quit();}else await account.signOut();return snapshot(); });
     ipcMain.handle('launcher:check', async event => { trusted(event, LAUNCHER_URL); checkBackend(); await controller.check(); return snapshot(); });
     ipcMain.handle('launcher:download', async event => { trusted(event, LAUNCHER_URL); if (!game) await controller.download(); return snapshot(); });
     ipcMain.handle('launcher:install', event => { trusted(event, LAUNCHER_URL); if (!game) controller.install(); return snapshot(); });
@@ -205,8 +209,14 @@ else {
       ipcMain.handle(prefix + ':chat-focused', event => { trusted(event, url); return (url === GAME_URL ? game : launcher)?.isFocused() === true; });
       ipcMain.handle(prefix + ':friends', event => { trusted(event, url); const user = account.snapshot(); return friends.snapshot(user.authenticated ? user.user.id : null); });
     }
-    createLauncher();
-    account.init();
+    if(platformManaged){
+      const apply=async value=>{const old=account.snapshot().user?.id,r=await client.auth.setSession({access_token:value.access_token,refresh_token:value.refresh_token});if(r.error||!r.data?.session||old&&r.data.session.user.id!==old)throw Error('HUB_HANDOFF');await account.accept(r.data.session);if(value.preferences)prefs.set({language:value.preferences.language==='en'?'en':'pl',fullscreen:value.preferences.fullscreen===true});if(!account.snapshot().authenticated)throw Error('HUB_HANDOFF');};
+      await apply(await platformBridge.first());platformBridge.on('session',v=>apply(v).catch(()=>closeGame().finally(()=>app.quit())));
+      platformBridge.on('inventory',()=>{if(game&&!game.isDestroyed())game.webContents.send('game:inventory');});
+      platformBridge.on('preferences',p=>{const next=prefs.set({language:p.language==='en'?'en':'pl',fullscreen:p.fullscreen===true});toBoth('preferences:state',next);broadcast();});
+      platformBridge.on('logout',()=>closeGame().finally(()=>app.quit()));platformBridge.on('disconnect',()=>closeGame().finally(()=>app.quit()));platformBridge.send('ready',{userId:account.snapshot().user.id});
+    }
+    createLauncher();if(!platformManaged)account.init();
     setInterval(() => { if (!game && launcher?.isVisible()) controller.check(); }, 120000).unref();
   }).catch(() => { app.exit(1); });
   app.on('window-all-closed', () => app.quit());

@@ -85,6 +85,7 @@ function render(state) {
   const online = state.backend.phase === 'online';
   $('network-dot').className = 'dot ' + (online ? '' : 'neutral');
   $('network-label').textContent = online ? 'Usługi online osiągalne' : state.backend.phase === 'checking' ? 'Sprawdzanie usług online…' : 'Brak połączenia z usługami online';
+  if(state.platformManaged){const en=state.preferences?.language==='en';$('update-title').textContent=en?'Managed by Zone Hub':'Zarządzane przez Zone Hub';$('update-description').textContent=en?'Installations and required updates are handled in your library.':'Instalacjami i wymaganymi aktualizacjami zarządza Twoja biblioteka.';$('update-action').hidden=true;$('account-caption').textContent=en?'Signed in through Zone Hub':'Zalogowano przez Zone Hub';}
   renderFriends(state);
 }
 const modeNames = { classic: 'Rozbrajanie bomby', tdm: 'Team Deathmatch', ctf: 'Capture the Flag', br: 'Battle Royale', dm: 'Deathmatch', arms: 'Wyścig zbrojeń', wingman: 'Wingman' };

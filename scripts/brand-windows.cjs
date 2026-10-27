@@ -18,7 +18,7 @@ module.exports = async context => {
     info.setFileVersion(version[0], version[1], version[2], 0, 1033);
     info.setProductVersion(version[0], version[1], version[2], 0, 1033);
     info.setStringValues({ lang: 1033, codepage: 1200 }, {
-      FileDescription: 'Strike Zone 2D', ProductName: 'Strike Zone 2D', CompanyName: 'Konrad Xocent',
+      FileDescription:context.packager.appInfo.productName,ProductName:context.packager.appInfo.productName, CompanyName: 'Konrad Xocent',
       InternalName: executable, OriginalFilename: executable + '.exe'
     });
     info.outputToResourceEntries(resources.entries);
