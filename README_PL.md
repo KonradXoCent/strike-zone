@@ -234,3 +234,5 @@ Nowe migracje po dotychczasowym schemacie: `zone-hub-item-categories.sql`, `zone
 - Sklep: pakiet Halloween za 500 monet Strike Zone 2D. Zakup jednorazowy, osobny wybór motywu profilu i platformy.
 - Profil z tłem, odznakami, bocznym panelem i gablotą na maksymalnie 6 posiadanych skinów lub ulubioną grę. Prywatność ekwipunku obowiązuje także w gablocie.
 - Osiągnięcia każdej gry są osobno w bibliotece i na profilu.
+
+Zone Hub **0.1.8**, Zone Royale **0.1.5** i zarządzany Strike **1.5.10-zonehub.3** uzupełniają tę aktualizację o dynamicznie tłumaczony ekran wczytywania Royale oraz pełny audyt nowych tekstów PL/EN. Dotychczasowe pakiety pozostają dostępne.

@@ -1,4 +1,6 @@
 (function(root){const pairs=`
+Twoja wyspa czeka|Your island awaits
+Przygotuj się na kolejny zrzut.|Get ready for the next drop.
 Wrócisz do Zone Hub. Twój postęp zostanie zapisany.|You will return to Zone Hub. Your progress will be saved.
 Najpierw zaznacz element do obrócenia.|Select an element to rotate first.
 Po obrocie element wychodzi poza mapę.|The rotated element would extend beyond the map.

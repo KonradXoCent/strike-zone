@@ -22,6 +22,8 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: node scripts/ensure-generated.cjs
       - run: npm run prepare:game
+      - name: Audit Polish and English UI strings
+        run: npm run check:ui
       - name: Test remote catalog, mandatory game updates, privacy and trade rules
         run: npm run test:platform
       - name: Test live catalog arrival, independent game updates and account handoffs
