@@ -42,7 +42,8 @@ begin
  if action='account_update' then
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(uid::text,821));
   perform 1 from public.saves where user_id=uid for update;
-  begin doc:=zone_hub_private.document(uid);exception when others then
+  begin doc:=zone_hub_private.document(uid);exception when raise_exception then
+   if SQLERRM<>'HUB_SAVE_REQUIRED' or exists(select 1 from public.saves where user_id=uid) then raise;end if;
    select l.name into name from public.leaderboard l where l.user_id=uid;name:=coalesce(name,'Player');
    doc:=jsonb_build_object('cur',name,'profiles',jsonb_build_object(name,jsonb_build_object('name',name,'wallet',500,'cases',1,'keys',1,'skins','[]'::jsonb,'kills',0,'deaths',0,'wins',0,'matches',0)));
    insert into public.saves(user_id,json,updated_at) values(uid,doc,now()) on conflict(user_id) do nothing;

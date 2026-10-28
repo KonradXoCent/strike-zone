@@ -25,7 +25,7 @@
       if (!SBU) return;
       await cloudLoad();
       if (!window.szDesktopCloudReady()) throw new Error(CL.msg);
-      window.szGameAccountReady?.();
+      window.SzGameSave?.restoreSettings();window.szGameAccountReady?.();
       await friInit(); hdr(); tab(T); overlay.hidden = true;overlay.setAttribute('aria-busy','false');clearTimeout(showBack);
     } catch {
       overlay.classList.add('sz-loading-failure');overlay.setAttribute('aria-busy','false');document.getElementById('desktop-account-back').hidden=false;

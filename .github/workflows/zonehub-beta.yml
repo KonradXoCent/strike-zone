@@ -36,6 +36,7 @@ jobs:
           node scripts/royale-squads-smoke.cjs
           node scripts/royale-view-smoke.cjs
           node scripts/royale-content-smoke.cjs
+          node scripts/royale-identity-smoke.cjs
       - name: Build the lightweight platform and separate game packages
         run: npm run dist:platform
       - name: Verify both actual Windows game packages

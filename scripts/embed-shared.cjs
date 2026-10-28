@@ -25,6 +25,7 @@ function sync(check=false){
  next=next.includes('<!-- SZ EVENT DATA START -->')?next.replace(/<!-- SZ EVENT DATA START -->[\s\S]*?<!-- SZ EVENT DATA END -->/,()=>event):next.replace('</head>',()=>event+'\n</head>');
  if(!next.includes('if(readOwner()===userId&&saved.zhEpoch'))next=next.replace("if (readOwner() !== userId || (saved.ts || 0) > (DB.ts || 0)) {","if(readOwner()===userId&&saved.zhEpoch&&saved.zhEpoch!==DB.zhEpoch)window.SzHubInventory?.apply(saved);\n          if (readOwner() !== userId || (saved.ts || 0) > (DB.ts || 0)) {");
  next=next.replace("} catch (error) { CL.msg = 'Cloud save failed: ' + (error.message || error); return false; }","} catch (error) {if(await window.SzHubInventory?.recover(error))return flushAccount();CL.msg='Cloud save failed: '+(error.message||error);return false;}");
+ next=next.replace("const result = await sb.from('saves').upsert({ user_id: userId, json: value, updated_at: new Date().toISOString() });\n      if (result.error) throw result.error;","await window.SzGameSave.write(sb,value);");
  fs.writeFileSync(file,next);
 }
 if(require.main===module)sync(process.argv.includes('--check'));

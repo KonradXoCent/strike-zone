@@ -225,3 +225,12 @@ W Zone Royale klawisze **1–3** wybierają bronie, **4** kilof, **5** granat. G
 Nowe migracje po dotychczasowym schemacie: `zone-hub-item-categories.sql`, `zone-hub-browse.sql`, `zone-hub-market-stock.sql`; `zone-royale-matchmaking.sql` obsługuje protokół 4. W działającej bazie można zastosować krótszą, idempotentną migrację `zone-royale-protocol4.sql`. Oryginalny kanał aktualizacji samodzielnego Strike Zone 2D nie jest zastępowany.
 
 Źródłami znaków aplikacji są `assets/hub-logo.svg` oraz `assets/strike-emblem.b64` (oryginalna grafika utworzona przez imagegen). `scripts/brand-assets.cjs` odtwarza PNG/ICO przed przygotowaniem gry i pakowaniem.
+
+## Zone Hub 0.1.7 / Zone Royale 0.1.4
+
+- Zone Royale wyświetla własne logo i wyspę już na pierwszym ekranie. Ma osobne statystyki, rangi, 12 osiągnięć BR i przełącznik meczów rankingowych/nierankingowych. Kolejki i wyniki są rozdzielone na serwerze.
+- Ustawienia gry i zapis postępu nie nadpisują drugiej gry. Zarządzana wersja Strike Zone: 1.5.10-zonehub.2.
+- Ustawienia konta Zone Hub: nick, kadrowany awatar, odzyskanie hasła przez e-mail, opis i prywatność.
+- Sklep: pakiet Halloween za 500 monet Strike Zone 2D. Zakup jednorazowy, osobny wybór motywu profilu i platformy.
+- Profil z tłem, odznakami, bocznym panelem i gablotą na maksymalnie 6 posiadanych skinów lub ulubioną grę. Prywatność ekwipunku obowiązuje także w gablocie.
+- Osiągnięcia każdej gry są osobno w bibliotece i na profilu.

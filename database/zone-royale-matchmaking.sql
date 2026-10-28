@@ -13,6 +13,7 @@ alter table zone_royale_private.matches add column if not exists protocol intege
 alter table zone_royale_private.matches drop constraint if exists matches_protocol_check;
 alter table zone_royale_private.matches add constraint matches_protocol_check check(protocol in(2,3,4,5));
 alter table zone_royale_private.matches add column if not exists ranked boolean not null default false;
+alter table zone_royale_private.matches add column if not exists result_roster jsonb not null default '[]';
 create index if not exists zr_waiting_ranked on zone_royale_private.matches(mode,ranked,protocol,map,closes_at) where phase='waiting';
 create index if not exists zr_host_user on zone_royale_private.matches(host_id);
 create index if not exists zr_match_expiry on zone_royale_private.matches(created_at);
@@ -99,7 +100,7 @@ begin
  if m.host_id=uid then update zone_royale_private.matches set host_seen=now() where id=m.id;end if;
  if action='launch' then
   if m.host_id<>uid or m.closes_at>now() then raise exception 'ZR_QUEUE_NOT_READY';end if;
-  update zone_royale_private.matches set phase='running' where id=m.id returning * into m;
+  update zone_royale_private.matches set phase='running',result_roster=(select jsonb_agg(jsonb_build_object('uid',x.user_id,'cid',x.cid,'team',p.team)) from zone_royale_private.members x join zone_royale_private.parties p on p.match_id=x.match_id and p.ticket=x.ticket where x.match_id=m.id) where id=m.id returning * into m;
  end if;
  select coalesce(jsonb_agg(jsonb_build_object('cid',x.cid,'uid',x.user_id,'n',x.name,'team',p.team,'fill',p.fill,'outfit',x.outfit,'chute',x.chute) order by x.joined_at),'[]') into roster from zone_royale_private.members x join zone_royale_private.parties p on p.match_id=x.match_id and p.ticket=x.ticket where x.match_id=m.id;
  return jsonb_build_object('protocol',m.protocol,'id',m.id,'room',m.room,'host',m.host_cid,'mode',m.mode,'ranked',m.ranked,'map',m.map,'phase',m.phase,'remaining',greatest(0,extract(epoch from m.closes_at-now())),'roster',roster);

@@ -42,14 +42,14 @@ begin
    return jsonb_build_object('state',coalesce(result,'{}'),'duplicate',true);
   end if;
   elapsed:=greatest(0,extract(epoch from now()-m.closes_at)::integer);
-  if elapsed<5 or jsonb_array_length(args->'players')<>(select count(*) from zone_royale_private.members where match_id=mid)
+  if elapsed<5 or jsonb_array_length(args->'players')<>jsonb_array_length(m.result_roster)
    or (select count(distinct p->>'cid') from jsonb_array_elements(args->'players') p)<>jsonb_array_length(args->'players')
-   or exists(select 1 from jsonb_array_elements(args->'players') p where not exists(select 1 from zone_royale_private.members x where x.match_id=mid and x.cid=p->>'cid')) then raise exception 'ZR_RESULT_INPUT';end if;
+   or exists(select 1 from jsonb_array_elements(args->'players') p where not exists(select 1 from jsonb_array_elements(m.result_roster) x where x->>'cid'=p->>'cid')) then raise exception 'ZR_RESULT_INPUT';end if;
   -- A team has a single placement; no two different human teams can both finish first.
-  if exists(select 1 from zone_royale_private.members x join zone_royale_private.parties t on t.match_id=x.match_id and t.ticket=x.ticket
-   join lateral jsonb_array_elements(args->'players') p on p->>'cid'=x.cid where x.match_id=mid group by t.team having count(distinct p->>'place')>1)
-   or (select count(distinct t.team) from zone_royale_private.members x join zone_royale_private.parties t on t.match_id=x.match_id and t.ticket=x.ticket join lateral jsonb_array_elements(args->'players') p on p->>'cid'=x.cid where x.match_id=mid and p->>'place'='1')>1 then raise exception 'ZR_RESULT_INPUT';end if;
-  for row in select x.user_id,x.cid from zone_royale_private.members x where x.match_id=mid order by x.user_id loop
+  if exists(select 1 from jsonb_array_elements(m.result_roster) x
+   join lateral jsonb_array_elements(args->'players') p on p->>'cid'=x->>'cid' group by x->>'team' having count(distinct p->>'place')>1)
+   or (select count(distinct x->>'team') from jsonb_array_elements(m.result_roster) x join lateral jsonb_array_elements(args->'players') p on p->>'cid'=x->>'cid' where p->>'place'='1')>1 then raise exception 'ZR_RESULT_INPUT';end if;
+  for row in select (x->>'uid')::uuid user_id,x->>'cid' cid from jsonb_array_elements(m.result_roster) x order by x->>'uid' loop
    select p into entry from jsonb_array_elements(args->'players') p where p->>'cid'=row.cid;
    foreach key in array array['place','kills','deaths','seconds','cards','reboots'] loop
     if coalesce(entry->>key,'')!~'^[0-9]{1,6}$' then raise exception 'ZR_RESULT_INPUT';end if;
