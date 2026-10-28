@@ -71,6 +71,10 @@ function protectWindow(win, expectedUrl) {
   win.webContents.on('will-navigate', (event, url) => { if (url !== expectedUrl) event.preventDefault(); });
   win.webContents.on('will-attach-webview', event => event.preventDefault());
 }
+function showManagedWindow(win) {
+  const reveal=()=>{if(win.isDestroyed())return;if(win.isMinimized())win.restore();win.show();win.focus();if(platformManaged&&win.isVisible())platformBridge.send('ready',{userId:account.snapshot().user.id});};
+  reveal();setTimeout(reveal,100);
+}
 function createLauncher() {
   launcher = new BrowserWindow({ ...launcherBounds(screen.getDisplayNearestPoint(screen.getCursorScreenPoint()).workArea),
     title: 'Strike Zone 2D — Launcher', titleBarStyle: 'hidden', backgroundColor: '#101418',
@@ -79,7 +83,7 @@ function createLauncher() {
       nodeIntegration: false, sandbox: true, webSecurity: true, spellcheck: false }
   });
   protectWindow(launcher, LAUNCHER_URL);
-  launcher.once('ready-to-show', () => {if(!royaleStandalone)launcher.show();});
+  launcher.once('ready-to-show', () => {if(!royaleStandalone)showManagedWindow(launcher);});
   launcher.webContents.on('did-finish-load', () => { broadcast(); checkBackend(); controller.check(); });
   launcher.on('closed', () => { launcher = null; if (game) closeGame().finally(() => app.quit()); });
   launcher.loadURL(LAUNCHER_URL);
@@ -104,7 +108,7 @@ async function openGame() {
   const win = game;
   friends.setGameRunning(true);platformBridge?.send('game',{running:true});
   protectWindow(win, GAME_URL);
-  win.once('ready-to-show', () => { if (startFullscreen) win.setFullScreen(true); else win.maximize(); win.show(); launcher?.hide(); broadcast(); });
+  win.once('ready-to-show', () => { if (startFullscreen) win.setFullScreen(true); else win.maximize(); showManagedWindow(win); launcher?.hide(); broadcast(); });
   win.webContents.on('before-input-event', (event, input) => {
     if (input.type !== 'keyDown') return;
     if (input.key === 'F11') { event.preventDefault(); win.setFullScreen(!win.isFullScreen()); }
@@ -112,6 +116,8 @@ async function openGame() {
   });
   win.on('close', event => { if (!win.__mayClose) { event.preventDefault(); closeGame(); } });
   win.on('closed', () => { game = null;platformBridge?.send('game',{running:false});friends.setGameRunning(false); friends.refresh();if(royaleStandalone){app.quit();return;}launcher?.show();launcher?.focus();broadcast();controller.check(); });
+  win.webContents.on('did-fail-load',()=>platformBridge?.send('failed',{code:'HUB_WINDOW'}));
+  win.webContents.on('render-process-gone',()=>platformBridge?.send('failed',{code:'HUB_WINDOW'}));
   win.loadURL(GAME_URL);
   broadcast();
   return snapshot();
@@ -216,7 +222,7 @@ else {
       await apply(await platformBridge.first());platformBridge.on('session',v=>apply(v).catch(()=>closeGame().finally(()=>app.quit())));
       platformBridge.on('inventory',()=>{if(game&&!game.isDestroyed())game.webContents.send('game:inventory');});
       platformBridge.on('preferences',p=>{const next=prefs.set({language:p.language==='en'?'en':'pl',fullscreen:p.fullscreen===true});toBoth('preferences:state',next);broadcast();});
-      platformBridge.on('logout',()=>closeGame().finally(()=>app.quit()));platformBridge.on('disconnect',()=>closeGame().finally(()=>app.quit()));platformBridge.send('ready',{userId:account.snapshot().user.id});
+      platformBridge.on('logout',()=>closeGame().finally(()=>app.quit()));platformBridge.on('disconnect',()=>closeGame().finally(()=>app.quit()));
     }
     createLauncher();if(!platformManaged)account.init();if(royaleStandalone)await openGame();
     setInterval(() => { if (!game && launcher?.isVisible()) controller.check(); }, 120000).unref();
