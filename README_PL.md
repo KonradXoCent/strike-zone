@@ -236,3 +236,11 @@ Nowe migracje po dotychczasowym schemacie: `zone-hub-item-categories.sql`, `zone
 - Osiągnięcia każdej gry są osobno w bibliotece i na profilu.
 
 Zone Hub **0.1.8**, Zone Royale **0.1.5** i zarządzany Strike **1.5.10-zonehub.3** uzupełniają tę aktualizację o dynamicznie tłumaczony ekran wczytywania Royale oraz pełny audyt nowych tekstów PL/EN. Dotychczasowe pakiety pozostają dostępne.
+
+## Zone Hub 0.1.9 — aktualizacje zawartości
+
+Aktualizacja platformy zachowuje gry w stałym katalogu użytkownika. Brakujący lub stary wpis `installed.json` jest odzyskiwany z istniejącej instalacji, także ze znanych wcześniejszych lokalizacji. Nazwa, konto i ekwipunek gry pozostają niezależne od wersji Zone Hub.
+
+Pakiety Strike `1.5.10-zonehub.4` i Royale `0.1.6` publikują obok pełnego ZIP mały ZIP z `resources/app.asar`. Manifest zachowuje schemat 1, więc starsze platformy nadal pobierają pełną paczkę. Zone Hub 0.1.9 porównuje kod pliku PE, ikonę oraz wszystkie pozostałe pliki silnika z manifestem; zgodny silnik jest ponownie używany. Aktualizacja zawartości sprawdza rozmiar, SHA-256, tożsamość gry i wersję, następnie zapisuje nowy indeks integralności i przełącza katalog atomowo. Błąd pobierania nie usuwa poprzedniej instalacji. Pierwsza instalacja, zmiana silnika lub uszkodzony silnik wymagają pełnej paczki.
+
+`zone-hub-content-smoke.cjs` sprawdza rzeczywiste publiczne gry Windows → nowe paczki zawartości, odzyskanie rejestru i ponowne uruchomienie platformy. Test NSIS instaluje oryginalny Zone Hub 0.1.1, aktualizuje go i wymaga `canPlay` obu rzeczywistych gier bez żadnego pobrania gry.

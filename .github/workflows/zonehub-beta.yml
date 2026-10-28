@@ -43,6 +43,8 @@ jobs:
         run: npm run dist:platform
       - name: Verify both actual Windows game packages
         run: node scripts/zone-hub-install-smoke.cjs --bundled
+      - name: Update released Windows games without downloading Electron again
+        run: node scripts/zone-hub-content-smoke.cjs
       - uses: actions/download-artifact@v7
         with:
           name: Zone-Hub-Beta
@@ -61,6 +63,7 @@ jobs:
             dist-platform/*.blockmap
             dist-platform/zonehub.yml
             dist-platform/installed-update-report.json
+            dist-platform/content-update-report.json
           if-no-files-found: error
           retention-days: 90
       - name: Publish the tested beta updater and online game packages
