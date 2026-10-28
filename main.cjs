@@ -219,10 +219,10 @@ else {
       ipcMain.handle(prefix + ':friends', event => { trusted(event, url); const user = account.snapshot(); return friends.snapshot(user.authenticated ? user.user.id : null); });
     }
     if(platformManaged){
-      const apply=async value=>{const old=account.snapshot().user?.id,r=await client.auth.setSession({access_token:value.access_token,refresh_token:value.refresh_token});if(r.error||!r.data?.session||old&&r.data.session.user.id!==old)throw Error('HUB_HANDOFF');await account.accept(r.data.session);if(value.preferences)prefs.set({language:value.preferences.language==='en'?'en':'pl',fullscreen:value.preferences.fullscreen===true});if(!account.snapshot().authenticated)throw Error('HUB_HANDOFF');};
+      const apply=async value=>{const old=account.snapshot().user?.id,r=await client.auth.setSession({access_token:value.access_token,refresh_token:value.refresh_token});if(r.error||!r.data?.session||old&&r.data.session.user.id!==old)throw Error('HUB_HANDOFF');await account.accept(r.data.session);if(value.preferences){prefs.seed({language:value.preferences.language==='en'?'en':'pl'});prefs.set({fullscreen:value.preferences.fullscreen===true});}if(!account.snapshot().authenticated)throw Error('HUB_HANDOFF');};
       await apply(await platformBridge.first());platformBridge.on('session',v=>apply(v).catch(()=>closeGame().finally(()=>app.quit())));
       platformBridge.on('inventory',()=>{if(game&&!game.isDestroyed())game.webContents.send('game:inventory');});
-      platformBridge.on('preferences',p=>{const next=prefs.set({language:p.language==='en'?'en':'pl',fullscreen:p.fullscreen===true});if(game&&!game.isDestroyed())game.setFullScreen(next.fullscreen);toBoth('preferences:state',next);broadcast();});
+      platformBridge.on('preferences',p=>{const next=prefs.set({fullscreen:p.fullscreen===true});if(game&&!game.isDestroyed())game.setFullScreen(next.fullscreen);toBoth('preferences:state',next);broadcast();});
       platformBridge.on('logout',()=>closeGame().finally(()=>app.quit()));platformBridge.on('disconnect',()=>closeGame().finally(()=>app.quit()));
     }
     if(platformManaged)await openGame();else{createLauncher();account.init();if(royaleStandalone)await openGame();}

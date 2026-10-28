@@ -74,8 +74,7 @@
     const userId = SBU.id;
     const value = JSON.parse(JSON.stringify(DB));
     try {
-      const result = await sb.from('saves').upsert({ user_id: userId, json: value, updated_at: new Date().toISOString() });
-      if (result.error) throw result.error;
+      await window.SzGameSave.write(sb,value);
       CL.msg = 'Cloud saved ' + new Date().toLocaleTimeString();
       lbPush();
       return true;
