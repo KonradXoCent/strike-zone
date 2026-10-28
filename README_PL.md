@@ -244,3 +244,9 @@ Aktualizacja platformy zachowuje gry w stałym katalogu użytkownika. Brakujący
 Pakiety Strike `1.5.10-zonehub.4` i Royale `0.1.6` publikują obok pełnego ZIP mały ZIP z `resources/app.asar`. Manifest zachowuje schemat 1, więc starsze platformy nadal pobierają pełną paczkę. Zone Hub 0.1.9 porównuje kod pliku PE, ikonę oraz wszystkie pozostałe pliki silnika z manifestem; zgodny silnik jest ponownie używany. Aktualizacja zawartości sprawdza rozmiar, SHA-256, tożsamość gry i wersję, następnie zapisuje nowy indeks integralności i przełącza katalog atomowo. Błąd pobierania nie usuwa poprzedniej instalacji. Pierwsza instalacja, zmiana silnika lub uszkodzony silnik wymagają pełnej paczki.
 
 `zone-hub-content-smoke.cjs` sprawdza rzeczywiste publiczne gry Windows → nowe paczki zawartości, odzyskanie rejestru i ponowne uruchomienie platformy. Test NSIS instaluje oryginalny Zone Hub 0.1.1, aktualizuje go i wymaga `canPlay` obu rzeczywistych gier bez żadnego pobrania gry.
+
+## Zone Hub 0.1.10 / Zone Haunt Beta 0.1.0
+
+Nowa gra kooperacyjna **Zone Haunt** ma trzy lokacje, osiem zjawisk, siedem dowodów, sprzęt pomiarowy, dziennik i polowania z bezpiecznymi szafami. Graj sam z botami lub w lobby do czterech osób. Sterowanie i wyniki są odrębne od pozostałych gier. [Opis funkcji i walidacji](docs/zone-haunt-and-style-shop.md).
+
+Strike `1.5.10-zonehub.5` usuwa Battle Royale z wyboru trybów, ekwipunku i skrzynek; BR pozostaje w osobnym Zone Royale `0.1.7`. Royale otrzymuje nową grafikę i znak. Sklep platformy zawiera sześć płatnych motywów/teł i sześć ramek awatara; zakupy i wyposażenie kontroluje serwer. Rynek uzupełnia do 240 ofert botów w każdej z obu gier.

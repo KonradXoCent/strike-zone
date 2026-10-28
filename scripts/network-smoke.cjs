@@ -22,7 +22,7 @@ let finished=false;process.on('beforeExit',()=>{if(!finished&&!process.exitCode)
    },{i,url:broker?.endpoint?.replace(/^ws/,'http')||null});
    if(broker)await p.evaluate(endpoint=>{sb.realtime.endPoint=endpoint;},broker.endpoint);
   }
-  const modes=(process.env.SZ_NETWORK_MODES?.split(',')||['tdm','classic','ctf','dm','gungame','retake','br','zombie','coop','snipers','deagle','pistols','shotguns','knife','prophunt','minigames','football','domination','heist','survival']);
+  const modes=(process.env.SZ_NETWORK_MODES?.split(',')||['tdm','classic','ctf','dm','gungame','retake','zombie','coop','snipers','deagle','pistols','shotguns','knife','prophunt','minigames','football','domination','heist','survival']);
   for(const entry of ['code','server']){
    for(const mode of modes){console.log('RUN',entry,mode);if(mode==='tdm')await require('./test-support/halloween-network.cjs').seed(guest);
     await host.evaluate(mode=>{sel.mode=mode;sel.map=SzObjectiveMaps.ids[mode]?SzObjectiveMaps.ids[mode][0]:mode==='football'?SzMiniData.ids.football:mode==='minigames'?SzMiniData.ids.grenade:mode==='br'?6:mode==='zombie'?(SzHalloweenMap.available()?SzHalloweenMap.id:9):['hns','prophunt'].includes(mode)?SzHideSeekMaps.ids[0]:2;sel.team='CT';sel.comp=false;},mode);await guest.evaluate(mode=>{sel.mode=mode;sel.team=mode==='survival'?'CT':'T';},mode);

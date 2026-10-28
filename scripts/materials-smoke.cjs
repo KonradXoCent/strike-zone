@@ -12,7 +12,7 @@ fs.writeFileSync(temp+'/main.cjs',`const {app,BrowserWindow,session}=require('el
   await app.evaluate(({BrowserWindow})=>{const w=BrowserWindow.getAllWindows()[0];w.setBounds({x:0,y:0,width:1440,height:900});w.show();w.focus();});await page.setViewportSize({width:1440,height:900});
   await page.evaluate(()=>{cloudPush=()=>{};$('splash').style.display='none';P().bd=ACH.map(a=>a[0]);});
   const maps=await page.evaluate(()=>{
-   const result=[];for(let map=0;map<14;map++){
+   const result=[];for(let map=0;map<14;map++){if([6,7,8].includes(map))continue;
     sel.map=map;sel.mode=mapSet('br').includes(map)?'br':mapSet('zombie').includes(map)?'zombie':'tdm';sel.team='CT';sel.comp=false;begin0();if(G.intro)skipIntro();G.paused=true;
     const grid=GR,before=JSON.stringify({d:grid?Array.from(grid.d):null,nd:grid?Array.from(grid.nd||[]):null,walls,wins,sites:SITES[map],spawns:SPW[map],covers:grid?.covers,links:grid?.links});
     SzMapMaterials.setEnabled(true,false);const start=performance.now();draw();cx.getImageData(0,0,1,1);const bake=performance.now()-start,a=SzMapMaterials.stats();for(let n=0;n<30;n++)draw();const b=SzMapMaterials.stats();
@@ -29,7 +29,7 @@ fs.writeFileSync(temp+'/main.cjs',`const {app,BrowserWindow,session}=require('el
   const benchmark=[];
   for(const map of[2,1,5,6]){
    const row=await page.evaluate(map=>{
-    sel.map=map;sel.mode=map===6?'br':'tdm';sel.team='CT';sel.comp=false;begin0();if(G.intro)skipIntro();G.paused=true;setGameZoom(.78);
+    sel.map=map;sel.mode=map===9?'zombie':'tdm';sel.team='CT';sel.comp=false;begin0();if(G.intro)skipIntro();G.paused=true;setGameZoom(.78);
     if(SITES[map]?.[0]){const[x,y,w,h]=SITES[map][0];if(!hitW(x+w/2,y+h/2)){G.me.x=x+w/2;G.me.y=y+h/2;}}
     const buffers={};for(const key of['simple','textured']){SzMapMaterials.setEnabled(key==='textured',false);draw();cx.getImageData(0,0,1,1);buffers[key]=SCV;}
     const times={simple:[],textured:[]};

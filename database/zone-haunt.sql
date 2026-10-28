@@ -12,11 +12,14 @@ create table if not exists haunt_private.rooms(
 );
 create table if not exists haunt_private.members(
  room_id uuid not null references haunt_private.rooms(id) on delete cascade,user_id uuid not null references auth.users(id) on delete cascade,
- ready boolean not null default false,last_seen timestamptz not null default now(),input jsonb not null default '{}',primary key(room_id,user_id)
+ ready boolean not null default false,active boolean not null default true,last_seen timestamptz not null default now(),input jsonb not null default '{}',primary key(room_id,user_id)
 );
+alter table haunt_private.members add column if not exists active boolean not null default true;
 create index if not exists haunt_member_user on haunt_private.members(user_id,last_seen desc);
 create index if not exists haunt_rooms_live on haunt_private.rooms(expires_at) where phase in ('lobby','running');
 create table if not exists haunt_private.results(room_id uuid not null references haunt_private.rooms(id),user_id uuid not null references auth.users(id),correct boolean not null,survived boolean not null,evidence integer not null,xp integer not null,created_at timestamptz not null default now(),primary key(room_id,user_id));
+create index if not exists haunt_rooms_host on haunt_private.rooms(host_id,created_at desc);
+create index if not exists haunt_results_user on haunt_private.results(user_id,created_at desc);
 alter table haunt_private.rooms enable row level security;
 alter table haunt_private.members enable row level security;
 alter table haunt_private.results enable row level security;
@@ -26,26 +29,26 @@ create or replace function haunt_private.room_view(room uuid) returns jsonb lang
 declare uid uuid:=auth.uid();r haunt_private.rooms;people jsonb;
 begin
  select * into r from haunt_private.rooms where id=room and expires_at>now();
- if r.id is null or not exists(select 1 from haunt_private.members where room_id=room and user_id=uid) then raise exception 'HAUNT_ROOM' using errcode='42501';end if;
- select coalesce(jsonb_agg(jsonb_build_object('id',m.user_id,'name',coalesce(l.name,'Investigator'),'image',l.avimg,'ready',m.ready,'online',m.last_seen>now()-interval '25 seconds') order by m.user_id),'[]') into people from haunt_private.members m left join public.leaderboard l on l.user_id=m.user_id where m.room_id=room;
- return jsonb_build_object('id',r.id,'code',r.code,'hostId',r.host_id,'phase',r.phase,'mapId',r.map_id,'difficulty',r.difficulty,'bots',r.bots,'members',people,'seed',case when uid=r.host_id then r.seed end,'snapshot',r.snapshot,'roster',r.roster,'inputs',case when uid=r.host_id then coalesce((select jsonb_object_agg(m.user_id::text,m.input) from haunt_private.members m where m.room_id=room),'{}') else '{}' end);
+ if r.id is null or not exists(select 1 from haunt_private.members where room_id=room and user_id=uid and active) then raise exception 'HAUNT_ROOM' using errcode='42501';end if;
+ select coalesce(jsonb_agg(jsonb_build_object('id',m.user_id,'name',coalesce(l.name,'Investigator'),'image',l.avimg,'ready',m.ready,'online',m.last_seen>now()-interval '25 seconds') order by m.user_id),'[]') into people from haunt_private.members m left join public.leaderboard l on l.user_id=m.user_id where m.room_id=room and m.active;
+ return jsonb_build_object('id',r.id,'code',r.code,'hostId',r.host_id,'phase',r.phase,'mapId',r.map_id,'difficulty',r.difficulty,'bots',r.bots,'members',people,'seed',case when uid=r.host_id then r.seed end,'snapshot',r.snapshot,'roster',r.roster,'inputs',case when uid=r.host_id then coalesce((select jsonb_object_agg(m.user_id::text,m.input) from haunt_private.members m where m.room_id=room and m.active),'{}') else '{}' end);
 end $$;
 revoke all on function haunt_private.room_view(uuid) from public,anon,authenticated;
 
-create or replace function haunt_private.command(action text,args jsonb default '{}') returns jsonb language plpgsql security definer set search_path='' as $$
+create or replace function haunt_private.lobby_command(action text,args jsonb) returns jsonb language plpgsql security definer set search_path='' as $$
 #variable_conflict use_variable
-declare uid uuid:=auth.uid();r haunt_private.rooms;room uuid;vcode text;slot integer;doc jsonb;guess text;correct boolean;ev integer;xp integer;person jsonb;survived boolean;ghosts text[]:=array['wisp','lament','cinder','watcher','veil','morrow','echo','thorn'];
+declare uid uuid:=auth.uid();r haunt_private.rooms;room uuid;vcode text;slot integer;doc jsonb;
 begin
  if uid is null or coalesce((auth.jwt()->>'is_anonymous')::boolean,false) then raise exception 'HAUNT_LOGIN' using errcode='42501';end if;
  if jsonb_typeof(args) is distinct from 'object' or octet_length(args::text)>70000 then raise exception 'HAUNT_INPUT';end if;
  if action='home' then
-  select m.room_id into room from haunt_private.members m join haunt_private.rooms q on q.id=m.room_id where m.user_id=uid and q.phase in ('lobby','running') and q.expires_at>now() order by m.last_seen desc limit 1;
+  select m.room_id into room from haunt_private.members m join haunt_private.rooms q on q.id=m.room_id where m.user_id=uid and m.active and q.phase in ('lobby','running') and q.expires_at>now() order by m.last_seen desc limit 1;
   return jsonb_build_object('room',case when room is not null then haunt_private.room_view(room) end,'progress',(select jsonb_build_object('contracts',count(*),'correct',count(*) filter(where s.correct),'xp',coalesce(sum(s.xp),0)) from haunt_private.results s where user_id=uid));
  elsif action='create' then
   if not exists(select 1 from public.zh_library where user_id=uid and game_id='zone-haunt') then raise exception 'HUB_LIBRARY';end if;
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(uid::text,934));
   if (select count(*) from haunt_private.rooms where host_id=uid and created_at>now()-interval '10 minutes')>=10 then raise exception 'HAUNT_RATE';end if;
-  if exists(select 1 from haunt_private.members m join haunt_private.rooms q on q.id=m.room_id where m.user_id=uid and q.phase in ('lobby','running') and q.expires_at>now()) then raise exception 'HAUNT_ALREADY';end if;
+  if exists(select 1 from haunt_private.members m join haunt_private.rooms q on q.id=m.room_id where m.user_id=uid and m.active and q.phase in ('lobby','running') and q.expires_at>now()) then raise exception 'HAUNT_ALREADY';end if;
   for slot in 1..4 loop
    vcode:=upper(substr(replace(gen_random_uuid()::text,'-',''),1,6));
    begin insert into haunt_private.rooms(code,host_id,seed) values(vcode,uid,1+floor(random()*2147483645)::integer) returning id into room;exit;exception when unique_violation then if slot=4 then raise;end if;end;
@@ -56,40 +59,55 @@ begin
   vcode:=upper(btrim(args->>'code'));if vcode is null or vcode!~'^[A-F0-9]{6}$' then raise exception 'HAUNT_CODE';end if;
   select * into r from haunt_private.rooms where code=vcode and expires_at>now() for update;
   if r.id is null or r.phase not in ('lobby','running') then raise exception 'HAUNT_ROOM';end if;
-  if exists(select 1 from haunt_private.members where room_id=r.id and user_id=uid) then update haunt_private.members set last_seen=now() where room_id=r.id and user_id=uid;return haunt_private.room_view(r.id);end if;
+  if exists(select 1 from haunt_private.members where room_id=r.id and user_id=uid and active) then update haunt_private.members set last_seen=now() where room_id=r.id and user_id=uid and active;return haunt_private.room_view(r.id);end if;
   if r.phase<>'lobby' then raise exception 'HAUNT_STARTED';end if;
   if not exists(select 1 from public.zh_library where user_id=uid and game_id='zone-haunt') then raise exception 'HUB_LIBRARY';end if;
-  if exists(select 1 from haunt_private.members m join haunt_private.rooms q on q.id=m.room_id where m.user_id=uid and q.phase in ('lobby','running') and q.expires_at>now()) then raise exception 'HAUNT_ALREADY';end if;
-  if (select count(*) from haunt_private.members where room_id=r.id)>=4 then raise exception 'HAUNT_FULL';end if;
-  insert into haunt_private.members(room_id,user_id) values(r.id,uid);return haunt_private.room_view(r.id);
+  if exists(select 1 from haunt_private.members m join haunt_private.rooms q on q.id=m.room_id where m.user_id=uid and m.active and q.phase in ('lobby','running') and q.expires_at>now()) then raise exception 'HAUNT_ALREADY';end if;
+  if (select count(*) from haunt_private.members where room_id=r.id and active)>=4 then raise exception 'HAUNT_FULL';end if;
+  insert into haunt_private.members(room_id,user_id) values(r.id,uid) on conflict(room_id,user_id) do update set active=true,ready=false,last_seen=now(),input='{}';return haunt_private.room_view(r.id);
  end if;
- if coalesce(args->>'room','')!~'^[a-f0-9-]{36}$' then raise exception 'HAUNT_ROOM';end if;room:=(args->>'room')::uuid;
- select * into r from haunt_private.rooms where id=room and expires_at>now() for update;
- if r.id is null or not exists(select 1 from haunt_private.members where room_id=room and user_id=uid) then raise exception 'HAUNT_ROOM' using errcode='42501';end if;
- update haunt_private.members set last_seen=now() where room_id=room and user_id=uid;
+ raise exception 'HAUNT_ACTION';
+end $$;
+revoke all on function haunt_private.lobby_command(text,jsonb) from public,anon,authenticated;
+
+create or replace function haunt_private.member_command(action text,args jsonb,r haunt_private.rooms) returns jsonb language plpgsql security definer set search_path='' as $$
+#variable_conflict use_variable
+declare uid uuid:=auth.uid();room uuid:=r.id;doc jsonb;
+begin
+ if auth.uid() is null then raise exception 'HAUNT_LOGIN' using errcode='42501';end if;
  if action='leave' then
   if r.host_id=uid then update haunt_private.rooms set phase='closed',updated_at=now() where id=room;end if;
-  delete from haunt_private.members where room_id=room and user_id=uid;return '{}';
+  update haunt_private.members set active=false,ready=false,input='{}' where room_id=room and user_id=uid and active;return '{}';
  elsif action='configure' then
   if r.host_id<>uid or r.phase<>'lobby' then raise exception 'HAUNT_HOST' using errcode='42501';end if;
   if coalesce(args->>'mapId','') not in ('pinewood','alder','ironvale') or coalesce(args->>'difficulty','') not in ('calm','normal','nightmare') or jsonb_typeof(args->'bots') is distinct from 'boolean' then raise exception 'HAUNT_INPUT';end if;
   update haunt_private.rooms set map_id=args->>'mapId',difficulty=args->>'difficulty',bots=(args->>'bots')::boolean,updated_at=now() where id=room;
  elsif action='ready' then
   if r.phase<>'lobby' or jsonb_typeof(args->'ready') is distinct from 'boolean' then raise exception 'HAUNT_INPUT';end if;
-  update haunt_private.members set ready=(args->>'ready')::boolean where room_id=room and user_id=uid;
+  update haunt_private.members set ready=(args->>'ready')::boolean where room_id=room and user_id=uid and active;
  elsif action='start' then
   if r.host_id<>uid or r.phase<>'lobby' then raise exception 'HAUNT_HOST' using errcode='42501';end if;
-  if exists(select 1 from haunt_private.members where room_id=room and (not ready or last_seen<now()-interval '25 seconds')) then raise exception 'HAUNT_NOT_READY';end if;
+  if exists(select 1 from haunt_private.members where room_id=room and active and (not ready or last_seen<now()-interval '25 seconds')) then raise exception 'HAUNT_NOT_READY';end if;
   doc:=haunt_private.room_view(room);
   update haunt_private.rooms set phase='running',roster=doc->'members',started_at=now(),updated_at=now() where id=room;
- elsif action='sync' then
+ else raise exception 'HAUNT_ACTION';end if;
+ return haunt_private.room_view(room);
+end $$;
+revoke all on function haunt_private.member_command(text,jsonb,haunt_private.rooms) from public,anon,authenticated;
+
+create or replace function haunt_private.match_command(action text,args jsonb,r haunt_private.rooms) returns jsonb language plpgsql security definer set search_path='' as $$
+#variable_conflict use_variable
+declare uid uuid:=auth.uid();room uuid:=r.id;doc jsonb;guess text;correct boolean;ev integer;xp integer;person jsonb;survived boolean;ghosts text[]:=array['wisp','lament','cinder','watcher','veil','morrow','echo','thorn'];
+begin
+ if auth.uid() is null then raise exception 'HAUNT_LOGIN' using errcode='42501';end if;
+ if action='sync' then
   if args ? 'input' then
    if jsonb_typeof(args->'input') is distinct from 'object' or octet_length((args->'input')::text)>2048 then raise exception 'HAUNT_INPUT';end if;
-   update haunt_private.members set input=args->'input' where room_id=room and user_id=uid;
+   update haunt_private.members set input=args->'input' where room_id=room and user_id=uid and active;
   end if;
   if args ? 'snapshot' then
    if uid<>r.host_id or r.phase<>'running' then raise exception 'HAUNT_HOST' using errcode='42501';end if;
-   doc:=args->'snapshot';if jsonb_typeof(doc) is distinct from 'object' or doc->>'schema'<>'1' or doc->>'id'<>room::text or doc->>'mapId'<>r.map_id or jsonb_typeof(doc->'players') is distinct from 'array' or jsonb_array_length(doc->'players')>4 then raise exception 'HAUNT_INPUT';end if;
+   doc:=args->'snapshot';if jsonb_typeof(doc) is distinct from 'object' or (doc->>'schema') is distinct from '1' or (doc->>'id') is distinct from room::text or (doc->>'mapId') is distinct from r.map_id or jsonb_typeof(doc->'players') is distinct from 'array' or jsonb_array_length(doc->'players')>4 then raise exception 'HAUNT_INPUT';end if;
    update haunt_private.rooms set snapshot=doc,updated_at=now() where id=room;
   end if;
  elsif action='finish' then
@@ -105,6 +123,22 @@ begin
  else raise exception 'HAUNT_ACTION';end if;
  return haunt_private.room_view(room);
 end $$;
+revoke all on function haunt_private.match_command(text,jsonb,haunt_private.rooms) from public,anon,authenticated;
+
+create or replace function haunt_private.command(action text,args jsonb default '{}') returns jsonb language plpgsql security definer set search_path='' as $$
+#variable_conflict use_variable
+declare uid uuid:=auth.uid();r haunt_private.rooms;room uuid;
+begin
+ if uid is null or coalesce((auth.jwt()->>'is_anonymous')::boolean,false) then raise exception 'HAUNT_LOGIN' using errcode='42501';end if;
+ if jsonb_typeof(args) is distinct from 'object' or octet_length(args::text)>70000 then raise exception 'HAUNT_INPUT';end if;
+ if action in ('home','create','join') then return haunt_private.lobby_command(action,args);end if;
+ if coalesce(args->>'room','')!~'^[a-f0-9-]{36}$' then raise exception 'HAUNT_ROOM';end if;room:=(args->>'room')::uuid;
+ select * into r from haunt_private.rooms where id=room and expires_at>now() for update;
+ if r.id is null or not exists(select 1 from haunt_private.members where room_id=room and user_id=uid and active) then raise exception 'HAUNT_ROOM' using errcode='42501';end if;
+ update haunt_private.members set last_seen=now() where room_id=room and user_id=uid and active;
+ if action in ('sync','finish') then return haunt_private.match_command(action,args,r);end if;
+ return haunt_private.member_command(action,args,r);
+end $$;
 revoke all on function haunt_private.command(text,jsonb) from public,anon;
 grant execute on function haunt_private.command(text,jsonb) to authenticated;
 create or replace function public.zone_haunt(action text,args jsonb default '{}') returns jsonb language sql security invoker set search_path='' as $$ select haunt_private.command(action,args) $$;
@@ -117,7 +151,7 @@ begin
  if uid is null or topic!~'^zh-haunt:[a-f0-9-]{36}:(state|input:[a-f0-9-]{36})$' then return false;end if;
  begin room:=parts[2]::uuid;exception when invalid_text_representation then return false;end;
  select * into r from haunt_private.rooms where id=room and expires_at>now() and phase in ('lobby','running');
- if r.id is null or not exists(select 1 from haunt_private.members where room_id=room and user_id=uid) then return false;end if;
+ if r.id is null or not exists(select 1 from haunt_private.members where room_id=room and user_id=uid and active) then return false;end if;
  if parts[3]='state' then return not writing or r.host_id=uid;end if;
  return case when writing then parts[4]=uid::text else r.host_id=uid or parts[4]=uid::text end;
 end $$;
@@ -125,14 +159,16 @@ revoke all on function haunt_private.channel_allowed(text,boolean) from public,a
 grant execute on function haunt_private.channel_allowed(text,boolean) to authenticated;
 do $$ begin
  if to_regclass('realtime.messages') is not null then
-  execute 'drop policy if exists zone_haunt_receive on realtime.messages';
-  execute 'drop policy if exists zone_haunt_send on realtime.messages';
-  execute 'create policy zone_haunt_receive on realtime.messages for select to authenticated using (extension=''broadcast'' and haunt_private.channel_allowed((select realtime.topic()),false))';
-  execute 'create policy zone_haunt_send on realtime.messages for insert to authenticated with check (extension=''broadcast'' and haunt_private.channel_allowed((select realtime.topic()),true))';
+  if not exists(select 1 from pg_catalog.pg_policies where schemaname='realtime' and tablename='messages' and policyname='zone_haunt_receive') then
+   execute 'create policy zone_haunt_receive on realtime.messages for select to authenticated using (extension=''broadcast'' and haunt_private.channel_allowed((select realtime.topic()),false))';
+  end if;
+  if not exists(select 1 from pg_catalog.pg_policies where schemaname='realtime' and tablename='messages' and policyname='zone_haunt_send') then
+   execute 'create policy zone_haunt_send on realtime.messages for insert to authenticated with check (extension=''broadcast'' and haunt_private.channel_allowed((select realtime.topic()),true))';
+  end if;
  end if;
 end $$;
 insert into public.zh_games(id,title,description_pl,description_en,tags,free,published,package_config) values('zone-haunt','Zone Haunt',
- 'Kooperacyjne śledztwa paranormalne 2.5D. Ośmiu duchów, siedem dowodów, EMF, termometr, radio i bezpieczne szafy. Graj z botami lub ekipą do 4 osób.',
+ 'Kooperacyjne śledztwa paranormalne 2.5D. Osiem typów duchów, siedem rodzajów dowodów, EMF, termometr, radio i bezpieczne szafy. Graj z botami lub ekipą do 4 osób.',
  'Cooperative 2.5D paranormal investigations. Eight ghosts, seven evidence types, EMF, thermometer, spirit radio and safe closets. Play with bots or up to four investigators.',
  array['Co-op','Horror','2.5D','Bots'],true,false,'{"protocol":1,"executable":"ZoneHaunt.exe","manifestName":"zonehub-haunt-manifest.json","releasePrefix":"haunt-v"}')
 on conflict(id) do update set title=excluded.title,description_pl=excluded.description_pl,description_en=excluded.description_en,tags=excluded.tags,package_config=excluded.package_config;

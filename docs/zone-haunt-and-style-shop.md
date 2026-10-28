@@ -9,7 +9,7 @@ Zone Haunt is an original 2.5D cooperative investigation beta, inspired by the g
 - Closed occupied closets are safe during hunts. Bots find real closets and investigate rooms with the same evidence tools as players.
 - Original procedural hunt music, footsteps, radio interference, entity whispers, equipment, evidence, doors and debrief sounds are synthesized locally.
 - Simulation uses its own timer so hiding the host's window does not stop the session. Rendering is separate, with cached room scenery and interpolated remote actors.
-- Authentication is inherited from Zone Hub. Tokens remain in renderer memory. Settings and results are isolated from the other games.
+- Authentication is inherited from Zone Hub. Tokens remain in renderer memory. Settings and results are isolated from the other games. Signed-in solo runs create a private one-person contract and can save progression; browser previews run as offline practice.
 - Lobby and result RPCs use the caller's Auth identity. Private Realtime topics bind state writes to the leader and input writes to the corresponding participant. A bounded RPC fallback remains available if Realtime is unavailable. Results are once per frozen roster member; this is peer-hosted co-op, not a dedicated authoritative server.
 
 Strike Zone 2D no longer offers BR in mode selection, inventory, cases, tips or achievements. Existing BR possessions are retained for Zone Royale. MVP music and gloves remain in Strike.
