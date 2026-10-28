@@ -1,6 +1,7 @@
 -- Paid cosmetics and public showcases are account-owned, independent of local preferences.
 alter table public.zh_profiles add column if not exists profile_theme text not null default 'violet' check(profile_theme in ('violet','ocean','ember','forest','halloween'));
 alter table public.zh_profiles add column if not exists launcher_theme text not null default 'violet' check(launcher_theme in ('violet','ocean','ember','forest','halloween'));
+alter table public.zh_profiles add column if not exists launcher_theme_set boolean not null default false;
 alter table public.zh_profiles add column if not exists showcase jsonb not null default '{"kind":"items","items":[]}';
 create table if not exists zone_hub_private.cosmetics(
  user_id uuid not null references auth.users(id) on delete cascade,
@@ -76,7 +77,7 @@ begin
    if theme='halloween' and not exists(select 1 from zone_hub_private.cosmetics where user_id=uid and cosmetic_id=theme) then raise exception 'HUB_COSMETIC_LOCKED';end if;
   end loop;
   insert into public.zh_profiles(user_id) values(uid) on conflict do nothing;
-  update public.zh_profiles set profile_theme=coalesce(args->>'profile',profile_theme),launcher_theme=coalesce(args->>'launcher',launcher_theme) where user_id=uid;return '{}'::jsonb;
+  update public.zh_profiles set profile_theme=coalesce(args->>'profile',profile_theme),launcher_theme=coalesce(args->>'launcher',launcher_theme),launcher_theme_set=launcher_theme_set or args ? 'launcher' where user_id=uid;return '{}'::jsonb;
  elsif action='showcase_save' then
   if args->>'kind'='game' then
    if not exists(select 1 from public.zh_library where user_id=uid and game_id=args->>'game_id') then raise exception 'HUB_LIBRARY';end if;
@@ -103,9 +104,9 @@ begin
  if action in ('home','profile') and result->'profile' is not null then result:=jsonb_set(result,'{profile}',zone_hub_private.decorate_profile(result->'profile',uid));end if;
  if action='home' then
   select coalesce(jsonb_agg(cosmetic_id),'[]') into owned from zone_hub_private.cosmetics where user_id=uid;
-  select coalesce(launcher_theme,'violet') into theme from public.zh_profiles where user_id=uid;
+  select case when launcher_theme_set then launcher_theme end into theme from public.zh_profiles where user_id=uid;
   begin doc:=zone_hub_private.document(uid);exception when others then doc:='{}';end;p:=doc->'profiles'->(doc->>'cur');balance:=coalesce((p->>'wallet')::bigint,0);
-  result:=result||jsonb_build_object('cosmetics',jsonb_build_object('owned',owned,'launcher',coalesce(theme,'violet'),'balance',balance,'currency','strike-zone'));
+  result:=result||jsonb_build_object('cosmetics',jsonb_build_object('owned',owned,'launcher',theme,'balance',balance,'currency','strike-zone'));
  end if;
  return result;
 end $$;
