@@ -212,7 +212,7 @@ Raport `update-smoke-report.json` jest dołączany do wydania.
 Instalatory nie mają podpisu cyfrowego wydawcy.
 
 
-## Zone Hub 0.1.5 / Zone Royale 0.1.3
+## Zone Hub 0.1.6 / Zone Royale 0.1.3
 
 Zone Hub uruchamia zarządzane gry bez dodatkowego okna launchera. Przy każdej grze w bibliotece jest zębatka z ustawieniem pełnego ekranu, weryfikacją SHA-256 zainstalowanych plików i naprawą. Naprawa zachowuje konto oraz zapisy w chmurze. Kontrola plików służy integralności instalacji.
 
