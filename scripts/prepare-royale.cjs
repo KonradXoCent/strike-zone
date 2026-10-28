@@ -11,6 +11,10 @@ function decorate(html,{inline=false}={}){
  const js0=inline?'<script>'+fs.readFileSync(path.join(root,'game/royale.js'),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'<script src="./royale.js"></script>';
  const additions=['../shared/royale-data.js','royale-visuals.js','royale-expansion.js'];const tag=file=>inline?'<script>'+fs.readFileSync(path.join(root,'game',file),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'<script src=\"'+(file.startsWith('../')?file:'./'+file)+'\"></script>';const js=additions.slice(0,2).map(tag).join('')+js0+tag(additions[2])+tag('royale-matchmaking.js')+tag('../shared/royale-island.js')+tag('royale-content.js');
  html=html.replace('</head>',()=>css+'<script>window.SZ_ROYALE=true;</script></head>');
+ // A storm hole is a separate complete circle, never a connected partial fan.
+ html=html.replace('cx.rect(0,0,WW,WH);cx.arc(g.z.x,g.z.y,Math.max(1,g.z.r),0,7,true)', 'cx.rect(0,0,WW,WH);cx.moveTo(g.z.x+Math.max(1,g.z.r),g.z.y);cx.arc(g.z.x,g.z.y,Math.max(1,g.z.r),0,Math.PI*2,true)');
+ html=html.replace('q.rect(0,0,WW,WH);q.arc(G.z.x,G.z.y,G.z.r,0,Math.PI*2,true)', 'q.rect(0,0,WW,WH);q.moveTo(G.z.x+G.z.r,G.z.y);q.arc(G.z.x,G.z.y,G.z.r,0,Math.PI*2,true)');
+ html=html.replace("toast('Fog of war: you only see what is in line of sight')", "toast(szLocale.language==='en'?'Frontier Island — use M to plan your landing':'Frontier Island — użyj M, aby zaplanować lądowanie')");
  // In squad modes allies do not count as threats while scavenging or healing.
  html=html.replaceAll('e!==p&&e.alive&&!e.ap','e!==p&&e.team!==p.team&&e.alive&&!e.ap');
  // Remote players and bots use their synchronized owned-style parachute colour.
