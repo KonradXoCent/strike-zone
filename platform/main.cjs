@@ -35,6 +35,7 @@ async function command(action,args={}){
  if(action==='select-game'){if(!runtimes.has(args.game_id))throw Error('HUB_GAME_UNKNOWN');active(args.game_id);selectedGame=args.game_id;publish();return snapshot();}
  if(action==='refresh'){await Promise.all([refresh(),friends.refresh(),...[...runtimes.values()].map(r=>r.packages.check())]);return snapshot();}
  if(action==='friend'){await friends.command(args.action,args.args);return snapshot();}
+ if(action.startsWith('market_')){const value=await rpc(action,args);if(action!=='market_list')inventory();return value;}
  if(['profile','search','inventory'].includes(action))return rpc(action,args);
  if(['trade_create','trade_pick','trade_confirm','trade_cancel'].includes(action)){const result=await rpc(action,args);if(result.status==='completed')inventory();await refresh();return result;}
  if(['edit_profile','comment','delete_comment','add_game'].includes(action)){await rpc(action,args);await refresh();return snapshot();}
