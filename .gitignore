@@ -27,3 +27,7 @@ vendor/
 
 assets/royale-icon.png
 assets/royale-icon.ico
+
+# Rebuilt from the canonical vector and generated emblem sources.
+assets/hub-icon.png
+assets/hub-icon.ico

@@ -9,7 +9,9 @@ create table if not exists zone_royale_private.matches(
  host_seen timestamptz not null default now(),closes_at timestamptz not null default (now()+interval '15 seconds'),
  phase text not null default 'waiting' check(phase in ('waiting','running')),created_at timestamptz not null default now()
 );
-alter table zone_royale_private.matches add column if not exists protocol integer not null default 2 check(protocol in(2,3));
+alter table zone_royale_private.matches add column if not exists protocol integer not null default 2 check(protocol in(2,3,4));
+alter table zone_royale_private.matches drop constraint if exists matches_protocol_check;
+alter table zone_royale_private.matches add constraint matches_protocol_check check(protocol in(2,3,4));
 create index if not exists zr_host_user on zone_royale_private.matches(host_id);
 create index if not exists zr_match_expiry on zone_royale_private.matches(created_at);
 create index if not exists zr_waiting on zone_royale_private.matches(mode,closes_at) where phase='waiting';
@@ -53,7 +55,7 @@ begin
   end if;return '{}'::jsonb;
  end if;
  if action='join' then
-  protocol:=case when args->>'protocol'='3' then 3 else 2 end;mode:=args->>'mode';size:=case mode when 'solo' then 1 when 'duo' then 2 when 'trio' then 3 when 'squad' then 4 else 0 end;
+  protocol:=case when args->>'protocol' in ('3','4') then (args->>'protocol')::integer else 2 end;mode:=args->>'mode';size:=case mode when 'solo' then 1 when 'duo' then 2 when 'trio' then 3 when 'squad' then 4 else 0 end;
   if size=0 or coalesce(args->>'party','') !~ '^[a-f0-9-]{36}$' or coalesce(args->>'expected','') !~ '^[1-4]$' or coalesce(args->>'map','') !~ '^[678]$' or jsonb_typeof(args->'fill')<>'boolean' then raise exception 'ZR_QUEUE_INPUT';end if;
   ticket:=(args->>'party')::uuid;expected:=(args->>'expected')::integer;fill:=(args->>'fill')::boolean;
   if expected>size then raise exception 'ROYALE_PARTY_SIZE';end if;

@@ -115,7 +115,7 @@ async function openGame() {
     if (input.control && input.shift && input.key.toLowerCase() === 'l') { event.preventDefault(); closeGame(); }
   });
   win.on('close', event => { if (!win.__mayClose) { event.preventDefault(); closeGame(); } });
-  win.on('closed', () => { game = null;platformBridge?.send('game',{running:false});friends.setGameRunning(false); friends.refresh();if(royaleStandalone){app.quit();return;}launcher?.show();launcher?.focus();broadcast();controller.check(); });
+  win.on('closed', () => { game = null;platformBridge?.send('game',{running:false});friends.setGameRunning(false); friends.refresh();if(platformManaged||royaleStandalone){app.quit();return;}launcher?.show();launcher?.focus();broadcast();controller.check(); });
   win.webContents.on('did-fail-load',()=>platformBridge?.send('failed',{code:'HUB_WINDOW'}));
   win.webContents.on('render-process-gone',()=>platformBridge?.send('failed',{code:'HUB_WINDOW'}));
   win.loadURL(GAME_URL);
@@ -221,10 +221,10 @@ else {
       const apply=async value=>{const old=account.snapshot().user?.id,r=await client.auth.setSession({access_token:value.access_token,refresh_token:value.refresh_token});if(r.error||!r.data?.session||old&&r.data.session.user.id!==old)throw Error('HUB_HANDOFF');await account.accept(r.data.session);if(value.preferences)prefs.set({language:value.preferences.language==='en'?'en':'pl',fullscreen:value.preferences.fullscreen===true});if(!account.snapshot().authenticated)throw Error('HUB_HANDOFF');};
       await apply(await platformBridge.first());platformBridge.on('session',v=>apply(v).catch(()=>closeGame().finally(()=>app.quit())));
       platformBridge.on('inventory',()=>{if(game&&!game.isDestroyed())game.webContents.send('game:inventory');});
-      platformBridge.on('preferences',p=>{const next=prefs.set({language:p.language==='en'?'en':'pl',fullscreen:p.fullscreen===true});toBoth('preferences:state',next);broadcast();});
+      platformBridge.on('preferences',p=>{const next=prefs.set({language:p.language==='en'?'en':'pl',fullscreen:p.fullscreen===true});if(game&&!game.isDestroyed())game.setFullScreen(next.fullscreen);toBoth('preferences:state',next);broadcast();});
       platformBridge.on('logout',()=>closeGame().finally(()=>app.quit()));platformBridge.on('disconnect',()=>closeGame().finally(()=>app.quit()));
     }
-    createLauncher();if(!platformManaged)account.init();if(royaleStandalone)await openGame();
+    if(platformManaged)await openGame();else{createLauncher();account.init();if(royaleStandalone)await openGame();}
     setInterval(() => { if (!game && launcher?.isVisible()) controller.check(); }, 120000).unref();
   }).catch(() => { app.exit(1); });
   app.on('window-all-closed', () => app.quit());

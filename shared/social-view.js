@@ -1,11 +1,11 @@
 (function(root){'use strict';
  function mount({command,subscribe,getFriends,locale,ack,notify=()=>true}){
   const t=x=>locale?.t(x)||x,el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e;};
-  const trigger=el('button','sz-chat-trigger'),badge=el('b','sz-chat-badge');trigger.type='button';trigger.append(el('span','','✉'),el('span','','Wiadomości'),badge);document.body.append(trigger);
+  const trigger=el('button','sz-chat-trigger'),badge=el('b','sz-chat-badge');trigger.type='button';trigger.append(el('span','','✉'),el('span','',t('Wiadomości')),badge);document.body.append(trigger);
   const dialog=el('dialog','sz-chat');dialog.setAttribute('aria-label',t('Wiadomości'));document.body.append(dialog);
   let state={threads:[],uid:null},thread=null,history=[],older=false,poll=null,busy=false,baseline=null,seen=new Map(),lastRead=null,draft=new Map(),outbox=null,request=0,view='chat',signature='';
-  const top=el('div','sz-chat-top');top.append(el('h2','','Wiadomości'));
-  const direct=el('button','','Nowa rozmowa'),group=el('button','','Nowa grupa'),close=el('button','','×');close.setAttribute('aria-label',t('Zamknij'));top.append(direct,group,close);dialog.append(top);
+  const top=el('div','sz-chat-top');top.append(el('h2','',t('Wiadomości')));
+  const direct=el('button','',t('Nowa rozmowa')),group=el('button','',t('Nowa grupa')),close=el('button','','×');close.setAttribute('aria-label',t('Zamknij'));top.append(direct,group,close);dialog.append(top);
   const layout=el('div','sz-chat-layout'),sidebar=el('div','sz-chat-sidebar'),main=el('div','sz-chat-main'),error=el('div','sz-chat-error');error.setAttribute('role','status');layout.append(sidebar,main);dialog.append(layout,error);
   const label=th=>th.kind==='group'?th.title:(th.members||[]).find(m=>m.id!==state.uid)?.name||'Player';
   const content=(node)=>{node.dataset.userContent='';return node;};
@@ -41,7 +41,7 @@
   close.onclick=()=>dialog.close();dialog.addEventListener('close',()=>{clearInterval(poll);request++;});dialog.addEventListener('keydown',e=>e.stopPropagation());trigger.onclick=()=>open(thread);direct.onclick=()=>choose('direct');group.onclick=()=>choose('group');window.addEventListener('focus',mark);document.addEventListener('visibilitychange',mark);
   subscribe(s=>{if(state.uid!==s.uid){thread=null;history=[];draft.clear();outbox=null;baseline=null;seen.clear();lastRead=null;main.replaceChildren();sidebar.replaceChildren();document.querySelector('.sz-chat-toast')?.remove();if(dialog.open)dialog.close();}announce(s);state=s;trigger.hidden=!s.uid;badge.textContent=s.unread>99?'99+':String(s.unread||0);badge.hidden=!s.unread;error.textContent=s.error?t(s.error):'';
    const sig=JSON.stringify(s.threads);if(sig!==signature){signature=sig;renderList();if(thread&&!s.threads.some(t=>t.id===thread)){thread=null;history=[];renderChat();}else if(dialog.open)load();}});
-  return {open,direct:async id=>{try{const r=await run('direct',{user:id});open(r.id);}catch{}},dispose(){clearInterval(poll);dialog.remove();trigger.remove();}};
+  return {open,refreshLocale(){trigger.children[1].textContent=t('Wiadomości');top.querySelector('h2').textContent=t('Wiadomości');direct.textContent=t('Nowa rozmowa');group.textContent=t('Nowa grupa');close.setAttribute('aria-label',t('Zamknij'));dialog.setAttribute('aria-label',t('Wiadomości'));renderList();if(dialog.open)renderChat();},direct:async id=>{try{const r=await run('direct',{user:id});open(r.id);}catch{}},dispose(){clearInterval(poll);dialog.remove();trigger.remove();}};
  }
  root.SzChatView={mount};
 })(globalThis);

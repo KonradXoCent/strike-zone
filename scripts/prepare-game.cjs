@@ -2,6 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+require('./ensure-generated.cjs');
 require('./embed-shared.cjs').sync(true);
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'game-source/index.html'), 'utf8');

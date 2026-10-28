@@ -25,7 +25,7 @@
  const originalBody=drawBody;drawBody=function(p){if(MODE()==='br')return ZRVisual.body(p);return originalBody(p);};
  outCol=()=>bit(SzRoyale.appearance().outfit)?.c||'#3b8291';chuteCol=()=>bit(SzRoyale.appearance().chute)?.c||'#d5eee3';
  const oldEq=eqOf;eqOf=function(p,k){return oldEq(p?.human&&MODE()==='br'?new Proxy(p,{get:(o,key)=>key==='team'?(o.brSide||'CT'):o[key]}):p,k);};
- const oldPresence=lobbyPresence;lobbyPresence=function(){return{...oldPresence(),royaleConfig:config(),royaleProtocol:2};};
+ const oldPresence=lobbyPresence;lobbyPresence=function(){return{...oldPresence(),royaleConfig:config(),royaleProtocol:4};};
  const oldLobbyUI=lobUI;lobUI=function(){if(L&&!L.host){const h=roomHost(),sig=JSON.stringify(validConfig(h?.royaleConfig));if(lastHostConfig&&sig!==lastHostConfig){lastHostConfig=sig;SzRoyale.clearReady();}lastHostConfig=sig;}oldLobbyUI();};
  const oldRound=brRound;brRound=function(){const c=config(),queued=root.SzRoyaleMatchmaking?.active()?.latest?.roster,members=queued?[...queued].sort((a,b)=>(b.cid===NET.cid)-(a.cid===NET.cid)):SzRoyale.party();if(!queued&&members.length>D.modes[c.mode])throw Error('ROYALE_PARTY_SIZE');const r=oldRound(),g=G,ordered=[g.me,...g.ps.filter(p=>p!==g.me)],layout=queued?null:D.plan(ordered.length,members.length,c.mode,c.fill);g.royaleConfig=c;g.royalePlaces={};
   const teamCounts=new Map(),fillable=new Map();if(queued)for(const member of members){const team='R'+member.team;teamCounts.set(team,(teamCounts.get(team)||0)+1);fillable.set(team,(fillable.get(team)??true)&&member.fill);}let nextTeam=queued?Math.max(-1,...members.map(p=>p.team))+1:0;

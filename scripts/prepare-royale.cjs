@@ -9,7 +9,7 @@ function decorate(html,{inline=false}={}){
  html=html.replace(/<title>[^<]*<\/title>/,'<title>Zone Royale · Battle Royale</title>');
  const css=inline?'<style>'+royaleCSS()+'</style>':'<link rel="stylesheet" href="./royale.css">';
  const js0=inline?'<script>'+fs.readFileSync(path.join(root,'game/royale.js'),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'<script src="./royale.js"></script>';
- const additions=['../shared/royale-data.js','royale-visuals.js','royale-expansion.js'];const tag=file=>inline?'<script>'+fs.readFileSync(path.join(root,'game',file),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'<script src=\"'+(file.startsWith('../')?file:'./'+file)+'\"></script>';const js=additions.slice(0,2).map(tag).join('')+js0+tag(additions[2])+tag('royale-matchmaking.js')+tag('../shared/royale-island.js')+tag('royale-content.js');
+ const additions=['../shared/royale-data.js','royale-visuals.js','royale-expansion.js'];const tag=file=>inline?'<script>'+fs.readFileSync(path.join(root,'game',file),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'<script src=\"'+(file.startsWith('../')?file:'./'+file)+'\"></script>';const js=additions.slice(0,2).map(tag).join('')+js0+tag(additions[2])+tag('royale-matchmaking.js')+tag('../shared/royale-island.js')+tag('royale-content.js')+tag('royale-squad.js');
  html=html.replace('</head>',()=>css+'<script>window.SZ_ROYALE=true;</script></head>');
  // A storm hole is a separate complete circle, never a connected partial fan.
  html=html.replace('cx.rect(0,0,WW,WH);cx.arc(g.z.x,g.z.y,Math.max(1,g.z.r),0,7,true)', 'cx.rect(0,0,WW,WH);cx.moveTo(g.z.x+Math.max(1,g.z.r),g.z.y);cx.arc(g.z.x,g.z.y,Math.max(1,g.z.r),0,Math.PI*2,true)');
