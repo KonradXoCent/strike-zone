@@ -17,12 +17,13 @@ const platformBridge=platformManaged?new(require('./core/platform-bridge.cjs').P
 if(require('./package.json').platformOnly===true&&!platformManaged)app.exit(1);
 const desktopTest = require('./package.json').desktopTest === true;
 const royaleStandalone=require('./package.json').brStandalone===true;
-const productName=royaleStandalone?'Zone Royale':'Strike Zone 2D';
+const hauntStandalone=require('./package.json').hauntStandalone===true;
+const productName=hauntStandalone?'Zone Haunt':royaleStandalone?'Zone Royale':'Strike Zone 2D';
 
 app.setName(productName);
-app.setAppUserModelId((royaleStandalone?'pl.konradxocent.zoneroyale':'pl.konradxocent.strikezone.desktop') + (platformManaged?'.zonehub':desktopTest?'.test':''));
+app.setAppUserModelId((hauntStandalone?'pl.konradxocent.zonehaunt':royaleStandalone?'pl.konradxocent.zoneroyale':'pl.konradxocent.strikezone.desktop') + (platformManaged?'.zonehub':desktopTest?'.test':''));
 // Keep this path and the strikezone://app origin unchanged between releases.
-app.setPath('userData', path.join(app.getPath('appData'), royaleStandalone?'ZoneRoyale-Managed':platformManaged?'StrikeZone2D-Managed':desktopTest?'StrikeZone2D-Test':'StrikeZone2D'));
+app.setPath('userData', path.join(app.getPath('appData'), hauntStandalone?'ZoneHaunt-Managed':royaleStandalone?'ZoneRoyale-Managed':platformManaged?'StrikeZone2D-Managed':desktopTest?'StrikeZone2D-Test':'StrikeZone2D'));
 protocol.registerSchemesAsPrivileged([{ scheme: 'strikezone', privileges: {
   standard: true, secure: true, supportFetchAPI: true, corsEnabled: true
 } }]);
@@ -39,10 +40,10 @@ let backend = { phase: 'checking' };
 let configError = false;
 const root = __dirname;
 const LAUNCHER_URL = 'strikezone://app/launcher/index.html';
-const GAME_URL = 'strikezone://app/game/'+(royaleStandalone?'royale.html':'index.html');
-const gameSource = fs.readFileSync(path.join(root, 'game/index.html'), 'utf8');
-const supabaseUrl = gameSource.match(/const SB_URL='(https:\/\/[a-z0-9]+\.supabase\.co)'/)?.[1];
-const supabaseKey = gameSource.match(/SB_KEY='([^']+)'/)?.[1];
+const GAME_URL = 'strikezone://app/game/'+(hauntStandalone?'haunt/index.html':royaleStandalone?'royale.html':'index.html');
+const gameSource = hauntStandalone?'':fs.readFileSync(path.join(root, 'game/index.html'), 'utf8');
+const supabaseUrl = hauntStandalone?'https://mvzlqpccmjslxdajjbfw.supabase.co':gameSource.match(/const SB_URL='(https:\/\/[a-z0-9]+\.supabase\.co)'/)?.[1];
+const supabaseKey = hauntStandalone?'sb_publishable_RmE3bsF9p-P1GJEw77LYvA_nSkKGeMI':gameSource.match(/SB_KEY='([^']+)'/)?.[1];
 
 function snapshot() {
   const user = account.snapshot();
@@ -78,7 +79,7 @@ function showManagedWindow(win) {
 function createLauncher() {
   launcher = new BrowserWindow({ ...launcherBounds(screen.getDisplayNearestPoint(screen.getCursorScreenPoint()).workArea),
     title: 'Strike Zone 2D — Launcher', titleBarStyle: 'hidden', backgroundColor: '#101418',
-    icon: path.join(root,royaleStandalone?'assets/royale-icon.png':'assets/icon.png'), show: false,
+    icon: path.join(root,hauntStandalone?'assets/haunt-icon.png':royaleStandalone?'assets/royale-icon.png':'assets/icon.png'), show: false,
     webPreferences: { preload: path.join(root, 'preload.cjs'), contextIsolation: true,
       nodeIntegration: false, sandbox: true, webSecurity: true, spellcheck: false }
   });
@@ -100,7 +101,7 @@ async function openGame() {
   game = new BrowserWindow({ width: 1440, height: 900, minWidth: 960, minHeight: 640,
     fullscreen: startFullscreen,
     title: productName, backgroundColor: '#10141b', autoHideMenuBar: true,
-    icon: path.join(root,royaleStandalone?'assets/royale-icon.png':'assets/icon.png'), show: false,
+    icon: path.join(root,hauntStandalone?'assets/haunt-icon.png':royaleStandalone?'assets/royale-icon.png':'assets/icon.png'), show: false,
     webPreferences: { preload: path.join(root, 'game-preload.cjs'), contextIsolation: true,
       nodeIntegration: false, sandbox: true, webSecurity: true, spellcheck: false,
       backgroundThrottling: false }

@@ -39,9 +39,15 @@ jobs:
           node scripts/royale-view-smoke.cjs
           node scripts/royale-content-smoke.cjs
           node scripts/royale-identity-smoke.cjs
+      - name: Verify original ghost investigations, lobby security and owned cosmetics
+        run: |
+          node --test tests/haunt*.test.cjs tests/zone-hub-cosmetics.test.cjs
+          node scripts/haunt-smoke.cjs
+          node scripts/haunt-network-smoke.cjs
+          node scripts/zone-hub-handoff-smoke.cjs --haunt
       - name: Build the lightweight platform and separate game packages
         run: npm run dist:platform
-      - name: Verify both actual Windows game packages
+      - name: Verify all three actual Windows game packages
         run: node scripts/zone-hub-install-smoke.cjs --bundled
       - name: Update released Windows games without downloading Electron again
         run: node scripts/zone-hub-content-smoke.cjs

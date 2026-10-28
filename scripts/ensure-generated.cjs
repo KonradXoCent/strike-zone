@@ -7,3 +7,5 @@ require('./embed-shared.cjs').sync();
 if(['items.js','items.css','items.webp'].some(n=>!fs.existsSync(path.join(root,'platform/ui',n))))execFileSync(process.execPath,[path.join(__dirname,'hub-items.cjs')],{stdio:'inherit'});
 
 execFileSync(process.execPath,[path.join(__dirname,'royale-assets.cjs')],{stdio:'inherit'});
+
+require('./hub-cosmetics-assets.cjs')();

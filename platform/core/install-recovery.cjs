@@ -6,7 +6,7 @@ function recover({root,legacyRoots=[],game,executable,version,compare,readAsarFi
   const record=read(path.join(base,'installed.json'));
   for(const sha256 of names){try{const dir=path.join(base,'versions',sha256);if(fs.lstatSync(dir).isSymbolicLink()||!fs.statSync(path.join(dir,executable)).isFile()||!fs.statSync(path.join(dir,'resources/app.asar')).isFile())continue;const index=read(path.join(dir,'zonehub-integrity.json'));let v=null;
     if(index?.schema===1&&index.game===game&&version(index.version)&&Array.isArray(index.files)&&index.files.some(x=>x.path===executable)&&index.files.some(x=>x.path==='resources/app.asar'))v=index.version;
-    if(!v&&record?.sha256===sha256&&(!record.game||record.game===game)&&version(record.version)){try{const pkg=JSON.parse(readAsarFile(path.join(dir,'resources/app.asar'),'package.json'));if(pkg.platformOnly===true&&(game==='zone-royale'?pkg.brStandalone===true:game==='strike-zone'?pkg.brStandalone!==true:false))v=record.version;}catch{}}
+    if(!v&&record?.sha256===sha256&&(!record.game||record.game===game)&&version(record.version)){try{const pkg=JSON.parse(readAsarFile(path.join(dir,'resources/app.asar'),'package.json'));if(pkg.platformOnly===true&&(game==='zone-haunt'?pkg.hauntStandalone===true:game==='zone-royale'?pkg.brStandalone===true:game==='strike-zone'?pkg.brStandalone!==true&&pkg.hauntStandalone!==true:false))v=record.version;}catch{}}
     if(v)choices.push({base,dir,version:v,sha256});
    }catch{}}
  }
