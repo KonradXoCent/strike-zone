@@ -205,6 +205,7 @@ else {
     ipcMain.handle('launcher:install', event => { trusted(event, LAUNCHER_URL); if (!game) controller.install(); return snapshot(); });
     ipcMain.handle('launcher:minimize', event => { trusted(event, LAUNCHER_URL); launcher.minimize(); });
     ipcMain.handle('launcher:quit', event => { trusted(event, LAUNCHER_URL); app.quit(); });
+    ipcMain.handle('game:managed',event=>{trusted(event,GAME_URL);return platformManaged;});
     ipcMain.handle('game:launcher', event => { trusted(event, GAME_URL); closeGame(); });
     ipcMain.handle('game:fullscreen', event => { trusted(event, GAME_URL); game.setFullScreen(!game.isFullScreen()); });
     ipcMain.handle('game:session', event => { trusted(event, GAME_URL); return account.gameSession(); });

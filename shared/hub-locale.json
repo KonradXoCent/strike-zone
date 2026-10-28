@@ -26,5 +26,9 @@
   [
     "Wybierz: kliknij i przeciągnij istniejący obiekt. R: obróć o 90° · Shift+R: w lewo. Delete: usuń przeszkodę. Rolka: zoom · PPM: widok. Deski i kratki odradzają się co rundę.",
     "Select: click and drag an existing object. R: rotate 90° · Shift+R: left. Delete: erase obstacle. Wheel: zoom · RMB: pan. Boards and vents reset each round."
+  ],
+  [
+    "Wrócisz do Zone Hub. Twój postęp zostanie zapisany.",
+    "You will return to Zone Hub. Your progress will be saved."
   ]
 ]

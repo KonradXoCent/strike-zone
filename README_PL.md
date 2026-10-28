@@ -210,3 +210,18 @@ Testy kont używają odizolowanych odpowiedzi HTTP; bez modyfikacji prawdziwych 
 Raport `update-smoke-report.json` jest dołączany do wydania.
 
 Instalatory nie mają podpisu cyfrowego wydawcy.
+
+
+## Zone Hub 0.1.5 / Zone Royale 0.1.3
+
+Zone Hub uruchamia zarządzane gry bez dodatkowego okna launchera. Przy każdej grze w bibliotece jest zębatka z ustawieniem pełnego ekranu, weryfikacją SHA-256 zainstalowanych plików i naprawą. Naprawa zachowuje konto oraz zapisy w chmurze. Kontrola plików służy integralności instalacji.
+
+Wiadomości i grupy używają istniejącego `sz_chat`; te same rozmowy widać w grze, dawnym launcherze i Zone Hub. Ekwipunek i wymiany otwiera się z profilu. Warsztat pokazuje wyłącznie opublikowane, aktywne prace z istniejącego katalogu Supabase. Oficjalne oznaczenie ZeroX pochodzi z prywatnej tabeli uprawnień, a nie z nicku lub metadanych użytkownika.
+
+Rynek posiada sortowanie, kategorie i strony po 24 oferty dla każdej gry. Boty uzupełniają zróżnicowane oferty; limit wydatków botów pozostaje niezmieniony.
+
+W Zone Royale klawisze **1–3** wybierają bronie, **4** kilof, **5** granat. Gdy trzy sloty są pełne, przytrzymaj **E**, aby podnieść inną broń w miejsce wybranej. **G** upuszcza trzymaną broń. W duo, trio i squad karta po śmierci wygasa po 180 sekundach, jeśli drużyna jej nie zbierze. Zebrana karta umożliwia odrodzenie przy vanie: przytrzymaj **E** przez 6 sekund. Ruch i obrażenia przerywają operację. Van po odrodzeniu ma 90 sekund odnowienia. Boty także zbierają karty i odradzają sojuszników. Host kontroluje stan broni, kart i vanów; protokół kolejki 4 oddziela te mecze od starszych klientów.
+
+Nowe migracje po dotychczasowym schemacie: `zone-hub-browse.sql`, `zone-hub-market-stock.sql`; `zone-royale-matchmaking.sql` obsługuje protokół 4. W działającej bazie można zastosować krótszą, idempotentną migrację `zone-royale-protocol4.sql`. Oryginalny kanał aktualizacji samodzielnego Strike Zone 2D nie jest zastępowany.
+
+Źródłami znaków aplikacji są `assets/hub-logo.svg` oraz `assets/strike-emblem.b64` (oryginalna grafika utworzona przez imagegen). `scripts/brand-assets.cjs` odtwarza PNG/ICO przed przygotowaniem gry i pakowaniem.
