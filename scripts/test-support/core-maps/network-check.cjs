@@ -42,11 +42,9 @@ async function run(){
  assert.notEqual(Q('NET.session'),beforeSession);assert.equal(Q('NET.session'),H('NET.session'));assert.equal(Q('sel.map'),13);assert(Q('G.client&&!G.netWaiting&&L&&!L.host&&LC===__retainedLobby&&!!roomHost()'),'automatic map changes retain the guest room and consume snapshots');assert.equal(Q('G.me.rid'),gid);
  const staleStart=toGuest.filter(p=>p.t==='start').at(-1);H('quit()');await tick();assert(Q('!G&&!L&&!LC'),'the host can end a match after the automatic map change');guest.netRecv(staleStart);assert(Q('!G&&!L'),'late start packets cannot revive a departed match');assert.deepEqual(h.errors,[]);assert.deepEqual(g.errors,[]);
  console.log('PASS automatic map/session changes preserve the lobby, new snapshots and remote slot; host end and explicit exits leave cleanly and reject late starts');
- H("sel.map=6;sel.mode='br';begin0();G.paused=true;for(const p of G.ps)if(!p.human){p.ap=0;p.alive=true;p.hp=100;}");
- Q(`L={host:false,code:'QATEST',team:'CT'};LP=${JSON.stringify(peers)};NET.host=0;NET.session=${JSON.stringify(H('NET.session'))};NET.hostCid=${JSON.stringify(hid)};NET.seenSeq=-1;LC={send(o){__route(o.payload);return Promise.resolve('ok');},track(){return Promise.resolve('ok')}};`);
- H('netStartMessage();netSnap()');await tick();assert(Q('G.client&&!G.netWaiting&&G.me.ap===0'),'a late BR guest inherits the valid landed state');
- H('const remote=G.ps.find(p=>p.rh);Object.assign(remote,{ap:1,alive:true,hp:100,inv:999,brLanding:brPoint(WW/2,WH/2,35)});netSnap()');assert.equal(Q('G.me.ap'),1);Q('jump(G.me)');assert(H('G.ps.some(p=>p.rh&&p.ap===2)'));H('netSnap()');assert.equal(Q('G.me.ap'),2);H('quit()');assert(Q('!G&&!L'));assert.deepEqual(h.errors,[]);assert.deepEqual(g.errors,[]);
- console.log('PASS a BR guest can join after bots have landed, and an explicitly staged plane jump remains host-authoritative and synchronizes the parachute');
+ H("sel.mode='br'");assert.equal(H('sel.mode'),'classic');assert(!H("MODES.some(m=>m[0]==='br')"));
+ assert.deepEqual(h.errors,[]);assert.deepEqual(g.errors,[]);
+ console.log('PASS Strike rejects legacy BR selection; plane, parachute and shared BR input are verified in the dedicated Royale SDK smoke test');
 
 
 }
