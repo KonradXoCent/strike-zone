@@ -56,7 +56,7 @@
     "test:platform": "node --test tests/zone-hub*.test.cjs",
     "test:platform-ui": "node scripts/zone-hub-install-smoke.cjs && node scripts/zone-hub-smoke.cjs && node scripts/zone-hub-handoff-smoke.cjs && node scripts/zone-hub-handoff-smoke.cjs --royale",
     "test:royale": "node scripts/royale-smoke.cjs",
-    "test:haunt": "node --test tests/haunt*.test.cjs && node scripts/haunt-smoke.cjs && node scripts/haunt-network-smoke.cjs"
+    "test:haunt": "node scripts/prepare-haunt.cjs && node --test tests/haunt*.test.cjs && node scripts/haunt-smoke.cjs && node scripts/haunt-network-smoke.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.4",

@@ -21,6 +21,7 @@ jobs:
           cache: npm
       - run: npm ci --no-audit --no-fund
       - run: node scripts/ensure-generated.cjs
+      - run: node scripts/prepare-haunt.cjs
       - name: Test all simulation, ownership, rewards and SQL authorization
         run: node --test tests/haunt*.test.cjs tests/zone-hub-cosmetics.test.cjs
       - name: Verify UI, actual lighting and consecutive investigations

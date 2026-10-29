@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),{execFileSync}=require('node:child_process'),{build,Platform,Arch}=require('electron-builder'),root=path.join(__dirname,'..');
 async function managed({beta=false,game='strike-zone'}={}){
- const royale=game==='zone-royale',haunt=game==='zone-haunt';if(royale||haunt)await require('./royale-assets.cjs')();if(!royale&&!haunt&&game!=='strike-zone')throw Error('Unknown game');
+ const royale=game==='zone-royale',haunt=game==='zone-haunt';if(haunt)require('./prepare-haunt.cjs').prepare();if(royale||haunt)await require('./royale-assets.cjs')();if(!royale&&!haunt&&game!=='strike-zone')throw Error('Unknown game');
  const stable=haunt?require('../game/haunt-version.json').version:royale?require('../game/royale-version.json').version:require('../package.json').version,version=!royale&&!haunt&&beta?require('../game/managed-version.json').version:stable,outName=haunt?'dist-haunt':royale?'dist-royale':'dist-managed',output=path.join(root,outName),exe=haunt?'ZoneHaunt':royale?'ZoneRoyale':'StrikeZone',brand=haunt?'haunt':royale?'royale':null;
  fs.mkdirSync(output,{recursive:true});fs.rmSync(path.join(output,'win-unpacked'),{recursive:true,force:true});
  const files=['main.cjs','preload.cjs','game-preload.cjs','core/**','launcher/**','shared/**','assets/**','vendor/**','updates.json','package.json',...(haunt?['game/haunt/**','game/haunt-version.json']:['game/**',...(!royale?['!game/royale*']:[]),'!game/haunt/**'])];
