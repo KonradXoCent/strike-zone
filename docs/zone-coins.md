@@ -1,6 +1,6 @@
 # Zone Coins — account wallet
 
-Zone Hub 0.1.11, managed Strike 1.5.10-zonehub.6, Royale 0.1.8 and Haunt 0.1.2 use one account-wide virtual currency: Zone Coins (ZC). Inventories remain game-specific. Strike round buy money and seasonal Halloween candy are separate gameplay/event mechanics.
+Zone Hub 0.1.12, managed Strike 1.5.10-zonehub.6, Royale 0.1.8 and Haunt 0.1.3 use one account-wide virtual currency: Zone Coins (ZC). Inventories remain game-specific. Strike round buy money and seasonal Halloween candy are separate gameplay/event mechanics.
 
 ## Migration and rewards
 
@@ -25,3 +25,5 @@ Wallet writers take advisory transaction lock `28003420` before existing save/ma
 The Hub header and Wallet page show the same balance as the style shop, both market games and each game menu. The game text adapter changes permanent wallet prices to ZC while leaving round HUD money intact. Twelve avatar frames include six new designs and the revised Pumpkin Guardian. Existing six paid bundles keep their server prices, now denominated in ZC.
 
 `tests/zone-wallet.test.cjs` exercises import, shared purchases, market escrow, offline payouts, time rewards, Haunt rewards, codes, Community Forge, retries, foreign sessions, and actual renderer adapter reconciliation against PostgreSQL. Native handoffs with `--wallet` use the same SQL fixture for Strike, Royale and Haunt. The Hub UI check includes purchases, two-client market settlement, the new wallet view, PL/EN and three window sizes. Existing Windows release gates retain install verification, content-only updates and platform self-update preservation.
+
+Zone Haunt costs 500 ZC for a new library license, with explicit price confirmation. Existing owners keep access. Before each contract, players can buy finite equipment with server prices and choose their contribution. A whole-crew wipe consumes the deployed gear; reserves remain. A surviving team recovers its loadout. Gear purchases and result settlement are idempotent, and use the same account wallet as the Hub shop and both game markets.
