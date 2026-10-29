@@ -1,14 +1,11 @@
-Zone Hub 0.1.12 · Zone Haunt 0.1.3 — biuro i nowe śledztwa
+Zone Hub 0.1.13 · Zone Haunt 0.1.4 — Punkty badań i skrócone kwoty
 
-- Zone Haunt kosztuje 500 ZC we wspólnym portfelu. Osoby, które już mają grę w bibliotece, zachowują dostęp bez ponownego zakupu.
-- Grywalne biuro ekipy: ruch, koszykówka ze wspólną piłką, tablica wyboru mapy, trudności i liczby botów oraz sklep sprzętowy.
-- Zaproszenia do lobby od znajomych Zone Hub, przyjmowane lub odrzucane w platformie i grze.
-- Sprzęt kupowany przed wyprawą za ZC. Jednorazowy zestaw startowy; na śledztwo trafiają tylko wybrane sztuki. Śmierć całej ekipy oznacza utratę zabranego wyposażenia. Zapasy w biurze zostają; gdy ktoś przeżyje, ekipa odzyskuje ładunek.
-- Boty wspierają graczy na polecenie, zamiast samodzielnie rozwiązywać śledztwo. Dowody wymagają obserwacji, czasu i odpowiednich warunków. Tempo zależy od ducha, trudności i wylosowanego śledztwa.
-- Sprzęt można rozstawiać także w korytarzach, innych pokojach i na zewnątrz. Bezpieczniki są głębiej w budynkach.
-- 12 map, uporządkowanych od najmniejszej do największej. Poziom Zone Haunt lidera odblokowuje kolejne lokacje dla całej ekipy. Willow i halloweenowe Harvest House są dostępne od poziomu 1.
-- Nowe lokacje: Harvest House, Marsh Chapel, Ironvale Workshop, Crow Motel i Ravenhill Asylum. Szkoła jest większa i ma osobne toalety damskie i męskie.
-- Duchy otwierają i zamykają drzwi, przełączają światła, szepczą, stukają i wywołują lokalne zdarzenia. Słyszalność zależy od dystansu i ścian.
-- Po zakończeniu zlecenia ekipa wraca do wspólnego biura; kolejne śledztwo ma nowy zapis wyniku i kanały synchronizacji.
+- Sprzęt Zone Haunt kupuje się za osobne Punkty badań (PB / RP), zdobywane za rozpoznanie ducha, dowody, zdjęcia i kość. Zlecenia nie dopisują nowych nagród do ZC.
+- Każdy właściciel gry otrzymuje jednorazowo 1K Punktów badań. Odświeżenie gry, nowe lobby i przegrane zlecenie nie przyznają ich ponownie.
+- Zakup gry nadal kosztuje 500 ZC; dotychczasowi właściciele zachowują dostęp. Wspólna nagroda ZC za czas gry pozostaje dostępna.
+- Zakupy sprzętu używają cen serwera i potwierdzeń chroniących przed podwójną opłatą. Niewystarczające PB blokują zakup niezależnie od salda ZC.
+- Ewentualne wcześniejsze zakupy sprzętu za ZC otrzymują jednorazowy zwrot ZC, a kupiony sprzęt zostaje w magazynie.
+- Salda, ceny i nagrody są skrócone: 1K, 1,5K, 1M itd. Dotyczy to biura, sklepu sprzętowego, nagród i XP Haunt oraz portfela, rynku, sklepu gier i wyglądów Zone Hub.
+- Zasady odzyskiwania sprzętu po ewakuacji i jego utraty po śmierci całej ekipy pozostają dostępne.
 
-Zaktualizuj Zone Hub, a następnie Zone Haunt w bibliotece. Konto i zainstalowane gry pozostają zachowane. Strike Zone 2D i Zone Royale zachowują obecne wersje.
+Zaktualizuj Zone Hub, a potem Zone Haunt w bibliotece. Konto, postęp i instalacje pozostają zachowane; gry Strike Zone 2D i Zone Royale zachowują obecne wersje.

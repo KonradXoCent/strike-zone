@@ -2,7 +2,7 @@ name: Zone Haunt standalone game update
 on:
   push:
     branches: [feature/zonehub-online-updates]
-    paths: ['game/haunt/**', 'game/haunt-version.json', 'database/zone-haunt.sql', 'database/haunt-progression.sql', 'scripts/*haunt*', 'tests/haunt*', '.github/workflows/haunt-beta.yml']
+    paths: ['game/haunt/**', 'game/haunt-version.json', 'database/zone-haunt.sql', 'database/haunt-progression.sql', 'database/haunt-research.sql', 'shared/money.js', 'scripts/*haunt*', 'tests/haunt*', '.github/workflows/haunt-beta.yml']
   workflow_dispatch:
 permissions:
   contents: write

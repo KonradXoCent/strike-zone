@@ -1,6 +1,6 @@
 # Zone Haunt and the Zone Hub style shop
 
-Zone Haunt 0.1.3 is an original 2.5D cooperative investigation beta with twelve locations, fourteen entities and nine evidence types. Up to four investigators share one host simulation. The host chooses zero to three support bots, limited by the remaining crew slots. The game costs 500 Zone Coins in Zone Hub 0.1.12; existing library owners keep their license.
+Zone Haunt 0.1.4 is an original 2.5D cooperative investigation beta with twelve locations, fourteen entities and nine evidence types. Up to four investigators share one host simulation. The host chooses zero to three support bots, limited by the remaining crew slots. The game costs 500 Zone Coins in Zone Hub 0.1.13; existing library owners keep their license.
 
 ## Garage and equipment
 
@@ -25,7 +25,7 @@ The planning board chooses the map, difficulty and bot count. Guests ready up af
 
 The board orders maps by grid area. The expanded school includes separate women's and men's restrooms. Breakers are in deeper accessible rooms. Harvest Eve House remains available at level 1 without a seasonal expiry.
 
-The one-time starter kit contains a flashlight, EMF reader, thermometer and writing book. Further equipment is bought before departure with the shared ZC wallet. Storage holds up to eight of each item; an investigator contributes up to two of a type and sixteen total units. The deployed pool waits in the van. Players and bots can carry four items. Reserves left in the garage survive; a total crew wipe loses the deployed loadout. If anyone survives, it returns. Aborting a running contract does not refund its loadout.
+The one-time starter kit contains a flashlight, EMF reader, thermometer and writing book. Each owner receives a one-time 1K Research Points (RP; PB in Polish) starting balance. Further equipment is bought before departure with these separate points. Correct identification, evidence, photos and bones earn more RP; new contract payouts do not enter the ZC wallet. ZC playtime rewards remain separate. Storage holds up to eight of each item; an investigator contributes up to two of a type and sixteen total units. The deployed pool waits in the van. Players and bots can carry four items. Reserves left in the garage survive; a total crew wipe loses the deployed loadout. If anyone survives, it returns. Aborting a running contract does not refund its loadout.
 
 Purchases use server prices and replayable receipt IDs. The same result cannot pay or recover gear twice. A new contract row transfers the returning crew back to one shared garage without reusing an old result or action.
 
@@ -40,7 +40,7 @@ Purchases use server prices and replayable receipt IDs. The same result cannot p
 - Closed occupied closets are safe during hunts. Bots react with a delay and seek actual available closets. Corridors remain dangerous. If all humans die, surviving bots attempt to evacuate.
 - Setup periods are 90/60/35 seconds for Calm/Standard/Nightmare. Nightmare has up to 55-second hunts, faster composure loss and pursuit. Entity speeds differ.
 
-Photos have base bonuses of 50 for the ghost, 25 for the bone and 20 per revealed UV trace, at most two. Collecting the bone adds 25. A target pays once. Correct identification, observed evidence, difficulty and map size determine the final ZC/XP payout; a total wipe pays no ZC. Photo previews stay local to the photographer; shared records contain metadata.
+Photos have base bonuses of 50 for the ghost, 25 for the bone and 20 per revealed UV trace, at most two. Collecting the bone adds 25. A target pays once. Correct identification, observed evidence, difficulty and map size determine the final RP/XP payout; a total wipe pays no RP. Photo previews stay local to the photographer; shared records contain metadata.
 
 Entities can switch room lights, cut power, open and close unoccupied doors, manifest, whisper, knock and make footsteps or scraping noises. Distance and walls attenuate positioned events. Original procedural hunt music, EMF beeps, radio interference, equipment, shutter and debrief sounds are generated locally. Speech uses an installed PL/EN voice when available, with visible text and procedural sound alongside it.
 
@@ -50,11 +50,13 @@ Mutual Zone Hub friends who own Haunt can be invited from the garage. Invitation
 
 Tokens remain in renderer memory. Settings and results stay separate from the other games. Signed-in solo investigations save account progression; browser previews are offline practice. The simulation uses its own timer, cached scenery and interpolated remote actors.
 
-Apply `database/zone-haunt.sql` and `database/zone-wallet.sql` before `database/haunt-progression.sql`. The add-on retains legacy protocol 1/2 calls and introduces protocol 3 for the garage, finite supplies and new maps. Old and new lobby protocols cannot mix. Do not reapply an older RPC router migration after this add-on.
+Apply `database/zone-haunt.sql` and `database/zone-wallet.sql` before `database/haunt-progression.sql`, then apply `database/haunt-research.sql` last. The research add-on tags legacy ZC results, prevents future RP results from entering a lazy ZC import, refunds prior ZC equipment orders once and seeds RP once. Purchases from an outdated equipment client are rejected until it updates. The add-on retains legacy protocol 1/2 calls and introduces protocol 3 for the garage, finite supplies and new maps. Old and new lobby protocols cannot mix. Do not reapply an older RPC router migration after this add-on.
+
+Displayed balances, prices and rewards use the common K/M/B/T formatter; stored integers and numeric purchase inputs remain exact.
 
 Private Realtime topics bind state writes to the host and input writes to their participant; an RPC fallback remains. Results are once per frozen roster member with bounded payouts. This is peer-hosted co-op, without an independent authoritative gameplay server.
 
-Compatible game updates replace the small content package through the Zone Hub library. Zone Hub 0.1.12 supplies the paid-game confirmation and platform invitations. Existing game installations, licenses, progress and settings remain available. Published assets are immutable.
+Compatible game updates replace the small content package through the Zone Hub library. Zone Hub 0.1.13 supplies the paid-game confirmation and platform invitations. Existing game installations, licenses, progress and settings remain available. Published assets are immutable.
 
 ## Zone Hub style shop and market
 
