@@ -1,0 +1,55 @@
+name: Zone Haunt standalone game update
+on:
+  push:
+    branches: [feature/zonehub-online-updates]
+    paths: ['game/haunt/**', 'game/haunt-version.json', 'database/zone-haunt.sql', 'scripts/*haunt*', 'tests/haunt*', '.github/workflows/haunt-beta.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: haunt-beta
+  cancel-in-progress: true
+jobs:
+  haunt:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/ensure-generated.cjs
+      - name: Test all simulation, ownership, rewards and SQL authorization
+        run: node --test tests/haunt*.test.cjs tests/zone-hub-cosmetics.test.cjs
+      - name: Verify UI, actual lighting and consecutive investigations
+        run: node scripts/haunt-smoke.cjs
+      - name: Verify three SDK clients and the next signed-in contract
+        run: node scripts/haunt-network-smoke.cjs
+      - name: Verify direct Zone Hub SSO
+        run: node scripts/zone-hub-handoff-smoke.cjs --haunt
+      - name: Build only Zone Haunt
+        run: node scripts/build-managed.cjs --haunt
+      - name: Install and inspect the actual Windows package
+        run: node scripts/zone-hub-install-smoke.cjs --bundled --haunt
+      - name: Update released Haunt using only the game content
+        run: node scripts/zone-hub-content-smoke.cjs --haunt
+      - name: Verify immutable release files
+        run: node scripts/publish-haunt.cjs --verify-only
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Zone-Haunt-Game
+          path: |
+            dist-haunt/*.zip
+            dist-haunt/zonehub-haunt-manifest.json
+            dist-platform/content-update-report.json
+            test-output/haunt/*.png
+          retention-days: 90
+      - name: Publish the tested game without a platform update
+        if: "startsWith(github.event.head_commit.message, 'release: Zone Haunt beta ')"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: node scripts/publish-haunt.cjs
