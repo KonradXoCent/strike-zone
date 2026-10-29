@@ -1,17 +1,12 @@
-Zone Hub Beta 0.1.1
+Zone Hub 0.1.11 — wspólny portfel Zone Coins
 
-- Fixed game installation failing after a completed download (native Electron ASAR extraction).
-- Password recovery by email from the sign-in screen, using the existing account recovery page.
-- Zone Royale beta: a separate Battle Royale 2.5D library game with three islands, bots and shared multiplayer lobbies.
-- New BR lobby, readiness, island selection and owned outfit/parachute Locker; shared Strike Zone account and cosmetics.
-- Independent install/update/playtime states for each game and direct sign-in-free Royale launch.
+- Zone Coins (ZC): jedna waluta konta w Zone Hub, Strike Zone 2D, Zone Royale i Zone Haunt.
+- Dotychczasowe zapisane salda są jednorazowo łączone w stosunku 1:1. Przedmioty pozostają w ekwipunkach odpowiednich gier.
+- 30 ZC za każdą pełną minutę uruchomionej gry przez Zone Hub, według czasu serwera. Dotychczasowe nagrody za rozgrywkę i zlecenia także trafiają do portfela.
+- Zakupy skinów, skrzynek i kluczy w grach, rynek obu gier oraz motywy, tła i ramki Zone Hub używają ZC.
+- Nowa zakładka Portfel: wspólne saldo i historia ostatnich 40 operacji.
+- Sześć nowych ramek awatara: Smoczy ogień, Impuls cyfrowy, Mroźna korona, Karmazynowy ronin, Gwiezdny szlak i Widmowy strażnik. Łącznie dwanaście ramek.
+- Poprawiony Dyniowy strażnik: wyraźne dynie z twarzami, łodygami i pędami.
+- Transakcje rynku i nagrody za czas gry są rozliczane atomowo. Ponowienie zapisu lub odebrania nagrody nie nalicza jej drugi raz.
 
-Previously in Beta 0.1.0:
-
-- Shared Strike Zone accounts, free store, cloud library and verified game installations.
-- Platform updates checked before sign-in; game updates required before launch.
-- Existing Strike Zone launcher starts on the platform account without another sign-in.
-- Shared friends, profiles, comments, profile levels and all 26 game achievements.
-- Public, friends-only or private profiles and inventories with actual game item art.
-- Online trades with mutual confirmation, atomic transfers and stale-save protection.
-- Polish and English, four themes and fullscreen preferences.
+Zaktualizuj Zone Hub, a następnie zainstalowane gry w bibliotece. Konto i instalacje pozostają zachowane; zgodne aktualizacje gier korzystają z małych paczek zawartości. Pieniądze na zakup broni podczas rundy Strike Zone 2D pozostają mechaniką meczu.

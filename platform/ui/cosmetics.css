@@ -33,3 +33,10 @@ body[data-theme="sakura"] :is(.sidebar,.friends-rail){background:#302333ed!impor
 [data-avatar-frame="frame-neon"]:after{background-image:url(../../assets/frame-neon.svg)}
 [data-avatar-frame="frame-vines"]:after{background-image:url(../../assets/frame-vines.svg)}
 .hero.haunt-hero{min-height:410px;border-color:#8cb5a34d;margin-top:20px}.haunt-hero:before{background-image:url('../../assets/haunt-cover.svg');background-position:65% center}.haunt-hero:after{background:linear-gradient(90deg,#071823f2,#0b1e2ad8 35%,transparent 90%)}.haunt-hero h2 span{color:#b7d8b0}.haunt-hero .hero-content{position:relative;z-index:2}.haunt-hero .hero-game-mark{width:70px;height:70px}
+
+[data-avatar-frame="frame-dragon"]:after{background-image:url(../../assets/frame-dragon.svg)}
+[data-avatar-frame="frame-circuit"]:after{background-image:url(../../assets/frame-circuit.svg)}
+[data-avatar-frame="frame-frost"]:after{background-image:url(../../assets/frame-frost.svg)}
+[data-avatar-frame="frame-samurai"]:after{background-image:url(../../assets/frame-samurai.svg)}
+[data-avatar-frame="frame-starlight"]:after{background-image:url(../../assets/frame-starlight.svg)}
+[data-avatar-frame="frame-spectral"]:after{background-image:url(../../assets/frame-spectral.svg)}

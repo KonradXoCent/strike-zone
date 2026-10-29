@@ -11,7 +11,7 @@ function gamePreferences(id){return{language:preferences.language,fullscreen:pre
 function active(id=selectedGame){const value=runtimes.get(id);if(!value)throw Error('PACKAGE_PENDING');return value;}
 function snapshot(){const current=active();return{account:account.snapshot(),friends:friends.snapshot(account.snapshot().user?.id),selectedGame,chat:chat.snapshot(),games:Object.fromEntries([...runtimes].map(([id,r])=>[id,{title:r.spec.title,packages:r.packages.snapshot(),managed:r.managed.snapshot()}])),packages:current.packages.snapshot(),managed:current.managed.snapshot(),home,trades,preferences,error,version:VERSION,hubUpdate:hubUpdates.snapshot()};}
 function publish(){if(win&&!win.isDestroyed())win.webContents.send('hub:state',snapshot());}
-async function rpc(action,args={}){const uid=account.snapshot().user?.id;if(!account.snapshot().authenticated)throw Error('HUB_LOGIN');const result=await client.rpc('zone_hub',{action,args});if(result.error)throw result.error;if(account.snapshot().user?.id!==uid)throw Error('HUB_ACCOUNT_CHANGED');return result.data;}
+async function rpc(action,args={}){const uid=account.snapshot().user?.id;if(!account.snapshot().authenticated)throw Error('HUB_LOGIN');const result=await client.rpc('zone_hub',{action,args:{...args,walletProtocol:1}});if(result.error)throw result.error;if(account.snapshot().user?.id!==uid)throw Error('HUB_ACCOUNT_CHANGED');return result.data;}
 function inventory(){for(const r of runtimes.values())r.managed.inventory();}
 
 function wireRuntime(id,r){r.packages.on('state',publish);r.managed.on('state',state=>{publish();playtime(id,state);if(state.ready&&!r.wasReady&&preferences.minimizeOnPlay)win?.minimize();r.wasReady=state.ready;if(!state.launcherRunning){win?.show();win?.restore();}});r.managed.on('error',e=>{error=e.code==='ENOENT'?'PACKAGE_CONTENTS':'HUB_START';publish();win?.show();win?.restore();});r.managed.on('logout',()=>logout());}
@@ -38,12 +38,13 @@ async function command(action,args={}){
  if(['account_update','cosmetic_buy','theme_apply','showcase_save'].includes(action)){await rpc(action,args);if(action==='account_update')await account.refreshProfile();inventory();await refresh();return snapshot();}
  if(action==='select-game'){if(!runtimes.has(args.game_id))throw Error('HUB_GAME_UNKNOWN');active(args.game_id);selectedGame=args.game_id;publish();return snapshot();}
  if(action==='refresh'){await Promise.all([refresh(),friends.refresh(),...[...runtimes.values()].map(r=>r.packages.check())]);return snapshot();}
+ if(action==='wallet-state'){const value=await client.rpc('zone_wallet',{action:'state',args:{}});if(value.error)throw value.error;if(home)home.wallet=value.data;publish();return value.data;}
  if(action==='chat-focused')return !!win?.isFocused()&&!win?.isMinimized();
  if(action==='chat')return chat.command(args.action,args.args||{});
  if(action==='workshop'){if(args.game_id!=='strike-zone'||!['map','skin'].includes(args.kind))throw Error('HUB_INPUT');const uid=accountId;const {data,error:err}=await client.from('sz_workshop_catalog').select('*').eq('kind',args.kind).order('updated_at',{ascending:false}).limit(100);if(err)throw err;const ids=(data||[]).map(x=>x.release_id);const releases=ids.length?await client.from('sz_workshop_releases').select('id,payload').in('id',ids):{data:[]};if(releases.error)throw releases.error;if(uid!==accountId)throw Error('HUB_ACCOUNT_CHANGED');return (data||[]).map(x=>({...x,payload:releases.data?.find(r=>r.id===x.release_id)?.payload}));}
  if(action==='game-preferences'){const id=args.game_id;active(id);if(typeof args.fullscreen!=='boolean')throw Error('HUB_INPUT');preferences=settings({...preferences,games:{...preferences.games,[id]:{fullscreen:args.fullscreen}}});fs.writeFileSync(preferencesFile(),JSON.stringify(preferences));active(id).managed.preferences(gamePreferences(id));publish();return snapshot();}
  if(action==='friend'){await friends.command(args.action,args.args);return snapshot();}
- if(action.startsWith('market_')){const value=await rpc(action,args);if(action!=='market_list')inventory();return value;}
+ if(action.startsWith('market_')){const value=await rpc(action,args);if(action!=='market_list'){inventory();await refresh();}return value;}
  if(['profile','search','inventory'].includes(action))return rpc(action,args);
  if(['trade_create','trade_pick','trade_confirm','trade_cancel'].includes(action)){const result=await rpc(action,args);if(result.status==='completed')inventory();await refresh();return result;}
  if(['edit_profile','comment','delete_comment','add_game'].includes(action)){await rpc(action,args);await refresh();return snapshot();}

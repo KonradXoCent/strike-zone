@@ -12,7 +12,13 @@
   {id:'frame-aurora',kind:'frame',price:300,pl:'Lodowy kryształ',en:'Ice crystal',color:'#80eadf'},
   {id:'frame-royal',kind:'frame',price:350,pl:'Królewski laur',en:'Royal laurel',color:'#edca72'},
   {id:'frame-neon',kind:'frame',price:300,pl:'Neonowy obwód',en:'Neon circuit',color:'#ba9bff'},
-  {id:'frame-vines',kind:'frame',price:250,pl:'Leśna straż',en:'Forest guard',color:'#9dd58a'}
+  {id:'frame-vines',kind:'frame',price:250,pl:'Leśna straż',en:'Forest guard',color:'#9dd58a'},
+  {id:'frame-dragon',kind:'frame',price:650,pl:'Smoczy ogień',en:'Dragonfire',color:'#ec7969'},
+  {id:'frame-circuit',kind:'frame',price:400,pl:'Impuls cyfrowy',en:'Digital pulse',color:'#66d2ee'},
+  {id:'frame-frost',kind:'frame',price:450,pl:'Mroźna korona',en:'Frost crown',color:'#b6e9f4'},
+  {id:'frame-samurai',kind:'frame',price:550,pl:'Karmazynowy ronin',en:'Crimson ronin',color:'#f09591'},
+  {id:'frame-starlight',kind:'frame',price:500,pl:'Gwiezdny szlak',en:'Starlight',color:'#e6ce8b'},
+  {id:'frame-spectral',kind:'frame',price:500,pl:'Widmowy strażnik',en:'Spectral guardian',color:'#9ee5c7'}
  ];
  const free=['violet','ocean','ember','forest'],themes=catalog.filter(x=>x.kind==='bundle').map(x=>x.id),frames=catalog.filter(x=>x.kind==='frame').map(x=>x.id);
  return Object.freeze({catalog,free,themes,frames,themeIds:[...free,...themes],item:id=>catalog.find(x=>x.id===id)});
