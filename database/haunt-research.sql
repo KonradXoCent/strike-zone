@@ -96,8 +96,7 @@ revoke all on function zone_wallet_private.haunt_reward() from public,anon,authe
 -- Reject a still-running legacy equipment RPC before its ZC debit can commit.
 create or replace function haunt_private.reject_zc_gear() returns trigger language plpgsql security definer set search_path='' as $$ begin raise exception 'HAUNT_UPDATE_REQUIRED';end $$;
 revoke all on function haunt_private.reject_zc_gear() from public,anon,authenticated;
-drop trigger if exists haunt_legacy_gear_debit on zone_wallet_private.entries;
-create trigger haunt_legacy_gear_debit before insert on zone_wallet_private.entries for each row when(new.reason='haunt_gear' and new.delta<0) execute function haunt_private.reject_zc_gear();
+create or replace trigger haunt_legacy_gear_debit before insert on zone_wallet_private.entries for each row when(new.reason='haunt_gear' and new.delta<0) execute function haunt_private.reject_zc_gear();
 
 -- Preserve acquired items and return any ZC spent by the previous equipment shop.
 -- Separate once-only receipt keys make this migration safe to apply again.
