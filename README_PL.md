@@ -250,3 +250,14 @@ Pakiety Strike `1.5.10-zonehub.4` i Royale `0.1.6` publikują obok pełnego ZIP 
 Nowa gra kooperacyjna **Zone Haunt** ma trzy lokacje, osiem zjawisk, siedem dowodów, sprzęt pomiarowy, dziennik i polowania z bezpiecznymi szafami. Graj sam z botami lub w lobby do czterech osób. Sterowanie i wyniki są odrębne od pozostałych gier. [Opis funkcji i walidacji](docs/zone-haunt-and-style-shop.md).
 
 Strike `1.5.10-zonehub.5` usuwa Battle Royale z wyboru trybów, ekwipunku i skrzynek; BR pozostaje w osobnym Zone Royale `0.1.7`. Royale otrzymuje nową grafikę i znak. Sklep platformy zawiera sześć płatnych motywów/teł i sześć ramek awatara; zakupy i wyposażenie kontroluje serwer. Rynek uzupełnia do 240 ofert botów w każdej z obu gier.
+
+
+### Zone Haunt 0.1.3 — ekonomia, biuro i poziomy
+
+Po bazowym `database/zone-haunt.sql` i wspólnym portfelu `database/zone-wallet.sql` zastosuj `database/haunt-progression.sql`. Jest to dodatek do istniejącego backendu, zachowujący obsługę starszych protokołów. Nowa gra korzysta z protokołu 3. Nie uruchamiaj ponownie starszych migracji, które zmieniają router RPC po tym dodatku.
+
+Gra kosztuje 500 ZC, z potwierdzeniem ceny po stronie klienta. Dotychczasowe wpisy w bibliotece zachowują licencję. Sprzęt, rozliczenia i zaproszenia są trzymane w prywatnym schemacie z RLS. Jednorazowy zestaw startowy nie odradza się po przegranej. Wyprawa rezerwuje wybrany ładunek; wynik zwraca go, gdy ktoś przeżyje, albo usuwa po śmierci całej ekipy. Przerwanie trwającego kontraktu nie zwraca ładunku. Nagrody i zakupy korzystają ze wspólnego ZC; ceny są ustalane przez serwer, a ponowienia zakupu i wyniku są idempotentne.
+
+Mapy odblokowuje poziom Zone Haunt lidera: 1 + suma XP / 250 (część całkowita). Willow i Harvest House są od poziomu 1; kolejne lokacje od poziomów 2–10, asylum od 12. Kolejność w tablicy wynika z powierzchni mapy. Znajomi z niższym poziomem mogą grać na mapie odblokowanej przez lidera.
+
+Kooperacja nadal używa symulacji prowadzonej przez lidera i prywatnych kanałów Realtime z autoryzacją SQL oraz zapasową synchronizacją RPC. Taki model nie jest niezależnym serwerem symulującym ducha ani zabezpieczeniem przed fałszowaniem przebiegu przez zmodyfikowanego klienta lidera.

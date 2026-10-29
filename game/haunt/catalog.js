@@ -23,5 +23,10 @@
  ].map(([id,pl,en,evidence,speed,traitPl,traitEn])=>({id,pl,en,evidence,speed,traitPl,traitEn}));
  const QUESTIONS=[['where','Gdzie jesteś?','Where are you?'],['age','Ile masz lat?','How old are you?'],['intent','Czego od nas chcesz?','What do you want?'],['alone','Czy jesteś tu sam?','Are you alone?'],['name','Jak masz na imię?','What is your name?']].map(([id,pl,en])=>({id,pl,en}));
  const REPLIES={where:['Jestem obok ciebie.','I am beside you.'],age:['Czekam tu od wielu lat.','I have waited here for many years.'],intent:['Odejdźcie.','Leave this place.'],alone:['Nie jesteście sami.','You are not alone.'],name:['Moje imię zostało zapomniane.','My name has been forgotten.']};
- return{PROTOCOL:2,TOOLS,ITEMS,EVIDENCE,GHOSTS,QUESTIONS,REPLIES};
+ const PRICES={flashlight:60,emf:90,thermo:80,uv:110,spirit:140,book:90,camera:200,dots:180,crucifix:180,salt:35,recorder:160,photo:150};
+ const STARTER={flashlight:1,emf:1,thermo:1,book:1};
+ const level=xp=>1+Math.floor(Math.max(0,Number(xp)||0)/250);
+ const mapFactor=size=>({small:1,medium:1.15,large:1.35,huge:1.6})[size]||1;
+ function reward({correct,evidence=0,hunt=false,photo=false,bonus=0,wipe=false,difficulty='normal',size='small'}){if(wipe)return{xp:Math.min(30,evidence*5),money:0};const scale=mapFactor(size)*({calm:1,normal:1.25,nightmare:1.6}[difficulty]||1);return{xp:Math.round((correct?120+Math.min(3,evidence)*30+(hunt?25:0)+(photo?25:0):Math.min(3,evidence)*10)*mapFactor(size)),money:Math.min(900,Math.round(((correct?90:0)+Math.min(3,evidence)*10+Math.min(140,bonus))*scale))};}
+ return{PROTOCOL:3,TOOLS,ITEMS,EVIDENCE,GHOSTS,QUESTIONS,REPLIES,PRICES,STARTER,level,reward};
 });

@@ -1,12 +1,14 @@
-Zone Hub 0.1.11 — wspólny portfel Zone Coins
+Zone Hub 0.1.12 · Zone Haunt 0.1.3 — biuro i nowe śledztwa
 
-- Zone Coins (ZC): jedna waluta konta w Zone Hub, Strike Zone 2D, Zone Royale i Zone Haunt.
-- Dotychczasowe zapisane salda są jednorazowo łączone w stosunku 1:1. Przedmioty pozostają w ekwipunkach odpowiednich gier.
-- 30 ZC za każdą pełną minutę uruchomionej gry przez Zone Hub, według czasu serwera. Dotychczasowe nagrody za rozgrywkę i zlecenia także trafiają do portfela.
-- Zakupy skinów, skrzynek i kluczy w grach, rynek obu gier oraz motywy, tła i ramki Zone Hub używają ZC.
-- Nowa zakładka Portfel: wspólne saldo i historia ostatnich 40 operacji.
-- Sześć nowych ramek awatara: Smoczy ogień, Impuls cyfrowy, Mroźna korona, Karmazynowy ronin, Gwiezdny szlak i Widmowy strażnik. Łącznie dwanaście ramek.
-- Poprawiony Dyniowy strażnik: wyraźne dynie z twarzami, łodygami i pędami.
-- Transakcje rynku i nagrody za czas gry są rozliczane atomowo. Ponowienie zapisu lub odebrania nagrody nie nalicza jej drugi raz.
+- Zone Haunt kosztuje 500 ZC we wspólnym portfelu. Osoby, które już mają grę w bibliotece, zachowują dostęp bez ponownego zakupu.
+- Grywalne biuro ekipy: ruch, koszykówka ze wspólną piłką, tablica wyboru mapy, trudności i liczby botów oraz sklep sprzętowy.
+- Zaproszenia do lobby od znajomych Zone Hub, przyjmowane lub odrzucane w platformie i grze.
+- Sprzęt kupowany przed wyprawą za ZC. Jednorazowy zestaw startowy; na śledztwo trafiają tylko wybrane sztuki. Śmierć całej ekipy oznacza utratę zabranego wyposażenia. Zapasy w biurze zostają; gdy ktoś przeżyje, ekipa odzyskuje ładunek.
+- Boty wspierają graczy na polecenie, zamiast samodzielnie rozwiązywać śledztwo. Dowody wymagają obserwacji, czasu i odpowiednich warunków. Tempo zależy od ducha, trudności i wylosowanego śledztwa.
+- Sprzęt można rozstawiać także w korytarzach, innych pokojach i na zewnątrz. Bezpieczniki są głębiej w budynkach.
+- 12 map, uporządkowanych od najmniejszej do największej. Poziom Zone Haunt lidera odblokowuje kolejne lokacje dla całej ekipy. Willow i halloweenowe Harvest House są dostępne od poziomu 1.
+- Nowe lokacje: Harvest House, Marsh Chapel, Ironvale Workshop, Crow Motel i Ravenhill Asylum. Szkoła jest większa i ma osobne toalety damskie i męskie.
+- Duchy otwierają i zamykają drzwi, przełączają światła, szepczą, stukają i wywołują lokalne zdarzenia. Słyszalność zależy od dystansu i ścian.
+- Po zakończeniu zlecenia ekipa wraca do wspólnego biura; kolejne śledztwo ma nowy zapis wyniku i kanały synchronizacji.
 
-Zaktualizuj Zone Hub, a następnie zainstalowane gry w bibliotece. Konto i instalacje pozostają zachowane; zgodne aktualizacje gier korzystają z małych paczek zawartości. Pieniądze na zakup broni podczas rundy Strike Zone 2D pozostają mechaniką meczu.
+Zaktualizuj Zone Hub, a następnie Zone Haunt w bibliotece. Konto i zainstalowane gry pozostają zachowane. Strike Zone 2D i Zone Royale zachowują obecne wersje.
