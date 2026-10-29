@@ -31,6 +31,8 @@ function sync(check=false){
  next=next.replace("const result = await sb.from('saves').upsert({ user_id: userId, json: value, updated_at: new Date().toISOString() });\n      if (result.error) throw result.error;","await window.SzGameSave.write(sb,value);");
  next=next.replace("if (readOwner() !== userId || (saved.ts || 0) > (DB.ts || 0)) {","if (window.SzWallet?.active || readOwner() !== userId || (saved.ts || 0) > (DB.ts || 0)) {");
  next=next.replace('const save=()=>{DB.ts=', 'const save=()=>{window.SzWallet?.attach();DB.ts=');
+ if(!next.includes('let accountFlushQueue=Promise.resolve();'))next=next.replace('  async function flush() {','  let accountFlushQueue=Promise.resolve();\n  async function flush() {');
+ next=next.replace('const task=flushAccount();window.szCloudPending.add(task);','const task=accountFlushQueue.then(()=>flushAccount());accountFlushQueue=task.catch(()=>false);window.szCloudPending.add(task);');
  fs.writeFileSync(file,next);
 }
 if(require.main===module)sync(process.argv.includes('--check'));
