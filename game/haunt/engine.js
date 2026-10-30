@@ -19,7 +19,7 @@
  function create({seed=1024,mapId='willow',difficulty='normal',players=[],bots=true,botCount=3,stock=null,hostId=players[0]?.id||'local'}={}){seed=Math.abs(Math.floor(Number(seed)||1))%2147483647;const m=map(mapId),rng=random(seed),people=players.slice(0,4).map((p,i)=>({id:String(p.id),name:String(p.name||'Investigator').slice(0,24),bot:false,x:m.spawn.x+(i%2)*30-15,y:m.spawn.y+Math.floor(i/2)*25,angle:-Math.PI/2,alive:true,hidden:null,sanity:100,stamina:100,inventory:[],tool:null,flashlight:false,guess:null,probe:0,scan:0,record:0,lastUse:-10,lastAct:0,watching:null}));
   if(!people.length)people.push({id:hostId,name:'Investigator',bot:false,x:m.spawn.x,y:m.spawn.y,angle:-Math.PI/2,alive:true,hidden:null,sanity:100,stamina:100,inventory:[],tool:null,flashlight:false,guess:null,probe:0,scan:0,record:0,lastUse:-10,lastAct:0,watching:null});
   const botNames=['Mira','Alex','Noah'];const desired=people.length+(bots?clamp(Math.floor(Number(botCount)||0),0,3):0);if(bots)while(people.length<Math.min(4,desired)){const i=people.length;people.push({...people[0],id:'bot-'+i,name:botNames[(i-1)%3],bot:true,x:m.spawn.x+i*18-25,y:m.spawn.y+18,inventory:[],brain:{room:(i-1)%m.rooms.length,next:0,route:[],target:null,cycle:0,resupply:0,lastHunt:false}});}
-  const room=Math.floor(seed/23)%m.rooms.length,w={schema:PROTOCOL,id:'contract-'+seed,seed,mapId:m.id,map:m,difficulty:Object.hasOwn(DIFFICULTIES,difficulty)?difficulty:'normal',hostId,time:0,phase:'investigating',players:people,doors:Object.fromEntries(m.doors.map(d=>[d.id,true])),power:true,lights:true,roomLights:Object.fromEntries(m.rooms.map(r=>[r.id,true])),secret:{type:GHOSTS[seed%GHOSTS.length].id,room},ghost:{...vacant({map:m,doors:Object.fromEntries(m.doors.map(d=>[d.id,true])),hunt:{active:false}},m.rooms[room],seed),angle:0,visible:0,path:[],target:null,routeAt:0},hunt:{active:false,until:0,next:DIFFICULTIES[difficulty]?.setup||50,count:0},found:[],devices:[],traces:[],photos:[],stock:Object.fromEntries(TOOLS.map(t=>[t,stock?clamp(Math.floor(Number(stock[t])||0),0,32):4])),crossStock:Array.from({length:stock?clamp(Math.floor(Number(stock.crucifix)||0),0,32):4},()=>2),sequence:0,deviceSeq:0,events:[],result:null,rng,activity:0,activityHistory:[],nextSample:0,nextActivity:5,botRoom:null,objectives:{hunt:false,photo:false,evidence:false},deadAt:null};
+  const room=Math.floor(seed/23)%m.rooms.length,w={schema:PROTOCOL,id:'contract-'+seed,seed,mapId:m.id,map:m,difficulty:Object.hasOwn(DIFFICULTIES,difficulty)?difficulty:'normal',hostId,time:0,phase:'investigating',players:people,doors:Object.fromEntries(m.doors.map(d=>[d.id,true])),power:true,lights:true,roomLights:Object.fromEntries(m.rooms.map(r=>[r.id,true])),secret:{type:GHOSTS[seed%GHOSTS.length].id,room},ghost:{...vacant({map:m,doors:Object.fromEntries(m.doors.map(d=>[d.id,true])),hunt:{active:false}},m.rooms[room],seed),angle:0,visible:0,path:[],target:null,routeAt:0},hunt:{active:false,until:0,next:DIFFICULTIES[difficulty]?.setup||50,count:0},found:[],devices:[],traces:[],photos:[],stock:Object.fromEntries(TOOLS.map(t=>[t,stock?clamp(Math.floor(Number(stock[t])||0),0,32):1])),crossStock:Array.from({length:stock?clamp(Math.floor(Number(stock.crucifix)||0),0,32):1},()=>2),sequence:0,deviceSeq:0,events:[],result:null,rng,activity:0,activityHistory:[],nextSample:0,nextActivity:5,botRoom:null,objectives:{hunt:false,photo:false,evidence:false},deadAt:null};
   rng();rng();rng();const bias={lament:.85,morrow:.9,veil:1.45,watcher:1.15,echo:.92,hollow:1.35,mourner:1.3,deceiver:1.22}[w.secret.type]||1;w.secret.patience=bias*(.85+rng()*.5);w.secret.proof={};for(const e of EVIDENCE)w.secret.proof[e.id]={first:(35+rng()*65)*w.secret.patience*(difficulty==='nightmare'?1.35:difficulty==='calm'?.72:1),period:18+rng()*22,duration:7+rng()*5};w.nextActivity=8+rng()*13;
   const extra=EVIDENCE.filter(e=>!GHOSTS[seed%GHOSTS.length].evidence.includes(e.id));w.secret.falseEvidence=extra[Math.floor(seed/7)%extra.length].id;const boneRoom=m.rooms[Math.floor(seed/41)%m.rooms.length];w.bone={id:'bone',...vacant(w,boneRoom,seed+19),room:boneRoom.id,collected:false};return w;
  }
@@ -46,7 +46,7 @@
   if(hit.kind==='bone'){w.bone.collected=true;event(w,'bone',p.id);}
   if(hit.kind==='pickup'){if(p.inventory.length>=4||owns(p,o.kind))return false;p.inventory.push(o.kind);p.tool=o.kind;if(o.kind==='crucifix')p.crossCharges=o.charges;w.devices.splice(w.devices.indexOf(o),1);event(w,'pickup',p.id,{tool:o.kind});}return true;
  }
- function place(w,p){const kind=p.tool;if(!['book','dots','camera','salt','crucifix'].includes(kind)||!owns(p,kind))return false;const q={x:p.x+26*Math.cos(p.angle),y:p.y+26*Math.sin(p.angle)};if(blocked(w,q.x,q.y)||!line(w,p,q))Object.assign(q,{x:p.x,y:p.y});if(blocked(w,q.x,q.y)||w.devices.length>=48)return false;removeItem(p,kind);w.devices.push({id:'device-'+(++w.deviceSeq),kind,room:roomAt(w.map,q),...q,angle:p.angle,at:w.time,owner:p.id,...(kind==='crucifix'?{charges:p.crossCharges??2}:{})});event(w,'place',p.id,{tool:kind});return true;}
+ function place(w,p){const kind=p.tool;if(!['book','dots','camera','salt','crucifix'].includes(kind)||!owns(p,kind))return false;const q={x:p.x+26*Math.cos(p.angle),y:p.y+26*Math.sin(p.angle)};if(blocked(w,q.x,q.y)||!line(w,p,q))Object.assign(q,{x:p.x,y:p.y});if(blocked(w,q.x,q.y)||w.devices.length>=48)return false;removeItem(p,kind);const room=roomAt(w.map,q),r=w.map.rooms[room],angle=kind==='camera'&&r&&distance(q,r)>60?Math.atan2(r.y-q.y,r.x-q.x):p.angle;w.devices.push({id:'device-'+(++w.deviceSeq),kind,room,...q,angle,at:w.time,owner:p.id,...(kind==='crucifix'?{charges:p.crossCharges??2}:{})});event(w,'place',p.id,{tool:kind});return true;}
  function photo(w,p){const within=o=>distance(p,o)<470&&line(w,p,o)&&Math.abs(Math.atan2(Math.sin(Math.atan2(o.y-p.y,o.x-p.x)-p.angle),Math.cos(Math.atan2(o.y-p.y,o.x-p.x)-p.angle)))<.65;const targets=[];if(!nearVan(w,p)&&(w.hunt.active||w.ghost.visible>w.time)&&within(w.ghost))targets.push({id:'ghost',kind:'ghost',...w.ghost});if(!w.bone.collected&&within(w.bone))targets.push({id:'bone',kind:'bone',...w.bone});for(const t of w.traces)if(t.revealedUntil>w.time&&t.expires>w.time&&within(t))targets.push({id:t.id,kind:'uv',...t});
   const target=targets.sort((a,b)=>distance(p,a)-distance(p,b)).find(o=>!w.photos.some(p=>p.target===o.id)&&w.photos.filter(p=>p.kind===o.kind).length<(o.kind==='uv'?2:1));event(w,'photo',p.id);if(!target)return false;const money={ghost:50,bone:25,uv:20}[target.kind],record={id:'photo-'+w.photos.length,target:target.id,kind:target.kind,player:p.id,x:target.x,y:target.y,at:w.time,money};w.photos.push(record);if(target.kind==='ghost')w.objectives.photo=true;event(w,'photo-bonus',p.id,{photo:record.id,kind:target.kind,money});return true;
  }
@@ -59,7 +59,7 @@
  }
  function follow(w,p,target,speed,dt){const b=p.brain;if(!b.target||distance(b.target,target)>30||!b.route.length||w.time>b.next){b.route=path(w,p,target);b.target={x:target.x,y:target.y};b.next=w.time+1.8;}while(b.route.length&&distance(p,b.route[0])<10)b.route.shift();const point=b.route[0]||target,dx=point.x-p.x,dy=point.y-p.y,d=Math.hypot(dx,dy);if(d<2)return;const door=doorAt(w,cell(point.x),cell(point.y));if(door&&!(door.exit&&w.hunt.active)&&w.doors[door.id]===false){w.doors[door.id]=true;event(w,'door',p.id,{material:w.map.style==='metal'?'metal':'wood'});}p.angle=Math.atan2(dy,dx);move(w,p,dx/d*Math.min(speed*dt,d),dy/d*Math.min(speed*dt,d));}
  function tip(w,p,key,data={}){const b=p.brain;if(w.time-(b.lastTip??-50)<14&&!['delivered','cold','warm','placed','power-restored'].includes(key))return;b.lastTip=w.time;event(w,'bot-tip',p.id,{name:p.name,key,...data});}
- function orderBot(w,requester,v){if(!v||!['bring','temperature','power','camera','crucifix','regroup'].includes(v.kind))return false;const bots=w.players.filter(p=>p.bot&&p.alive&&!p.hidden);const p=(v.bot&&v.bot!=='auto'?bots.find(p=>p.id===v.bot):bots.sort((a,b)=>(a.brain.order?1:0)-(b.brain.order?1:0)||distance(a,requester)-distance(b,requester))[0]);if(!p)return false;const tool=v.kind==='bring'&&TOOLS.includes(v.tool)?v.tool:v.kind==='temperature'?'thermo':v.kind==='camera'?'camera':v.kind==='crucifix'?'crucifix':null;if(v.kind==='bring'&&!tool)return false;const room=roomAt(w.map,requester);p.brain.order={kind:v.kind,tool,requester:requester.id,room:room>=0?room:null,point:{x:requester.x,y:requester.y},at:w.time,scan:0};p.brain.route=[];p.assignment=v.kind;tip(w,p,'ordered');return true;}
+ function orderBot(w,requester,v){if(!v||!['bring','temperature','power','camera','crucifix','regroup'].includes(v.kind))return false;const bots=w.players.filter(p=>p.bot&&p.alive&&!p.hidden);const p=(v.bot&&v.bot!=='auto'?bots.find(p=>p.id===v.bot):bots.sort((a,b)=>(owns(b,v.tool||({temperature:'thermo',camera:'camera',crucifix:'crucifix'})[v.kind])?1:0)-(owns(a,v.tool||({temperature:'thermo',camera:'camera',crucifix:'crucifix'})[v.kind])?1:0)||(a.brain.order?1:0)-(b.brain.order?1:0)||distance(a,requester)-distance(b,requester))[0]);if(!p)return false;const tool=v.kind==='bring'&&TOOLS.includes(v.tool)?v.tool:v.kind==='temperature'?'thermo':v.kind==='camera'?'camera':v.kind==='crucifix'?'crucifix':null;if(v.kind==='bring'&&!tool)return false;const room=roomAt(w.map,requester);p.brain.order={kind:v.kind,tool,requester:requester.id,room:room>=0?room:null,point:{x:requester.x,y:requester.y},at:w.time,scan:0};p.brain.route=[];p.brain.survey=null;p.assignment=v.kind;tip(w,p,'ordered');return true;}
  function executeOrder(w,p,dt){const b=p.brain,o=b.order,requester=w.players.find(q=>q.id===o.requester);const done=()=>{b.order=null;p.assignment=null;b.route=[];b.loaded=false;};if(!requester||!requester.alive||w.time-o.at>180){done();return false;}
   if(o.tool&&!owns(p,o.tool)){follow(w,p,w.map.spawn,112,dt);if(nearVan(w,p)){if(!w.stock[o.tool]){tip(w,p,'stock',{tool:o.tool});done();return true;}if(p.inventory.length===4){const take=p.inventory.find(t=>t!=='flashlight');gear(w,p,take,true);}gear(w,p,o.tool);}return true;}
   if(o.kind==='bring'){follow(w,p,requester,112,dt);if(distance(p,requester)<70){if(requester.inventory.length>=4){tip(w,p,'full');return true;}if(!owns(requester,o.tool)){if(o.tool==='crucifix')requester.crossCharges=p.crossCharges??2;removeItem(p,o.tool);requester.inventory.push(o.tool);requester.tool=requester.tool||o.tool;if(o.tool==='flashlight')requester.flashlight=true;}tip(w,p,'delivered',{tool:o.tool});done();}return true;}
@@ -69,14 +69,81 @@
   if(o.kind==='temperature'){o.scan+=dt;if(o.scan>5){const temp=readings(w,p).temperature;tip(w,p,temp<10?'cold':'warm',{room:roomAt(w.map,p),temperature:temp});done();}return true;}
   use(w,p);tip(w,p,'placed',{tool:o.tool,room:roomAt(w.map,p)});done();return true;
  }
+ function scoutReport(w,p,key,data={}){
+  if(w.time<(w.nextBotReport||45)||w.time<(p.brain.nextReport||0))return;
+  tip(w,p,key,data);w.nextBotReport=w.time+28;p.brain.nextReport=w.time+55;
+ }
+ function survey(w,p,dt,index){
+  const b=p.brain;
+  if(w.time<20+index*7||w.time<(b.resumeAt||0)){p.assignment='preparing';return;}
+  if(p.sanity<25)b.resting=true;
+  if(b.resting){
+   p.assignment='rest';if(!nearVan(w,p)){follow(w,p,w.map.spawn,108,dt);return;}
+   for(const id of [...p.inventory])gear(w,p,id,true);
+   b.survey=null;if(p.sanity<60)return;b.resting=false;b.resumeAt=w.time+5;return;
+  }
+  const s=b.survey||(b.survey={phase:'load',visits:{},reviewed:0,round:0,lead:null,placed:false,pause:0});
+  if(s.phase==='load'||s.phase==='return'||s.phase==='supply'){
+   p.assignment=s.phase==='load'?'preparing':'return';
+   if(!nearVan(w,p)){follow(w,p,w.map.spawn,108,dt);return;}
+   if(s.phase==='return'){
+    for(const id of [...p.inventory])gear(w,p,id,true);
+    s.phase='load';s.pause=w.time+10+index*2;s.round++;return;
+   }
+   if(w.time<s.pause)return;
+   const choices=[['thermo','emf','uv','recorder'],['emf','uv','thermo','recorder'],['uv','recorder','thermo','emf']][(index-1)%3];
+   s.tool=choices.find(id=>owns(p,id))||choices.find(id=>w.stock[id]>0&&!w.players.some(q=>q.bot&&q!==p&&owns(q,id)))||choices.find(id=>w.stock[id]>0);
+   if(!s.tool){s.pause=w.time+15;return;}
+   for(const id of [...p.inventory])if(id!==s.tool&&id!=='flashlight')gear(w,p,id,true);
+   if(!owns(p,s.tool))gear(w,p,s.tool);
+   if(!owns(p,'flashlight')&&w.stock.flashlight>1)gear(w,p,'flashlight');
+   const placement=['book','camera','dots'][(index-1)%3];
+   if(s.phase==='supply'&&s.lead&&w.stock[placement]>0&&!w.devices.some(d=>d.kind===placement)){
+    gear(w,p,placement);s.placing=placement;s.room=s.lead.room;s.target=vacant(w,w.map.rooms[s.room],index*11+3);s.phase='place';
+   }else{s.phase='choose';}
+   b.route=[];return;
+  }
+  if(s.phase==='choose'){
+   const candidates=w.map.rooms.map(r=>({r,score:(s.visits[r.id]||0)*1800+distance(p,r)+w.players.filter(q=>q.bot&&q!==p&&q.brain?.survey?.room===r.id).length*950+((r.id*17+index*31)%47)})).sort((a,b)=>a.score-b.score);
+   s.room=candidates[0].r.id;s.target=vacant(w,candidates[0].r,index*17+s.round*7);s.phase='travel';s.travelAt=w.time;s.scan=0;s.used=false;b.route=[];
+  }
+  if(s.phase==='travel'||s.phase==='place'){
+   p.assignment=s.phase==='place'?'supply':'search';
+   if(distance(p,s.target)>35){
+    follow(w,p,s.target,105,dt);
+    if(w.time-(s.travelAt||w.time)>75){s.visits[s.room]=(s.visits[s.room]||0)+1;s.phase='choose';b.route=[];}
+    return;
+   }
+   if(s.phase==='place'){
+    equip(p,s.placing);if(use(w,p))scoutReport(w,p,'placed',{tool:s.placing,room:s.room});s.placed=true;s.placing=null;s.phase='choose';return;
+   }
+   s.phase='scan';s.scan=0;s.duration=14+((s.room*7+index*3)%9);s.best=0;
+  }
+  if(s.phase!=='scan')return;
+  p.assignment='scan';equip(p,s.tool);s.scan+=dt;
+  if(s.tool==='recorder'&&s.scan>4&&!s.used){use(w,p);s.used=true;}
+  const r=readings(w,p);let strength=0,key='quiet',data={room:s.room};
+  if(s.tool==='thermo'){data.temperature=r.temperature;key=r.temperature<10?'cold':'warm';strength=r.temperature<10?2:r.temperature<13?1:0;}
+  if(s.tool==='emf'&&r.emf>1){key='emf';data.value=r.emf;strength=r.emf===5?3:r.emf>=3?2:1;}
+  if(s.tool==='uv'&&r.uv&&s.scan>6){key='uv';strength=3;for(const t of w.traces)if(t.expires>w.time&&distance(p,t)<200&&line(w,p,t))t.revealedUntil=w.time+9;}
+  if(s.tool==='recorder'&&r.resonance&&p.recordingUntil>w.time&&s.scan>7){key='resonance';strength=2;}
+  if(strength>s.best){s.best=strength;s.report={key,data};}
+  if(s.scan<s.duration)return;
+  s.visits[s.room]=(s.visits[s.room]||0)+1;s.reviewed++;
+  if(s.best>=2&&(!s.lead||s.best>s.lead.strength))s.lead={room:s.room,strength:s.best,at:w.time};
+  const report=s.report||{key,data};scoutReport(w,p,report.key,report.data);s.report=null;
+  // Reports require human confirmation. Placement follows measured leads only,
+  // after multiple room checks; no route or task reads the secret room.
+  const placement=['book','camera','dots'][(index-1)%3];
+  if(!s.placed&&s.lead&&s.reviewed>=2&&w.time>120&&w.stock[placement]>0&&!w.devices.some(d=>d.kind===placement)){s.phase='supply';s.travelAt=w.time;}
+  else s.phase=s.reviewed%2===0?'return':'choose';
+ }
   function bot(w,p,dt){if(!p.alive)return;const b=p.brain,index=Number(p.id.split('-')[1])||1;
-  if(w.hunt.active){if(p.hidden||nearVan(w,p))return;if(w.time-(w.hunt.started||0)<.5+index*.35)return;let c=b.hide&&w.map.closets.find(x=>x.id===b.hide&&!w.players.some(q=>q!==p&&q.hidden===x.id));if(!c){c=w.map.closets.filter(c=>!w.players.some(q=>q!==p&&(q.hidden===c.id||q.brain?.hide===c.id))).map(c=>({c,path:path(w,p,c)})).filter(x=>x.path.length||distance(p,x.c)<70).sort((a,b)=>a.path.length-b.path.length)[0]?.c;b.hide=c?.id;b.route=[];}if(c){follow(w,p,{x:c.x+35,y:c.y+30},160,dt);if(distance(p,c)<66){p.hidden=c.id;p.x=c.x;p.y=c.y;event(w,'closet',p.id,{open:false});}}else follow(w,p,w.map.spawn,150,dt);return;}
-  if(p.hidden){interact(w,p);b.hide=null;b.route=[];}b.hide=null;
+  if(w.hunt.active){b.lastHunt=true;if(p.hidden||nearVan(w,p))return;if(w.time-(w.hunt.started||0)<.5+index*.35)return;let c=b.hide&&w.map.closets.find(x=>x.id===b.hide&&!w.players.some(q=>q!==p&&q.hidden===x.id));if(!c){c=w.map.closets.filter(c=>!w.players.some(q=>q!==p&&(q.hidden===c.id||q.brain?.hide===c.id))).map(c=>({c,path:path(w,p,c)})).filter(x=>x.path.length||distance(p,x.c)<70).sort((a,b)=>a.path.length-b.path.length)[0]?.c;b.hide=c?.id;b.route=[];}if(c){follow(w,p,{x:c.x+35,y:c.y+30},160,dt);if(distance(p,c)<66){p.hidden=c.id;p.x=c.x;p.y=c.y;event(w,'closet',p.id,{open:false});}}else follow(w,p,w.map.spawn,150,dt);return;}
+  if(p.hidden){interact(w,p);b.hide=null;b.route=[];}b.hide=null;if(b.lastHunt){b.lastHunt=false;b.survey=null;b.route=[];b.resumeAt=w.time+4;}
   const humans=w.players.filter(q=>!q.bot&&q.alive);if(!humans.length){b.order=null;follow(w,p,w.map.spawn,112,dt);return;}
   if(b.order&&executeOrder(w,p,dt))return;
-  // Assistants follow an investigator; they never search the secret room or solve evidence alone.
-  const human=humans[(index-1)%humans.length];if(p.sanity<23||index===3&&distance(human,w.map.spawn)<230){follow(w,p,w.map.spawn,100,dt);return;}
-  if(distance(p,human)>115+index*28){const offset={x:human.x-45*Math.cos(human.angle)+index*12,y:human.y-45*Math.sin(human.angle)+index*8};follow(w,p,blocked(w,offset.x,offset.y)?human:offset,105,dt);}
+  survey(w,p,dt,index);
  }
   function startHunt(w){if(w.phase==='complete'||w.hunt.active)return false;let protection=w.devices.find(d=>d.kind==='crucifix'&&d.charges>0&&distance(d,w.ghost)<200);let holder=null;if(!protection){holder=w.players.find(p=>p.alive&&!p.hidden&&owns(p,'crucifix')&&(p.crossCharges??2)>0&&distance(p,w.ghost)<170);if(holder)protection=holder;}
   if(protection){if(holder){holder.crossCharges=(holder.crossCharges??2)-1;if(!holder.crossCharges)removeItem(holder,'crucifix');}else protection.charges--;w.hunt.next=w.time+28;event(w,'crucifix',holder?.id||protection.owner,{x:protection.x,y:protection.y});return false;}
@@ -97,9 +164,27 @@
    for(const p of w.players)if(p.alive&&!p.hidden&&indoors(w,p)&&distance(p,g)<26&&line(w,g,p)){p.alive=false;event(w,'death',p.id);}
   }else{const r=w.map.rooms[w.secret.room],point=vacant(w,r,Math.floor(w.time/8));g.x+=(point.x-g.x)*Math.min(1,dt*.5);g.y+=(point.y-g.y)*Math.min(1,dt*.5);if(w.time>=w.nextActivity){manifest(w);w.nextActivity=w.time+(typeOf(w).id==='veil'&&!roomLit(w,r.id)?12:17)+w.rng()*17;}w.activity=Math.max(0,w.activity-dt);const living=w.players.filter(p=>p.alive),sanity=living.reduce((n,p)=>n+p.sanity,0)/(living.length||1),d=DIFFICULTIES[w.difficulty];if(w.time>=w.hunt.next&&w.time>d.setup){if(sanity<(w.difficulty==='nightmare'?85:w.difficulty==='calm'?45:65)||w.time>d.setup+(w.difficulty==='nightmare'?25:w.difficulty==='calm'?150:80))startHunt(w);else w.hunt.next=w.time+12;}}
  }
- function cameraFeed(w,device){const r=w.map.rooms[device.room],focus=r||{x:device.x+Math.cos(device.angle)*120,y:device.y+Math.sin(device.angle)*120},angle=Math.atan2(focus.y-device.y,focus.x-device.x),cone=distance(device,focus)<80||Math.abs(Math.atan2(Math.sin(angle-device.angle),Math.cos(angle-device.angle)))<1.2,clear=line(w,device,focus);
-  const orb=w.secret?device.room===w.secret.room&&signal(w,'orb')&&cone&&clear:device.orb;
-  const dots=w.secret?w.devices.some(d=>d.kind==='dots'&&d.positive&&distance(d,device)<450&&line(w,device,d))&&cone&&clear:device.dots;return{orb:!!orb,dots:!!dots};}
+ // Panoramic room cameras keep a north-up frame. Corridor cameras retain a
+ // directional wide lens; both use actual walls/doors rather than hidden truth.
+ function cameraPose(w,device){
+  const room=w.map.rooms[device.room],angle=Number.isFinite(device.angle)?device.angle:0;
+  return room?{room,angle,arc:Math.PI*2,range:Math.hypot(room.w,room.h)+TILE,focus:{x:room.x,y:room.y}}:
+   {room:null,angle,arc:2.8,range:700,focus:{x:device.x+Math.cos(angle)*230,y:device.y+Math.sin(angle)*230}};
+ }
+ function cameraVisible(w,device,point){
+  const pose=cameraPose(w,device),d=distance(device,point);
+  if(d>pose.range||!line(w,device,point))return false;
+  if(pose.room){const r=pose.room;return point.x>=r.left-TILE&&point.x<=r.left+r.w+TILE&&point.y>=r.top-TILE&&point.y<=r.top+r.h+TILE;}
+  const angle=Math.atan2(point.y-device.y,point.x-device.x);
+  return d<45||Math.abs(Math.atan2(Math.sin(angle-pose.angle),Math.cos(angle-pose.angle)))<=pose.arc/2;
+ }
+ function cameraFeed(w,device){
+  const pose=cameraPose(w,device);
+  const orb=w.secret?device.room===w.secret.room&&signal(w,'orb')&&cameraVisible(w,device,pose.focus):device.orb;
+  const dots=w.secret?w.devices.some(d=>d.kind==='dots'&&d.positive&&cameraVisible(w,device,d)):device.dots;
+  return{orb:!!orb,dots:!!dots};
+ }
+
 
   function update(w,dt,inputs={}){if(w.phase==='complete')return;dt=clamp(Number(dt)||0,0,.1);w.time+=dt;
   for(const d of w.devices){
@@ -122,5 +207,5 @@
   function snapshot(w){return{schema:PROTOCOL,id:w.id,mapId:w.mapId,difficulty:w.difficulty,hostId:w.hostId,time:w.time,phase:w.phase,players:w.players.map(({brain,probe,scan,record,...p})=>{const r=readings(w,p);return{...p,sensor:{room:r.room,temperature:p.tool==='thermo'?r.temperature:null,emf:p.tool==='emf'?r.emf:null,uv:p.tool==='uv'&&r.uv,orb:p.tool==='camera'&&r.orb,recording:Math.max(0,(p.recordingUntil||0)-w.time)}};}),doors:{...w.doors},power:w.power,lights:w.lights,roomLights:{...w.roomLights},ghost:{x:w.ghost.x,y:w.ghost.y,angle:w.ghost.angle,visible:w.ghost.visible},hunt:{...w.hunt},found:[...w.found],devices:w.devices.map(d=>({...d})),traces:w.traces.map(t=>({...t})),photos:w.photos.map(p=>({...p})),bone:{...w.bone},stock:{...w.stock},crossStock:[...w.crossStock],activity:w.hunt.active?10:Math.round(clamp(w.activity*1.35,0,9)),activityHistory:[...w.activityHistory],events:w.events.map(e=>({...e})),sequence:w.sequence,result:w.result,objectives:{...w.objectives}};}
  function validSnapshot(s,roster=[]){const spec=MAPS.find(m=>m.id===s?.mapId),point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&p.x>=0&&p.y>=0&&p.x<=(spec?.cols||0)*TILE&&p.y<=(spec?.rows||0)*TILE;return s?.schema===PROTOCOL&&typeof s.id==='string'&&s.id.length<80&&!!spec&&['investigating','complete'].includes(s.phase)&&Number.isFinite(s.time)&&s.time>=0&&s.time<=1600&&Array.isArray(s.players)&&s.players.length<=4&&new Set(s.players.map(p=>p.id)).size===s.players.length&&s.players.every(p=>typeof p.id==='string'&&p.id.length<70&&(p.bot===true||roster.includes(p.id))&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&p.x>=0&&p.x<=spec.cols*TILE&&p.y>=0&&p.y<=spec.rows*TILE&&Array.isArray(p.inventory)&&p.inventory.length<=4&&new Set(p.inventory).size===p.inventory.length&&p.inventory.every(t=>TOOLS.includes(t))&&(p.tool===null||p.inventory.includes(p.tool)))&&Array.isArray(s.found)&&s.found.length<=4&&s.found.every(id=>EVIDENCE.some(e=>e.id===id))&&Array.isArray(s.devices)&&s.devices.length<=48&&s.devices.every(d=>/^device-[0-9]{1,7}$/.test(d.id)&&TOOLS.includes(d.kind)&&point(d)&&Number.isInteger(d.room)&&d.room>=-1&&d.room<spec.rooms.length)&&Array.isArray(s.traces)&&s.traces.length<=12&&s.traces.every(t=>/^trace-[0-9]{1,7}$/.test(t.id)&&point(t)&&Number.isFinite(t.expires)&&Number.isFinite(t.revealedUntil))&&Array.isArray(s.photos)&&s.photos.length<=4&&s.photos.every(p=>/^photo-[0-3]$/.test(p.id)&&['ghost','bone','uv'].includes(p.kind)&&point(p))&&Array.isArray(s.events)&&s.events.length<=30&&s.ghost&&Number.isFinite(s.ghost.x)&&Number.isFinite(s.ghost.y)&&s.hunt&&typeof s.hunt.active==='boolean'&&s.doors&&typeof s.doors==='object'&&point(s.bone)&&Array.isArray(s.crossStock)&&s.crossStock.length<=32&&s.crossStock.every(n=>n===1||n===2)&&s.stock&&TOOLS.every(t=>Number.isInteger(s.stock[t])&&s.stock[t]>=0&&s.stock[t]<=32)&&s.roomLights&&typeof s.power==='boolean'&&(!s.result||GHOSTS.some(g=>g.id===s.result.type)&&Array.isArray(s.result.evidence)&&s.result.evidence.every(id=>EVIDENCE.some(e=>e.id===id))&&Array.isArray(s.result.found)&&Number.isFinite(s.result.seconds)&&Number.isFinite(s.result.xp)&&Number.isFinite(s.result.money));}
  function candidates(found){return GHOSTS.filter(g=>g.id==='deceiver'?found.length<=4&&found.filter(id=>!g.evidence.includes(id)).length<=1:found.every(id=>g.evidence.includes(id)));}
- return{PRICES:C.PRICES,STARTER:C.STARTER,level:C.level,reward:C.reward,signal,PROTOCOL,TILE,WIDTH,HEIGHT,TOOLS,ITEMS,EVIDENCE,GHOSTS,QUESTIONS,REPLIES,MAPS,DIFFICULTIES,clamp,distance,cell,centre,random,map,roomAt,blocked,move,line,path,create,readings,interact,interaction,use,gear,owns,equip,nearVan,indoors,roomLit,input,update,startHunt,finish,snapshot,validSnapshot,candidates,cameraFeed,bonusMoney,manifest};
+ return{PRICES:C.PRICES,STARTER:C.STARTER,supplies:C.supplies,level:C.level,reward:C.reward,signal,PROTOCOL,TILE,WIDTH,HEIGHT,TOOLS,ITEMS,EVIDENCE,GHOSTS,QUESTIONS,REPLIES,MAPS,DIFFICULTIES,clamp,distance,cell,centre,random,map,roomAt,blocked,move,line,path,create,readings,interact,interaction,use,gear,owns,equip,nearVan,indoors,roomLit,input,update,startHunt,finish,snapshot,validSnapshot,candidates,cameraPose,cameraVisible,cameraFeed,bonusMoney,manifest};
 });
