@@ -2,7 +2,7 @@ name: Zone Haunt standalone game update
 on:
   push:
     branches: [feature/zonehub-online-updates]
-    paths: ['game/haunt/**', 'game/haunt-version.json', 'database/zone-haunt.sql', 'database/haunt-progression.sql', 'database/haunt-research.sql', 'database/haunt-operations.sql', 'shared/money.js', 'scripts/*haunt*', 'tests/haunt*', '.github/workflows/haunt-beta.yml']
+    paths: ['game/haunt/**', 'game/haunt-version.json', 'database/zone-haunt.sql', 'database/haunt-progression.sql', 'database/haunt-research.sql', 'database/haunt-operations.sql', 'database/haunt-fieldwork.sql', 'shared/money.js', 'scripts/*haunt*', 'tests/haunt*', '.github/workflows/haunt-beta.yml']
   workflow_dispatch:
 permissions:
   contents: write
@@ -26,6 +26,8 @@ jobs:
         run: node --test tests/haunt*.test.cjs tests/zone-hub-cosmetics.test.cjs
       - name: Verify UI, actual lighting and consecutive investigations
         run: node scripts/haunt-smoke.cjs
+      - name: Verify cursed possessions, shared challenges and sensor UI
+        run: node scripts/haunt-fieldwork-smoke.cjs
       - name: Verify three SDK clients and the next signed-in contract
         run: node scripts/haunt-network-smoke.cjs
       - name: Verify direct Zone Hub SSO

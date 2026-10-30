@@ -13,10 +13,10 @@ async function complete(f,uid,room,wipe){
  await f.db.query("update haunt_private.rooms set started_at=now()-interval '1 minute' where id=$1",[room.id]);
  const w=H.create({seed:room.seed,mapId:room.mapId,players:room.roster,botCount:room.botCount,stock:room.supplies,hostId:uid});w.id=room.id;w.time=90;
  if(wipe)for(const p of w.players)p.alive=false;
- H.finish(w,null);await f.haunt(uid,'sync',{room:room.id,snapshot:H.snapshot(w)});await f.haunt(uid,'finish',{room:room.id,guess:null});
+ H.finish(w,null);await f.haunt(uid,'sync',{room:room.id,snapshot:{...H.snapshot(w),schema:room.protocol}});await f.haunt(uid,'finish',{room:room.id,guess:null});
 }
-test('every practice investigation starts with exactly one of all twelve tools and four empty carried slots',()=>{
- const w=create({bots:false});assert.equal(H.TOOLS.length,12);assert.deepEqual(w.stock,H.STARTER);assert.deepEqual(H.supplies(),H.STARTER);assert.deepEqual(w.players[0].inventory,[]);
+test('every practice investigation starts with exactly one of all fifteen tools and four empty carried slots',()=>{
+ const w=create({bots:false});assert.equal(H.TOOLS.length,15);assert.deepEqual(w.stock,H.STARTER);assert.deepEqual(H.supplies(),H.STARTER);assert.deepEqual(w.players[0].inventory,[]);
  const withExtras=H.supplies({camera:2});assert.equal(withExtras.camera,3);assert.equal(withExtras.crucifix,1);assert.deepEqual(w.crossStock,[2]);
 });
 test('bot scouts carry finite equipment, check different rooms slowly and never confirm evidence for an idle human',()=>{
@@ -26,7 +26,7 @@ test('bot scouts carry finite equipment, check different rooms slowly and never 
   for(const e of w.events)if(e.type==='bot-tip')messages.set(e.id,e.at);
   for(const id of H.TOOLS)assert.equal(w.stock[id]+w.players.filter(p=>p.inventory.includes(id)).length+w.devices.filter(d=>d.kind===id).length,1,id);
  });
- assert(rooms.size>=3);assert(seenTools.has('thermo'));assert(seenTools.has('emf'));assert(seenTools.has('uv'));assert(messages.size>0);assert(Math.min(...messages.values())>=45);assert(messages.size<=8);assert.deepEqual(w.found,[]);
+ assert(rooms.size>=3);assert(seenTools.has('thermo'));assert(seenTools.has('emf'));assert(seenTools.has('uv'));assert(messages.size>0);assert(Math.min(...messages.values())>=25);assert(messages.size<=10);assert.deepEqual(w.found,[]);
 });
 test('initial scouting routes depend on public rooms rather than the hidden ghost room',()=>{
  const a=create(),b=create();a.secret.room=0;b.secret.room=b.map.rooms.length-1;a.nextActivity=b.nextActivity=1e9;
@@ -80,9 +80,9 @@ test('the kit migration keeps existing purchased gear and running contracts and 
  try{
   await f.haunt(a,'gear_buy',{request:randomUUID(),tool:'camera',quantity:1});const original=await f.haunt(a,'home');
   let room=await f.haunt(a,'create');room=await f.haunt(a,'start',{room:room.id});const supplies=room.supplies;
-  await f.db.exec(migration);assert.deepEqual((await f.haunt(a,'sync',{room:room.id})).supplies,supplies);
+  await f.db.exec(migration);await f.db.exec(fs.readFileSync(path.join(__dirname,'../database/haunt-fieldwork.sql'),'utf8'));assert.deepEqual((await f.haunt(a,'sync',{room:room.id})).supplies,supplies);
   await complete(f,a,room,false);let home=await f.haunt(a,'home');assert.deepEqual(home.gear.owned,original.gear.owned);assert.equal(home.gear.funds.balance,800);assert.deepEqual(home.gear.starter,H.STARTER);
-  await f.db.exec(migration);home=await f.haunt(a,'home');assert.deepEqual(home.gear.owned,original.gear.owned);assert.equal(home.gear.funds.balance,800);
+  await f.db.exec(migration);await f.db.exec(fs.readFileSync(path.join(__dirname,'../database/haunt-fieldwork.sql'),'utf8'));home=await f.haunt(a,'home');assert.deepEqual(home.gear.owned,original.gear.owned);assert.equal(home.gear.funds.balance,800);
   const fresh=await f.haunt(b,'home');assert.deepEqual(fresh.gear.owned,{});assert.deepEqual(fresh.gear.starter,H.STARTER);assert.equal(fresh.gear.funds.balance,1000);
   await assert.rejects(f.as(b,'select haunt_private.basic_gear()'),/permission denied/);
  }finally{await f.db.close();}

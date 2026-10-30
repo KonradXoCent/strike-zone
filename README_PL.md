@@ -263,3 +263,7 @@ Mapy odblokowuje poziom Zone Haunt lidera: 1 + suma XP / 250 (część całkowit
 Kooperacja nadal używa symulacji prowadzonej przez lidera i prywatnych kanałów Realtime z autoryzacją SQL oraz zapasową synchronizacją RPC. Taki model nie jest niezależnym serwerem symulującym ducha ani zabezpieczeniem przed fałszowaniem przebiegu przez zmodyfikowanego klienta lidera.
 
 Kamery automatycznie kadrują panoramę pokoju bez obracania obrazu. Widać rozstawiony sprzęt, także książki i krucyfiksy; ściany i zamknięte drzwi zasłaniają obraz. Boty zabierają narzędzia i spokojnie sprawdzają różne pomieszczenia, zgłaszając rzeczywiste odczyty. Nie znają pokoju ducha i nie wypełniają dziennika za gracza. Polecenia pod Z mają pierwszeństwo; sprzęt niesiony przez bota można zamówić także w vanie.
+
+### Zone Haunt 0.1.6 — przeklęte przedmioty i wyzwania
+
+Po `haunt-operations.sql` zastosuj `database/haunt-fieldwork.sql`. Nowe śledztwa używają protokołu 4, zachowując stare kontrakty i obsługę zaproszeń z Zone Hub 0.1.13. Na każdą wyprawę jest 15 bezpłatnych narzędzi. REM-POD działa w ręce, po postawieniu i w vanie; czujnik ruchu oraz zabawkowy samochód reagują na faktyczne położenie ducha. Na mapie jest jeden losowy przeklęty przedmiot. Boty samodzielnie badają pokoje od początku, cała ekipa może dzielić szafę, a lider wybiera siedem wyzwań z dodatkowymi PB. Wymagane dowody duchów są w dzienniku. [Pełny opis i walidacja](docs/zone-haunt-and-style-shop.md).
