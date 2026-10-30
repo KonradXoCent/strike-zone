@@ -1,6 +1,6 @@
 (function(root){'use strict';
  class Loading{
-  constructor(view,language){this.view=view;this.language=language;this.token=0;this.active=false;}
+  constructor(view,language,extra){this.view=view;this.language=language;this.extra=extra;this.token=0;this.active=false;}
   cancel(){this.token++;this.active=false;document.getElementById('map-loading').hidden=true;}
   async start(world){
    const token=++this.token,map=world.map,en=this.language()==='en',box=document.getElementById('map-loading'),progress=document.getElementById('map-load-progress');this.active=true;box.hidden=false;box.style.setProperty('--site-accent',map.accent);
@@ -10,6 +10,7 @@
    document.getElementById('map-load-tip').textContent=tips[Math.abs(world.seed||Math.floor(world.time))%tips.length];progress.value=12;document.getElementById('map-load-status').textContent=en?'Preparing the location…':'Przygotowanie lokacji…';
    await new Promise(resolve=>requestAnimationFrame(resolve));if(token!==this.token)return;
    this.view.prepare(map);progress.value=60;document.getElementById('map-load-status').textContent=en?'Scenery and floor plans ready':'Sceneria i plany pięter gotowe';this.paint(map);
+   if(this.extra){await new Promise(resolve=>requestAnimationFrame(resolve));if(token!==this.token)return;await this.extra(world);if(token!==this.token)return;}
    await(document.fonts?.ready||Promise.resolve());if(token!==this.token)return;progress.value=100;document.getElementById('map-load-status').textContent=en?'Equipment ready · entering the investigation':'Sprzęt gotowy · wejście do śledztwa';
    await new Promise(resolve=>setTimeout(resolve,550));if(token!==this.token)return;box.hidden=true;this.active=false;document.getElementById('scene').focus();
   }

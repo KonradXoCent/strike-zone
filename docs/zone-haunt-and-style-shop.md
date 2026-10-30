@@ -1,6 +1,6 @@
 # Zone Haunt and the Zone Hub style shop
 
-Zone Haunt 0.1.7 is an original 2.5D cooperative investigation beta with nineteen locations, fifteen entities and nine evidence types. Up to four investigators share one host simulation. The host chooses zero to three support bots, limited by the remaining crew slots. The game costs 500 Zone Coins in Zone Hub 0.1.13; existing library owners keep their license.
+Zone Haunt 0.1.8 is an original cooperative investigation beta with top-down and optional first-person 3D views with nineteen locations, fifteen entities and nine evidence types. Up to four investigators share one host simulation. The host chooses zero to three support bots, limited by the remaining crew slots. The game costs 500 Zone Coins in Zone Hub 0.1.13; existing library owners keep their license.
 
 ## Garage and equipment
 
@@ -51,6 +51,18 @@ Purchases use server prices and replayable receipt IDs. The same result cannot p
 Photos have base bonuses of 50 for the ghost, 25 for the bone, 20 per revealed UV trace, 35 per dirty sink and 25 per disturbed salt patch. UV, water and salt each allow at most two different targets, with eight photos total. Collecting the bone adds 25. A target pays once; the complete photo/bone bonus is capped at 260 RP. Water requires a genuinely dirty map sink, salt a placed disturbed patch; canonical sink IDs and target deduplication are checked during server settlement. Correct identification, observed evidence, difficulty and map size determine the final RP/XP payout; a total wipe pays no RP. Photo previews stay local to the photographer; shared records contain metadata.
 
 Entities can switch room lights, cut power, open and close unoccupied doors, manifest, whisper, knock and make footsteps or scraping noises. Distance and walls attenuate positioned events. Original procedural hunt music, EMF beeps, radio interference, equipment, shutter and debrief sounds are generated locally. Speech selects an installed PL/EN voice matching the visual model where available, with distinct male, female, child and demonic procedural/pitch profiles as fallback. The Demon has demonic laughter, 65% faster composure drain, a 30% shorter initial protection, 40% shorter hunt cooldowns, a higher hunt threshold and more frequent power cuts. Its evidence is freezing, UV and spirit-radio responses.
+
+## First-person preview and planning scroll
+
+Settings → Graphics and controls → Game view selects the optional 3D first-person preview. The default remains 2.5D. Both views use the same nineteen map layouts, authoritative simulation, bots, account, equipment, results and private network room. Switching view does not restart or clone the contract; parties can mix views. Ground axes retain their existing orientation and basement positions use the real stair destinations.
+
+The first-person scene includes floors, ceilings, textured walls, doors, hiding closets, themed furniture, investigators, seven entity appearances, all fifteen held tools, eight placed equipment models, sinks, bones and cursed possessions. Devices use their actual shared state for LEDs, writing, disturbed salt and motion alarms. Power, room lights, flashlight and UV affect the scene; balanced/high quality includes flashlight shadows. Room cameras have a perspective 3D feed; the journal and monitor controls remain readable HTML. First-person photos also check vertical aim at the target height. Original top-down and bot photos retain their existing behavior.
+
+Click the investigation to capture the cursor. WASD moves relative to facing, mouse looks, Shift sprints, F toggles the carried flashlight, E interacts, R/LMB uses equipment and 1–4 selects a carried item. J, Z, spirit-radio and van menus release pointer lock. Escape releases it and opens pause; returning requires a deliberate click. Loading and other menus never automatically capture the mouse. Quality, FOV 60–100° and sensitivity are game-specific saved preferences. A renderer initialization failure returns to 2.5D.
+
+The renderer is an offline, pinned MIT Three.js 0.187.0 bundle, built with esbuild 0.28.2 by `scripts/build-haunt-three.cjs`. To reproduce it, install those versions into a separate temporary directory and pass its node_modules path to that script. No runtime CDN or external model downloads are used. Repo-native geometry/materials are shared and instanced; each replaced map disposes its old GPU resources. The preview uses the existing flat navigation/collision simulation; stairs change floors through E rather than continuous vertical walking. It is an optional 3D presentation of the live game, not a replacement physics/network engine.
+
+Planning refreshes no longer move the mounted lobby element. Configuration and busy-state redraws retain the map grid, selected card and exact scroll positions, including the lowest unlocked maps.
 
 ## Team room and photo assistance
 

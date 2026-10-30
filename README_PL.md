@@ -276,3 +276,10 @@ Po `haunt-fieldwork.sql` zastosuj `database/haunt-expeditions.sql`. Nowe wyprawy
 Gra ma 19 lokacji, w tym nowy cyrk, sklep, arcade, opuszczony szpital i więzienie, cmentarz i kamping z namiotami oraz domkami. Na każdej mapie schody pod **E** prowadzą do piwnicy z bezpiecznikami. **Z → Tu jest pokój ducha** kieruje boty ze sprzętem do aktualnego pokoju gracza; boty nie otrzymują tajnej pozycji ducha. Poprawiono otwieranie drzwi ze sprzętem w progu i dochodzenie botów do półek vana.
 
 Pomocnicy fotografują i zbierają zauważoną kość, fizycznie przynosząc dostępny aparat. Zdjęcia brudnej wody i odcisków w soli mają osobne, jednorazowe bonusy PB. Demon częściej poluje, szybciej obniża spokój i częściej wyłącza prąd. Zjawiska mają głosy dopasowane do modeli oraz demoniczny śmiech. Odświeżone menu i ekran ładowania pokazują plan oraz opis wybranej mapy. [Szczegóły zmian i walidacji](docs/zone-haunt-and-style-shop.md).
+
+
+### Zone Haunt 0.1.8 / Zone Royale 0.1.9
+
+W Zone Haunt poprawiono przewijanie tablicy map: odświeżenia lobby i wybór mapy zachowują pozycję listy. W **Ustawienia → Obraz i sterowanie → Widok gry** można włączyć testowy widok **3D z oczu postaci**. Korzysta z tych samych 19 map i mechanik; gracze 3D i 2.5D mogą być w jednej ekipie. Jakość, pole widzenia i czułość myszy zapisują się osobno dla Haunt. Dziennik i inne okna uwalniają kursor. Schody nadal obsługuje **E**. Domyślny widok 2.5D pozostaje dostępny. [Opis i ograniczenia wersji testowej](docs/zone-haunt-and-style-shop.md).
+
+Zone Royale ma 14 miejscówek, 26 budynków i 32 dodatkowe osłony. Dodano osadę nad kanałem, zajezdnię, posterunek rzeczny, giełdę portową, zakład przemysłowy, kamieniołom, obozowisko i obserwatorium. `database/zone-royale-frontier.sql` oddziela kolejki różnych wersji geometrii i zachowuje stare mecze. Obie gry aktualizują się samodzielnie w obecnej bibliotece Zone Hub.

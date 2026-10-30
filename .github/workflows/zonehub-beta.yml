@@ -45,6 +45,7 @@ jobs:
           node scripts/haunt-smoke.cjs
           node scripts/haunt-fieldwork-smoke.cjs
           node scripts/haunt-expeditions-smoke.cjs
+          node scripts/haunt-graphics-smoke.cjs
           node scripts/haunt-network-smoke.cjs
           node scripts/zone-hub-handoff-smoke.cjs --haunt --wallet
       - name: Build the lightweight platform and separate game packages

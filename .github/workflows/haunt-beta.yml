@@ -30,6 +30,8 @@ jobs:
         run: node scripts/haunt-fieldwork-smoke.cjs
       - name: Verify basements, marked rooms, bone retrieval and photo bonuses
         run: node scripts/haunt-expeditions-smoke.cjs
+      - name: Verify stable planning scroll and the first-person renderer
+        run: node scripts/haunt-graphics-smoke.cjs
       - name: Verify three SDK clients and the next signed-in contract
         run: node scripts/haunt-network-smoke.cjs
       - name: Verify direct Zone Hub SSO
@@ -50,9 +52,11 @@ jobs:
             dist-haunt/zonehub-haunt-manifest.json
             dist-platform/content-update-report.json
             test-output/haunt/*.png
+            test-output/haunt/*.jpg
+            test-output/haunt/*performance.json
           retention-days: 90
       - name: Publish the tested game without a platform update
-        if: "startsWith(github.event.head_commit.message, 'release: Zone Haunt beta ')"
+        if: "startsWith(github.event.head_commit.message, 'release: Zone Haunt beta ') || startsWith(github.event.head_commit.message, 'release: Zone games ')"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}

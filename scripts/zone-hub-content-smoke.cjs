@@ -8,8 +8,8 @@ const root=path.resolve(__dirname,'..'),tmp=fs.mkdtempSync(path.join(os.tmpdir()
  const args=[tmp,'--no-sandbox','--ozone-platform=headless','--headless','--disable-gpu'];
  if(process.env.HTTPS_PROXY)args.push('--proxy-server='+process.env.HTTPS_PROXY,'--ignore-certificate-errors');
  app=await _electron.launch({executablePath:require('electron'),args});
- const reports=[];
- for(const spec of require('../platform/core/catalog.cjs').filter(s=>!process.argv.includes('--haunt')||s.id==='zone-haunt')){
+ const reports=[],selected=process.argv.includes('--haunt')?'zone-haunt':process.argv.includes('--royale')?'zone-royale':null;
+ for(const spec of require('../platform/core/catalog.cjs').filter(s=>!selected||s.id===selected)){
   const result=await app.evaluate(async({net},{root,tmp,spec})=>{
    const fs=__req('original-fs'),path=__req('node:path'),crypto=__req('node:crypto'),{Packages}=__req(root+'/platform/core/packages.cjs'),fetchLive=__req(root+'/platform/core/network.cjs').createNetFetch(net);
    const built=root+(spec.id==='zone-haunt'?'/dist-haunt':spec.id==='strike-zone'?'/dist-managed':'/dist-royale'),next=JSON.parse(fs.readFileSync(built+'/'+spec.manifestName,'utf8')),installRoot=tmp+'/'+spec.id;

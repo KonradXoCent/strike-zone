@@ -1,14 +1,10 @@
-Zone Haunt 0.1.7
+Zone Haunt 0.1.8
 
-- Siedem nowych lokacji: sklep Nocna Zmiana, salon Neon Arcade, cyrk Blackbriar, opuszczony szpital św. Brygidy, opuszczone więzienie Lockridge, cmentarz Dolina Ciszy i leśny kamping z namiotami oraz domkami. Łącznie 19 map, od małych po bardzo duże, z odblokowaniami za poziom lidera.
-- Każda lokacja ma dostępną piwnicę z magazynem i pomieszczeniem bezpieczników. Naciśnij E przy schodach, aby zmienić piętro. Boty i duchy też korzystają ze schodów; widoczność, monitoring i radar uwzględniają poziom mapy.
-- Z → „Tu jest pokój ducha” wskazuje ekipie aktualne pomieszczenie. Boty przynoszą i rozstawiają dostępny sprzęt, odzyskują potrzebne urządzenia z poprzedniego pokoju oraz wykonują pomiary. Oznaczenie jest wspólną wskazówką gracza, więc można wskazać błędny pokój. Druga komenda przywraca przeszukiwanie całej lokacji.
-- Poprawione przechodzenie przez drzwi i powrót pomocników do półek w vanie. Zamknięte drzwi da się otworzyć, także gdy w progu leży czujnik lub inne urządzenie.
-- Bot, który zauważy kość, przynosi dostępny aparat z vana, fotografuje ją, zbiera i oddaje aparat. Cudzy zajęty aparat pozostaje u jego użytkownika; gracz nadal może zbadać i zebrać kość samodzielnie.
-- Duch może odkręcić kran i zostawić brudną wodę w zlewie. Jej zdjęcie daje 35 PB, a zdjęcie faktycznych odcisków w soli 25 PB. Ten sam obiekt nie płaci ponownie. Nowe zdjęcia są widoczne we wspólnym albumie i rozliczane na serwerze.
-- Demon dołącza do 14 dotychczasowych zjawisk. Szybciej obniża spokój, częściej poluje i wyłącza prąd. Głosy i proceduralne odgłosy rozróżniają modele kobiece, męskie, dziecko i demoniczne brzmienie ze śmiechem.
-- Odświeżone menu główne i ekran wczytywania z rzeczywistym planem lokacji, opisem mapy, paskiem postępu i wskazówkami. Dopracowane widoki piwnic oraz oznaczenia pokoju ekipy.
+- Naprawione przewijanie wyboru map. Odświeżenie lobby, gotowości i stanu zakupów zachowuje pozycję listy. Można wybierać mapy na samym dole bez powrotu do początku.
+- Nowy, opcjonalny widok 3D z oczu postaci: Ustawienia → Obraz i sterowanie → Widok gry → 3D. Domyślny widok 2.5D pozostaje dostępny; można przełączać widoki także podczas śledztwa.
+- Te same 19 map, piwnice, schody, boty, duchy, sprzęt, przeklęte przedmioty, album zdjęć i rozliczenia działają na obecnym silniku śledztwa. W jednej ekipie można używać różnych widoków. Zmiana widoku nie resetuje zlecenia ani ekwipunku.
+- Sceny 3D mają podłogi, sufity, drzwi, szafy, meble, wyposażenie, modele pomocników i zjawisk. Oświetlenie reaguje na prąd, światła pokojów, latarkę i UV; wyższe ustawienia obsługują cienie latarki. Kamery w vanie pokazują scenę 3D.
+- Mysz służy do rozglądania po kliknięciu w grę. Dziennik, van, pytania do ducha i komendy dla botów uwalniają kursor. Escape również go uwalnia. Powrót do rozglądania wymaga kliknięcia. Zdjęcia w 3D uwzględniają kierunek patrzenia w pionie.
+- Ustawienia jakości 3D: Wydajność, Zrównoważona i Wysoka, pole widzenia 60–100° oraz czułość myszy. Współdzielona geometria i powtarzane instancje ograniczają liczbę wywołań renderowania. Błąd uruchomienia WebGL pozwala wrócić do widoku z góry.
 
-REM-POD zachowuje kolorowe odczyty i dźwięk w ręce, na podłodze oraz w vanie. Na każdą nową wyprawę wraca po jednej bezpłatnej sztuce wszystkich 15 narzędzi. Dodatki nadal kupuje się za Punkty badań (PB/RP), oddzielnie od ZC. Zachowane są wcześniejsze wyzwania i przeklęte przedmioty.
-
-Aktualizacja gry jest dostępna w bibliotece Zone Hub bez ponownej instalacji platformy. Nowe funkcje wymagają nowej wyprawy i wersji 0.1.7 u wszystkich członków ekipy. Trwające kontrakty starszych wersji zachowują swoje reguły rozliczenia.
+Widok 3D jest wersją testową do sprawdzenia wyglądu i wydajności. Aktualizuj samą grę w bibliotece Zone Hub; nowy instalator platformy nie jest potrzebny.

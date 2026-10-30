@@ -1,6 +1,6 @@
 # Zone Coins — account wallet
 
-Zone Hub 0.1.13, managed Strike 1.5.10-zonehub.6, Royale 0.1.8 and Haunt 0.1.7 use one account-wide virtual currency: Zone Coins (ZC). Inventories remain game-specific. Strike round buy money and seasonal Halloween candy are separate gameplay/event mechanics.
+Zone Hub 0.1.13, managed Strike 1.5.10-zonehub.6, Royale 0.1.9 and Haunt 0.1.8 use one account-wide virtual currency: Zone Coins (ZC). Inventories remain game-specific. Strike round buy money and seasonal Halloween candy are separate gameplay/event mechanics.
 
 ## Migration and rewards
 

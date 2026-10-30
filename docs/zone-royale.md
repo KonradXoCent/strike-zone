@@ -17,3 +17,12 @@ Zone Hub passes the verified session through the existing authenticated Windows 
 `node scripts/zone-hub-install-smoke.cjs --bundled --live-feed` optionally repeats the full temporary installation against the real public GitHub release feed, without accessing any player account. The normal CI fixture stays deterministic. Public release lists have a separate bounded size allowance from small package manifests.
 
 These are controlled integration checks, not a measurement of Internet latency or a large-player load test. This is an unpublished beta; the existing live Strike Zone release remains unchanged.
+
+
+## Frontier expansion — 0.1.9
+
+Frontier Island now contains fourteen named landing areas, 26 reachable buildings and 32 extra cover props. Eight smaller sites join the six original districts: Westbank Depot, Canal Village, Rivergate Outpost, Harbor Exchange, Copperworks, Redstone Quarry, Whisper Camp and Southwatch Observatory. Extra sites have themed scenery and two supply caches; original districts keep four. Six original reboot vans remain. World dimensions stay 4096 × 3072 and scenery uses the existing cached canvas renderer.
+
+Apply `database/zone-royale-frontier.sql` after the existing ranked queue upgrade. Matchmaking remains protocol 5 and stores a separate immutable `world_revision`: older clients default to 1, new clients request 2. Waiting pools and party joins partition by revision as well as mode/ranked/map. Existing running matches and progression rules are retained. Party presence and start/snapshot handshakes reject mismatched island versions before shared play. All formats, fill settings, cards, van revivals and ranks remain unchanged.
+
+The standalone Royale release workflow tests geometry and PostgreSQL, actual two-/three-client matches, all squad formats, ownership/appearance, SSO, Windows package installation and a content-only update before publication. Zone Hub itself does not need a new installer.

@@ -1,0 +1,62 @@
+name: Zone Royale standalone game update
+on:
+  push:
+    branches: [feature/zonehub-online-updates]
+    paths: ['game/royale*', 'shared/royale*', 'database/zone-royale*', 'scripts/*royale*', 'scripts/publish-haunt.cjs', 'tests/royale*', '.github/workflows/royale-beta.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: royale-beta
+  cancel-in-progress: true
+jobs:
+  royale:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/ensure-generated.cjs
+      - run: npm run prepare:game
+      - run: node scripts/prepare-royale.cjs
+      - name: Test map reachability, island revisions, ranked results and ownership
+        run: node --test tests/royale*.test.cjs
+      - name: Verify actual parties, bot matches and the expanded island
+        run: node scripts/royale-smoke.cjs
+      - name: Verify three SDK clients, squads, cards and reboot vans
+        run: node scripts/royale-squads-smoke.cjs
+      - name: Verify identity, arsenal and first frame
+        run: |
+          node scripts/royale-view-smoke.cjs
+          node scripts/royale-content-smoke.cjs
+          node scripts/royale-identity-smoke.cjs
+      - name: Verify direct Zone Hub account handoff
+        run: node scripts/zone-hub-handoff-smoke.cjs --royale --wallet
+      - name: Build only Zone Royale
+        run: node scripts/build-managed.cjs --royale
+      - name: Install and inspect the real Windows package
+        run: node scripts/zone-hub-install-smoke.cjs --bundled --royale
+      - name: Verify the compatible content update
+        run: node scripts/zone-hub-content-smoke.cjs --royale
+      - name: Verify immutable package hashes
+        run: node scripts/publish-haunt.cjs --royale --verify-only
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Zone-Royale-Game
+          path: |
+            dist-royale/*.zip
+            dist-royale/zonehub-royale-manifest.json
+            dist-platform/content-update-report.json
+            test-output/royale/*.png
+          retention-days: 90
+      - name: Publish the tested game without updating the platform
+        if: "startsWith(github.event.head_commit.message, 'release: Zone Royale beta ') || startsWith(github.event.head_commit.message, 'release: Zone games ')"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: node scripts/publish-haunt.cjs --royale
