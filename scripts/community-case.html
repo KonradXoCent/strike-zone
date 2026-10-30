@@ -41,7 +41,7 @@ async function forgeBuy(){
   clearTimeout(CL.h);await Promise.allSettled([...(window.szCloudPending||[])]);if(!await window.szDesktopFlush?.())throw Error('FORGE_SAVE_REQUIRED');clearTimeout(CL.h);FORGE.locked=true;
   request=ST.getItem(forgeRequestKey())||crypto.randomUUID();ST.setItem(forgeRequestKey(),request);
   const r=await sb.rpc('sz_workshop_case_buy',{request_id:request,profile_name:DB.cur,expected_ts:DB.ts||0});if(r.error)throw r.error;if(communityAccount()!==owner)return;
-  P().wallet=Number(r.data.balance);DB.ts=Number(r.data.saved_ts);ST.setItem(WORKSHOP_SAVE_KEY,JSON.stringify(DB));ST.removeItem(forgeRequestKey());FORGE.message='Kupiono Community Forge Case. Możesz ją otworzyć w ekwipunku.';
+  if(window.SzWallet?.active)await SzWallet.refresh();else P().wallet=Number(r.data.balance);DB.ts=Number(r.data.saved_ts);ST.setItem(WORKSHOP_SAVE_KEY,JSON.stringify(DB));ST.removeItem(forgeRequestKey());FORGE.message='Kupiono Community Forge Case. Możesz ją otworzyć w ekwipunku.';
  }catch(e){FORGE.message=forgeError(e);if(!/FORGE_/.test(String(e?.message||''))){FORGE.uncertain=true;await cloudLoad();if(window.szDesktopCloudReady?.())FORGE.uncertain=false;}}
  finally{FORGE.locked=false;FORGE.busy=false;$('menu').inert=!!CASE_PRESENTATION;if(communityAccount()===owner){await forgeLoad();forgeMount();hdr();}}
 }

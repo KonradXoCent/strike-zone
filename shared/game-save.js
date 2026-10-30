@@ -1,0 +1,7 @@
+/* Merge foreign-game fields after an atomic cloud save, preserving changes made while uploading. */
+(function(root){'use strict';
+ function accept(remote){if(!remote?.profiles)return;root.SzWallet?.accept(remote.zoneWallet,remote.walletAck);if(root.SzWallet?.active)return root.SzWallet.suspend(()=>merge(remote));return merge(remote);}
+ function merge(remote){for(const [key,source]of Object.entries(remote.profiles)){const p=DB.profiles[key];if(!p){DB.profiles[key]=source;continue;}if(root.SZ_ROYALE){for(const field of Object.keys(source))if(field!=='royale')p[field]=source[field];DB.st=remote.st;}else if(source.royale)p.royale=source.royale;}if(remote.identityEpoch&&remote.identityEpoch!==DB.identityEpoch)for(const [key,source]of Object.entries(remote.profiles)){const p=DB.profiles[key];if(p)for(const field of ['name','av','avimg'])p[field]=source[field];}if(!root.SZ_ROYALE&&remote.royaleSt)DB.royaleSt=remote.royaleSt;if(remote.identityEpoch)DB.identityEpoch=remote.identityEpoch;}
+ async function write(client,doc){const {data,error}=await client.rpc('zone_game_save',{game_id:root.SZ_ROYALE?'zone-royale':'strike-zone',doc:root.SzWallet?.capture(doc)||doc});if(error)throw error;accept(data);if(DB.ts===doc.ts&&Number.isFinite(data?.ts))DB.ts=data.ts;return data;}
+ root.SzGameSave={write,accept,restoreSettings(){const z=ST_().zoom;if(Number.isFinite(z))VIEW_ZOOM=Math.max(.65,Math.min(1,z));visualZoomLabel();}};
+})(globalThis);

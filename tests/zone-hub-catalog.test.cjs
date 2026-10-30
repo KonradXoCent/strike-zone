@@ -1,0 +1,5 @@
+'use strict';
+const{test}=require('node:test'),assert=require('node:assert/strict'),{resolveRecord}=require('../platform/core/catalog.cjs');
+const row={id:'arena-test',title:'Arena Test',package_config:{protocol:1,executable:'Arena.exe',manifestName:'arena-manifest.json',releasePrefix:'arena-v'}};
+test('remote game definitions enable new games without a platform rebuild',()=>{assert.equal(resolveRecord(row).id,'arena-test');assert.equal(resolveRecord(row).releasePrefix,'arena-v');assert.equal(resolveRecord({id:'strike-zone',title:'Strike Zone 2D'}).executable,'StrikeZone.exe');assert.equal(resolveRecord({id:'unconfigured',title:'Soon'}),null);});
+test('catalog definitions reject unsafe paths, unsupported protocols and platform update tags',()=>{for(const changed of[{protocol:2},{executable:'../Other.exe'},{executable:'CON.exe'},{manifestName:'../manifest.json'},{releasePrefix:'zonehub-v'},{releasePrefix:'https://evil.test/'}])assert.equal(resolveRecord({...row,package_config:{...row.package_config,...changed}}),null);for(const id of['../arena','CON','con','__proto__'])assert.equal(resolveRecord({...row,id}),null);});

@@ -8,7 +8,7 @@ create table if not exists public.zh_games(
  description_pl text not null,description_en text not null,tags text[] not null default '{}',
  free boolean not null default true,published boolean not null default false
 );
-insert into public.zh_games values('strike-zone','Strike Zone 2D',
+insert into public.zh_games(id,title,description_pl,description_en,tags,free,published) values('strike-zone','Strike Zone 2D',
  'Taktyczna akcja 2.5D. Rywalizacja, piłka nożna, Prop Hunt, zombie i mapy społeczności.',
  'Tactical 2.5D action. Competitive matches, football, Prop Hunt, zombies and community maps.',
  array['Action','Multiplayer','Free to play'],true,true) on conflict(id) do nothing;

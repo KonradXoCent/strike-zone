@@ -24,3 +24,19 @@ vendor/
 /dist-royale/
 /platform/zonehub-royale-seed.json
 /game/royale.html
+
+assets/royale-icon.png
+assets/royale-icon.ico
+
+# Rebuilt from the canonical vector and generated emblem sources.
+assets/hub-icon.png
+assets/hub-icon.ico
+
+assets/haunt-icon.png
+assets/haunt-icon.ico
+dist-haunt/
+
+# Pinned browser renderer shipped with the optional Haunt 3D view.
+!game/haunt/vendor/
+!game/haunt/vendor/three.js
+!game/haunt/vendor/THREE-LICENSE.txt

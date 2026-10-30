@@ -1,17 +1,11 @@
-Zone Hub Beta 0.1.1
+Zone Hub 0.1.13 · Zone Haunt 0.1.4 — Punkty badań i skrócone kwoty
 
-- Fixed game installation failing after a completed download (native Electron ASAR extraction).
-- Password recovery by email from the sign-in screen, using the existing account recovery page.
-- Zone Royale beta: a separate Battle Royale 2.5D library game with three islands, bots and shared multiplayer lobbies.
-- New BR lobby, readiness, island selection and owned outfit/parachute Locker; shared Strike Zone account and cosmetics.
-- Independent install/update/playtime states for each game and direct sign-in-free Royale launch.
+- Sprzęt Zone Haunt kupuje się za osobne Punkty badań (PB / RP), zdobywane za rozpoznanie ducha, dowody, zdjęcia i kość. Zlecenia nie dopisują nowych nagród do ZC.
+- Każdy właściciel gry otrzymuje jednorazowo 1K Punktów badań. Odświeżenie gry, nowe lobby i przegrane zlecenie nie przyznają ich ponownie.
+- Zakup gry nadal kosztuje 500 ZC; dotychczasowi właściciele zachowują dostęp. Wspólna nagroda ZC za czas gry pozostaje dostępna.
+- Zakupy sprzętu używają cen serwera i potwierdzeń chroniących przed podwójną opłatą. Niewystarczające PB blokują zakup niezależnie od salda ZC.
+- Ewentualne wcześniejsze zakupy sprzętu za ZC otrzymują jednorazowy zwrot ZC, a kupiony sprzęt zostaje w magazynie.
+- Salda, ceny i nagrody są skrócone: 1K, 1,5K, 1M itd. Dotyczy to biura, sklepu sprzętowego, nagród i XP Haunt oraz portfela, rynku, sklepu gier i wyglądów Zone Hub.
+- Zasady odzyskiwania sprzętu po ewakuacji i jego utraty po śmierci całej ekipy pozostają dostępne.
 
-Previously in Beta 0.1.0:
-
-- Shared Strike Zone accounts, free store, cloud library and verified game installations.
-- Platform updates checked before sign-in; game updates required before launch.
-- Existing Strike Zone launcher starts on the platform account without another sign-in.
-- Shared friends, profiles, comments, profile levels and all 26 game achievements.
-- Public, friends-only or private profiles and inventories with actual game item art.
-- Online trades with mutual confirmation, atomic transfers and stale-save protection.
-- Polish and English, four themes and fullscreen preferences.
+Zaktualizuj Zone Hub, a potem Zone Haunt w bibliotece. Konto, postęp i instalacje pozostają zachowane; gry Strike Zone 2D i Zone Royale zachowują obecne wersje.

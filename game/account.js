@@ -11,7 +11,7 @@
   const originalHeader = hdr;
   hdr = function () { originalHeader(); if (SBU && window.szDesktopCloudReady()) bridge.profile({ name: P().name, av: P().av, avimg: P().avimg }).catch(() => {}); };
   async function applySession(tokens) {
-    if (!tokens) { SBU = null; clearTimeout(CL.h); await bridge.launcher(); return; }
+    if (!tokens) { window.SzWallet?.stop(); SBU = null; clearTimeout(CL.h); await bridge.launcher(); return; }
     const { data, error } = await sb.auth.setSession(tokens);
     if (error || !data.session) throw error || new Error('Brak sesji konta.');
     SBU = data.session.user;
@@ -23,9 +23,11 @@
       if (!sb) sb = window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false, storageKey: 'strikezone-game-memory' }, realtime: { params: { eventsPerSecond: 30 } } });
       await applySession(await bridge.session());
       if (!SBU) return;
+      await window.SzWallet?.open(sb,SBU.id);
       await cloudLoad();
+      window.SzWallet?.attach();
       if (!window.szDesktopCloudReady()) throw new Error(CL.msg);
-      window.szGameAccountReady?.();
+      window.SzGameSave?.restoreSettings();window.szGameAccountReady?.();
       await friInit(); hdr(); tab(T); overlay.hidden = true;overlay.setAttribute('aria-busy','false');clearTimeout(showBack);
     } catch {
       overlay.classList.add('sz-loading-failure');overlay.setAttribute('aria-busy','false');document.getElementById('desktop-account-back').hidden=false;

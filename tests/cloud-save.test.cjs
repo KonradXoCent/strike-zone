@@ -9,24 +9,26 @@ const sourceHTML=fs.readFileSync(path.join(__dirname,'../game-source/index.html'
 const browserIntegration=sourceHTML.match(/<script>\r?\n\/\* Standalone browser builds[\s\S]*?<\/script>/)[0].replace(/^<script>|<\/script>$/g,'');
 function fixture({ saved = null, owner = null, userId = 'user-a', failure = false, code = integration } = {}) {
   const storage = new Map(owner ? [['sz2-cloud-owner', owner]] : []);
-  const writes = [], timers = new Map();
+  const writes = [], calls = [], timers = new Map();
   let timerId = 0;
   const context = vm.createContext({
     localStorage: { getItem: key => storage.get(key) || null, setItem: (key, value) => storage.set(key, value) },
     setTimeout: fn => { const id = ++timerId; timers.set(id, fn); return id; },
     clearTimeout: id => timers.delete(id),
     window: {}, document: { createElement: () => ({ append() {} }), head: { appendChild() {} }, body: { appendChild() {} } },
-    console, inputUser: userId, records: { saved, failure }, writes
+    console, inputUser: userId, records: { saved, failure }, writes, calls
   });
   vm.runInContext(`
     var DB = {profiles:{Local:{name:'Local',wallet:10}},cur:'Local',ts:999999};
     var SBU = {id:inputUser,email:'test@example.test'}, CL={}, T='play';
     var cloudLoad=function(){}, cloudPush=function(){}, tab=function(){}, hdr=function(){}, lbPush=function(){};
     var mk=n=>({name:n,wallet:500}),communityReset=()=>{},communityRefresh=()=>{};
-    var sb={from:()=>({select:()=>({eq:()=>({maybeSingle:async()=>({data:records.saved?{json:records.saved}:null,error:records.failure?new Error('Offline'):null})})}),upsert:async v=>{writes.push(v);return {error:null}}})};
+    var sb={from:()=>({select:()=>({eq:()=>({maybeSingle:async()=>({data:records.saved?{json:records.saved}:null,error:records.failure?new Error('Offline'):null})})}),upsert:async v=>{writes.push(v);return {error:null}}}),rpc:async(name,args)=>{calls.push({name,args});if(name!=='zone_game_save')throw Error('Unexpected save endpoint');writes.push({user_id:SBU.id,json:args.doc});return{data:args.doc,error:null};}};
+    window=globalThis;
   `, context);
+  vm.runInContext(fs.readFileSync(path.join(__dirname,'../shared/game-save.js'),'utf8'),context);
   vm.runInContext(code, context);
-  return { storage, writes, timers, context, run: value => vm.runInContext(value, context) };
+  return { storage, writes, calls, timers, context, run: value => vm.runInContext(value, context) };
 }
 test('a fresh installation reads the cloud before writing, even if local timestamps are newer', async () => {
   const f = fixture({ saved: { profiles: { Konrad: { name: 'Konrad', wallet: 12345 } }, cur: 'Konrad', ts: 10 } });
@@ -51,6 +53,8 @@ test('an existing account can upload its newer local progress after the read', a
   assert.equal(f.writes.length, 1);
   assert.equal(f.writes[0].user_id, 'user-a');
   assert.equal(f.writes[0].json.profiles.Local.wallet, 10);
+  assert.equal(f.calls[0].name,'zone_game_save');
+  assert.equal(f.calls[0].args.game_id,'strike-zone');
 });
 test('an empty second account does not inherit another account inventory', async () => {
   const f = fixture({ owner: 'user-a', userId: 'user-b' });

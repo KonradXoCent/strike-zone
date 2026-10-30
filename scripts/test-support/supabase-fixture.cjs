@@ -2,7 +2,7 @@
 const http = require('node:http');
 const { randomUUID } = require('node:crypto');
 const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jM5kAAAAASUVORK5CYII=';
-async function startFixture({ friends = [], profiles = [], userId = randomUUID(), chatRPC = null, bonusRPC = null, friendsRPC = null, friendsRead = null, hubRPC = null } = {}) {
+async function startFixture({ friends = [], profiles = [], userId = randomUUID(), chatRPC = null, bonusRPC = null, friendsRPC = null, friendsRead = null, hubRPC = null, savesRead = null, gameSaveRPC = null, walletRPC = null, hauntRPC = null, workshopCatalog = [], workshopReleases = [] } = {}) {
   const users = new Map(), saves = new Map(), writes = [], recoveries=[];
   const email = 'desktop-smoke@example.test', password = 'SmokePass123!';
   const user = { id: userId, email, aud: 'authenticated', role: 'authenticated', email_confirmed_at: new Date().toISOString(), user_metadata: { nickname: 'KonradQA' }, app_metadata: { provider: 'email' }, identities: [] };
@@ -15,6 +15,10 @@ async function startFixture({ friends = [], profiles = [], userId = randomUUID()
     const bearer = headers.authorization || headers.Authorization || '';
     let id; try { id = JSON.parse(Buffer.from(bearer.replace(/^Bearer /i, '').split('.')[1], 'base64url')).sub; } catch {}
     const actor = [...users.values()].find(u => u.id === id);
+    if(u.pathname.endsWith('/saves')&&method==='GET'&&savesRead)return savesRead(actor?.id).then(json=>({status:200,body:JSON.stringify(json?{json}:null),headers:{'content-type':'application/json','access-control-allow-origin':'*'}}));
+    if(u.pathname.endsWith('/rpc/zone_game_save')){const task=gameSaveRPC?gameSaveRPC(actor?.id,data.game_id,data.doc):Promise.resolve().then(()=>{const doc=data.doc,prior=saves.get(actor?.id)||doc,merged=structuredClone(doc);for(const[key,p]of Object.entries(merged.profiles||{})){const old=prior.profiles?.[key];if(old&&data.game_id==='zone-royale')merged.profiles[key]={...old,royale:p.royale};else if(old?.royale)p.royale=old.royale;}saves.set(actor?.id,merged);writes.push({user_id:actor?.id,json:merged});return merged;});return task.then(value=>({status:200,body:JSON.stringify(value),headers:{'content-type':'application/json','access-control-allow-origin':'*'}})).catch(error=>({status:400,body:JSON.stringify({message:error.message}),headers:{'content-type':'application/json','access-control-allow-origin':'*'}}));}
+    if(u.pathname.endsWith('/rpc/zone_wallet')&&walletRPC)return walletRPC(actor?.id,data.action,data.args).then(value=>({status:200,body:JSON.stringify(value),headers:{'content-type':'application/json','access-control-allow-origin':'*'}})).catch(error=>({status:400,body:JSON.stringify({message:error.message}),headers:{'content-type':'application/json','access-control-allow-origin':'*'}}));
+    if(u.pathname.endsWith('/rpc/zone_haunt')&&hauntRPC)return hauntRPC(actor?.id,data.action,data.args).then(value=>({status:200,body:JSON.stringify(value),headers:{'content-type':'application/json','access-control-allow-origin':'*'}})).catch(error=>({status:400,body:JSON.stringify({message:error.message}),headers:{'content-type':'application/json','access-control-allow-origin':'*'}}));
     if (u.pathname.endsWith('/rpc/zone_hub') && hubRPC) return hubRPC(actor?.id, data.action, data.args).then(value => ({ status: 200, body: JSON.stringify(value), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } })).catch(error => ({ status: 400, body: JSON.stringify({ message: error.message }), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } }));
     if (u.pathname.endsWith('/rpc/sz_friends') && friendsRPC) return friendsRPC(actor?.id, data.action, data.args).then(value => ({ status: 200, body: JSON.stringify(value), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } })).catch(error => ({ status: 400, body: JSON.stringify({ message: error.message }), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } }));
     if (u.pathname.endsWith('/friends') && friendsRead && method === 'GET') return friendsRead(actor?.id).then(value => ({ status: 200, body: JSON.stringify(value), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } }));
@@ -43,6 +47,8 @@ async function startFixture({ friends = [], profiles = [], userId = randomUUID()
       else if (method === 'GET') value = saves.has(actor.id) ? { json: saves.get(actor.id) } : null;
       else { saves.set(actor.id, data.json); writes.push(data); status = 201; }
     } else if (u.pathname.endsWith('/leaderboard')) value = method === 'GET' ? (u.searchParams.has('user_id') && u.searchParams.get('user_id').startsWith('in.') ? profiles : null) : {};
+    else if (u.pathname.endsWith('/sz_workshop_catalog') && method==='GET') value=workshopCatalog.filter(x=>!u.searchParams.has('kind')||u.searchParams.get('kind')==='eq.'+x.kind);
+    else if (u.pathname.endsWith('/sz_workshop_releases') && method==='GET') value=workshopReleases;
     else if (u.pathname.endsWith('/friends')) value = actor?.id === user.id ? friends : [];
     return { status, body: status === 204 ? '' : JSON.stringify(value), headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'GET,POST,PATCH,DELETE,OPTIONS' } };
   }

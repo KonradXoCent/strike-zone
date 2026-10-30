@@ -1,0 +1,24 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{randomUUID}=require('node:crypto'),{fixture}=require('../scripts/test-support/friend-db.cjs'),D=require('../shared/royale-progress.js');
+const sql=name=>fs.readFileSync(path.join(__dirname,'../database/',name),'utf8');
+test('Royale stats, rank and achievement identities cannot inherit Strike progress',()=>{globalThis.SzRoyaleData=require('../shared/royale-data.js');const raw={kills:999,wins:99,matches:199,sr:1400,cw:20,bd:['fb','ge'],ac:{bomb:40},royale:{items:[]}};const p=D.profile(raw);assert.equal(p.kills,0);assert.deepEqual(p.bd,[]);assert.equal(p.sr,0);assert.equal(p.cw,0);p.kills++;p.wins++;p.sr=700;p.cw=1;p.ac.cards=3;assert.equal(raw.kills,999);assert.equal(raw.wins,99);assert.equal(raw.sr,1400);assert.deepEqual(raw.bd,['fb','ge']);assert.equal(D.rank(p,'en').name,'Gold');assert(D.badgeIds(D.stats(p)).includes('zr-gold'));assert.equal(D.delta({place:36,kills:0}),-20);assert.equal(D.delta({place:1,kills:3,seconds:60}),111);});
+test('ranked queue is isolated, results are host-scoped and idempotent, casual never changes rank',async()=>{const f=await fixture(),[a,b,c]=f.ids;try{
+ await f.db.exec("create table saves(user_id uuid primary key,json jsonb,updated_at timestamptz);create schema zone_hub_private;create table zh_games(id text primary key);insert into zh_games values('zone-royale');create table zh_achievement_definitions(game_id text,id text,title text,description text,xp integer,primary key(game_id,id));");
+ await f.db.exec(sql('zone-royale-matchmaking.sql'));await f.db.exec(sql('zone-royale-progression.sql'));await f.db.exec(sql('zone-game-save.sql'));
+ const call=(uid,name,action,args={})=>f.as(uid,'select '+name+'($1,$2::jsonb) value',[action,JSON.stringify(args)]).then(r=>r.rows[0].value);
+ const queue=(uid,action,args={})=>call(uid,'zone_royale_queue',action,{cid:'cid-'+uid,...args});
+ const join=(uid,ranked)=>queue(uid,'join',{protocol:5,mode:'duo',party:randomUUID(),expected:1,fill:true,map:6,ranked});
+ const casual=await join(a,false),ranked=await join(b,true),teammate=await join(c,true);assert.notEqual(casual.room,ranked.room);assert.equal(ranked.room,teammate.room);assert.equal(teammate.ranked,true);
+ await f.db.exec("update zone_royale_private.matches set closes_at=now()-interval '90 seconds'");await queue(b,'launch');await queue(a,'launch');
+ const players=[b,c].map(id=>({cid:'cid-'+id,place:1,kills:3,deaths:0,seconds:60,cards:5,reboots:1}));
+ await assert.rejects(call(c,'zone_royale_progress','finish',{match:ranked.id,players}),/ZR_RESULT_HOST/);
+ const result=await call(b,'zone_royale_progress','finish',{match:ranked.id,players});assert.equal(result.state.points,111);assert.equal(result.state.wins,1);assert.equal(result.state.rankedMatches,1);assert(result.state.bd.includes('zr-reboot'));assert(result.state.bd.includes('zr-card'));
+ const twice=await call(b,'zone_royale_progress','finish',{match:ranked.id,players});assert.equal(twice.duplicate,true);assert.equal(twice.state.points,111);assert.equal((await call(c,'zone_royale_progress','profile')).state.points,111);
+ const normal=await call(a,'zone_royale_progress','finish',{match:casual.id,players:[{...players[0],cid:'cid-'+a}]});assert.equal(normal.state.points,0);assert.equal(normal.state.rankedMatches,0);assert.equal(normal.state.wins,1);
+ await assert.rejects(call(null,'zone_royale_progress','profile'),/permission denied/);await assert.rejects(f.as(a,'select * from zone_royale_private.progression'),/permission denied/);
+ const original={cur:'KonradQA',st:{sfx:.8,zoom:.9},royaleSt:{sfx:.2,zoom:.66},profiles:{KonradQA:{name:'KonradQA',kills:800,sr:1000,bd:['fb'],wallet:5000,royale:{wallet:800,progress:{points:111}}}}};await f.db.query('insert into saves values($1,$2,now())',[a,JSON.stringify(original)]);
+ const stale=structuredClone(original);stale.profiles.KonradQA.kills=1;stale.st.sfx=0;stale.royaleSt.sfx=.4;stale.profiles.KonradQA.royale.wallet=900;
+ const write=(game,doc)=>f.as(a,'select zone_game_save($1,$2::jsonb) value',[game,JSON.stringify(doc)]).then(r=>r.rows[0].value);
+ const own=await write('zone-royale',stale);assert.equal(own.profiles.KonradQA.kills,800);assert.equal(own.st.sfx,.8);assert.equal(own.royaleSt.sfx,.4);assert.equal(own.profiles.KonradQA.royale.wallet,900);
+ original.profiles.KonradQA.kills=801;original.st.sfx=.6;const strike=await write('strike-zone',original);assert.equal(strike.profiles.KonradQA.kills,801);assert.equal(strike.profiles.KonradQA.royale.wallet,900);assert.equal(strike.royaleSt.sfx,.4);assert.equal(strike.st.sfx,.6);
+ }finally{await f.db.close();}});

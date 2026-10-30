@@ -9,7 +9,7 @@ module.exports = async context => {
   const file = path.join(context.appOutDir, executable + '.exe');
   const exe = PE.NtExecutable.from(fs.readFileSync(file), { ignoreCert: true });
   const resources = PE.NtExecutableResource.from(exe);
-  const icon = ResEdit.Data.IconFile.from(fs.readFileSync(path.join(__dirname, '../assets/icon.ico')));
+  const icon = ResEdit.Data.IconFile.from(fs.readFileSync(path.resolve(__dirname,'..',context.packager.platformSpecificBuildOptions.icon||'assets/icon.ico')));
   const groups = ResEdit.Resource.IconGroupEntry.fromEntries(resources.entries);
   for (const group of groups) ResEdit.Resource.IconGroupEntry.replaceIconsForResource(
     resources.entries, group.id, group.lang, icon.icons.map(item => item.data));

@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('strikeZoneDesktop', {
   onChat: callback => { const fn = (_event, value) => callback(value); ipcRenderer.on('social:state', fn); return () => ipcRenderer.removeListener('social:state', fn); },
   onPreferences: callback => { const fn = (_event, value) => callback(value); ipcRenderer.on('preferences:state', fn); return () => ipcRenderer.removeListener('preferences:state', fn); },
   onFriends: callback => { const fn = (_event, value) => callback(value); ipcRenderer.on('friends:state', fn); return () => ipcRenderer.removeListener('friends:state', fn); },
+  managed: () => ipcRenderer.invoke('game:managed'),
   launcher: () => ipcRenderer.invoke('game:launcher'),
   fullscreen: () => ipcRenderer.invoke('game:fullscreen'),
   session: () => ipcRenderer.invoke('game:session'),

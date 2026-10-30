@@ -17,12 +17,13 @@ const platformBridge=platformManaged?new(require('./core/platform-bridge.cjs').P
 if(require('./package.json').platformOnly===true&&!platformManaged)app.exit(1);
 const desktopTest = require('./package.json').desktopTest === true;
 const royaleStandalone=require('./package.json').brStandalone===true;
-const productName=royaleStandalone?'Zone Royale':'Strike Zone 2D';
+const hauntStandalone=require('./package.json').hauntStandalone===true;
+const productName=hauntStandalone?'Zone Haunt':royaleStandalone?'Zone Royale':'Strike Zone 2D';
 
 app.setName(productName);
-app.setAppUserModelId((royaleStandalone?'pl.konradxocent.zoneroyale':'pl.konradxocent.strikezone.desktop') + (platformManaged?'.zonehub':desktopTest?'.test':''));
+app.setAppUserModelId((hauntStandalone?'pl.konradxocent.zonehaunt':royaleStandalone?'pl.konradxocent.zoneroyale':'pl.konradxocent.strikezone.desktop') + (platformManaged?'.zonehub':desktopTest?'.test':''));
 // Keep this path and the strikezone://app origin unchanged between releases.
-app.setPath('userData', path.join(app.getPath('appData'), royaleStandalone?'ZoneRoyale-Managed':platformManaged?'StrikeZone2D-Managed':desktopTest?'StrikeZone2D-Test':'StrikeZone2D'));
+app.setPath('userData', path.join(app.getPath('appData'), hauntStandalone?'ZoneHaunt-Managed':royaleStandalone?'ZoneRoyale-Managed':platformManaged?'StrikeZone2D-Managed':desktopTest?'StrikeZone2D-Test':'StrikeZone2D'));
 protocol.registerSchemesAsPrivileged([{ scheme: 'strikezone', privileges: {
   standard: true, secure: true, supportFetchAPI: true, corsEnabled: true
 } }]);
@@ -39,10 +40,10 @@ let backend = { phase: 'checking' };
 let configError = false;
 const root = __dirname;
 const LAUNCHER_URL = 'strikezone://app/launcher/index.html';
-const GAME_URL = 'strikezone://app/game/'+(royaleStandalone?'royale.html':'index.html');
-const gameSource = fs.readFileSync(path.join(root, 'game/index.html'), 'utf8');
-const supabaseUrl = gameSource.match(/const SB_URL='(https:\/\/[a-z0-9]+\.supabase\.co)'/)?.[1];
-const supabaseKey = gameSource.match(/SB_KEY='([^']+)'/)?.[1];
+const GAME_URL = 'strikezone://app/game/'+(hauntStandalone?'haunt/index.html':royaleStandalone?'royale.html':'index.html');
+const gameSource = hauntStandalone?'':fs.readFileSync(path.join(root, 'game/index.html'), 'utf8');
+const supabaseUrl = hauntStandalone?'https://mvzlqpccmjslxdajjbfw.supabase.co':gameSource.match(/const SB_URL='(https:\/\/[a-z0-9]+\.supabase\.co)'/)?.[1];
+const supabaseKey = hauntStandalone?'sb_publishable_RmE3bsF9p-P1GJEw77LYvA_nSkKGeMI':gameSource.match(/SB_KEY='([^']+)'/)?.[1];
 
 function snapshot() {
   const user = account.snapshot();
@@ -71,15 +72,19 @@ function protectWindow(win, expectedUrl) {
   win.webContents.on('will-navigate', (event, url) => { if (url !== expectedUrl) event.preventDefault(); });
   win.webContents.on('will-attach-webview', event => event.preventDefault());
 }
+function showManagedWindow(win) {
+  const reveal=()=>{if(win.isDestroyed())return;if(win.isMinimized())win.restore();win.show();win.focus();if(platformManaged&&win.isVisible())platformBridge.send('ready',{userId:account.snapshot().user.id});};
+  reveal();setTimeout(reveal,100);
+}
 function createLauncher() {
   launcher = new BrowserWindow({ ...launcherBounds(screen.getDisplayNearestPoint(screen.getCursorScreenPoint()).workArea),
     title: 'Strike Zone 2D — Launcher', titleBarStyle: 'hidden', backgroundColor: '#101418',
-    icon: path.join(root, 'assets/icon.png'), show: false,
+    icon: path.join(root,hauntStandalone?'assets/haunt-icon.png':royaleStandalone?'assets/royale-icon.png':'assets/icon.png'), show: false,
     webPreferences: { preload: path.join(root, 'preload.cjs'), contextIsolation: true,
       nodeIntegration: false, sandbox: true, webSecurity: true, spellcheck: false }
   });
   protectWindow(launcher, LAUNCHER_URL);
-  launcher.once('ready-to-show', () => {if(!royaleStandalone)launcher.show();});
+  launcher.once('ready-to-show', () => {if(!royaleStandalone)showManagedWindow(launcher);});
   launcher.webContents.on('did-finish-load', () => { broadcast(); checkBackend(); controller.check(); });
   launcher.on('closed', () => { launcher = null; if (game) closeGame().finally(() => app.quit()); });
   launcher.loadURL(LAUNCHER_URL);
@@ -96,7 +101,7 @@ async function openGame() {
   game = new BrowserWindow({ width: 1440, height: 900, minWidth: 960, minHeight: 640,
     fullscreen: startFullscreen,
     title: productName, backgroundColor: '#10141b', autoHideMenuBar: true,
-    icon: path.join(root, 'assets/icon.png'), show: false,
+    icon: path.join(root,hauntStandalone?'assets/haunt-icon.png':royaleStandalone?'assets/royale-icon.png':'assets/icon.png'), show: false,
     webPreferences: { preload: path.join(root, 'game-preload.cjs'), contextIsolation: true,
       nodeIntegration: false, sandbox: true, webSecurity: true, spellcheck: false,
       backgroundThrottling: false }
@@ -104,14 +109,16 @@ async function openGame() {
   const win = game;
   friends.setGameRunning(true);platformBridge?.send('game',{running:true});
   protectWindow(win, GAME_URL);
-  win.once('ready-to-show', () => { if (startFullscreen) win.setFullScreen(true); else win.maximize(); win.show(); launcher?.hide(); broadcast(); });
+  win.once('ready-to-show', () => { if (startFullscreen) win.setFullScreen(true); else win.maximize(); showManagedWindow(win); launcher?.hide(); broadcast(); });
   win.webContents.on('before-input-event', (event, input) => {
     if (input.type !== 'keyDown') return;
     if (input.key === 'F11') { event.preventDefault(); win.setFullScreen(!win.isFullScreen()); }
     if (input.control && input.shift && input.key.toLowerCase() === 'l') { event.preventDefault(); closeGame(); }
   });
   win.on('close', event => { if (!win.__mayClose) { event.preventDefault(); closeGame(); } });
-  win.on('closed', () => { game = null;platformBridge?.send('game',{running:false});friends.setGameRunning(false); friends.refresh();if(royaleStandalone){app.quit();return;}launcher?.show();launcher?.focus();broadcast();controller.check(); });
+  win.on('closed', () => { game = null;platformBridge?.send('game',{running:false});friends.setGameRunning(false); friends.refresh();if(platformManaged||royaleStandalone){app.quit();return;}launcher?.show();launcher?.focus();broadcast();controller.check(); });
+  win.webContents.on('did-fail-load',()=>platformBridge?.send('failed',{code:'HUB_WINDOW'}));
+  win.webContents.on('render-process-gone',()=>platformBridge?.send('failed',{code:'HUB_WINDOW'}));
   win.loadURL(GAME_URL);
   broadcast();
   return snapshot();
@@ -199,6 +206,7 @@ else {
     ipcMain.handle('launcher:install', event => { trusted(event, LAUNCHER_URL); if (!game) controller.install(); return snapshot(); });
     ipcMain.handle('launcher:minimize', event => { trusted(event, LAUNCHER_URL); launcher.minimize(); });
     ipcMain.handle('launcher:quit', event => { trusted(event, LAUNCHER_URL); app.quit(); });
+    ipcMain.handle('game:managed',event=>{trusted(event,GAME_URL);return platformManaged;});
     ipcMain.handle('game:launcher', event => { trusted(event, GAME_URL); closeGame(); });
     ipcMain.handle('game:fullscreen', event => { trusted(event, GAME_URL); game.setFullScreen(!game.isFullScreen()); });
     ipcMain.handle('game:session', event => { trusted(event, GAME_URL); return account.gameSession(); });
@@ -212,13 +220,13 @@ else {
       ipcMain.handle(prefix + ':friends', event => { trusted(event, url); const user = account.snapshot(); return friends.snapshot(user.authenticated ? user.user.id : null); });
     }
     if(platformManaged){
-      const apply=async value=>{const old=account.snapshot().user?.id,r=await client.auth.setSession({access_token:value.access_token,refresh_token:value.refresh_token});if(r.error||!r.data?.session||old&&r.data.session.user.id!==old)throw Error('HUB_HANDOFF');await account.accept(r.data.session);if(value.preferences)prefs.set({language:value.preferences.language==='en'?'en':'pl',fullscreen:value.preferences.fullscreen===true});if(!account.snapshot().authenticated)throw Error('HUB_HANDOFF');};
+      const apply=async value=>{const old=account.snapshot().user?.id,r=await client.auth.setSession({access_token:value.access_token,refresh_token:value.refresh_token});if(r.error||!r.data?.session||old&&r.data.session.user.id!==old)throw Error('HUB_HANDOFF');await account.accept(r.data.session);if(value.preferences){prefs.seed({language:value.preferences.language==='en'?'en':'pl'});prefs.set({fullscreen:value.preferences.fullscreen===true});}if(!account.snapshot().authenticated)throw Error('HUB_HANDOFF');};
       await apply(await platformBridge.first());platformBridge.on('session',v=>apply(v).catch(()=>closeGame().finally(()=>app.quit())));
       platformBridge.on('inventory',()=>{if(game&&!game.isDestroyed())game.webContents.send('game:inventory');});
-      platformBridge.on('preferences',p=>{const next=prefs.set({language:p.language==='en'?'en':'pl',fullscreen:p.fullscreen===true});toBoth('preferences:state',next);broadcast();});
-      platformBridge.on('logout',()=>closeGame().finally(()=>app.quit()));platformBridge.on('disconnect',()=>closeGame().finally(()=>app.quit()));platformBridge.send('ready',{userId:account.snapshot().user.id});
+      platformBridge.on('preferences',p=>{const next=prefs.set({fullscreen:p.fullscreen===true});if(game&&!game.isDestroyed())game.setFullScreen(next.fullscreen);toBoth('preferences:state',next);broadcast();});
+      platformBridge.on('logout',()=>closeGame().finally(()=>app.quit()));platformBridge.on('disconnect',()=>closeGame().finally(()=>app.quit()));
     }
-    createLauncher();if(!platformManaged)account.init();if(royaleStandalone)await openGame();
+    if(platformManaged)await openGame();else{createLauncher();account.init();if(royaleStandalone)await openGame();}
     setInterval(() => { if (!game && launcher?.isVisible()) controller.check(); }, 120000).unref();
   }).catch(() => { app.exit(1); });
   app.on('window-all-closed', () => app.quit());

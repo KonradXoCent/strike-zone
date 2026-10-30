@@ -1,0 +1,33 @@
+name: Publish the verified Zone Hub 0.1.2 artifact
+on:
+  push:
+    branches: [feature/zonehub-online-updates]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: zonehub-verified-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: "startsWith(github.event.head_commit.message, 'publish: verified Zone Hub 0.1.2')"
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - uses: actions/download-artifact@v7
+        with:
+          name: Zone-Hub-Online-Update
+          run-id: 40602131334
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: dist-platform
+      - name: Verify provenance and publish the exact tested installer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: node scripts/publish-verified-zonehub.cjs

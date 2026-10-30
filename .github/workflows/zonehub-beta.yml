@@ -1,0 +1,84 @@
+name: Zone Hub update verification and beta channel
+on:
+  push:
+    branches: [feature/zonehub-online-updates]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: zonehub-beta
+  cancel-in-progress: true
+jobs:
+  platform:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/ensure-generated.cjs
+      - run: npm run prepare:game
+      - name: Audit Polish and English UI strings
+        run: npm run check:ui
+      - name: Test remote catalog, mandatory game updates, privacy and trade rules
+        run: npm run test:platform
+      - name: Test live catalog arrival, independent game updates and account handoffs
+        run: npm run test:platform-ui
+      - name: Verify actual public Strike Zone download and redirects
+        run: node scripts/zone-hub-live-smoke.cjs
+      - name: Test Royale progression, inventory privacy and server matchmaking
+        run: node --test tests/royale*.test.cjs
+      - name: Verify Royale party matches, public squads and appearance
+        run: |
+          npm run test:royale
+          node scripts/royale-squads-smoke.cjs
+          node scripts/royale-view-smoke.cjs
+          node scripts/royale-content-smoke.cjs
+          node scripts/royale-identity-smoke.cjs
+      - name: Verify original ghost investigations, lobby security and owned cosmetics
+        run: |
+          node --test tests/haunt*.test.cjs tests/zone-hub-cosmetics.test.cjs tests/zone-wallet.test.cjs
+          node scripts/haunt-smoke.cjs
+          node scripts/haunt-fieldwork-smoke.cjs
+          node scripts/haunt-expeditions-smoke.cjs
+          node scripts/haunt-graphics-smoke.cjs
+          node scripts/haunt-network-smoke.cjs
+          node scripts/zone-hub-handoff-smoke.cjs --haunt --wallet
+      - name: Build the lightweight platform and separate game packages
+        run: npm run dist:platform
+      - name: Verify all three actual Windows game packages
+        run: node scripts/zone-hub-install-smoke.cjs --bundled
+      - name: Update released Windows games without downloading Electron again
+        run: node scripts/zone-hub-content-smoke.cjs
+      - uses: actions/download-artifact@v7
+        with:
+          name: Zone-Hub-Beta
+          run-id: 40536550230
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: previous-platform
+      - name: Test the installed 0.1.1 self-update, login and game preservation
+        run: node scripts/zone-hub-windows-update-smoke.cjs
+      - name: Validate every file before beta publication
+        run: node scripts/publish-zonehub.cjs --verify-only
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: Zone-Hub-Online-Update
+          path: |
+            dist-platform/ZoneHub-Beta-*.exe
+            dist-platform/*.blockmap
+            dist-platform/zonehub.yml
+            dist-platform/installed-update-report.json
+            dist-platform/content-update-report.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Publish the tested beta updater and online game packages
+        if: "startsWith(github.event.head_commit.message, 'release: Zone Hub beta ')"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: node scripts/publish-zonehub.cjs

@@ -1,5 +1,5 @@
 /* Currency presentation only. Inventory values, transactions and numeric inputs remain exact. */
-(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else{root.SzMoney=api;api.mount(root);}})(globalThis,function(){'use strict';
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else{root.SzMoney=api;if(!root.document?.currentScript?.hasAttribute('data-money-passive'))api.mount(root);}})(globalThis,function(){'use strict';
  function compact(value,language='pl'){const n=Number(value);if(!Number.isFinite(n))return String(value);const abs=Math.abs(n),units=['','K','M','B','T'];let tier=0;while(tier<4&&abs>=1000**(tier+1))tier++;if(!tier)return String(n);let scaled=Math.round(abs/1000**tier*10)/10;if(scaled>=1000&&tier<4){scaled=1;tier++;}return(n<0?'-':'')+scaled.toLocaleString(language==='en'?'en-US':'pl-PL',{maximumFractionDigits:1,useGrouping:false})+units[tier];}
  function mount(root){const doc=root.document,lang=()=>root.szLocale?.language||'pl',skip='script,style,textarea,input,select,option,[contenteditable],[data-user-content],[data-money-value],#nk,#nn,#sz-chat-panel,.sz-chat-message';
   const pattern=/\$\s*(-?\d+(?:[ \u00a0\u202f]\d{3})*(?:[.,]\d{1,2})?)|(-?\d+(?:[ \u00a0\u202f]\d{3})*(?:[.,]\d{1,2})?)\s*\$/g;
