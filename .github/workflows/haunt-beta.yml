@@ -33,6 +33,7 @@ jobs:
       - name: Verify stable planning scroll and the first-person renderer
         run: node scripts/haunt-graphics-smoke.cjs
       - name: Verify three SDK clients and the next signed-in contract
+        timeout-minutes: 8
         run: node scripts/haunt-network-smoke.cjs
       - name: Verify direct Zone Hub SSO
         run: node scripts/zone-hub-handoff-smoke.cjs --haunt
