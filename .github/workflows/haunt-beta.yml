@@ -11,7 +11,8 @@ concurrency:
   cancel-in-progress: true
 jobs:
   haunt:
-    runs-on: windows-latest
+    # Keep the graphics and package gates on one supported Windows image.
+    runs-on: windows-2022
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
