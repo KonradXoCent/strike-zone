@@ -24,6 +24,9 @@ jobs:
       - run: node scripts/prepare-haunt.cjs
       - name: Test all simulation, ownership, rewards and SQL authorization
         run: node --test tests/haunt*.test.cjs tests/zone-hub-cosmetics.test.cjs
+      - name: Verify three SDK clients and the next signed-in contract
+        timeout-minutes: 8
+        run: node scripts/haunt-network-smoke.cjs
       - name: Verify UI, actual lighting and consecutive investigations
         run: node scripts/haunt-smoke.cjs
       - name: Verify cursed possessions, shared challenges and sensor UI
@@ -32,9 +35,6 @@ jobs:
         run: node scripts/haunt-expeditions-smoke.cjs
       - name: Verify stable planning scroll and the first-person renderer
         run: node scripts/haunt-graphics-smoke.cjs
-      - name: Verify three SDK clients and the next signed-in contract
-        timeout-minutes: 8
-        run: node scripts/haunt-network-smoke.cjs
       - name: Verify direct Zone Hub SSO
         run: node scripts/zone-hub-handoff-smoke.cjs --haunt
       - name: Build only Zone Haunt
