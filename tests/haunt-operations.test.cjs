@@ -1,7 +1,7 @@
 'use strict';
 const{test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{randomUUID}=require('node:crypto'),{setup}=require('../scripts/test-support/wallet-db.cjs'),H=require('../game/haunt/engine.js');
 const migration=fs.readFileSync(path.join(__dirname,'../database/haunt-operations.sql'),'utf8');
-const create=(o={})=>H.create({seed:16,difficulty:'calm',players:[{id:'p'}],bots:true,...o});
+const create=(o={})=>H.create({seed:17,difficulty:'calm',players:[{id:'p'}],bots:true,...o});
 const advance=(w,seconds,observe=()=>{})=>{w.hunt.next=1e9;for(let i=0;i<seconds*10;i++){H.update(w,.1);observe(w);}};
 async function fixture(operations=true){
  const f=await setup({progression:true,operations});
@@ -11,7 +11,7 @@ async function fixture(operations=true){
 }
 async function complete(f,uid,room,wipe){
  await f.db.query("update haunt_private.rooms set started_at=now()-interval '1 minute' where id=$1",[room.id]);
- const w=H.create({seed:room.seed,mapId:room.mapId,players:room.roster,botCount:room.botCount,stock:room.supplies,hostId:uid});w.id=room.id;w.time=90;
+ const w=H.create({seed:room.seed,mapId:room.mapId,players:room.roster,botCount:room.botCount,stock:room.supplies,hostId:uid});w.id=room.id;w.time=90;if(room.protocol<5)w.secret.type=H.GHOSTS.filter(g=>g.id!=='demon')[room.seed%14].id;
  if(wipe)for(const p of w.players)p.alive=false;
  H.finish(w,null);await f.haunt(uid,'sync',{room:room.id,snapshot:{...H.snapshot(w),schema:room.protocol}});await f.haunt(uid,'finish',{room:room.id,guess:null});
 }

@@ -1,4 +1,4 @@
-(function(root,factory){const v=factory();if(typeof module==='object'&&module.exports)module.exports=v;else root.HauntMaps=v;})(globalThis,()=>{
+(function(root,factory){const v=factory(typeof module==='object'&&module.exports?require('./locations.js'):root.HauntLocations);if(typeof module==='object'&&module.exports)module.exports=v;else root.HauntMaps=v;})(globalThis,(L)=>{
  'use strict';const TILE=48;
  const SPECS=[
   {id:'pinewood',pl:'Dom pod Sosnami',en:'Pinewood House',sizePl:'Mała',sizeEn:'Small',cols:34,rows:30,style:'wood',floor:'#68594c',wall:'#a19583',accent:'#c9bd99',outline:[[3,3,27,21]],halls:[[15,4,3,19]],exit:[16,23],spawn:[16,27],breaker:[16,5],rooms:[[4,4,10,8,'Salon','Living room','sofa'],[4,14,10,8,'Kuchnia','Kitchen','counter'],[19,4,9,6,'Sypialnia','Bedroom','bed'],[19,12,9,5,'Pokój dziecięcy','Nursery','bed'],[19,19,9,4,'Gabinet','Study','desk']],doors:[[14,8],[14,18],[18,7],[18,14],[18,21]]},
@@ -30,27 +30,39 @@
  SPECS.push(institution('grayhaven','Dwór Grayhaven','Grayhaven Manor',58,46,'manor',[[4,15,20],[24,16,0]],2,[['Salon muzyczny','Music room','piano'],['Galeria','Gallery','shelf'],['Biblioteka','Library','shelf'],['Jadalnia','Dining room','table'],['Sypialnia gościnna','Guest bedroom','bed'],['Kuchnia','Kitchen','counter'],['Pokój właściciela','Owner bedroom','bed'],['Zamknięty gabinet','Sealed study','desk']]));
  SPECS.push({id:'harvest',pl:'Dom Dyniowej Nocy',en:'Harvest Eve House',cols:32,rows:28,style:'halloween',floor:'#6d5143',wall:'#9c8b74',accent:'#efa75e',outline:[[3,3,25,18]],halls:[[14,4,3,16]],exit:[15,20],spawn:[15,24],breaker:[15,5],rooms:[[4,4,9,6,'Salon świec','Candle lounge','sofa'],[4,12,9,8,'Kuchnia wiedźmy','Witch kitchen','counter'],[18,4,9,6,'Pokój z maskami','Mask room','shelf'],[18,12,9,8,'Sypialnia dyni','Pumpkin bedroom','bed']],doors:[[13,7],[13,16],[17,7],[17,16]],halloween:true});
  SPECS.push({id:'bramblefarm',pl:'Gospodarstwo Bramble',en:'Bramble Farm',cols:38,rows:34,style:'farm',floor:'#6a5b48',wall:'#a6957b',accent:'#c5b079',outline:[[3,3,31,25]],halls:[[15,4,3,23],[4,14,29,3]],exit:[16,27],spawn:[16,31],breaker:[17,4],rooms:[[4,4,10,9,'Izba','Farm lounge','sofa'],[19,4,14,9,'Stodoła','Barn','crate'],[4,18,10,9,'Kuchnia','Kitchen','counter'],[19,18,6,9,'Sypialnia','Bedroom','bed'],[27,18,6,9,'Warsztat','Toolshed','shelf']],doors:[[14,8],[18,8],[14,22],[22,17],[30,17]]});
- SPECS.sort((a,b)=>a.cols*a.rows-b.cols*b.rows||a.id.localeCompare(b.id));let unlock=1;
- for(const s of SPECS){const a=s.cols*s.rows;s.area=a;s.size=a<=1100?'small':a<=1500?'medium':a<=3000?'large':'huge';s.sizePl={small:'Mała',medium:'Średnia',large:'Duża',huge:'Bardzo duża'}[s.size];s.sizeEn={small:'Small',medium:'Medium',large:'Large',huge:'Very large'}[s.size];s.minLevel=s.halloween?1:unlock++;if(s.id==='ravenhill')s.minLevel=12;}
+ L.extend(SPECS);
+ SPECS.sort((a,b)=>a.area-b.area||a.id.localeCompare(b.id));
+ for(const s of SPECS){const a=s.area;s.size=a<=1100?'small':a<=1500?'medium':a<=3000?'large':'huge';s.sizePl={small:'Mała',medium:'Średnia',large:'Duża',huge:'Bardzo duża'}[s.size];s.sizeEn={small:'Small',medium:'Medium',large:'Large',huge:'Very large'}[s.size];}
  const cellOf=n=>Math.floor(n/TILE);
  const centre=(x,y)=>({x:(x+.5)*TILE,y:(y+.5)*TILE});
  function build(id){const s=SPECS.find(x=>x.id===id)||SPECS[0],cells=Array.from({length:s.rows},()=>Array(s.cols).fill(0)),inside=Array.from({length:s.rows},()=>Array(s.cols).fill(false)),doors=[],rooms=[],closets=[],furniture=[],switches=[],lamps=[];
   const fill=([x,y,w,h],v)=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++){cells[j][i]=v;inside[j][i]=true;}};
   s.outline.forEach(r=>fill(r,1));s.halls.forEach(r=>fill(r,0));
-  for(const [i,d]of s.rooms.entries()){const [x,y,w,h,pl,en,type]=d;fill([x,y,w,h],0);const r={id:i,...centre(x+Math.floor(w/2),y+Math.floor(h/2)),left:x*TILE,top:y*TILE,w:w*TILE,h:h*TILE,cols:w,rows:h,pl,en,type};rooms.push(r);
-   if(i%3===0||s.rooms.length<6&&i%2===0)closets.push({id:'closet-'+i,...centre(x+1,y+1),room:i,w:52,h:54});lamps.push({id:'lamp-'+i,...centre(x+Math.floor(w/2),y+Math.floor(h/2)),room:i});
+  for(const [i,d]of s.rooms.entries()){const [x,y,w,h,pl,en,type,floor=0]=d;fill([x,y,w,h],0);const r={id:i,...centre(x+Math.floor(w/2),y+Math.floor(h/2)),left:x*TILE,top:y*TILE,w:w*TILE,h:h*TILE,cols:w,rows:h,pl,en,type,floor,outdoor:(s.outdoorRooms||[]).includes(i)};rooms.push(r);
+   if(i%3===0||i>=s.groundRooms||s.groundRooms<6&&i%2===0)closets.push({id:'closet-'+i,...centre(x+1,y+1),room:i,w:52,h:54});lamps.push({id:'lamp-'+i,...centre(x+Math.floor(w/2),y+Math.floor(h/2)),room:i});
    const door=s.doors[i],near=door?centre(door[0]+(door[0]<x?1:door[0]>=x+w?-1:0),door[1]+(door[1]<y?1:door[1]>=y+h?-1:0)):centre(x,y);switches.push({id:'switch-'+i,...near,room:i});
    furniture.push({id:'f-'+i,type,...centre(x+w-2,y+1),w:type==='counter'?90:76,h:40,room:i});
    if(w>7&&h>5)furniture.push({id:'table-'+i,type:type==='bed'?'desk':type==='shelf'?'shelf':'table',...centre(x+w-3,y+h-2),w:72,h:40,room:i});
-   if(type==='machine')for(let n=0;n<4&&3+n*4<w-1;n++)furniture.push({id:'machine-'+n,type:'machine',...centre(x+3+n*4,y+4),w:72,h:80,room:i});
+   if(type==='machine'&&floor===0)for(let n=0;n<4&&3+n*4<w-1;n++)furniture.push({id:'machine-'+n,type:'machine',...centre(x+3+n*4,y+4),w:72,h:80,room:i});
    if(type==='pew')for(let row=0;row<4&&4+row*2<h-1;row++)for(const offset of[3,12].filter(n=>n<w-1))furniture.push({id:'pew-'+row+'-'+offset,type:'pew',...centre(x+offset,y+4+row*2),w:108,h:24,room:i});
+   if(['arcade','shelf'].includes(type)&&w>10&&h>8)for(let col=0;col<3;col++)furniture.push({id:'aisle-'+i+'-'+col,type:type==='arcade'?'arcade':'shelf',...centre(x+3+col*3,y+4),w:48,h:type==='arcade'?60:100,room:i});
+   if(type==='graves')for(let row=0;row<3;row++)for(let col=0;col<3;col++)furniture.push({id:'grave-'+i+'-'+row+col,type:'tomb',...centre(x+3+col*4,y+3+row*3),w:35,h:50,room:i});
+   if(type==='tent')for(let n=0;n<2;n++)furniture.push({id:'tent-'+i+'-'+n,type:'tent',...centre(x+3+n*4,y+4+n*4),w:100,h:82,room:i});
+   if(type==='ring')furniture.push({id:'ring-'+i,type:'ring',...centre(x+Math.floor(w/2),y+Math.floor(h/2)),w:50,h:45,room:i});
    if(type.startsWith('toilet-'))for(let n=0;n<Math.min(3,Math.floor(w/3));n++)furniture.push({id:'wc-'+i+'-'+n,type:'toilet',...centre(x+2+n*3,y+3),w:40,h:54,room:i});
-   if(['school','asylum'].includes(s.style)&&type==='desk')for(let row=0;row<2;row++)for(let col=0;col<2;col++)furniture.push({id:'desk-'+i+'-'+row+col,type:'desk',...centre(x+2+col*3,y+4+row*3),w:60,h:32,room:i});
+   if(['school','asylum','hospital'].includes(s.style)&&type==='desk')for(let row=0;row<2;row++)for(let col=0;col<2;col++)furniture.push({id:'desk-'+i+'-'+row+col,type:'desk',...centre(x+2+col*3,y+4+row*3),w:60,h:32,room:i});
   }
   const makeDoor=(x,y,exit=false)=>{cells[y][x]=2;const horizontal=cells[y]?.[x-1]===1&&cells[y]?.[x+1]===1;doors.push({id:'door-'+doors.length,...centre(x,y),cellX:x,cellY:y,open:true,exit,horizontal});};
   s.doors.forEach(([x,y])=>makeDoor(x,y));makeDoor(...s.exit,true);
   const spawn=centre(...s.spawn),candidates=[];for(const r of rooms)for(let y=cellOf(r.top)+1;y<cellOf(r.top)+r.rows-1;y++)for(let x=cellOf(r.left)+1;x<cellOf(r.left)+r.cols-1;x++){const p=centre(x,y);if(!furniture.some(f=>Math.abs(p.x-f.x)<f.w/2+20&&Math.abs(p.y-f.y)<f.h/2+20)&&!closets.some(c=>Math.hypot(p.x-c.x,p.y-c.y)<75))candidates.push(p);}for(const r of rooms){const free=candidates.filter(p=>p.x>r.left&&p.x<r.left+r.w&&p.y>r.top&&p.y<r.top+r.h).sort((a,b)=>Math.hypot(a.x-r.x,a.y-r.y)-Math.hypot(b.x-r.x,b.y-r.y));if(free.length)Object.assign(r,free[0]);}candidates.sort((a,b)=>Math.hypot(b.x-spawn.x,b.y-spawn.y)-Math.hypot(a.x-spawn.x,a.y-spawn.y));
-  return{...s,cells,inside,doors,rooms,closets,furniture,switches,lamps,spawn:centre(...s.spawn),van:{...centre(...s.spawn),w:160,h:76},breaker:candidates[0]||centre(...s.breaker),width:s.cols*TILE,height:s.rows*TILE};
+  const lower=candidates.filter(p=>p.y>=s.groundRows*TILE),ground=candidates.filter(p=>p.y<s.groundRows*TILE);
+  const stairTop=ground.filter(p=>!rooms.some(r=>r.outdoor&&p.x>r.left&&p.x<r.left+r.w&&p.y>r.top&&p.y<r.top+r.h)&&!doors.some(d=>Math.hypot(p.x-d.x,p.y-d.y)<85)).sort((a,b)=>Math.hypot(a.x-spawn.x,a.y-spawn.y)-Math.hypot(b.x-spawn.x,b.y-spawn.y))[0]||ground[0];
+  const stairBottom=lower.filter(p=>p.x<11*TILE).sort((a,b)=>a.y-b.y||a.x-b.x)[0];
+  const stairs=[{id:'stairs-down',...stairTop,to:{...stairBottom},floor:0,toFloor:-1},{id:'stairs-up',...stairBottom,to:{...stairTop},floor:-1,toFloor:0}];
+  const breaker=lower.filter(p=>p.x>12*TILE).sort((a,b)=>Math.hypot(b.x-stairBottom.x,b.y-stairBottom.y)-Math.hypot(a.x-stairBottom.x,a.y-stairBottom.y))[0]||lower[0];
+  const kitchens=rooms.filter(r=>r.floor===0&&r.type==='counter');if(!kitchens.length){const r=rooms.filter(r=>r.floor===0).at(-1);const f=furniture.find(f=>f.room===r.id);f.type='counter';kitchens.push(r);}
+  const sinks=kitchens.map(r=>{const f=furniture.find(f=>f.room===r.id&&f.type==='counter');return{id:'sink-'+r.id,x:f.x-13,y:f.y-3,room:r.id};});
+  return{...s,cells,inside,doors,rooms,closets,furniture,switches,lamps,stairs,sinks,groundHeight:s.groundRows*TILE,spawn:centre(...s.spawn),van:{...centre(...s.spawn),w:160,h:76},breaker,width:s.cols*TILE,height:s.rows*TILE};
  }
  return{SPECS,build,TILE};
 });

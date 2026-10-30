@@ -1,6 +1,6 @@
 'use strict';
 const{test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),H=require('../game/haunt/engine.js'),C=require('../game/haunt/catalog.js'),{setup}=require('../scripts/test-support/wallet-db.cjs');
-const create=(v={})=>H.create({seed:14,players:[{id:'p'}],bots:false,...v}),at=(p,q)=>Object.assign(p,{x:q.x,y:q.y});
+const create=(v={})=>H.create({seed:15,players:[{id:'p'}],bots:false,...v}),at=(p,q)=>Object.assign(p,{x:q.x,y:q.y});
 const step=(w,seconds)=>{for(let n=0;n<Math.ceil(seconds*10);n++)H.update(w,.1);};
 const migration=fs.readFileSync(path.join(__dirname,'../database/haunt-fieldwork.sql'),'utf8');
 function curse(kind,options={}){const w=create(options);w.curse.kind=kind;at(w.players[0],w.curse);w.hunt.next=1e9;return w;}
@@ -14,7 +14,7 @@ test('each map has one reachable seeded possession, varied independent ghost app
   assert.deepEqual(w.curse,same.curse);assert.equal(H.blocked(w,w.curse.x,w.curse.y),false);assert(H.path(w,w.map.spawn,w.curse).length);assert.equal(w.secret.deck.length,10);assert.equal(new Set(w.secret.deck).size,10);
   const s=H.snapshot(w);assert(H.validSnapshot(s,['p']));assert(!('secret'in s));assert(!JSON.stringify(s).includes('falseEvidence'));assert(!('deck'in s.curse));assert.equal(s.curse.revealRoom,null);
  }
- assert.equal(kinds.size,3);assert.equal(models.size,6);
+ assert.equal(kinds.size,3);assert.equal(models.size,7);
  const s=H.snapshot(create());s.challenges=['no_sanity','no_sanity'];assert.equal(H.validSnapshot(s,['p']),false);
 });
 test('bots collect finite EMF, thermometer and UV tools at the start, walk through public rooms and leave proof confirmation to humans',()=>{
@@ -65,7 +65,7 @@ test('motion sensors trigger on real ghost entry, return to green, preserve trip
 test('REM-POD has colored levels and pulsed events, registers genuine EMF 5 and cannot invent EMF evidence for another entity',()=>{
  const w=create(),d=place(w,'rempod'),p=w.players[0];w.time=180;w.hunt.next=1e9;w.nextActivity=1e9;w.secret.proof.emf={first:0,period:10000,duration:10000};at(w.ghost,d);w.activity=8;H.updateSensor(w,d);assert.equal(d.level,5);assert(w.events.some(e=>e.type==='rem-pulse'&&e.level===5));
  at(p,w.map.spawn);H.update(w,.1);assert.deepEqual(w.found,[]);for(let i=0;i<35;i++)H.update(w,.1,{p:{watchingSensors:true}});assert(w.found.includes('emf'));
- const other=create({seed:15}),rem=place(other,'rempod');other.time=180;other.activity=9;at(other.ghost,rem);H.updateSensor(other,rem);assert(rem.level<=4);assert(!other.found.includes('emf'));
+ const other=create({seed:16}),rem=place(other,'rempod');other.time=180;other.activity=9;at(other.ghost,rem);H.updateSensor(other,rem);assert(rem.level<=4);assert(!other.found.includes('emf'));
  at(other.ghost,{x:rem.x+700,y:rem.y});H.updateSensor(other,rem);assert.equal(rem.level,1);
 });
 test('a ghost pushes a toy car in either direction without passing through furniture or walls and raises an audible event',()=>{
@@ -84,8 +84,8 @@ test('only correct completed surviving contracts earn challenge bonuses and all 
 });
 test('SQL freezes shared challenges, validates host edits and recomputes once-only RP bonuses instead of trusting client reward amounts',async()=>{
  const f=await fixture(),[a,b,c]=f.ids;try{
-  let room=await f.haunt(a,'create');assert.equal(room.protocol,4);assert.deepEqual(room.supplies,H.STARTER);assert.equal(Object.keys(room.supplies).length,15);
-  await f.db.query("insert into friends(user_id,friend_id,name) values($1,$2,'B'),($2,$1,'A')",[a,b]);await f.haunt(a,'invite',{room:room.id,id:b});const invitation=(await f.haunt(b,'invitations'))[0];const accepted=await f.haunt(b,'accept_invite',{protocol:3,id:invitation.id});assert.equal(accepted.protocol,4);await f.haunt(b,'ready',{room:room.id,ready:true});
+  let room=await f.haunt(a,'create');assert.equal(room.protocol,H.PROTOCOL);assert.deepEqual(room.supplies,H.STARTER);assert.equal(Object.keys(room.supplies).length,15);
+  await f.db.query("insert into friends(user_id,friend_id,name) values($1,$2,'B'),($2,$1,'A')",[a,b]);await f.haunt(a,'invite',{room:room.id,id:b});const invitation=(await f.haunt(b,'invitations'))[0];const accepted=await f.haunt(b,'accept_invite',{protocol:3,id:invitation.id});assert.equal(accepted.protocol,H.PROTOCOL);await f.haunt(b,'ready',{room:room.id,ready:true});
   const config={room:room.id,mapId:room.mapId,difficulty:'normal',botCount:0,challenges:C.CHALLENGES.map(c=>c.id).reverse()};
   await assert.rejects(f.haunt(b,'configure',config),/HAUNT_HOST/);await assert.rejects(f.haunt(a,'configure',{...config,challenges:['no_power','no_power']}),/HAUNT_INPUT/);await assert.rejects(f.haunt(a,'configure',{...config,challenges:['free_money']}),/HAUNT_INPUT/);
   room=await f.haunt(a,'configure',config);assert.deepEqual(room.challenges,C.CHALLENGES.map(c=>c.id));assert.equal(room.members.find(p=>p.id===b).ready,false);
@@ -94,13 +94,13 @@ test('SQL freezes shared challenges, validates host edits and recomputes once-on
   await assert.rejects(f.haunt(a,'sync',{room:room.id,snapshot:{...s,challenges:['no_power']}}),/HAUNT_INPUT/);await assert.rejects(f.haunt(c,'sync',{room:room.id,snapshot:s}),/HAUNT_ROOM/);await assert.rejects(f.haunt(a,'sync',{room:room.id,snapshot:{...s,power:true}}),/HAUNT_INPUT/);const lit=structuredClone(s);lit.players[0].flashlight=true;await assert.rejects(f.haunt(a,'sync',{room:room.id,snapshot:lit}),/HAUNT_INPUT/);
   await f.haunt(a,'sync',{room:room.id,snapshot:s});await f.db.query("update haunt_private.rooms set started_at=now()-interval '1 minute' where id=$1",[room.id]);room=await f.haunt(a,'finish',{room:room.id,guess:result.guess});assert.equal(room.snapshot.result.money,result.money);assert.equal(room.snapshot.result.challengeBonus,result.challengeBonus);
   for(const id of[a,b]){const home=await f.haunt(id,'home');assert.equal(home.gear.funds.balance,1000+result.money);const paid=(await f.db.query('select money,challenge_bonus from haunt_private.results where room_id=$1 and user_id=$2',[room.id,id])).rows[0];assert.equal(paid.challenge_bonus,result.challengeBonus);assert.equal(paid.money,result.money);assert.equal((await f.as(id,"select zone_wallet('state') value")).rows[0].value.balance,3000);}
-  await f.haunt(a,'finish',{room:room.id,guess:result.guess});assert.equal((await f.haunt(a,'home')).gear.funds.balance,1000+result.money);const next=await f.haunt(a,'return_lobby',{room:room.id});assert.deepEqual(next.challenges,room.challenges);assert.notEqual(next.id,room.id);assert.equal(next.protocol,4);
+  await f.haunt(a,'finish',{room:room.id,guess:result.guess});assert.equal((await f.haunt(a,'home')).gear.funds.balance,1000+result.money);const next=await f.haunt(a,'return_lobby',{room:room.id});assert.deepEqual(next.challenges,room.challenges);assert.notEqual(next.id,room.id);assert.equal(next.protocol,H.PROTOCOL);
   await assert.rejects(f.haunt(c,'join',{protocol:3,code:next.code}),/HAUNT_VERSION/);
  }finally{await f.db.close();}
 });
 test('the additive migration preserves running v3 stock, owned equipment and RP, is replayable and exposes no private challenge helpers',async()=>{
  const f=await fixture(false),[a]=f.ids;try{
-  let room=await f.haunt(a,'create',{protocol:3});room=await f.haunt(a,'start',{protocol:3,room:room.id});const supply=room.supplies;await f.db.exec(migration);await f.db.exec(migration);
+  let room=await f.haunt(a,'create',{protocol:3});room=await f.haunt(a,'start',{protocol:3,room:room.id});const supply=room.supplies;await f.db.exec(migration);await f.db.exec(fs.readFileSync(path.join(__dirname,'../database/haunt-expeditions.sql'),'utf8'));await f.db.exec(migration);await f.db.exec(fs.readFileSync(path.join(__dirname,'../database/haunt-expeditions.sql'),'utf8'));
   assert.deepEqual((await f.haunt(a,'sync',{protocol:3,room:room.id})).supplies,supply);const home=await f.haunt(a,'home');assert.equal(home.gear.funds.balance,1000);assert.equal(Object.keys(home.gear.starter).length,15);
   await assert.rejects(f.as(a,"select haunt_private.challenge_percent('[\"no_power\"]')"),/permission denied/);await assert.rejects(f.as(a,"select haunt_private.valid_challenges('[]')"),/permission denied/);await assert.rejects(f.as(null,"select zone_haunt('home','{\"protocol\":4}')"),/permission denied|HAUNT_LOGIN/);
  }finally{await f.db.close();}

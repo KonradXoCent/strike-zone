@@ -1,11 +1,14 @@
-Zone Haunt 0.1.6
+Zone Haunt 0.1.7
 
-- Boty od początku zabierają dostępny EMF, termometr, UV lub rejestrator i samodzielnie badają kolejne pomieszczenia. Odczyty i wskazówki wynikają z rzeczywistych pomiarów; potwierdzanie dowodów pozostaje zadaniem gracza.
-- W jednej szafie może bezpiecznie schować się cała czteroosobowa ekipa. Sprzęt na podłodze przy szafie nie przejmuje przycisku chowania.
-- Na każdej mapie pojawia się jeden losowy przeklęty przedmiot: lustro, tablica Ouija albo talia tarota. Lustro pomaga znaleźć pokój ducha, ale drugie użycie wywołuje polowanie. Ouija ma wspólny limit 20 sekund rozmowy. Dziesięć kart tarota zmienia prąd, spokój i aktywność; jedna rozpoczyna polowanie.
-- Nowy czujnik ruchu zmienia kolor z zielonego na czerwony i sygnalizuje przejście ducha. REM-POD pokazuje odczyt 1–5 i kolorowe diody w ręce, po postawieniu oraz w vanie; mocniejszy sygnał oznacza intensywniejszy dźwięk. Zabawkowy samochód może zostać popchnięty przez ducha.
-- Przed wyprawą lider może wybrać siedem wyzwań, m.in. brak latarki, prądu i monitorów, trudniejsze dowody oraz częstsze polowania i zmiany pokoju. Bonus PB przyznajemy za poprawne rozpoznanie ducha, z ocalałym członkiem ekipy, po co najmniej 30 sekundach śledztwa. Bonus jest wyliczany i zapisywany jednokrotnie na serwerze.
-- Dziennik pokazuje wymagane dowody dla każdego typu ducha. Sześć różnych wyglądów zjawisk obejmuje dziecko, starszego drwala z siekierą, wdowę, starca, pielęgniarkę i cień. Wygląd nie zdradza rodzaju ducha.
-- Dopracowane menu, tablica, ekwipunek, dziennik, monitoring i podsumowanie. Nowe ikony sprzętu, dźwięki przedmiotów oraz niepokojące, nakładające się tła dźwiękowe polowania.
+- Siedem nowych lokacji: sklep Nocna Zmiana, salon Neon Arcade, cyrk Blackbriar, opuszczony szpital św. Brygidy, opuszczone więzienie Lockridge, cmentarz Dolina Ciszy i leśny kamping z namiotami oraz domkami. Łącznie 19 map, od małych po bardzo duże, z odblokowaniami za poziom lidera.
+- Każda lokacja ma dostępną piwnicę z magazynem i pomieszczeniem bezpieczników. Naciśnij E przy schodach, aby zmienić piętro. Boty i duchy też korzystają ze schodów; widoczność, monitoring i radar uwzględniają poziom mapy.
+- Z → „Tu jest pokój ducha” wskazuje ekipie aktualne pomieszczenie. Boty przynoszą i rozstawiają dostępny sprzęt, odzyskują potrzebne urządzenia z poprzedniego pokoju oraz wykonują pomiary. Oznaczenie jest wspólną wskazówką gracza, więc można wskazać błędny pokój. Druga komenda przywraca przeszukiwanie całej lokacji.
+- Poprawione przechodzenie przez drzwi i powrót pomocników do półek w vanie. Zamknięte drzwi da się otworzyć, także gdy w progu leży czujnik lub inne urządzenie.
+- Bot, który zauważy kość, przynosi dostępny aparat z vana, fotografuje ją, zbiera i oddaje aparat. Cudzy zajęty aparat pozostaje u jego użytkownika; gracz nadal może zbadać i zebrać kość samodzielnie.
+- Duch może odkręcić kran i zostawić brudną wodę w zlewie. Jej zdjęcie daje 35 PB, a zdjęcie faktycznych odcisków w soli 25 PB. Ten sam obiekt nie płaci ponownie. Nowe zdjęcia są widoczne we wspólnym albumie i rozliczane na serwerze.
+- Demon dołącza do 14 dotychczasowych zjawisk. Szybciej obniża spokój, częściej poluje i wyłącza prąd. Głosy i proceduralne odgłosy rozróżniają modele kobiece, męskie, dziecko i demoniczne brzmienie ze śmiechem.
+- Odświeżone menu główne i ekran wczytywania z rzeczywistym planem lokacji, opisem mapy, paskiem postępu i wskazówkami. Dopracowane widoki piwnic oraz oznaczenia pokoju ekipy.
 
-Na każdą wyprawę wraca po jednej bezpłatnej sztuce wszystkich 15 narzędzi. Dodatkowy sprzęt nadal kupuje się za Punkty badań (PB/RP), bez wydawania ZC. Aktualizacja jest dostępna w bibliotece Zone Hub bez ponownej instalacji platformy. Nowe funkcje wymagają nowej wyprawy i zaktualizowania gry u wszystkich członków ekipy.
+REM-POD zachowuje kolorowe odczyty i dźwięk w ręce, na podłodze oraz w vanie. Na każdą nową wyprawę wraca po jednej bezpłatnej sztuce wszystkich 15 narzędzi. Dodatki nadal kupuje się za Punkty badań (PB/RP), oddzielnie od ZC. Zachowane są wcześniejsze wyzwania i przeklęte przedmioty.
+
+Aktualizacja gry jest dostępna w bibliotece Zone Hub bez ponownej instalacji platformy. Nowe funkcje wymagają nowej wyprawy i wersji 0.1.7 u wszystkich członków ekipy. Trwające kontrakty starszych wersji zachowują swoje reguły rozliczenia.

@@ -267,3 +267,12 @@ Kamery automatycznie kadrują panoramę pokoju bez obracania obrazu. Widać rozs
 ### Zone Haunt 0.1.6 — przeklęte przedmioty i wyzwania
 
 Po `haunt-operations.sql` zastosuj `database/haunt-fieldwork.sql`. Nowe śledztwa używają protokołu 4, zachowując stare kontrakty i obsługę zaproszeń z Zone Hub 0.1.13. Na każdą wyprawę jest 15 bezpłatnych narzędzi. REM-POD działa w ręce, po postawieniu i w vanie; czujnik ruchu oraz zabawkowy samochód reagują na faktyczne położenie ducha. Na mapie jest jeden losowy przeklęty przedmiot. Boty samodzielnie badają pokoje od początku, cała ekipa może dzielić szafę, a lider wybiera siedem wyzwań z dodatkowymi PB. Wymagane dowody duchów są w dzienniku. [Pełny opis i walidacja](docs/zone-haunt-and-style-shop.md).
+
+
+### Zone Haunt 0.1.7 — piwnice, nowe lokacje i współpraca
+
+Po `haunt-fieldwork.sql` zastosuj `database/haunt-expeditions.sql`. Nowe wyprawy korzystają z protokołu 5; kontrakty protokołów 1–4 zachowują poprzednie rozliczenia, a zaproszenia nadal działają z Zone Hub 0.1.13.
+
+Gra ma 19 lokacji, w tym nowy cyrk, sklep, arcade, opuszczony szpital i więzienie, cmentarz i kamping z namiotami oraz domkami. Na każdej mapie schody pod **E** prowadzą do piwnicy z bezpiecznikami. **Z → Tu jest pokój ducha** kieruje boty ze sprzętem do aktualnego pokoju gracza; boty nie otrzymują tajnej pozycji ducha. Poprawiono otwieranie drzwi ze sprzętem w progu i dochodzenie botów do półek vana.
+
+Pomocnicy fotografują i zbierają zauważoną kość, fizycznie przynosząc dostępny aparat. Zdjęcia brudnej wody i odcisków w soli mają osobne, jednorazowe bonusy PB. Demon częściej poluje, szybciej obniża spokój i częściej wyłącza prąd. Zjawiska mają głosy dopasowane do modeli oraz demoniczny śmiech. Odświeżone menu i ekran ładowania pokazują plan oraz opis wybranej mapy. [Szczegóły zmian i walidacji](docs/zone-haunt-and-style-shop.md).

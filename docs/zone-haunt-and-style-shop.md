@@ -1,6 +1,6 @@
 # Zone Haunt and the Zone Hub style shop
 
-Zone Haunt 0.1.6 is an original 2.5D cooperative investigation beta with twelve locations, fourteen entities and nine evidence types. Up to four investigators share one host simulation. The host chooses zero to three support bots, limited by the remaining crew slots. The game costs 500 Zone Coins in Zone Hub 0.1.13; existing library owners keep their license.
+Zone Haunt 0.1.7 is an original 2.5D cooperative investigation beta with nineteen locations, fifteen entities and nine evidence types. Up to four investigators share one host simulation. The host chooses zero to three support bots, limited by the remaining crew slots. The game costs 500 Zone Coins in Zone Hub 0.1.13; existing library owners keep their license.
 
 ## Garage and equipment
 
@@ -14,16 +14,23 @@ The planning board chooses the map, difficulty and bot count. Guests ready up af
 | Harvest Eve House | Small / Halloween | 1 |
 | Pinewood House | Small | 2 |
 | Marsh Chapel | Small | 3 |
+| Night Shift Store | Medium | 2 |
 | Bramble Farm | Medium | 4 |
 | Ironvale Workshop | Medium | 5 |
 | Blackthorn Lodge | Medium | 6 |
 | Alder Clinic | Medium | 7 |
+| Neon Arcade | Large | 3 |
+| Mourning Vale Cemetery | Large | 1 |
 | Crow Road Motel | Large | 8 |
+| Blackbriar Circus | Large | 4 |
 | Grayhaven Manor | Large | 9 |
+| Whispering Pines Camp | Large | 5 |
 | Bellweather School | Very large | 10 |
+| St. Brigid Abandoned Hospital | Very large | 9 |
+| Lockridge Abandoned Prison | Very large | 11 |
 | Ravenhill Asylum | Very large | 12 |
 
-The board orders maps by grid area. The expanded school includes separate women's and men's restrooms. Breakers are in deeper accessible rooms. Harvest Eve House remains available at level 1 without a seasonal expiry.
+The board orders maps by grid area. The expanded school includes separate women's and men's restrooms. All nineteen maps have a connected basement storage room and power room. The breaker is in the basement. E at either stair landing changes floor. Bots and ghosts navigate the same stairs. Visibility and room cameras are floor-aware; the radar shows the current level. Basements do not inflate existing ground-area reward factors. Harvest Eve House remains available at level 1 without a seasonal expiry.
 
 Every new contract includes one complimentary team item of all fifteen equipment types, shared once by the crew rather than multiplied per member. The basic kit waits in the van even after a wipe and does not use RP or ZC. Personal stashes and selected contributions contain additional units only; previously owned items are retained as extras. Each owner still receives a one-time 1K Research Points (RP; PB in Polish) balance. Correct identification, evidence, photos and bones earn RP; platform playtime still earns ZC. Buy extras before departure, store up to eight of each and select up to two of a type and sixteen extra units. Players and bots carry four items. Garage reserves remain safe; a total wipe or abandoned contract loses only deployed extras. If anyone survives, those extras return. An ongoing contract keeps its original frozen supplies when the kit migration is applied.
 
@@ -41,9 +48,19 @@ Purchases use server prices and replayable receipt IDs. The same result cannot p
 - Up to four investigators share one safe closet during hunts. Nearby floor equipment does not override the hide interaction. Bots react with a delay and seek actual available closets. Corridors remain dangerous. If all humans die, surviving bots attempt to evacuate.
 - Setup periods are 90/60/35 seconds for Calm/Standard/Nightmare. Nightmare has up to 55-second hunts, faster composure loss and pursuit. Entity speeds differ.
 
-Photos have base bonuses of 50 for the ghost, 25 for the bone and 20 per revealed UV trace, at most two. Collecting the bone adds 25. A target pays once. Correct identification, observed evidence, difficulty and map size determine the final RP/XP payout; a total wipe pays no RP. Photo previews stay local to the photographer; shared records contain metadata.
+Photos have base bonuses of 50 for the ghost, 25 for the bone, 20 per revealed UV trace, 35 per dirty sink and 25 per disturbed salt patch. UV, water and salt each allow at most two different targets, with eight photos total. Collecting the bone adds 25. A target pays once; the complete photo/bone bonus is capped at 260 RP. Water requires a genuinely dirty map sink, salt a placed disturbed patch; canonical sink IDs and target deduplication are checked during server settlement. Correct identification, observed evidence, difficulty and map size determine the final RP/XP payout; a total wipe pays no RP. Photo previews stay local to the photographer; shared records contain metadata.
 
-Entities can switch room lights, cut power, open and close unoccupied doors, manifest, whisper, knock and make footsteps or scraping noises. Distance and walls attenuate positioned events. Original procedural hunt music, EMF beeps, radio interference, equipment, shutter and debrief sounds are generated locally. Speech uses an installed PL/EN voice when available, with visible text and procedural sound alongside it.
+Entities can switch room lights, cut power, open and close unoccupied doors, manifest, whisper, knock and make footsteps or scraping noises. Distance and walls attenuate positioned events. Original procedural hunt music, EMF beeps, radio interference, equipment, shutter and debrief sounds are generated locally. Speech selects an installed PL/EN voice matching the visual model where available, with distinct male, female, child and demonic procedural/pitch profiles as fallback. The Demon has demonic laughter, 65% faster composure drain, a 30% shorter initial protection, 40% shorter hunt cooldowns, a higher hunt threshold and more frequent power cuts. Its evidence is freezing, UV and spirit-radio responses.
+
+## Team room and photo assistance
+
+Z → “This is the ghost room” marks the room occupied by a living investigator, including a basement room. The command is shared and can be wrong; it never queries the secret room. Support bots fetch finite available tools, redeploy relevant devices from another room, inspect the declared room and report actual measurements without filling journal evidence. Another command clears the marker and resumes a full-site search. Explicit individual orders and hiding during hunts take priority. Navigation checks body clearance, opens doors and returns bots to the actual van rack rather than the exit doorway.
+
+A bot can only discover a bone within real visual range. One assigned helper returns for an available camera, frees an inventory slot if needed, walks back, photographs the bone, collects it and returns the camera. It will not steal a player's camera; an unavailable camera produces a limited-rate request instead of blocking every helper. A manually photographed or collected bone is respected.
+
+A nearby ghost event can turn on a kitchen/utility tap and dirty the sink; E toggles the tap. Salt footprints appear only after real ghost interaction with the placed salt. Both have distinct album entries and once-only RP photo bonuses. Closed doors have interaction priority over equipment in their doorway; open doors allow the equipment to be recovered.
+
+Main-menu art and layout have been refreshed. Map loading displays an actual cached ground-floor plan, the site description, size, room count, preparation progress and localized tips. Simulation and control start after loading finishes; cancellation prevents a previous loading job from entering the next contract.
 
 ## Field sensors, possessions and challenges
 
@@ -53,7 +70,7 @@ A motion sensor is green in standby and red for three seconds after the ghost en
 
 Each map spawns exactly one deterministic random possession in a reachable room, independent of the secret ghost identity. E opens its controls; possession limits belong to the crew. Mirror previews reveal the current haunted room for seven seconds. A second look shatters it and starts a cursed hunt. Ouija accepts location, age, intent and name questions; one person speaks at a time. Closing the board says goodbye and pauses its cumulative timer, but does not reset it. Twenty total conversation seconds break the board and force a hunt. Tarot has ten shuffled, single-use cards: Death/hunt, Tower/power cut, Sun/+20 composure, Moon/−20, Devil/manifestation, Wheel/room change, Hermit/30-second normal-hunt delay, Star/+10 team composure, Magician/power restoration and Hanged One/whispers and activity. Death preserves the remaining cards for after the hunt. Cursed hunts bypass crucifixes and provide six seconds to escape before pursuit can kill.
 
-The journal lists all three canonical evidence types on each ghost's reference card. Models are cosmetic and independent of ghost identity: child, woodsman with an axe, veiled widow, elderly man, nurse and shadow. Hidden entities stay invisible in the van except through an actual camera view or an explicit mirror vision. Hunt audio uses overlapping detuned drones, bowed tones and breath textures rather than a repeating melody.
+The journal lists all three canonical evidence types on each ghost's reference card. Models are cosmetic and independent of ghost identity: child, woodsman with an axe, veiled widow, elderly man, nurse, shadow and horned demon. Hidden entities stay invisible in the van except through an actual camera view or an explicit mirror vision. Hunt audio uses overlapping detuned drones, bowed tones and breath textures rather than a repeating melody.
 
 The host chooses shared challenges before departure. Changing them resets guest readiness; their list is frozen in the contract and included in snapshots. A correct conclusion after at least 30 seconds, with at least one crew survivor, earns a separate RP bonus; failed or wiped contracts receive none. The server recomputes it from stored challenge IDs and bounded base rewards, ignores client reward amounts and credits one ledger receipt per roster member. ZC is unaffected.
 
@@ -75,7 +92,7 @@ Mutual Zone Hub friends who own Haunt can be invited from the garage. Invitation
 
 Tokens remain in renderer memory. Settings and results stay separate from the other games. Signed-in solo investigations save account progression; browser previews are offline practice. The simulation uses its own timer, cached scenery and interpolated remote actors.
 
-Apply `database/zone-haunt.sql` and `database/zone-wallet.sql` before `database/haunt-progression.sql`, then `database/haunt-research.sql` then `database/haunt-operations.sql` and finally `database/haunt-fieldwork.sql`. The research add-on tags legacy ZC results, prevents future RP results from entering a lazy ZC import, refunds prior ZC equipment orders once and seeds RP once. Purchases from an outdated equipment client are rejected until it updates. The add-on retains legacy protocol 1/2 calls and retains protocol 3 for existing contracts and introduces protocol 4 for cursed possessions, sensors and frozen shared challenges. The installed Hub 0.1.13 can accept a protocol 4 invitation using its existing protocol 3 request, then launch the updated game. Old and new lobby protocols cannot mix. Do not reapply an older RPC router migration after these add-ons without reapplying them in order.
+Apply `database/zone-haunt.sql` and `database/zone-wallet.sql` before `database/haunt-progression.sql`, then `database/haunt-research.sql` then `database/haunt-operations.sql` then `database/haunt-fieldwork.sql` and finally `database/haunt-expeditions.sql`. The research add-on tags legacy ZC results, prevents future RP results from entering a lazy ZC import, refunds prior ZC equipment orders once and seeds RP once. Purchases from an outdated equipment client are rejected until it updates. The add-on retains protocol 1–4 calls and existing contracts, and introduces protocol 5 for basements, team markers, dirty sinks, new photo bonuses and the fifteen-entity seed rule. Earlier contracts retain their fourteen-entity reward calculation. The installed Hub 0.1.13 can accept a protocol 4 or 5 invitation using its existing protocol 3 request, then launch the updated game. Old and new lobby protocols cannot mix. Do not reapply an older RPC router migration after these add-ons without reapplying them in order.
 
 Displayed balances, prices and rewards use the common K/M/B/T formatter; stored integers and numeric purchase inputs remain exact.
 
@@ -89,7 +106,7 @@ The shop has six theme/background bundles and twelve avatar frames. Each bundle 
 
 The market stocks 240 bot listings per game, retains the purchase budget, and uses server pagination of 24 results per page. Strike and Royale inventories and item catalogs remain separate. Strike no longer exposes BR content; previous BR possessions remain with Zone Royale.
 
-Validation covers map connectivity, free equipment placement, delayed evidence, bot support, hiding, gear recovery/loss, replay protection, server prices, map levels, mutual-friend invitations, private sender permissions, three SDK clients in one garage and consecutive contracts, native PL/EN screens, smaller windows and direct Zone Hub SSO. Release checks install actual Windows packages and verify content updates and platform self-updates.
+Validation covers all nineteen map/stair paths, door-mounted equipment, physical bot camera retrieval and returns, declared-room resupply, new photo targets, gendered audio, legacy reward settlement, map connectivity, free equipment placement, delayed evidence, bot support, hiding, gear recovery/loss, replay protection, server prices, map levels, mutual-friend invitations, private sender permissions, three SDK clients in one garage and consecutive contracts, native PL/EN screens, smaller windows and direct Zone Hub SSO. Release checks install actual Windows packages and verify content updates and platform self-updates.
 
 ## Artwork sources
 

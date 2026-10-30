@@ -6,10 +6,26 @@
   tone(f,seconds=.15,type='sine',gain=.1,delay=0){gain*=this.effectGain;if(!this.context||gain<=0)return;const a=this.context.currentTime+delay,o=this.context.createOscillator(),g=this.context.createGain();o.type=type;o.frequency.setValueAtTime(Math.max(20,f),a);g.gain.setValueAtTime(.0001,a);g.gain.exponentialRampToValueAtTime(gain,a+.012);g.gain.exponentialRampToValueAtTime(.0001,a+seconds);o.connect(g);this.output(g);o.start(a);o.stop(a+seconds+.02);}
   noise(seconds=.2,gain=.08,frequency=600){gain*=this.effectGain;if(!this.context||gain<=0)return;const n=Math.ceil(this.context.sampleRate*seconds),b=this.context.createBuffer(1,n,this.context.sampleRate),data=b.getChannelData(0);for(let i=0;i<n;i++)data[i]=(Math.random()*2-1)*(1-i/n);const source=this.context.createBufferSource(),filter=this.context.createBiquadFilter(),g=this.context.createGain();source.buffer=b;filter.type='lowpass';filter.frequency.value=frequency;g.gain.value=gain;source.connect(filter);filter.connect(g);this.output(g);source.start();}
   output(node){if(this.context.createStereoPanner&&Math.abs(this.pan)>.01){const p=this.context.createStereoPanner();p.pan.value=Math.max(-1,Math.min(1,this.pan));node.connect(p);p.connect(this.master);}else node.connect(this.master);}
-  whisper(variant=0,language='pl',scale=1){if(!this.context||scale<.08)return;const words=(language==='en'?['I am here.','Do not turn around.','Can you hear me?','Stay with me.']:['Jestem tu.','Nie odwracaj się.','Słyszysz mnie?','Zostań ze mną.']);if(root.speechSynthesis&&root.SpeechSynthesisUtterance){const u=new SpeechSynthesisUtterance(words[variant%4]);u.lang=language==='en'?'en-US':'pl-PL';u.rate=.6;u.pitch=.45;u.volume=this.volume*.35*scale;speechSynthesis.speak(u);}}
-  speak(text,language='pl'){if(!this.context||this.volume===0)return;if(root.speechSynthesis&&root.SpeechSynthesisUtterance){const u=new SpeechSynthesisUtterance(text),voices=speechSynthesis.getVoices();u.lang=language==='en'?'en-US':'pl-PL';u.voice=voices.find(v=>v.lang.toLowerCase().startsWith(language))||null;u.rate=.72;u.pitch=.62;u.volume=this.volume*.85;speechSynthesis.cancel();speechSynthesis.speak(u);}this.noise(.8,.08,1400);this.tone(105,.7,'sawtooth',.025);}
+  chooseVoice(language,profile){
+   const voices=root.speechSynthesis?.getVoices?.()||[],local=voices.filter(v=>v.lang.toLowerCase().startsWith(language)),pool=local.length?local:voices;
+   const female=/female|woman|zira|paulina|agnieszka|samantha|victoria|joanna|ewa|anna/i,male=/\bmale\b|\bman\b|david|marek|daniel|adam|\bjan\b/i;
+   return pool.find(v=>(['female','child'].includes(profile)?female:male).test(v.name))||pool[0]||null;
+  }
+  vocal(profile='male',laugh=false){
+   if(!this.context)return;const base=({female:180,child:235,demonic:54,male:100})[profile]||100;
+   for(let i=0;i<(laugh?4:2);i++){this.tone(base*(i%2?1.16:1),laugh?.16:.4,'sawtooth',profile==='demonic'?.032:.012,i*(laugh?.23:.11));this.tone(base*2.07,laugh?.12:.28,'sine',.014,i*(laugh?.23:.11)+.035);}
+   if(profile==='demonic'){this.noise(laugh?1.3:.8,.045,400);this.tone(42,1.3,'triangle',.05);}
+  }
+  whisper(variant=0,language='pl',scale=1,profile='male'){
+   if(!this.context||scale<.08)return;const words=language==='en'?['I am here.','Do not turn around.','Can you hear me?','Stay with me.']:['Jestem tu.','Nie odwracaj się.','Słyszysz mnie?','Zostań ze mną.'];
+   if(root.speechSynthesis&&root.SpeechSynthesisUtterance){const u=new SpeechSynthesisUtterance(words[variant%4]);u.lang=language==='en'?'en-US':'pl-PL';u.voice=this.chooseVoice(language,profile);u.rate=profile==='demonic'?.48:.65;u.pitch=({female:.85,child:1.35,demonic:.05,male:.45})[profile]??.5;u.volume=this.volume*.4*scale;speechSynthesis.speak(u);}this.vocal(profile);
+  }
+  speak(text,language='pl',profile='male'){
+   if(!this.context||this.volume===0)return;
+   if(root.speechSynthesis&&root.SpeechSynthesisUtterance){const u=new SpeechSynthesisUtterance(text);u.lang=language==='en'?'en-US':'pl-PL';u.voice=this.chooseVoice(language,profile);u.rate=profile==='demonic'?.5:.72;u.pitch=({female:.94,child:1.4,demonic:.05,male:.5})[profile]??.5;u.volume=this.volume*.8;speechSynthesis.cancel();speechSynthesis.speak(u);}this.noise(.8,.065,1400);this.vocal(profile);
+  }
   effect(type,data={}){if(!this.context)return;const previous=this.effectGain,pan=this.pan;this.effectGain=Number.isFinite(data.volume)?Math.max(0,Math.min(1,data.volume)):1;this.pan=Number(data.pan)||0;try{
-   if(type==='ghost-event'){if(data.kind==='whisper'){this.noise(1.9,.13,1200);this.tone(97,1.3,'sawtooth',.027);this.tone(730,.45,'triangle',.018,.2);}else if(data.kind==='knock'){for(let i=0;i<3;i++){this.tone(85+i*9,.12,'triangle',.13,i*.18);this.tone(150,.06,'sine',.05,i*.18);}}else if(data.kind==='footsteps'){for(let i=0;i<4;i++)this.tone(52,.13,'triangle',.11,i*.3);}else{this.noise(1.15,.12,450);this.tone(171,.7,'sawtooth',.03);}}
+   if(type==='ghost-event'){if(data.kind==='laugh'){this.vocal(data.voice||'demonic',true);this.noise(.8,.055,850);}else if(data.kind==='whisper'){this.noise(1.9,.13,1200);this.tone(97,1.3,'sawtooth',.027);this.tone(730,.45,'triangle',.018,.2);}else if(data.kind==='knock'){for(let i=0;i<3;i++){this.tone(85+i*9,.12,'triangle',.13,i*.18);this.tone(150,.06,'sine',.05,i*.18);}}else if(data.kind==='footsteps'){for(let i=0;i<4;i++)this.tone(52,.13,'triangle',.11,i*.3);}else{this.noise(1.15,.12,450);this.tone(171,.7,'sawtooth',.03);}}
    else if(type==='motion-alarm'){this.tone(820,.11,'sine',.07);this.tone(1180,.11,'sine',.06,.14);}
    else if(type==='rem-pulse'){const level=Math.max(1,Math.min(5,data.level||1));this.tone(540+level*195,.08+level*.015,level>=4?'triangle':'sine',.02+level*.012);if(level===5)this.tone(1720,.05,'sine',.035,.12);}
    else if(type==='toycar-event'){this.noise(.65,.11,1700);this.tone(127,.4,'triangle',.04);this.tone(92,.25,'triangle',.035,.27);}
@@ -18,6 +34,9 @@
    else if(type==='curse-answer'){this.noise(.4,.045,1900);this.tone(190,.2,'triangle',.025);}
    else if(type==='tarot'){this.noise(.35,.09,2700);this.tone(360,.5,'sine',.035,.1);}
    else if(type==='curse-goodbye'){this.noise(.2,.025,500);this.tone(170,.35,'sine',.03);}
+   else if(type==='water'||type==='water-drip'){this.noise(type==='water'?.65:.2,.045,1700);this.tone(820,.09,'sine',.035);this.tone(640,.12,'sine',.025,.14);}
+   else if(type==='stairs'){this.noise(.18,.07,350);this.tone(80,.2,'triangle',.035);}
+   else if(type==='bone-found'){this.noise(.09,.025,1800);this.tone(590,.08,'sine',.03);}
    else if(type==='evidence'){[523.25,659.25,783.99].forEach((n,i)=>this.tone(n,.5,'sine',.10,i*.1));}
    else if(type==='door'||type==='closet'){this.noise(.35,.12,data.material==='metal'?1900:400);this.tone(data.material==='metal'?280:82,.32,'triangle',.06);this.tone(data.material==='metal'?510:140,.18,'sine',.035,.12);}
    else if(type==='radio'){this.noise(.65,.1,2800);this.tone(380,.07,'sine',.06);this.tone(430,.06,'sine',.04,.1);}

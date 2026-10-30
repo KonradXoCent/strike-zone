@@ -22,10 +22,13 @@
   ['pulse','Impuls','Pulse',['emf','resonance','writing'],174,'Silne zakłócenia towarzyszą zapiskom i echu.','Strong interference accompanies writing and resonance.'],
   ['deceiver','Zwodziciel','Deceiver',['voice','salt','resonance'],129,'Ma trzy prawdziwe dowody i naśladuje jeden dodatkowy. Cztery sprzeczne dowody wskazują Zwodziciela.','Has three real evidence types and imitates one extra. Four conflicting readings point to the Deceiver.']
  ].map(([id,pl,en,evidence,speed,traitPl,traitEn])=>({id,pl,en,evidence,speed,traitPl,traitEn}));
+ GHOSTS.push({id:'demon',pl:'Demon',en:'Demon',evidence:['freezing','uv','voice'],speed:151,traitPl:'Często poluje, szybciej odbiera spokój i chętnie odcina prąd. Jego śmiech i głos brzmią nienaturalnie.',traitEn:'Hunts often, drains composure faster and frequently cuts the power. Its voice and laughter sound unnatural.'});
  const QUESTIONS=[['where','Gdzie jesteś?','Where are you?'],['age','Ile masz lat?','How old are you?'],['intent','Czego od nas chcesz?','What do you want?'],['alone','Czy jesteś tu sam?','Are you alone?'],['name','Jak masz na imię?','What is your name?']].map(([id,pl,en])=>({id,pl,en}));
  const REPLIES={where:['Jestem obok ciebie.','I am beside you.'],age:['Czekam tu od wielu lat.','I have waited here for many years.'],intent:['Odejdźcie.','Leave this place.'],alone:['Nie jesteście sami.','You are not alone.'],name:['Moje imię zostało zapomniane.','My name has been forgotten.']};
  const PRICES={flashlight:60,emf:90,thermo:80,uv:110,spirit:140,book:90,camera:200,dots:180,crucifix:180,salt:35,recorder:160,photo:150,motion:140,rempod:170,toycar:65};
- const MODELS=['child','woodsman','widow','elder','nurse','shade'];
+ const PHOTO_VALUES={ghost:50,bone:25,uv:20,water:35,salt:25};
+ const voiceProfile=(model,type)=>type==='demon'||model==='demon'?'demonic':model==='child'?'child':['widow','nurse'].includes(model)?'female':'male';
+ const MODELS=['child','woodsman','widow','elder','nurse','shade','demon'];
  const CURSES=[
   {id:'mirror',pl:'Przeklęte lustro',en:'Cursed mirror',hintPl:'Pokazuje pokój ducha. Drugie użycie rozbija lustro i wywołuje przeklęte polowanie.',hintEn:'Reveals the haunted room. The second use shatters the mirror and starts a cursed hunt.'},
   {id:'ouija',pl:'Tablica Ouija',en:'Ouija board',hintPl:'Zadaj pytanie i pożegnaj się. Po 20 sekundach łącznej rozmowy tablica pęka i rozpoczyna się polowanie.',hintEn:'Ask a question and say goodbye. After 20 seconds of total conversation the board breaks and a hunt begins.'},
@@ -58,6 +61,6 @@
  const supplies=(extra={})=>Object.fromEntries(TOOLS.map(id=>[id,1+Math.min(31,Math.max(0,Math.floor(Number(extra[id])||0)))]));
  const level=xp=>1+Math.floor(Math.max(0,Number(xp)||0)/250);
  const mapFactor=size=>({small:1,medium:1.15,large:1.35,huge:1.6})[size]||1;
- function reward({correct,evidence=0,hunt=false,photo=false,bonus=0,wipe=false,difficulty='normal',size='small',challenges:ids=[],seconds=0}){const base=wipe?0:Math.min(900,Math.round(((correct?90:0)+Math.min(3,evidence)*10+Math.min(140,bonus))*mapFactor(size)*({calm:1,normal:1.25,nightmare:1.6}[difficulty]||1)));const challengeBonus=correct&&!wipe&&seconds>=30?Math.round(base*challengePercent(ids)/100):0;return{xp:wipe?Math.min(30,evidence*5):Math.round((correct?120+Math.min(3,evidence)*30+(hunt?25:0)+(photo?25:0):Math.min(3,evidence)*10)*mapFactor(size)),money:base+challengeBonus,challengeBonus,challengePercent:challengePercent(ids),baseMoney:base};}
- return{PROTOCOL:4,TOOLS,ITEMS,EVIDENCE,GHOSTS,QUESTIONS,REPLIES,PRICES,STARTER,supplies,level,reward,MODELS,CURSES,CARDS,CHALLENGES,challenges,challengePercent};
+ function reward({correct,evidence=0,hunt=false,photo=false,bonus=0,wipe=false,difficulty='normal',size='small',challenges:ids=[],seconds=0}){const base=wipe?0:Math.min(1200,Math.round(((correct?90:0)+Math.min(3,evidence)*10+Math.min(260,bonus))*mapFactor(size)*({calm:1,normal:1.25,nightmare:1.6}[difficulty]||1)));const challengeBonus=correct&&!wipe&&seconds>=30?Math.round(base*challengePercent(ids)/100):0;return{xp:wipe?Math.min(30,evidence*5):Math.round((correct?120+Math.min(3,evidence)*30+(hunt?25:0)+(photo?25:0):Math.min(3,evidence)*10)*mapFactor(size)),money:base+challengeBonus,challengeBonus,challengePercent:challengePercent(ids),baseMoney:base};}
+ return{PROTOCOL:5,PHOTO_VALUES,voiceProfile,TOOLS,ITEMS,EVIDENCE,GHOSTS,QUESTIONS,REPLIES,PRICES,STARTER,supplies,level,reward,MODELS,CURSES,CARDS,CHALLENGES,challenges,challengePercent};
 });
