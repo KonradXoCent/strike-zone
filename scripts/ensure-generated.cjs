@@ -9,3 +9,5 @@ if(['items.js','items.css','items.webp'].some(n=>!fs.existsSync(path.join(root,'
 execFileSync(process.execPath,[path.join(__dirname,'royale-assets.cjs')],{stdio:'inherit'});
 
 require('./hub-cosmetics-assets.cjs')();
+
+require('./prepare-football.cjs').prepare();
