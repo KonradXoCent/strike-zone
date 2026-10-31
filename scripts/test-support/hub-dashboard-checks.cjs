@@ -1,0 +1,40 @@
+'use strict';
+const assert=require('node:assert/strict');
+module.exports=async({page,app,root})=>{
+ const prior=await page.evaluate(()=>({view:H.view,preferences:H.state.preferences}));
+ await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].setBounds({x:0,y:0,width:1440,height:900}));
+ await page.setViewportSize({width:1440,height:900});
+ await page.evaluate(()=>zoneHub.command('preferences',{language:'pl',theme:'violet'}));
+ await page.evaluate(()=>H.navigate('store'));
+ const search=page.locator('#hub-game-search');
+ await search.fill('royale');
+ assert.equal(await page.locator('[data-game-hero]:visible').count(),1);
+ assert.equal(await page.locator('[data-game-hero]:visible').getAttribute('data-game-hero'),'zone-royale');
+ await page.locator('#refresh-button').click();
+ assert.equal(await search.inputValue(),'royale');
+ await search.fill('no-game-matches-this-name');
+ await page.locator('#hub-search-empty').waitFor({state:'visible'});
+ assert.equal(await page.locator('[data-hub-search-item]:visible').count(),0);
+ await search.fill('');
+ await page.evaluate(()=>zoneHub.command('preferences',{language:'en'}));
+ await page.getByRole('searchbox',{name:'Search games',exact:true}).waitFor();
+ assert.equal(await page.locator('[data-hub-shortcut=messages]').getAttribute('title'),'Messages');
+ assert.equal(await page.locator('[data-hub-shortcut=profile]').getAttribute('aria-label'),'My profile');
+ const game=await page.locator('[data-open-library-game]').getAttribute('data-open-library-game');
+ await page.locator('[data-open-library-game]').click();
+ await page.waitForFunction(id=>H.view==='library'&&H.state.selectedGame===id,game);
+ await page.evaluate(()=>zoneHub.command('preferences',{language:'pl'}));
+ await page.evaluate(()=>H.navigate('store'));
+ for(const[width,height]of[[1440,900],[1024,720],[920,650]]){
+  await app.evaluate(({BrowserWindow},size)=>BrowserWindow.getAllWindows()[0].setBounds({x:0,y:0,...size}),{width,height});
+  await page.setViewportSize({width,height});
+  await page.waitForFunction(()=>[...document.images].every(i=>i.complete&&i.naturalWidth>0));
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight));
+  await page.locator('#hub-wallet-balance').waitFor({state:'visible'});await page.locator('#toast').waitFor({state:'hidden'});
+  await page.locator('#navigation [data-nav=downloads]').waitFor({state:'visible'});
+  await page.screenshot({path:root+'/test-output/zonehub/dashboard-'+width+'.png'});
+ }
+ await page.evaluate(p=>zoneHub.command('preferences',{language:p.language,theme:p.theme}),prior.preferences);
+ await page.evaluate(view=>H.navigate(view),prior.view);
+ console.log('PASS: dashboard search survives refresh, sidebar game opens its real library, PL/EN labels and three desktop sizes preserve wallet/navigation');
+};
