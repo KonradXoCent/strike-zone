@@ -25,10 +25,10 @@ jobs:
       - run: node scripts/prepare-haunt.cjs
       - name: Test all simulation, ownership, rewards and SQL authorization
         run: node --test tests/haunt*.test.cjs tests/zone-hub-cosmetics.test.cjs
-      - name: Verify basements, marked rooms, bone retrieval and photo bonuses
-        run: node scripts/haunt-expeditions-smoke.cjs
       - name: Verify stable planning scroll and the first-person renderer
         run: node scripts/haunt-graphics-smoke.cjs
+      - name: Verify basements, marked rooms, bone retrieval and photo bonuses
+        run: node scripts/haunt-expeditions-smoke.cjs
       - name: Verify direct Zone Hub SSO
         run: node scripts/zone-hub-handoff-smoke.cjs --haunt
       - name: Verify three SDK clients and the next signed-in contract
