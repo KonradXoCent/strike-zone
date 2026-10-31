@@ -25,6 +25,7 @@ module.exports=async({page,app,root})=>{
  await page.waitForFunction(id=>H.view==='library'&&H.state.selectedGame===id,game);
  await page.evaluate(()=>zoneHub.command('preferences',{language:'pl'}));
  await page.evaluate(()=>H.navigate('store'));
+ const catalog=await page.evaluate(()=>{const rows=H.state.home.catalog;H.state.home.catalog=rows.filter(g=>g.id!=='arena-test');H.sig='';H.render();return rows;});
  for(const[width,height]of[[1440,900],[1024,720],[920,650]]){
   await app.evaluate(({BrowserWindow},size)=>BrowserWindow.getAllWindows()[0].setBounds({x:0,y:0,...size}),{width,height});
   await page.setViewportSize({width,height});
@@ -34,6 +35,7 @@ module.exports=async({page,app,root})=>{
   await page.locator('#navigation [data-nav=downloads]').waitFor({state:'visible'});
   await page.screenshot({path:root+'/test-output/zonehub/dashboard-'+width+'.png'});
  }
+ await page.evaluate(rows=>{H.state.home.catalog=rows;H.sig='';H.render();},catalog);
  await page.evaluate(p=>zoneHub.command('preferences',{language:p.language,theme:p.theme}),prior.preferences);
  await page.evaluate(view=>H.navigate(view),prior.view);
  console.log('PASS: dashboard search survives refresh, sidebar game opens its real library, PL/EN labels and three desktop sizes preserve wallet/navigation');

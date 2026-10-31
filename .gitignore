@@ -40,3 +40,8 @@ dist-haunt/
 !game/haunt/vendor/
 !game/haunt/vendor/three.js
 !game/haunt/vendor/THREE-LICENSE.txt
+
+# Generated standalone football preview (canonical shell is game/football.js).
+/game/football/index.html
+
+/assets/football-icon.png

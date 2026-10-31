@@ -41,3 +41,12 @@ Wzór to przesłany fioletowy pulpit z profilem i nawigacją po lewej, dużym ba
 Sprawdzić wygląd przy 1440 × 900, 1024 × 720 i 920 × 650, wyszukiwanie, pełną nawigację, PL/EN, posiadane motywy oraz aktualizację instalatora z zachowaniem sesji i istniejących gier. Przed publikacją korzystać z wyników bieżącej gałęzi, zamiast ponownie wydawać starsze pakiety gier.
 
 Opis i tagi Haunt w publicznym katalogu zostały uaktualnione do 3D, 20 map i 21 narzędzi. Cena 500 ZC, konfiguracja pakietu i zakupione licencje pozostały bez zmian.
+
+
+## Preview 0.1.15 — compact catalog and Zone Football
+
+The Hub uses a single set of cover tiles (three columns on wide screens, two on smaller screens), with captions and actions below the artwork. Search, library actions, the real wallet and all existing navigation remain. Favorites are local and persist across refresh/restart. Appearance preferences add validated custom accent colours, compact/comfortable density, a hideable friends rail, reduced motion, contrast and background glow. Purchased themes remain independently owned. Existing per-game fullscreen preferences are preserved.
+
+Zone Football 0.1.0 is an experimental standalone entry bundled in this preview Hub. It opens in its own sandboxed window, receives the authenticated Hub session through a restricted preload, and reuses the shipped football rules/bots/referee/replay. It has its own locker-room screen, branding, settings and storage namespace. Multiplayer rooms use `zf-` instead of `sz-`. Free kicks, penalties, protected goalkeepers, passes, tackles and ten-goal matches stay intact. It does not modify the Strike Zone mode, read/write cloud game saves, spend or reward ZC, or publish a new game to the public catalog. Its standalone HTML can also be tested offline with bots; online authentication comes from Zone Hub.
+
+Checks include the full native Hub suite, persisted appearance/favorites, actual Hub-to-Football SSO, original football rule checks, a full bot match to ten goals, and two real clients sharing a match through the pinned SDK/local Phoenix fixture. No schema or production account changes are part of this preview.
