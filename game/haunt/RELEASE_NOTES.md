@@ -6,7 +6,7 @@ Uaktualnienie wersji 0.1.14a zaakceptowanej po testach lokalnych.
 - 20 map, w tym Kościół św. Michała, przebudowany Kamping Szepczący Las i nowe dekoracje.
 - Piwnice z przejściami wentylacyjnymi, poprawki kolizji, map, drzwi, szaf i wnętrza vana.
 - Rozbudowane zachowania botów, oznaczanie pokoju ducha oraz rotacja wyposażenia.
-- Poprawiona droga botów do półek w vanie: pomocnicy pobierają sprzęt, docierają do oznaczonego pokoju i zwracają pożyczony aparat po sfotografowaniu kości.
+- Poprawiona droga botów do dostępnych półek w vanie (punkt w zasięgu odbioru sprzętu): pomocnicy pobierają sprzęt, docierają do oznaczonego pokoju i zwracają pożyczony aparat po sfotografowaniu kości.
 - Kulki reagujące na ruch (do trzech osobno rozstawianych), z migającymi diodami i poświatą.
 - Pozytywka ruchowa, głośnik duchów, detektor ektoplazmy, mikrofon kierunkowy i sejsmograf.
 - Nowe duchy, dowody, rejestrator dźwięku z odsłuchem, bonusy fotograficzne, mgliste otoczenie.
