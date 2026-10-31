@@ -1,7 +1,7 @@
-name: Zone Hub violet dashboard design checks
+name: Zone Hub tiles and football preview checks
 on:
   push:
-    branches: [feature/zonehub-purple-dashboard]
+    branches: [feature/zonehub-purple-dashboard, feature/zonehub-tile-catalog-football]
   workflow_dispatch:
 permissions:
   contents: read
@@ -26,6 +26,12 @@ jobs:
         run: node --test --test-concurrency=2 tests/zone-hub*.test.cjs
       - name: Test actual Zone Hub desktop UI, navigation, accounts and games
         run: node scripts/zone-hub-smoke.cjs
+      - name: Verify standalone football rules, bots and two-client match
+        run: |
+          node scripts/football-preview-smoke.cjs
+          node scripts/football-preview-network.cjs
+      - name: Prepare unchanged managed-game installation fixtures
+        run: node scripts/prepare-game.cjs
       - name: Build the dashboard installer and unchanged game fixtures
         run: node scripts/build-platform.cjs
       - name: Download the current public Zone Hub for an actual upgrade test
@@ -37,7 +43,7 @@ jobs:
       - name: Keep the preview installer private to the workflow artifact
         uses: actions/upload-artifact@v7
         with:
-          name: Zone-Hub-0.1.14-Dashboard-Installer
+          name: Zone-Hub-0.1.15-Tiles-Installer
           path: |
             dist-platform/ZoneHub-Beta-*.exe
             dist-platform/*.blockmap
@@ -49,7 +55,9 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: Zone-Hub-Violet-Dashboard-Preview
-          path: test-output/zonehub/*.png
+          name: Zone-Hub-Tiles-and-Football-Preview
+          path: |
+            test-output/zonehub/*.png
+            test-output/football/*.png
           if-no-files-found: ignore
           retention-days: 30
