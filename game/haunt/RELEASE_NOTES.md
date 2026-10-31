@@ -13,3 +13,7 @@ Uaktualnienie wersji 0.1.14a zaakceptowanej po testach lokalnych.
 - Polski i angielski interfejs. Wymagana jednakowa wersja klienta podczas rozgrywki wieloosobowej.
 
 Wersja przeznaczona do aktualizacji w bibliotece Zone Hub. Publikacja wymaga przejścia testów pakietu Windows i zgodności z usługą online.
+
+## Status wydania
+
+Paczka Windows jest publikowana automatycznie przez GitHub Actions wyłącznie po przejściu testów multiplayer, renderowania 3D, instalacji oraz aktualizacji z Zone Hub.
