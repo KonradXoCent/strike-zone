@@ -855,14 +855,14 @@ dialog{background:linear-gradient(135deg,#1c3031,#112225);border:1px solid #c1d1
   dt=H.clamp(Number(dt)||0,0,.05);g.time+=dt;g.serial++;
   for(const p of g.players){const v=inputs[p.id]||{};if(p.bot){p.angle=-Math.PI/2;continue;}move(p,H.clamp(Number(v.x)||0,-1,1),H.clamp(Number(v.y)||0,-1,1),dt);if(Number.isFinite(v.angle))p.angle=v.angle;
    if(v.pick&&g.ball.owner===null&&g.ball.z<16&&H.distance(p,g.ball)<52){g.ball.owner=p.id;g.ball.scored=false;}
-   if(g.ball.owner===p.id&&v.throw&&Number.isSafeInteger(v.throw.seq)&&v.throw.seq>p.lastThrow){p.lastThrow=v.throw.seq;const power=H.clamp(Number(v.throw.power)||.4,.15,1),speed=300+power*370;Object.assign(g.ball,{owner:null,vx:Math.cos(p.angle)*speed,vy:Math.sin(p.angle)*speed,vz:405+power*125,z:20,scored:false});}
+   if(g.ball.owner===p.id&&v.throw&&Number.isSafeInteger(v.throw.seq)&&v.throw.seq>p.lastThrow){p.lastThrow=v.throw.seq;const power=H.clamp(Number(v.throw.power)||.4,.15,1),speed=300+power*370;Object.assign(g.ball,{owner:null,vx:Math.cos(p.angle)*speed,vy:Math.sin(p.angle)*speed,vz:260+power*90,z:20,scored:false});}
   }
   const b=g.ball,owner=g.players.find(p=>p.id===b.owner);if(owner){b.x=owner.x+Math.cos(owner.angle)*24;b.y=owner.y+Math.sin(owner.angle)*24;b.z=20;return;}
   b.x+=b.vx*dt;b.y+=b.vy*dt;b.z+=b.vz*dt;b.vz-=520*dt;
   if(b.x<48||b.x>WIDTH-48){b.x=H.clamp(b.x,48,WIDTH-48);b.vx*=-.65;}if(b.y<70||b.y>HEIGHT-48){b.y=H.clamp(b.y,70,HEIGHT-48);b.vy*=-.65;}
   if(b.y<202&&b.y>171&&Math.abs(b.x-1125)<62&&b.z>184&&b.z<250&&b.vy<0){b.y=203;b.vy=Math.abs(b.vy)*.72;}if(b.z<0){b.z=0;b.vz=Math.abs(b.vz)>.5?-b.vz*.48:0;b.vx*=.78;b.vy*=.78;}else if(b.z===0){b.vx*=Math.exp(-2*dt);b.vy*=Math.exp(-2*dt);}
   if(Math.abs(b.vx)<3)b.vx=0;if(Math.abs(b.vy)<3)b.vy=0;
-  if(!b.scored&&Math.hypot(b.x-1125,b.y-190)<33&&b.z>125&&b.z<188&&b.vz<0){b.score++;b.scored=true;b.vx*=.3;b.vy*=.3;}
+  if(!b.scored&&Math.hypot(b.x-1125,b.y-190)<33&&b.z>35&&b.z<105&&b.vz<0){b.score++;b.scored=true;b.vx*=.3;b.vy*=.3;}
  }
  function snapshot(g){return{kind:g.kind,serial:g.serial,time:g.time,players:g.players.map(p=>({...p})),ball:{...g.ball}};}
  function valid(g,roster=[]){return g?.kind==='haunt-garage'&&Number.isSafeInteger(g.serial)&&g.serial>=0&&Number.isFinite(g.time)&&g.time>=0&&Array.isArray(g.players)&&g.players.length<=4&&new Set(g.players.map(p=>p.id)).size===g.players.length&&g.players.every(p=>point(p)&&Number.isFinite(p.angle)&&typeof p.id==='string'&&(roster.includes(p.id)||p.bot===true&&/^bot-[0-3]$/.test(p.id)))&&point(g.ball)&&['vx','vy','vz','z','score'].every(k=>Number.isFinite(g.ball[k]))&&g.ball.z>=0&&g.ball.z<500&&Math.abs(g.ball.vx)<1600&&Math.abs(g.ball.vy)<1600&&Math.abs(g.ball.vz)<1200&&g.ball.score>=0&&g.ball.score<=100000&&(g.ball.owner===null||g.players.some(p=>p.id===g.ball.owner));}
