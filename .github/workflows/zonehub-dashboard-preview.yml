@@ -1,0 +1,36 @@
+name: Zone Hub violet dashboard design checks
+on:
+  push:
+    branches: [feature/zonehub-purple-dashboard]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual:
+    runs-on: windows-2022
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/ensure-generated.cjs
+      - name: Check frontend syntax and UI translations
+        run: |
+          node --check platform/ui/app.js
+          node --check platform/ui/common.js
+          npm run check:ui
+      - name: Test library, catalog and update compatibility
+        run: node --test tests/zone-hub-browse.test.cjs tests/zone-hub-catalog.test.cjs tests/zone-hub-runtime.test.cjs
+      - name: Test actual Zone Hub desktop UI, navigation, accounts and games
+        run: node scripts/zone-hub-smoke.cjs
+      - name: Collect dashboard review screenshot
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: Zone-Hub-Violet-Dashboard-Preview
+          path: test-output/zonehub/*.png
+          if-no-files-found: ignore
+          retention-days: 30
