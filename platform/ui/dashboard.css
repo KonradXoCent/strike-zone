@@ -137,3 +137,13 @@ body[data-theme=ember] .friends-rail{background:linear-gradient(175deg,#403040,#
 @media(max-width:970px){.workspace{grid-template-columns:164px minmax(0,1fr) 172px}.friends-rail{display:flex;padding:18px 9px}.hub-search input{width:80px}.hub-top-icon[data-nav=profile]{display:none}.hub-featured .hero-content{max-width:85%}.hub-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hub-feature-tag{display:none}.hub-featured h2{font-size:27px}}
 @media(max-height:660px){.sidebar .nav-item{min-height:34px;padding-top:7px;padding-bottom:7px}.sidebar-section-label{padding-bottom:6px}.sidebar .mini-profile{margin-bottom:8px;padding-bottom:11px}.hub-featured{min-height:205px}.hub-tile{min-height:180px}.friends-rail{padding-top:17px}}
 @media(prefers-reduced-motion:reduce){.hub-game-hero,.hub-game-backdrop{transition:none!important}}
+
+/* Existing account balance and Zone Haunt invitations stay functional inside the new header. */
+.page-header{flex-wrap:wrap}
+.hub-header-actions .wallet-header{margin-left:0;padding:5px 9px;border-radius:22px;background:#67518487;border:1px solid #d9c6f53c;gap:6px;white-space:nowrap}
+.hub-header-actions .wallet-header small{display:none}
+.hub-header-actions .wallet-header b{font-size:11px;color:#f4e4b9}
+.hub-header-actions .wallet-header .zone-coin{width:22px;height:22px;font-size:12px}
+.hub-header-actions #hub-haunt-invite-button{margin:0;padding:8px 10px;font-size:10px;border-radius:18px;white-space:nowrap}
+@media(max-width:1150px){.hub-header-actions{flex-wrap:wrap;justify-content:flex-end;min-width:0;max-width:100%}}
+@media(max-width:970px){.hub-header-actions .wallet-header{padding:5px 7px}.hub-header-actions .wallet-header b{font-size:10px}}
