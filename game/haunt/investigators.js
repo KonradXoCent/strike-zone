@@ -1,7 +1,7 @@
 (function(root,factory){const value=factory();if(typeof module==='object'&&module.exports)module.exports=value;else root.HauntInvestigators=value;})(globalThis,()=>{
  'use strict';
  function create(H){
-  const rack=w=>({x:w.map.van.x+82,y:w.map.van.y});
+  const rack=w=>({x:w.map.van.x+40,y:w.map.van.y});
   const{distance,roomAt,line,sameFloor,atRack,follow,gear,equip,owns,use,pickup,collectBone,readings,vacant,event,tip}=H;
   const scanners=['thermo','emf','uv','recorder'],deployable=['book','camera','dots','motion','rempod','salt','crucifix','toycar'];
   function mark(w,p){
