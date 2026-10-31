@@ -21,3 +21,5 @@ Wersja przeznaczona do aktualizacji w bibliotece Zone Hub. Publikacja wymaga prz
 ## Status wydania
 
 Paczka Windows jest publikowana automatycznie przez GitHub Actions wyłącznie po przejściu testów multiplayer, renderowania 3D, instalacji oraz aktualizacji z Zone Hub.
+
+Aktualizacja obejmuje wyłącznie grę Zone Haunt w bibliotece Zone Hub; nie zastępuje launchera ani plików innych gier.
