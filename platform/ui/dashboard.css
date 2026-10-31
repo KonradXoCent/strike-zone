@@ -147,3 +147,55 @@ body[data-theme=ember] .friends-rail{background:linear-gradient(175deg,#403040,#
 .hub-header-actions #hub-haunt-invite-button{margin:0;padding:8px 10px;font-size:10px;border-radius:18px;white-space:nowrap}
 @media(max-width:1150px){.hub-header-actions{flex-wrap:wrap;justify-content:flex-end;min-width:0;max-width:100%}}
 @media(max-width:970px){.hub-header-actions .wallet-header{padding:5px 7px}.hub-header-actions .wallet-header b{font-size:10px}}
+
+/* The original game artwork rules must not enlarge dashboard cards. */
+.hero.hub-featured{min-height:236px;margin-top:0;align-items:center}
+.hero.hub-featured .hero-content{max-width:76%;padding:26px 30px}
+.hero.hub-featured h2{font-size:38px;margin:12px 0 10px;line-height:1.05}
+.hero.hub-featured p{font-size:12px;line-height:1.5;max-width:460px;margin:0 0 20px}
+.hero.hub-featured .hero-game-mark{display:none}
+.hero.hub-tile{min-height:190px;margin-top:0;align-items:flex-end}
+.hero.hub-tile .hero-content{max-width:100%;padding:19px 21px}
+.hero.hub-tile h2{font-size:25px;font-weight:800;letter-spacing:-.7px;text-shadow:0 2px 12px #0006}
+.hero.hub-tile p{margin:0 0 13px;line-height:1.4;max-height:28px}
+.hero.hub-game-hero:before{opacity:0;mask-image:none}
+.hero.hub-game-hero:after{background:linear-gradient(90deg,#24183ddd 0%,#231936aa 36%,#24163c0d 100%),linear-gradient(0deg,#1b133bbb,transparent 90%)!important}
+.hero.hub-game-hero .hub-game-backdrop{filter:saturate(1.08) brightness(.88)}
+.hub-feature-heading{margin:0 0 13px}
+.hub-feature-heading h2{font-size:17px}
+.hub-section-heading{margin:23px 0 12px;align-items:center}
+.hub-section-heading h2{font-size:16px}
+.hub-catalog-card>img{height:125px}
+.sidebar-game{flex-shrink:0;margin:18px 2px 13px;padding:10px;background:#ffffff06;border:1px solid var(--hub-edge);border-radius:13px;overflow:hidden}
+.sidebar-game>small{font-size:8px;letter-spacing:1.1px;color:var(--hub-subtle);display:block;margin:0 0 8px}
+.sidebar-game>img{display:block;width:100%;height:72px;object-fit:cover;border-radius:7px;margin-bottom:10px}
+.sidebar-game>div{display:grid;gap:4px;min-width:0}
+.sidebar-game b{font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.sidebar-game span{font-size:9px;color:var(--hub-subtle);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.sidebar-game>button{width:100%;margin-top:11px;display:flex;align-items:center;justify-content:space-between;gap:5px;padding:8px;font-size:9px;border-radius:7px;background:#aa88f13d;border:1px solid #cfadff30}
+.sidebar-game>button svg{width:13px;height:13px}
+.friends-rail .friend{margin:3px 0;border:1px solid transparent}
+.friends-rail .friend:nth-child(4n+1){background:linear-gradient(100deg,#be754317,#9d4cb020)}
+.friends-rail .friend:nth-child(4n+2){background:linear-gradient(100deg,#5c4e8614,#4e927323)}
+.friends-rail .friend:nth-child(4n+3){background:linear-gradient(100deg,#55437d18,#984aa029)}
+.friends-rail .friend:nth-child(4n){background:linear-gradient(100deg,#60508b18,#467b9f20)}
+.friends-rail .friend:hover:not(:disabled){border-color:#d3b6f640}
+body[data-theme=forest]{--hub-panel:#2b403c;--hub-elevated:#365249;--hub-modal:#273e38;--hub-subtle:#b5cabe}
+body[data-theme=ocean]{--hub-panel:#2d3d59;--hub-elevated:#384d6b;--hub-modal:#293a52;--hub-subtle:#b2c4dc}
+body[data-theme=ember]{--hub-panel:#48383f;--hub-elevated:#5a454a;--hub-modal:#44323a;--hub-subtle:#d1b9b2}
+body[data-theme=halloween]{--hub-panel:#242438;--hub-elevated:#343347;--hub-modal:#242236;--hub-subtle:#d0c1b4}
+body[data-theme=aurora]{--hub-panel:#203b43;--hub-elevated:#2c4c50;--hub-modal:#1b353b;--hub-subtle:#acd1c7}
+body[data-theme=mirage]{--hub-panel:#44382d;--hub-elevated:#574637;--hub-modal:#392e27;--hub-subtle:#d8c4aa}
+body[data-theme=nebula]{--hub-panel:#30264c;--hub-elevated:#40325f;--hub-modal:#29213f;--hub-subtle:#c5b7e4}
+body[data-theme=deep-ocean]{--hub-panel:#203b4c;--hub-elevated:#294d60;--hub-modal:#1a3344;--hub-subtle:#a9cbd8}
+body[data-theme=sakura]{--hub-panel:#493047;--hub-elevated:#5b3b56;--hub-modal:#3e293c;--hub-subtle:#e0bacf}
+.central .card,.central .feature,.central .catalog-game,.central .achievement,.central .empty,.hub-catalog-card{background:var(--hub-panel)}
+.central .game-facts,.style-shop-product{background:var(--hub-panel)}
+body dialog{background:var(--hub-modal,#35274f)}
+@media(max-width:1150px){.hero.hub-featured{min-height:235px}.hero.hub-featured .hero-content{max-width:84%;padding:22px 24px}.hero.hub-featured h2{font-size:34px}.hero.hub-tile{min-height:188px}.hub-feature-heading h2{font-size:16px}}
+@media(max-width:970px){.hero.hub-featured .hero-content{max-width:100%;padding:21px}.hero.hub-featured h2{font-size:29px}.hero.hub-tile h2{font-size:21px}.hero.hub-tile .hero-content{padding:17px}.hub-section-heading>small{display:none}.hub-catalog-card>img{height:110px}}
+@media(max-height:820px){.sidebar-game{display:none}.sidebar #navigation{gap:2px}.sidebar .nav-item{min-height:35px;padding-top:8px;padding-bottom:8px}.sidebar .mini-profile{margin-bottom:10px;padding-bottom:12px}}
+@media(max-height:710px){.sidebar .sidebar-edition{display:none}.sidebar .mini-profile{padding-top:3px;padding-bottom:9px;margin-bottom:7px;min-height:56px}.sidebar-section-label{font-size:8px;padding-bottom:7px}.sidebar .nav-item{min-height:32px;padding-top:6px;padding-bottom:6px}.sidebar .sidebar-bottom{padding-top:8px}.sidebar{padding-top:9px;padding-bottom:10px}}
+
+/* Messages remain available in the header and sidebar, without a duplicate floating launcher. */
+body:has(#workspace:not([hidden])) .sz-chat-launcher{display:none}

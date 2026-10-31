@@ -262,3 +262,57 @@ create or replace function public.zone_haunt(action text,args jsonb default '{}'
 revoke all on function public.zone_haunt(text,jsonb) from public,anon;
 grant execute on function public.zone_haunt(text,jsonb) to authenticated;
 notify pgrst,'reload schema';
+
+
+-- Zone Haunt 0.1.15: server-side 20-map, 21-tool and 21-ghost compatibility.
+-- Keep old 15-ghost settlements for older in-progress client snapshots.
+INSERT INTO haunt_private.gear_catalog(id,price) VALUES
+('ectometer',175),('parabolic',165),('seismograph',185),
+('musicbox',150),('catballs',95),('ghostspeaker',220)
+ON CONFLICT(id) DO UPDATE SET price=excluded.price;
+INSERT INTO haunt_private.map_catalog(id,min_level,size,area,room_count,sink_ids)
+VALUES ('grandchurch',9,'huge',4216,8,'["sink-3"]'::jsonb)
+ON CONFLICT(id) DO UPDATE SET min_level=excluded.min_level,size=excluded.size,
+area=excluded.area,room_count=excluded.room_count,sink_ids=excluded.sink_ids;
+CREATE OR REPLACE FUNCTION haunt_private.expedition_finish(r haunt_private.rooms, args jsonb)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare uid uuid:=auth.uid();guess text:=args->>'guess';correct boolean;ev integer;xp integer;money integer;bonus integer:=0;survived boolean;wipe boolean;person jsonb;scale numeric;size_factor numeric;kind text;challenge_bonus integer:=0;rate integer:=0;ghosts text[]:=array['wisp','lament','cinder','watcher','veil','morrow','echo','thorn','hollow','rattle','mourner','drifter','pulse','deceiver','demon','poltergeist','banshee','revenant','phantom','mimic','earthbound'];
+begin
+ if uid<>r.host_id then raise exception 'HAUNT_HOST' using errcode='42501';end if;if r.phase='complete' then return haunt_private.room_view(r.id);end if;
+ if r.phase<>'running' or r.started_at>now()-interval '30 seconds' or r.snapshot->>'phase' is distinct from 'complete' or coalesce((r.snapshot->>'time')::numeric,0)<30 then raise exception 'HAUNT_EARLY';end if;
+ correct:=coalesce(guess=ghosts[1+r.seed%(case when r.snapshot->>'catalogVersion'='0.1.15' then 21 else 15 end)],false);ev:=least(3,jsonb_array_length(coalesce(r.snapshot->'found','[]')));wipe:=not exists(select 1 from jsonb_array_elements(r.snapshot->'players') p where p->>'alive'='true');
+ select size into kind from haunt_private.map_catalog where id=r.map_id;size_factor:=case kind when 'medium' then 1.15 when 'large' then 1.35 when 'huge' then 1.6 else 1 end;scale:=size_factor*case r.difficulty when 'normal' then 1.25 when 'nightmare' then 1.6 else 1 end;
+ select least(235,
+  50*least(1,count(*) filter(where p->>'kind'='ghost'))+
+  25*least(1,count(*) filter(where p->>'kind'='bone'))+
+  20*least(2,count(*) filter(where p->>'kind'='uv'))+
+  35*least(2,count(*) filter(where p->>'kind'='water'))+
+  25*least(2,count(*) filter(where p->>'kind'='salt')))::integer into bonus
+ from(select distinct on(p->>'target') p from jsonb_array_elements(coalesce(r.snapshot->'photos','[]')) p where
+  (p->>'kind'='ghost' and p->>'target'='ghost') or
+  (p->>'kind'='bone' and p->>'target'='bone') or
+  (p->>'kind'='uv' and p->>'target'~'^trace-[0-9]{1,7}$') or
+  (p->>'kind'='water' and exists(select 1 from jsonb_array_elements(coalesce(r.snapshot->'sinks','[]'))s where s->>'id'=p->>'target' and s->>'dirty'='true')) or
+  (p->>'kind'='salt' and exists(select 1 from jsonb_array_elements(coalesce(r.snapshot->'devices','[]'))d where d->>'id'=p->>'target' and d->>'kind'='salt' and d->>'disturbed'='true'))
+ )x;
+ if r.snapshot->'bone'->>'collected'='true' then bonus:=bonus+25;end if;
+ xp:=case when wipe then least(30,ev*5) else round((case when correct then 120+ev*30+(case when r.snapshot->'objectives'->>'hunt'='true' then 25 else 0 end)+(case when r.snapshot->'objectives'->>'photo'='true' then 25 else 0 end) else ev*10 end)*size_factor)::integer end;
+ money:=case when wipe then 0 else least(1200,round(((case when correct then 90 else 0 end)+ev*10+least(260,bonus))*scale)::integer) end;
+
+ if r.protocol=5 and correct and not wipe and (r.snapshot->>'time')::numeric>=30 then
+  rate:=haunt_private.challenge_percent(r.challenges);challenge_bonus:=round(money*rate/100.0)::integer;
+ end if;
+ money:=money+challenge_bonus;
+ -- The server recalculates the amount. The host's displayed price is never used as a credit.
+ update haunt_private.rooms set snapshot=jsonb_set(jsonb_set(jsonb_set(snapshot,'{result,money}',to_jsonb(money)),'{result,challengeBonus}',to_jsonb(challenge_bonus)),'{result,baseMoney}',to_jsonb(money-challenge_bonus)) where id=r.id;
+ for person in select value from jsonb_array_elements(r.roster) loop
+  survived:=exists(select 1 from jsonb_array_elements(r.snapshot->'players') p where p->>'id'=person->>'id' and p->>'alive'='true');
+  insert into haunt_private.results(room_id,user_id,correct,survived,evidence,xp,money,challenge_bonus) values(r.id,(person->>'id')::uuid,correct,survived,ev,xp,money,challenge_bonus) on conflict do nothing;
+ end loop;
+ perform haunt_private.settle_gear(r.id,wipe);update haunt_private.rooms set phase='complete',updated_at=now() where id=r.id;return haunt_private.room_view(r.id);
+end $function$
+

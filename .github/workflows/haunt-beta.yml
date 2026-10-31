@@ -1,7 +1,7 @@
 name: Zone Haunt standalone game update
 on:
   push:
-    branches: [feature/zonehub-online-updates]
+    branches: [feature/zonehub-online-updates, release/zone-haunt-0.1.15]
     paths: ['game/haunt/**', 'game/haunt-version.json', 'database/zone-haunt.sql', 'database/haunt-progression.sql', 'database/haunt-research.sql', 'database/haunt-operations.sql', 'database/haunt-fieldwork.sql', 'database/haunt-expeditions.sql', 'shared/money.js', 'scripts/*haunt*', 'tests/haunt*', '.github/workflows/haunt-beta.yml']
   workflow_dispatch:
 permissions:
@@ -25,6 +25,12 @@ jobs:
       - run: node scripts/prepare-haunt.cjs
       - name: Test all simulation, ownership, rewards and SQL authorization
         run: node --test tests/haunt*.test.cjs tests/zone-hub-cosmetics.test.cjs
+      - name: Verify direct Zone Hub SSO
+        run: node scripts/zone-hub-handoff-smoke.cjs --haunt
+      - name: Verify stable planning scroll and the first-person renderer
+        run: node scripts/haunt-graphics-smoke.cjs
+      - name: Verify basements, marked rooms, bone retrieval and photo bonuses
+        run: node scripts/haunt-expeditions-smoke.cjs
       - name: Verify three SDK clients and the next signed-in contract
         timeout-minutes: 8
         run: node scripts/haunt-network-smoke.cjs
@@ -32,12 +38,6 @@ jobs:
         run: node scripts/haunt-smoke.cjs
       - name: Verify cursed possessions, shared challenges and sensor UI
         run: node scripts/haunt-fieldwork-smoke.cjs
-      - name: Verify basements, marked rooms, bone retrieval and photo bonuses
-        run: node scripts/haunt-expeditions-smoke.cjs
-      - name: Verify stable planning scroll and the first-person renderer
-        run: node scripts/haunt-graphics-smoke.cjs
-      - name: Verify direct Zone Hub SSO
-        run: node scripts/zone-hub-handoff-smoke.cjs --haunt
       - name: Build only Zone Haunt
         run: node scripts/build-managed.cjs --haunt
       - name: Install and inspect the actual Windows package

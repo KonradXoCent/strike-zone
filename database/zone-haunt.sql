@@ -180,9 +180,9 @@ do $$ begin
  end if;
 end $$;
 insert into public.zh_games(id,title,description_pl,description_en,tags,free,published,package_config) values('zone-haunt','Zone Haunt',
- 'Kooperacyjne śledztwa paranormalne 2.5D. Siedem różnych map, czternaście duchów, dziewięć dowodów, sprzęt z vana, monitoring i bonusy za zdjęcia. Graj z botami lub ekipą do 4 osób.',
- 'Cooperative 2.5D paranormal investigations. Seven distinct maps, fourteen entities, nine evidence types, van equipment, camera feeds and photo bonuses. Play with bots or up to four investigators.',
- array['Co-op','Horror','2.5D','Bots'],true,false,'{"protocol":1,"executable":"ZoneHaunt.exe","manifestName":"zonehub-haunt-manifest.json","releasePrefix":"haunt-v"}')
+ 'Kooperacyjne śledztwa paranormalne w 3D. 20 map, 21 narzędzi, własne biuro, boty i ekipy do 4 graczy. Zbieraj dowody, odblokowuj mapy i kupuj sprzęt za Punkty badań.',
+ 'Cooperative paranormal investigations in 3D. 20 maps, 21 tools, your own garage, bots and teams of up to 4 investigators. Collect evidence, unlock locations and buy equipment with Research Points.',
+ array['Co-op','Horror','3D','Bots'],true,false,'{"protocol":1,"executable":"ZoneHaunt.exe","manifestName":"zonehub-haunt-manifest.json","releasePrefix":"haunt-v"}')
 on conflict(id) do update set title=excluded.title,description_pl=excluded.description_pl,description_en=excluded.description_en,tags=excluded.tags,package_config=excluded.package_config;
 
 insert into public.zh_achievement_definitions(id,game_id,title,description,xp) values

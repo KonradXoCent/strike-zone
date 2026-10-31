@@ -1,5 +1,7 @@
 'use strict';
+
 const{test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{randomUUID}=require('node:crypto'),{setup}=require('../scripts/test-support/wallet-db.cjs'),H=require('../game/haunt/engine.js');
+const EXPANDED_STARTER={...H.STARTER,ectometer:1,parabolic:1,seismograph:1,musicbox:1,catballs:1,ghostspeaker:1};
 const migration=fs.readFileSync(path.join(__dirname,'../database/haunt-operations.sql'),'utf8');
 const create=(o={})=>H.create({seed:17,difficulty:'calm',players:[{id:'p'}],bots:true,...o});
 const advance=(w,seconds,observe=()=>{})=>{w.hunt.next=1e9;for(let i=0;i<seconds*10;i++){H.update(w,.1);observe(w);}};
@@ -60,16 +62,16 @@ test('one free team kit survives repeated wipes; only purchased deployed extras 
  try{
   for(const id of f.ids)await f.haunt(id,'home');await f.db.query('update haunt_private.research_accounts set balance=0');
   let room=await f.haunt(a,'create');for(const id of[b,c]){await f.haunt(id,'join',{code:room.code});await f.haunt(id,'ready',{room:room.id,ready:true});}
-  assert.deepEqual((await f.haunt(a,'sync',{room:room.id})).supplies,H.STARTER);
-  room=await f.haunt(a,'start',{room:room.id});assert.deepEqual(room.supplies,H.STARTER);await complete(f,a,room,true);
+  assert.deepEqual((await f.haunt(a,'sync',{room:room.id})).supplies,EXPANDED_STARTER);
+  room=await f.haunt(a,'start',{room:room.id});assert.deepEqual(room.supplies,EXPANDED_STARTER);await complete(f,a,room,true);
   let home=await f.haunt(a,'home');assert.deepEqual(home.gear.owned,{});assert.equal(home.gear.funds.balance,0);
-  room=await f.haunt(a,'return_lobby',{room:room.id});assert.deepEqual(room.supplies,H.STARTER);
+  room=await f.haunt(a,'return_lobby',{room:room.id});assert.deepEqual(room.supplies,EXPANDED_STARTER);
   await f.db.query('update haunt_private.research_accounts set balance=1000 where user_id=$1',[a]);
   await f.haunt(a,'gear_buy',{request:randomUUID(),tool:'camera',quantity:2});await f.haunt(a,'gear_select',{selected:{camera:1}});
   for(const id of[b,c])await f.haunt(id,'ready',{room:room.id,ready:true});
   room=await f.haunt(a,'start',{room:room.id});assert.equal(room.supplies.camera,2);assert.equal((await f.haunt(a,'home')).gear.owned.camera,1);
   await complete(f,a,room,true);await f.haunt(a,'finish',{room:room.id,guess:null});home=await f.haunt(a,'home');assert.equal(home.gear.owned.camera,1);assert.equal(home.gear.funds.balance,600);
-  room=await f.haunt(a,'return_lobby',{room:room.id});assert.deepEqual(room.supplies,H.STARTER);
+  room=await f.haunt(a,'return_lobby',{room:room.id});assert.deepEqual(room.supplies,EXPANDED_STARTER);
   await f.haunt(a,'gear_select',{selected:{camera:1}});for(const id of[b,c])await f.haunt(id,'ready',{room:room.id,ready:true});
   room=await f.haunt(a,'start',{room:room.id});await complete(f,a,room,false);home=await f.haunt(a,'home');assert.equal(home.gear.owned.camera,1);assert.equal(home.gear.funds.balance,600);
   assert.equal((await f.as(a,"select zone_wallet('state') value")).rows[0].value.balance,0);
