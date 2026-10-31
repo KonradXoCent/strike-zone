@@ -11,6 +11,9 @@ Uaktualnienie wersji 0.1.14a zaakceptowanej po testach lokalnych.
 - Nowe duchy, dowody, rejestrator dźwięku z odsłuchem, bonusy fotograficzne, mgliste otoczenie.
 - Rozbudowany tryb obserwatora, ciała pozostające do końca śledztwa i upuszczanie sprzętu.
 - Polski i angielski interfejs. Wymagana jednakowa wersja klienta podczas rozgrywki wieloosobowej.
+- Poprawiony aparat fotograficzny w vanie: pewny odbiór przedmiotu, odświeżanie zapasów i synchronizacja zdjęć między członkami ekipy.
+- Poprawiona fizyka koszykówki w lobby 3D i kompletne testy wszystkich 20 map oraz 21 narzędzi.
+- Usprawniony test multiplayera trzech klientów, w tym wejście do drugiej wyprawy bez rozdzielenia ekipy.
 
 Wersja przeznaczona do aktualizacji w bibliotece Zone Hub. Publikacja wymaga przejścia testów pakietu Windows i zgodności z usługą online.
 
