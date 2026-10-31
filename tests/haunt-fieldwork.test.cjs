@@ -1,7 +1,7 @@
 'use strict';
-const EXPANDED_STARTER={...H.STARTER,ectometer:1,parabolic:1,seismograph:1,musicbox:1,catballs:1,ghostspeaker:1};
 
 const{test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),H=require('../game/haunt/engine.js'),C=require('../game/haunt/catalog.js'),{setup}=require('../scripts/test-support/wallet-db.cjs');
+const EXPANDED_STARTER={...H.STARTER,ectometer:1,parabolic:1,seismograph:1,musicbox:1,catballs:1,ghostspeaker:1};
 const create=(v={})=>H.create({seed:15,players:[{id:'p'}],bots:false,...v}),at=(p,q)=>Object.assign(p,{x:q.x,y:q.y});
 const step=(w,seconds)=>{for(let n=0;n<Math.ceil(seconds*10);n++)H.update(w,.1);};
 const migration=fs.readFileSync(path.join(__dirname,'../database/haunt-fieldwork.sql'),'utf8');
