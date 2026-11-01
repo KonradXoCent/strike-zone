@@ -31,7 +31,7 @@ declare row zone_wallet_private.accounts;result jsonb;
 begin
  select * into row from zone_wallet_private.accounts where user_id=target;
  if row.user_id is null then return null;end if;
- result:=jsonb_build_object('schema',1,'currency','ZC','name','Zone Coins','balance',row.balance,'revision',row.revision,'play_seconds',row.play_seconds,'rate_per_minute',30);
+ result:=jsonb_build_object('schema',1,'currency','ZC','name','Zone Coins','balance',row.balance,'revision',row.revision,'play_seconds',row.play_seconds,'rate_per_minute',5);
  if history then result:=result||jsonb_build_object('history',coalesce((select jsonb_agg(to_jsonb(x)) from(select id,delta,reason,reference,game_id,created_at from zone_wallet_private.entries where user_id=target order by created_at desc,id desc limit 40)x),'[]'));end if;
  return result;
 end $$;
@@ -178,7 +178,7 @@ begin
    update zone_wallet_private.accounts set play_seconds=play_seconds+greatest(0,new_seconds-coalesce(old_seconds,new_seconds)) where user_id=uid returning * into account;
    minutes:=account.play_seconds/60;
    if minutes>account.rewarded_minutes then
-    perform zone_wallet_private.change(uid,(minutes-account.rewarded_minutes)*30,'playtime',minutes::text,(select game_id from zone_hub_private.play_sessions where id=(args->>'id')::uuid and user_id=uid));
+    perform zone_wallet_private.change(uid,(minutes-account.rewarded_minutes)*5,'playtime',minutes::text,(select game_id from zone_hub_private.play_sessions where id=(args->>'id')::uuid and user_id=uid));
     update zone_wallet_private.accounts set rewarded_minutes=minutes where user_id=uid;
     select json into doc from public.saves where user_id=uid for update;
     update public.saves set json=zone_wallet_private.project(doc,uid),updated_at=now() where user_id=uid;

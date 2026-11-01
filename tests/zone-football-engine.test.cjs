@@ -40,3 +40,34 @@ test('keeper possession excludes only opponents from the entire penalty area in 
 test('shot strength is host-timed, increases with hold time, caps at full power and resets on lost possession',()=>{function fire(seconds){const m=E.makePractice('open'),p=m.players[9];E.input(m,0,{shootHeld:true,aimX:2200,aimY:720});ticks(m,seconds);const charge=p.charge;E.input(m,0,{shootRelease:true,aimX:2200,aimY:720,power:999});return{m,charge,speed:Math.hypot(m.ball.vx,m.ball.vy)};}const quick=fire(.05),long=fire(.9),max=fire(2),cap=fire(4);assert(long.speed>quick.speed+150);assert.equal(max.charge,1);assert.equal(cap.speed,max.speed);assert.equal(max.m.players[9].charge,0);const m=E.makePractice('open'),p=m.players[9];E.input(m,0,{shootHeld:true});ticks(m,.5);m.ball.owner=11;E.step(m,.05);assert.equal(p.charge,0);assert.equal(m.stats[0].shots,0);});
 test('single player mode never switches on Tab, passes or another teammate taking a restart',()=>{const m=live();m.controlModes[0]='single';m.locked[0]=m.selected[0]=5;const p=m.players[5];m.ball.owner=5;E.input(m,0,{pass:true,aimX:2100,aimY:720});assert.equal(m.selected[0],5);E.switchPlayer(m,0);assert.equal(m.selected[0],5);E.restart(m,'throw-in',0,m.players[9].x,E.FIELD.top);m.restart.taker=9;E.input(m,0,{shootRelease:true});assert(!m.restart.execute);ticks(m,3.1);assert.equal(m.selected[0],5);p.red=true;E.switchPlayer(m,0);assert.equal(m.selected[0],5);});
 test('5v5 shares 90-minute halves, side swap, offside, correct outs, five substitutions and replay',()=>{const m=E.make({size:5,human:[false,false],seed:927});assert.equal(m.players.length,10);assert.equal(m.players.filter(p=>p.keeper).length,2);E.kickoff(m,0);for(const p of m.players)if(p.id!==m.restart.taker)assert((p.x-E.FIELD.cx)*E.direction(m,p.team)<0);ticks(m,3);m.phase='live';m.clock=2699.9;E.step(m,.05);assert.equal(m.phase,'halftime');E.resume(m,0);assert.equal(m.half,2);assert.equal(E.direction(m,0),-1);ticks(m,3);m.phase='live';m.ball.owner=2;m.players[2].x=700;m.players[4].x=300;m.players[5].x=190;m.players[6].x=500;for(const p of m.players.filter(p=>p.team===1&&!p.keeper))p.x=500;E.pass(m,m.players[2],300,m.players[4].y);assert(m.offside?.ids.includes(4));m.offside=null;m.ball.owner=null;m.ball.lastTeam=0;m.ball.x=E.FIELD.left-8;m.ball.y=300;E.checkLines(m,{x:E.FIELD.left+10,y:300});assert.equal(m.restart.kind,'goal-kick');assert.equal(m.restart.team,1);m.phase='live';m.clock=5399.9;E.step(m,.05);assert.equal(m.phase,'over');});
+
+test('context action tackles an exposed ball before body contact, then passes with possession',()=>{
+ const m=live(),p=m.players[3],v=m.players[15];m.selected[0]=p.id;p.x=960;p.y=720;v.x=1015;v.y=720;m.ball={...m.ball,owner:v.id,x:995,y:720};
+ E.input(m,0,{context:true,aimX:1500,aimY:720});assert.equal(m.ball.owner,p.id);assert.equal(m.stats[0].fouls,0);assert.equal(m.phase,'live');
+ E.input(m,0,{context:true,aimX:1800,aimY:720});assert.equal(m.ball.owner,null);assert(m.events.some(e=>e.kind==='pass'));assert.equal(m.stats[0].fouls,0);
+});
+test('team control follows every new outfield owner; fixed-player and keeper control stay unchanged',()=>{
+ const m=live();m.selected[0]=9;m.ball.owner=3;E.followPossession(m);assert.equal(m.selected[0],3);
+ m.ball.owner=0;E.followPossession(m);assert.equal(m.selected[0],3);
+ m.controlModes[0]='single';m.locked[0]=m.selected[0]=5;m.ball.owner=7;E.followPossession(m);assert.equal(m.selected[0],5);
+ m.controlModes[0]='team';m.manualInputs={5:{}};E.followPossession(m);assert.equal(m.selected[0],5,'multi-controller adapter assigns ownership without taking another controller');
+});
+test('offside respects the ball, second-last defender, own half, both directions and both team sizes',()=>{
+ for(const size of[5,11])for(const half of[1,2])for(const team of[0,1]){
+  const m=E.make({size});m.phase='live';m.half=half;const dir=E.direction(m,team),p=m.players[team*size+2],r=m.players[team*size+size-1];
+  for(const q of m.players){q.x=E.FIELD.cx+dir*(q.team===team?-300:300);q.y=300+q.slot*35;q.cooldown=9;}
+  const keeper=m.players[(1-team)*size];keeper.x=E.FIELD.cx+dir*800;p.x=E.FIELD.cx+dir*100;p.y=r.y=720;
+  const kick=()=>{m.ball={...m.ball,owner:p.id,x:E.FIELD.cx+dir*500,y:720,vx:0,vy:0};E.pass(m,p,r.x,r.y);};
+  r.x=E.FIELD.cx+dir*450;kick();assert(!m.offside?.ids.includes(r.id),'cutback behind the ball is onside');
+  r.x=E.FIELD.cx+dir*600;kick();assert(m.offside?.ids.includes(r.id));assert.equal(m.offside.kickX,E.FIELD.cx+dir*500);
+  r.x=E.FIELD.cx-dir*10;kick();assert(!m.offside?.ids.includes(r.id),'own half is onside');
+  m.ball.owner=p.id;m.ball.x=E.FIELD.cx+dir*100;r.x=E.FIELD.cx+dir*302;E.pass(m,p,r.x,r.y);assert(!m.offside?.ids.includes(r.id),'level within the simulation tolerance is onside');
+ }
+});
+test('direct free kicks can create offside; throw-ins, corners and goal kicks remain exempt',()=>{
+ for(const kind of['free-kick','throw-in','corner','goal-kick']){
+  const m=live(),p=m.players[2],r=m.players[9];for(const q of m.players){q.x=q.team===1?(q.keeper?2050:1500):700;q.y=400+q.slot*25;}
+  r.x=1800;r.y=720;E.restart(m,kind,0,1000,720);m.restart.taker=p.id;m.restart.execute=true;m.restart.aim={x:r.x,y:r.y};m.phaseTime=1.1;E.step(m,.001);
+  assert.equal(!!m.offside?.ids.includes(r.id),kind==='free-kick',kind);
+ }
+});

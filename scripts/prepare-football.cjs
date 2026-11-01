@@ -4,6 +4,7 @@ function prepare(destination=path.join(root,'game/football/index.html')){
  const {createCanvas,Image}=require('@napi-rs/canvas'),icon=createCanvas(256,256),image=new Image();image.src=fs.readFileSync(path.join(root,'assets/football-logo.svg'));icon.getContext('2d').drawImage(image,0,0,256,256);fs.writeFileSync(path.join(root,'assets/football-icon.png'),icon.toBuffer('image/png'));
  let html=require('./prepare-preview.cjs').makePreview();
  const assets=Object.fromEntries(['logo','cover'].map(name=>[name,'data:image/svg+xml;base64,'+fs.readFileSync(path.join(root,'assets/football-'+name+'.svg')).toString('base64')]));
+ assets.background='data:image/webp;base64,'+fs.readFileSync(path.join(root,'assets/football-stadium-032.webp')).toString('base64');
  html=html.replace(/<script id="sz-test-preview-account">[\s\S]*?<\/script>/,'');
  html=html.replace(/<title>[^<]*<\/title>/,'<title>Zone Football · Preview</title>');
  // Every legacy storage reference is namespaced before any script executes.

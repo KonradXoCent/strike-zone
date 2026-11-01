@@ -13,3 +13,7 @@ body.football-client{background:#071923;color:#ebf6f1;font-family:Inter,Arial,sa
 .football-client .sz-chat-trigger,.football-client .sz-chat-toast,.football-client #visual-game-controls,.football-client #sz-depth-compare{display:none!important}
 
 .ultimate-open #social-root,.ultimate-open .social-widget,.ultimate-open #chat-widget{display:none!important}
+
+/* Stadium artwork also gives the locker room a football identity. */
+.football-client #menu{background:linear-gradient(100deg,#071b26f5,#071b26d9 65%,#071b26c9),var(--football-menu-art) center top/cover fixed!important}
+.football-team .football-slot{padding:8px 10px;margin:5px 0}.football-room-grid .football-panel{align-self:start}

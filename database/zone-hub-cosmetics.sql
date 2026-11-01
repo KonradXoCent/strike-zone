@@ -9,6 +9,9 @@ insert into zone_hub_private.cosmetic_catalog(id,kind,price,title_pl,title_en) v
 ('nebula','bundle',700,'Mgławica','Nebula'),
 ('deep-ocean','bundle',600,'Błękitna głębia','Ocean depths'),
 ('sakura','bundle',550,'Ogród sakury','Sakura garden'),
+('stadium','bundle',450,'Wieczór na stadionie','Stadium night'),
+('cyberpunk','bundle',600,'Neonowe miasto','Neon city'),
+('winter','bundle',500,'Zimowa cisza','Winter hush'),
 ('frame-halloween','frame',300,'Dyniowy strażnik','Pumpkin guardian'),
 ('frame-ember','frame',250,'Żar','Ember'),
 ('frame-aurora','frame',300,'Lodowy kryształ','Ice crystal'),
@@ -18,9 +21,9 @@ insert into zone_hub_private.cosmetic_catalog(id,kind,price,title_pl,title_en) v
 on conflict(id) do update set kind=excluded.kind,price=excluded.price,title_pl=excluded.title_pl,title_en=excluded.title_en;
 alter table zone_hub_private.cosmetics drop constraint if exists cosmetics_cosmetic_id_check;
 alter table public.zh_profiles drop constraint if exists zh_profiles_profile_theme_check;
-alter table public.zh_profiles add constraint zh_profiles_profile_theme_check check(profile_theme in ('violet','ocean','ember','forest','halloween','aurora','mirage','nebula','deep-ocean','sakura'));
+alter table public.zh_profiles add constraint zh_profiles_profile_theme_check check(profile_theme in ('violet','ocean','ember','forest','halloween','aurora','mirage','nebula','deep-ocean','sakura','stadium','cyberpunk','winter'));
 alter table public.zh_profiles drop constraint if exists zh_profiles_launcher_theme_check;
-alter table public.zh_profiles add constraint zh_profiles_launcher_theme_check check(launcher_theme in ('violet','ocean','ember','forest','halloween','aurora','mirage','nebula','deep-ocean','sakura'));
+alter table public.zh_profiles add constraint zh_profiles_launcher_theme_check check(launcher_theme in ('violet','ocean','ember','forest','halloween','aurora','mirage','nebula','deep-ocean','sakura','stadium','cyberpunk','winter'));
 alter table public.zh_profiles add column if not exists profile_background text not null default 'auto';
 alter table public.zh_profiles add column if not exists avatar_frame text not null default 'none';
 create or replace function zone_hub_private.decorate_profile(value jsonb,viewer uuid) returns jsonb
