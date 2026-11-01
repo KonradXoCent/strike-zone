@@ -31,6 +31,7 @@ jobs:
           node scripts/football-preview-smoke.cjs
           node scripts/football-preview-network.cjs
           node scripts/football-ultimate-smoke.cjs
+          node scripts/football-offline-smoke.cjs
       - name: Verify Zombie modes, map paths and actual two-client co-op
         run: |
           node --test tests/zone-zombie.test.cjs
@@ -50,7 +51,7 @@ jobs:
       - name: Keep the preview installer private to the workflow artifact
         uses: actions/upload-artifact@v7
         with:
-          name: Zone-Hub-0.1.19-Preview-Installer
+          name: Zone-Hub-0.1.20-Preview-Installer
           path: |
             dist-platform/ZoneHub-Beta-*.exe
             dist-platform/*.blockmap
@@ -62,7 +63,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: Zone-Hub-0.1.19-Screenshots
+          name: Zone-Hub-0.1.20-Screenshots
           path: |
             test-output/zonehub/*.png
             test-output/football/*.png

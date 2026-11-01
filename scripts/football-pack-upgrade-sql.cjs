@@ -1,0 +1,3 @@
+'use strict';const fs=require('node:fs'),path=require('node:path');
+function sql(){const source=fs.readFileSync(path.join(__dirname,'../database/zone-football-test-packs.sql'),'utf8'),start=source.indexOf('create or replace function zone_football_private.packs_command'),end=source.indexOf('create or replace function public.zone_football',start);return '-- Pack sizes are server-owned. Existing receipts and promotional grant counters are preserved.\n'+source.slice(start,end)+'\n'+require('./football-market-sql.cjs').sql();}
+if(require.main===module){if(process.argv[2])fs.writeFileSync(process.argv[2],sql());else process.stdout.write(sql());}module.exports={sql};

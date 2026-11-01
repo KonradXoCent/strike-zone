@@ -12,7 +12,7 @@ $$;
 revoke all on function zone_football_private.test_pack_view(uuid) from public,anon,authenticated;
 create or replace function zone_football_private.packs_command(action text,args jsonb default '{}') returns jsonb language plpgsql security definer set search_path='' as $$
 #variable_conflict use_variable
-declare uid uuid:=auth.uid();result jsonb;club zone_football_private.clubs;grant_row zone_football_private.test_pack_grants;receipt zone_football_private.packs;nonce uuid;kind text;tier text;roll float;pid text;card jsonb;pulled jsonb:='[]';
+declare uid uuid:=auth.uid();result jsonb;club zone_football_private.clubs;grant_row zone_football_private.test_pack_grants;receipt zone_football_private.packs;nonce uuid;kind text;tier text;roll float;pid text;card jsonb;pack_size int;pulled jsonb:='[]';
 begin
  if uid is null or coalesce((auth.jwt()->>'is_anonymous')::boolean,false) then raise exception 'HUB_LOGIN' using errcode='42501';end if;
  if jsonb_typeof(args) is distinct from 'object' or octet_length(args::text)>20000 then raise exception 'FOOTBALL_INPUT';end if;
@@ -29,8 +29,9 @@ begin
    select * into grant_row from zone_football_private.test_pack_grants g where g.user_id=uid and g.pack=kind and g.opened<g.quantity order by g.created_at,g.campaign limit 1 for update;
    if grant_row.user_id is null then raise exception 'FOOTBALL_TEST_PACKS_EMPTY';end if;
    select * into club from zone_football_private.clubs where user_id=uid for update;
-   if jsonb_array_length(club.cards)>4997 then raise exception 'FOOTBALL_PACK';end if;
-   for i in 1..3 loop
+   pack_size:=3;if to_regclass('zone_football_private.pack_catalog') is not null then execute 'select (data->>''count'')::int from zone_football_private.pack_catalog where id=$1' into pack_size using kind;end if;pack_size:=coalesce(pack_size,3);
+   if jsonb_array_length(club.cards)>5000-pack_size then raise exception 'FOOTBALL_PACK';end if;
+   for i in 1..pack_size loop
     roll:=random()*100;tier:=case when kind='bronze' then case when roll<85 then 'bronze' when roll<99 then 'silver' else 'gold' end when kind='silver' then case when roll<85 then 'silver' when roll<99 then 'gold' else 'elite' end else case when roll<94 then 'gold' else 'elite' end end;
     select p.id into pid from zone_football_private.players p where p.data->>'tier'=tier order by random() limit 1;
     card:=jsonb_build_object('id',gen_random_uuid(),'player_id',pid);pulled:=pulled||jsonb_build_array(card);

@@ -78,8 +78,8 @@ begin
    if pack is null then raise exception 'FOOTBALL_PACK';end if;price:=(pack->>'price')::bigint;
    if args->>'expected_zf' is distinct from price::text then raise exception 'FOOTBALL_PRICE';end if;
    if club.zf<price then raise exception 'FOOTBALL_ZF_FUNDS';end if;
-   if jsonb_array_length(club.cards)>4997 then raise exception 'FOOTBALL_CARD_LIMIT';end if;
-   for i in 1..3 loop
+   if jsonb_array_length(club.cards)>5000-(pack->>'count')::int then raise exception 'FOOTBALL_CARD_LIMIT';end if;
+   for i in 1..(pack->>'count')::int loop
     roll:=random()*100;total:=0;
     for j in 0..3 loop total:=total+(pack->'odds'->>j)::float;if roll<total then tier:=(array['bronze','silver','gold','elite'])[j+1];exit;end if;end loop;
     select p.id into pid from zone_football_private.players p where p.data->>'tier'=tier and (not(pack?'positions') or pack->'positions' ? (p.data->>'position')) order by random() limit 1;
@@ -143,4 +143,4 @@ revoke execute on function zone_football_private.command(text,jsonb),zone_footba
 create or replace function public.zone_football(action text,args jsonb default '{}') returns jsonb language sql security invoker set search_path='' as $$ select zone_football_private.market_command(action,args) $$;
 revoke all on function public.zone_football(text,jsonb) from public,anon;
 grant execute on function public.zone_football(text,jsonb) to authenticated;
-update public.zh_games set package_config=coalesce(package_config,'{}')||'{"version":"0.3.0"}'::jsonb where id='zone-football';
+update public.zh_games set package_config=coalesce(package_config,'{}')||'{"version":"0.3.1"}'::jsonb where id='zone-football';
