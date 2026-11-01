@@ -9,7 +9,7 @@ const report={from:base,to:version,checks:[],authentication:'isolated HTTP fixtu
 function stop(){execFileSync('powershell.exe',['-NoProfile','-Command',"Get-CimInstance Win32_Process -Filter \"Name='ZoneHub.exe'\" | Where-Object { $_.ExecutablePath -like $env:ZONE_HUB_SMOKE_PATTERN } | ForEach-Object { Invoke-CimMethod -InputObject $_ -MethodName Terminate | Out-Null }"],{env:{...process.env,ZONE_HUB_SMOKE_PATTERN:'*'+path.sep+path.basename(dir)+path.sep+'ZoneHub.exe'},stdio:'ignore'});}
 async function waitForUpdatedLaunch(){const end=Date.now()+45000;while(Date.now()<end){const running=execFileSync('powershell.exe',['-NoProfile','-Command',"@(Get-CimInstance Win32_Process -Filter \"Name='ZoneHub.exe'\" | Where-Object { $_.ExecutablePath -like $env:ZONE_HUB_SMOKE_PATTERN -and $_.CommandLine -notmatch '--type=' }).Count"],{env:{...process.env,ZONE_HUB_SMOKE_PATTERN:'*'+path.sep+path.basename(dir)+path.sep+'ZoneHub.exe'},encoding:'utf8'});if(Number(running.trim())>0){stop();return;}await wait(250);}throw Error('Updated platform did not start automatically');}
 function installed(){try{const file=dir+'/resources/app.asar';asar.uncache(file);return JSON.parse(asar.extractFile(file,'package.json')).version;}catch{return null;}}
-async function state(page,predicate,timeout=45000){const end=Date.now()+timeout;let last;while(Date.now()<end){last=await page.evaluate(()=>zoneHub.state());if(predicate(last))return last;await wait(200);}throw Error('Unexpected installed update state: '+JSON.stringify({version:last?.version,update:last?.hubUpdate,account:last?.account?.phase}));}
+async function state(page,predicate,timeout=45000){const end=Date.now()+timeout;let last;while(Date.now()<end){last=await page.evaluate(()=>zoneHub.state());if(predicate(last))return last;await wait(200);}throw Error('Unexpected installed update state: '+JSON.stringify({version:last?.version,update:last?.hubUpdate,account:last?.account?.phase,error:last?.error,games:Object.fromEntries(Object.entries(last?.games||{}).map(([id,r])=>[id,{phase:r.packages.phase,error:r.packages.error,checked:r.packages.checked,canPlay:r.packages.canPlay,installed:r.packages.installed,latest:r.packages.latest}]))}));}
 async function connect(){
  app=await _electron.launch({executablePath:exe,timeout:45000});
  await app.evaluate(({app,net},{base,feed,games})=>{
@@ -29,8 +29,11 @@ async function connect(){
   const updater=requireApp('electron-updater').autoUpdater,set=updater.setFeedURL.bind(updater);updater.setFeedURL=()=>set({provider:'generic',url:feed.url,channel:'zonehub'});
  },{base:fixture.base,feed:{version,url:server.base},games:gameSpecs.map(({built,...spec})=>spec)});
  const page=await app.firstWindow();await page.waitForFunction(()=>!!window.zoneHub);
- // A real check may have started before debugger interception. Drain it first.
- await state(page,s=>s.hubUpdate.phase!=='checking');await page.evaluate(()=>zoneHub.command('app-check'));return page;
+ // Both platform and game checks can start before debugger interception.
+ // Drain all real requests before the fixture refresh; check() intentionally
+ // returns early while busy, so an overlapping refresh would retain a real
+ // public manifest instead of the locally built installation's fixture.
+ await state(page,s=>s.hubUpdate.phase!=='checking'&&gameSpecs.every(g=>s.games[g.id]?.packages.phase!=='checking'),90000);await page.evaluate(()=>zoneHub.command('app-check'));return page;
 }
 (async()=>{if(process.platform!=='win32')throw Error('Windows required');try{
  const candidates=fs.readdirSync(root+'/previous-platform',{recursive:true}).filter(x=>path.basename(x)==='ZoneHub-Beta-'+base+'.exe');assert.equal(candidates.length,1);await new Promise((resolve,reject)=>{const child=spawn(path.join(root,'previous-platform',candidates[0]),['/S','/D='+dir],{stdio:'inherit'});child.once('error',reject);child.once('exit',c=>c===0?resolve():reject(Error('Bootstrap installer '+c)));});assert.equal(installed(),base);stop();passed('Original Zone Hub '+base+' installed on Windows');
