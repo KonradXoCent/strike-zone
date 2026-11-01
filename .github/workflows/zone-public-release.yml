@@ -1,0 +1,39 @@
+name: Publish verified Zone Hub, Football and Zombie
+on:
+  push:
+    branches: [release/zonehub-0.1.20]
+    paths:
+      - .github/workflows/zone-public-release.yml
+      - scripts/publish-zone-family-020.cjs
+      - docs/public-release-0.1.20.md
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: zonehub-public-0.1.20
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.repository == 'KonradXoCent/strike-zone' && github.ref == 'refs/heads/release/zonehub-0.1.20'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Verify and publish the exact installer approved by the user
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/publish-zone-family-020.cjs
+      - name: Keep publication verification
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: Zone-Public-0.1.20-Verification
+          path: public-release-020/public-release-verified.json
+          if-no-files-found: ignore
+          retention-days: 90
