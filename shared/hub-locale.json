@@ -38,5 +38,77 @@
   [
     "Przygotuj się na kolejny zrzut.",
     "Get ready for the next drop."
+  ],
+  [
+    "Cześć / Hello",
+    "Hello"
+  ],
+  [
+    "Reakcja / Reaction",
+    "Reaction"
+  ],
+  [
+    "Gry i sport / Games & sport",
+    "Games & sport"
+  ],
+  [
+    "Pokaż GIF",
+    "Show GIF"
+  ],
+  [
+    "Ukryj GIF",
+    "Hide GIF"
+  ],
+  [
+    "Nie udało się wczytać GIF. Spróbuj ponownie.",
+    "Could not load the GIF. Try again."
+  ],
+  [
+    "Szukaj: super, cześć, impreza, wow…",
+    "Search: like, hello, party, wow…"
+  ],
+  [
+    "Brak wyników. Wklej link do GIF poniżej.",
+    "No results. Paste a GIF link below."
+  ],
+  [
+    "Lub wklej bezpośredni link GIF (GIPHY / Tenor)",
+    "Or paste a direct GIF link (GIPHY / Tenor)"
+  ],
+  [
+    "Wklej link HTTPS do pliku .gif z GIPHY lub Tenor.",
+    "Paste an HTTPS link to a .gif file from GIPHY or Tenor."
+  ],
+  [
+    "Wybierz emoji",
+    "Choose an emoji"
+  ],
+  [
+    "Wstaw emoji",
+    "Insert emoji"
+  ],
+  [
+    "Wybierz GIF",
+    "Choose a GIF"
+  ],
+  [
+    "Szukaj GIF",
+    "Search GIFs"
+  ],
+  [
+    "Link do GIF",
+    "GIF link"
+  ],
+  [
+    "Dodaj GIF",
+    "Add GIF"
+  ],
+  [
+    "Super / Like",
+    "Like"
+  ],
+  [
+    "Impreza / Party",
+    "Party"
   ]
 ]

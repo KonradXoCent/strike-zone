@@ -35,9 +35,10 @@ begin
     case when sort='newest' then l.created_at end desc,case when sort='oldest' then l.created_at end asc,case when sort='name' then d.title end asc,l.id
    limit 24 offset (page-1)*24
   ) x;
+  doc:=doc||jsonb_build_object('own_listings',coalesce((select jsonb_agg(to_jsonb(o)) from(select l.id,l.item,l.game_id,l.price,l.kills,l.status,l.created_at,d.title,d.category,d.rarity,true as mine,false as bot from zone_hub_private.market_listings l join public.zh_item_definitions d on d.id=l.item where l.seller_id=uid and l.game_id=game and l.status='active' order by l.created_at desc limit 20)o),'[]'::jsonb));
   return doc||jsonb_build_object('listings',rows,'total',total,'page',page,'pages',greatest(1,ceil(total/24.0)::integer),'page_size',24,'sort',sort,'category',v_category);
  end if;
- if action like 'market\_%' escape '\' then return zone_hub_private.market_command(action,args);end if;
+ if left(action,7)='market_' then return zone_hub_private.market_command(action,args);end if;
  doc:=zone_hub_private.community_command(action,args);
  if action in ('profile','home') and doc->'profile' is not null then
   doc:=jsonb_set(doc,'{profile,creator_verified}',to_jsonb(exists(select 1 from zone_hub_private.official_accounts a where a.user_id=(doc->'profile'->>'id')::uuid)));

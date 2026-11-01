@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),root=path.join(__dirname,'..');
+function prepare(destination=path.join(root,'game/zombie/index.html')){
+ const source=fs.readFileSync(path.join(root,'game-source/index.html'),'utf8'),url=source.match(/SB_URL\s*=\s*['"]([^'"]+)/)?.[1],key=source.match(/SB_KEY\s*=\s*['"]([^'"]+)/)?.[1];if(!url||!key||key.startsWith('sb_secret_')||!(key.startsWith('sb_publishable_')||key.startsWith('eyJ')&&JSON.parse(Buffer.from(key.split('.')[1],'base64url').toString()).role==='anon'))throw Error('Zombie requires the existing public client configuration');
+ const art=Object.fromEntries(['logo','cover'].map(id=>[id,'data:image/svg+xml;base64,'+fs.readFileSync(path.join(root,'assets/zombie-'+id+'.svg')).toString('base64')]));
+ const scripts=['node_modules/@supabase/supabase-js/dist/umd/supabase.js','shared/zombie-rules.js','game/zombie/data.js','game/zombie/engine.js','game/zombie/network.js','game/zombie/app.js'];
+ const html='<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Zone Zombie</title><link rel="icon" href="'+art.logo+'"><style>'+fs.readFileSync(path.join(root,'game/zombie/style.css'),'utf8')+'</style></head><body><main id="menu"></main><section id="game" hidden><canvas id="scene"></canvas><div id="hud"></div></section><dialog id="pause"></dialog><script>window.ZONE_ZOMBIE_ART='+JSON.stringify(art)+';window.ZONE_ZOMBIE_BACKEND='+JSON.stringify({url,key})+';</script>'+scripts.map(file=>'<script>'+fs.readFileSync(path.join(root,file),'utf8').replace('if(!e)throw new Error("Automatic publicPath is not supported in this browser");','if(!e)e="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";').replace(/<\/script/gi,'<\\/script')+'</script>').join('')+'</body></html>';
+ fs.mkdirSync(path.dirname(destination),{recursive:true});fs.writeFileSync(destination,html);return destination;
+}
+if(require.main===module)console.log(prepare(process.argv[2]&&path.resolve(process.argv[2])));module.exports={prepare};

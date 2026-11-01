@@ -1,0 +1,20 @@
+/* Isolated ephemeral co-op rooms. Host owns the simulation; guests send bounded input only. */
+(()=>{'use strict';let client=null,room=null,channel=null,peers=[],listeners=new Set(),input={},last=0,sequence=0;
+ const uid=()=>room?.uid,emit=()=>listeners.forEach(f=>f()),send=payload=>channel?.send({type:'broadcast',event:'game',payload:{...payload,from:uid(),room:room.code}});
+ async function connect(bootstrap){const cfg=window.ZONE_ZOMBIE_BACKEND;client=supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},realtime:{params:{eventsPerSecond:30}},global:{fetch:(url,options)=>new URL(url).pathname.startsWith('/auth/v1/')?fetch(url,options):Promise.resolve(new Response('{}',{status:403}))}});const r=await client.auth.setSession(bootstrap.session);if(r.error)throw r.error;return r.data.user;}
+ async function join(code,owner,name){await leave();if(!client)throw Error('ZOMBIE_LOGIN');code=String(code||'').trim().toUpperCase();if(!/^[A-Z0-9]{6}$/.test(code))throw Error('ZOMBIE_CODE');const auth=await client.auth.getSession();if(!auth.data.session)throw Error('ZOMBIE_LOGIN');room={code,owner,uid:auth.data.session.user.id,name:String(name).slice(0,24),host:null,session:null,ready:false};channel=client.channel('zz-'+code.toLowerCase(),{config:{broadcast:{self:false},presence:{key:room.uid}}});
+ channel.on('presence',{event:'sync'},()=>{peers=Object.values(channel.presenceState()).flat();const hosts=peers.filter(p=>p.host);room.host=hosts.length===1?hosts[0].id:null;emit();});
+ channel.on('broadcast',{event:'game'},({payload:p})=>{if(!room||p?.room!==room.code||p.from===room.uid||!peers.some(q=>q.id===p.from))return;
+  if(p.type==='start'&&!room.owner&&p.from===room.host&&typeof p.session==='string'&&p.session.length<80&&p.state?.ps?.length<=10){room.session=p.session;sequence=0;ZoneZombie.receive(p.state,true);}
+  if(p.type==='state'&&!room.owner&&p.from===room.host&&p.session===room.session&&Number.isSafeInteger(p.sequence)&&p.sequence>sequence&&p.state?.ps?.length<=64){sequence=p.sequence;last=performance.now();ZoneZombie.receive(p.state,false);}
+  if(p.type==='input'&&room.owner&&p.session===room.session&&p.input&&JSON.stringify(p.input).length<500){const k=p.input;input[p.from]={x:Math.max(-1,Math.min(1,Number(k.x)||0)),y:Math.max(-1,Math.min(1,Number(k.y)||0)),a:Number.isFinite(k.a)?k.a:0,fire:!!k.fire,e:!!k.e,sprint:!!k.sprint,reload:!!k.reload};if(['freeze','mine','build','remove'].includes(p.action))ZoneZombie.remoteAction(p.from,p.action);}
+  if(p.type==='leave'&&p.from===room.host&&!room.owner)ZoneZombie.disconnected();
+ });
+ await new Promise((resolve,reject)=>channel.subscribe(async status=>{if(status==='SUBSCRIBED'){await channel.track({id:room.uid,name:room.name,host:owner,ready:owner});resolve();}else if(['CHANNEL_ERROR','TIMED_OUT'].includes(status))reject(Error('ZOMBIE_NETWORK'));}));last=performance.now();emit();return room;
+ }
+ async function leave(){if(room?.owner)await send({type:'leave'});if(channel&&client)await client.removeChannel(channel);channel=null;room=null;peers=[];input={};emit();}
+ function start(state){if(!room?.owner)return;room.session=crypto.randomUUID();sequence=0;send({type:'start',state,session:room.session});}
+ let accumulator=0,queuedAction=null;
+ function tick(dt,state,keys,action){if(!room)return;if(action)queuedAction=action;accumulator+=dt;if(accumulator<.08)return;accumulator=0;if(room.owner){for(const p of state.ps)if(!p.bot&&!peers.some(peer=>peer.id===p.id))p.bot=true;for(const key of Object.keys(input))if(!peers.some(p=>p.id===key))delete input[key];send({type:'state',state,session:room.session,sequence:++sequence});}else{send({type:'input',input:keys,action:queuedAction,session:room.session});queuedAction=null;if(room.session&&performance.now()-last>15000)ZoneZombie.disconnected();}}
+ window.ZoneZombieNet={connect,join,leave,start,tick,updateSession:session=>client?.auth.setSession(session),get room(){return room;},get peers(){return peers;},get inputs(){return input;},onChange(fn){listeners.add(fn);return()=>listeners.delete(fn);}};
+})();

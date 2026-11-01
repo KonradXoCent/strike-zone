@@ -14,7 +14,7 @@ function prepare(destination=path.join(root,'game/football/index.html')){
  html=html.replace(wallet,'<!-- Zone Football preview never connects the shared wallet. -->');
  html=html.replace(/<!-- SZ BRAND START -->[\s\S]*?<!-- SZ BRAND END -->/,'<style>'+fs.readFileSync(path.join(root,'shared/branding.css'),'utf8')+'</style><script>document.documentElement.style.setProperty("--sz-brand-image",\'url("'+assets.logo+'")\');document.documentElement.style.setProperty("--sz-loading-art",\'url("'+assets.cover+'")\');</script><link rel="icon" href="'+assets.logo+'">');
  html=html.replace('</head>',()=>'<style>'+fs.readFileSync(path.join(root,'game/football.css'),'utf8')+'</style></head>');
- html=html.replace('</body>',()=>'<script>'+fs.readFileSync(path.join(root,'game/football.js'),'utf8').replace(/<\/script/gi,'<\\/script')+'</script></body>');
+ html=html.replace('</body>',()=>'<script>'+['game/football.js','game/football-stadiums.js'].map(file=>fs.readFileSync(path.join(root,file),'utf8')).join('\n').replace(/<\/script/gi,'<\\/script')+'</script></body>');
  fs.mkdirSync(path.dirname(destination),{recursive:true});fs.writeFileSync(destination,html);return destination;
 }
 if(require.main===module)console.log(prepare(process.argv[2]&&path.resolve(process.argv[2])));

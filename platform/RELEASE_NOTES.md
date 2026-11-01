@@ -1,3 +1,16 @@
+Zone Hub 0.1.16 — podgląd: stadiony, Zone Zombie, rynek i czat
+
+- Zone Football 0.1.1: trzy stadiony, pełne trybuny, wejście i powitanie drużyn oraz konfetti w kolorze zdobywcy gola. Prezentacja i stadion są wspólne dla graczy w meczu.
+- Osobne Zone Zombie 0.1.0: Survival, Objectives, Survive Rounds i Zombie Escape; osiem map, boty, infekcja, zamrażanie, barykady, miny i wspólne lobby.
+- Czat: nowy wygląd, emoji w kategoriach, galeria GIF i wklejanie linków GIPHY/Tenor. Obsługiwane prywatne wiadomości i grupy; możliwość ukrycia animacji.
+- Rynek: zawsze dostępne Moje oferty, wycofanie z powrotem do ekwipunku, ceny odniesienia zgodne z wyceną przedmiotów i zakupy botów w różnych przedziałach cenowych.
+- Strike Zone 2D: usunięte Piłka Nożna i Zombie z wyboru trybów; piłka usunięta z minigier; usunięte opcje tworzenia obu typów map z Warsztatu.
+- Konto, zainstalowane gry, rynek, portfel, kupione motywy oraz pozostałe funkcje Huba pozostają dostępne.
+
+To podgląd do sprawdzenia; nie publikuje nowych wersji Haunt ani Royale.
+
+---
+
 Zone Hub 0.1.13 · Zone Haunt 0.1.4 — Punkty badań i skrócone kwoty
 
 - Sprzęt Zone Haunt kupuje się za osobne Punkty badań (PB / RP), zdobywane za rozpoznanie ducha, dowody, zdjęcia i kość. Zlecenia nie dopisują nowych nagród do ZC.

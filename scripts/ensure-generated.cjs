@@ -11,3 +11,5 @@ execFileSync(process.execPath,[path.join(__dirname,'royale-assets.cjs')],{stdio:
 require('./hub-cosmetics-assets.cjs')();
 
 require('./prepare-football.cjs').prepare();
+
+require('./prepare-zombie.cjs').prepare();

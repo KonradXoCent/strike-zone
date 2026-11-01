@@ -2,11 +2,18 @@
 create or replace function zone_hub_private.market_bot_tick() returns jsonb language plpgsql security definer set search_path='' as $$
 declare state zone_hub_private.market_bots;row record;bought integer:=0;stocked integer:=0;game text;
 begin
+ perform zone_wallet_private.lock();
  if not pg_catalog.pg_try_advisory_xact_lock(28003419) then return '{}';end if;
  select * into state from zone_hub_private.market_bots where id=true for update;
  if state.last_tick>now()-interval '55 seconds' then return '{}';end if;
  if state.day<>current_date then state.day:=current_date;state.spent:=0;end if;
- for row in select l.id,l.price from zone_hub_private.market_listings l join public.zh_item_definitions d on d.id=l.item where l.status='active' and l.seller_id is not null and l.created_at<now()-interval '1 minute' and l.price<=d.market_price*.95 and random()<.35 order by random() limit 3 loop
+ for row in select id,price from (
+  select l.id,l.price,l.created_at,row_number() over(partition by case when d.market_price>=10000 then 2 when d.market_price>=1000 then 1 else 0 end order by l.created_at,l.id) as tier_rank
+  from zone_hub_private.market_listings l join public.zh_item_definitions d on d.id=l.item
+  where l.status='active' and l.seller_id is not null and l.created_at<now()-interval '1 minute'
+   and d.tradable and l.price<=d.market_price*1.10 and l.price<=250000-state.spent
+   and random()<least(.85,.35+extract(epoch from(now()-l.created_at))/72000)
+ ) candidates order by tier_rank,created_at limit 3 loop
   if state.spent+row.price>250000 then continue;end if;
   begin perform zone_hub_private.market_settle(row.id,null);state.spent:=state.spent+row.price;bought:=bought+1;exception when others then null;end;
  end loop;
