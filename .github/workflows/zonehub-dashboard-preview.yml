@@ -1,7 +1,7 @@
-name: Zone Hub stadiums, Zombie and chat checks
+name: Zone Hub Ultimate Team checks
 on:
   push:
-    branches: [feature/zonehub-purple-dashboard, feature/zonehub-tile-catalog-football, feature/stadiums-zombie-chat]
+    branches: [feature/zonehub-purple-dashboard, feature/zonehub-tile-catalog-football, feature/stadiums-zombie-chat, feature/football-ultimate-club]
   workflow_dispatch:
 permissions:
   contents: read
@@ -23,13 +23,14 @@ jobs:
           node --check platform/ui/common.js
           npm run check:ui
       - name: Test library, catalog and update compatibility
-        run: node --test --test-concurrency=2 tests/zone-hub*.test.cjs
+        run: node --test --test-concurrency=2 tests/zone-hub*.test.cjs tests/zone-football*.test.cjs
       - name: Test actual Zone Hub desktop UI, navigation, accounts and games
         run: node scripts/zone-hub-smoke.cjs
       - name: Verify standalone football rules, bots and two-client match
         run: |
           node scripts/football-preview-smoke.cjs
           node scripts/football-preview-network.cjs
+          node scripts/football-ultimate-smoke.cjs
       - name: Verify Zombie modes, map paths and actual two-client co-op
         run: |
           node --test tests/zone-zombie.test.cjs
@@ -49,7 +50,7 @@ jobs:
       - name: Keep the preview installer private to the workflow artifact
         uses: actions/upload-artifact@v7
         with:
-          name: Zone-Hub-0.1.16-Preview-Installer
+          name: Zone-Hub-0.1.17-Preview-Installer
           path: |
             dist-platform/ZoneHub-Beta-*.exe
             dist-platform/*.blockmap
@@ -61,7 +62,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: Zone-Hub-0.1.16-Screenshots
+          name: Zone-Hub-0.1.17-Screenshots
           path: |
             test-output/zonehub/*.png
             test-output/football/*.png

@@ -63,3 +63,17 @@ Bieżąca gałąź: `feature/stadiums-zombie-chat`, na bazie podglądu Huba 0.1.
 - Stare projekty map graczy nie zostały skasowane. W Strike nie można wybrać usuniętych trybów ani stworzyć dla nich nowej mapy z interfejsu.
 
 Wydania publiczne Haunt 0.1.15 i Royale 0.1.9 pozostają punktami wyjścia. Zmiany gier/Huba mają status podglądu, dopóki nie zostaną osobno opublikowane.
+
+
+## Ultimate Team — 1 listopada 2026, Hub 0.1.17 / Football 0.2.0
+
+Bieżąca gałąź: `feature/football-ultimate-club`, baza `f39a2a617b5079a223cb14ff8a8bede476cd2aa8`. Własny silnik, renderowanie i klub w `game/football-ultimate/`; stary tryb 5v5 pozostaje w osobnym menu.
+
+- Silnik hosta: 22 zawodników, kontrola 10 z pola na drużynę, keeper AI, 2x45 wirtualnych minut, przerwy na żądanie przy zatrzymaniu i 5 zmian, połowa ze zmianą stron. Zegar nie biegnie podczas przerw, VAR i wznowień.
+- Sędzia główny i dwaj asystenci, aut/rożny/rzut od bramki/wolny/karny, spalony zapamiętany w chwili podania i odgwizdany przy zaangażowaniu zawodnika, VAR oparty na zapisanych odległościach/kontakcie i goal-line wymagający przekroczenia linii przez całą piłkę. Reguły są uproszczoną własną symulacją 2D.
+- 180 fikcyjnych piłkarzy, 18 kart startowych, formacje 4-3-3/4-4-2/3-5-2, rezerwy i ławka. Paczki: Kickoff 75 ZC (85/14/1/0%), Rising Stars 200 ZC (0/85/14/1%), Elite Nights 500 ZC (0/0/94/6%); po 3 niezależne losowania, możliwe duplikaty.
+- Katalog gry kosztuje 50 ZC. `public.zone_football` jest fasadą invoker; prywatna procedura wymaga zakupu gry, blokuje portfel, losuje karty na serwerze i zapisuje nonce idempotencji. Tabele są prywatne, RLS i odebrane bezpośrednie uprawnienia. Nowy łańcuch `zone_hub -> football_hub_command -> haunt_economy_command -> wallet_hub_command` zachowuje Haunt i całą dotychczasową ekonomię.
+- Ligi Zone/Premier po 7 kolejek (8 klubów), puchary Zone/Neon po 3 etapy i sparing. Pucharowy remis daje powtórkę. Wyniki są osobistą historią, bez nagród pieniężnych/kart ani globalnego rankingu.
+- Online: prywatne lobby dwóch graczy, serwer przydziela użytkowników i składy oraz losowy topic `zfu-<uuid>`. Host symuluje, gość wysyła sterowanie. Nie jest to dedykowany serwer meczu ani publiczny matchmaking. Wyniki nie służą rozliczaniu ekonomii.
+- Football jest wbudowany w Hub i aktualizowany z nim. Start gry i zakupy wymagają zalogowania/własności; plik HTML jest demonstracją offline bez prawdziwego portfela i zakupów. Preload dopuszcza tylko zamkniętą listę operacji klubu.
+- Testy: `tests/zone-football-engine.test.cjs`, `tests/zone-football-economy.test.cjs`, `scripts/football-ultimate-smoke.cjs`; ostatni uruchamia dwa prawdziwe klienty przypiętego SDK z lokalną bazą i brokerem. Test Huba obejmuje zakup gry za 50 ZC oraz uruchomienie z sesją. Zachować dotychczasowe testy 5v5, Zombie, czatu/rynku i usunięcia trybów Strike.

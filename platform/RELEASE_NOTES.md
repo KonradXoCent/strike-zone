@@ -1,3 +1,14 @@
+Zone Hub 0.1.17 · Zone Football 0.2.0 — Ultimate Team (podgląd)
+
+- Osobny Ultimate Team 11v11 obok istniejącego szybkiego 5v5. Przełączanie pomiędzy dziesięcioma zawodnikami z pola; bramkarze zawsze AI. Większe boisko, kamera podążająca za piłką, radar i dolne paski zawodnika/posiadania.
+- 180 fikcyjnych piłkarzy, klub w chmurze, 18 kart na start, formacje 4-3-3 / 4-4-2 / 3-5-2, ławka i rezerwy. Karty Bronze, Silver, Gold i Elite wpływają na parametry gry.
+- Zone Football kosztuje 50 ZC ze wspólnego portfela. Paczki po 3 karty kosztują 75 / 200 / 500 ZC; szanse są pokazane przed zakupem. Serwer losuje karty, rozlicza transakcję i rozpoznaje ponowienia. Duplikaty możliwe; jednego piłkarza nie można ustawić dwa razy.
+- Dwie połowy po 45 wirtualnych minut. Zatrzymania wstrzymują zegar. Pięć zmian na drużynę podczas zgłoszonej przerwy lub w połowie meczu; zdjęty zawodnik nie wraca.
+- Dwie ligi z tabelami, dwa puchary i sparing z botami; prywatne mecze online dwóch klubów. W pucharze remis oznacza powtórzenie etapu. Historia zapisuje się na koncie i nie emituje ZC ani kart.
+- Auty z kierowanym wrzutem, rożne, rzuty od bramki, wolne, karne, spalony przy podaniu i trzech sędziów. VAR odtwarza zapisany kontakt; goal-line sprawdza całą piłkę za linią. To własna, uproszczona symulacja 2D.
+- Trzy stadiony, ceremonia, kibice i konfetti również w Ultimate Team. Usunięty nakładający się ekran Strike Zone podczas ładowania.
+- Instalator aktualizuje Hub i wbudowany Football. Pozostałe gry i ich zakupy pozostają w dotychczasowych kanałach.
+
 Zone Hub 0.1.16 — podgląd: stadiony, Zone Zombie, rynek i czat
 
 - Zone Football 0.1.1: trzy stadiony, pełne trybuny, wejście i powitanie drużyn oraz konfetti w kolorze zdobywcy gola. Prezentacja i stadion są wspólne dla graczy w meczu.
