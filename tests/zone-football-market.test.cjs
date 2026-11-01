@@ -1,0 +1,40 @@
+'use strict';
+const{test}=require('node:test'),assert=require('node:assert/strict'),{randomUUID}=require('node:crypto'),fs=require('node:fs'),{setup}=require('../scripts/test-support/wallet-db.cjs'),D=require('../game/football-ultimate/data.js');
+test('ZF exchange, packs, duplicates and transfer escrow conserve balances and enforce ownership',async()=>{const f=await setup({progression:true}),[a,b,c]=f.ids;try{
+ await f.db.exec(require('../scripts/football-economy-sql.cjs').sql());await f.db.exec(fs.readFileSync('database/zone-football-test-packs.sql','utf8'));await f.db.exec(require('../scripts/football-market-sql.cjs').sql());
+ const rpc=async(id,action,args={})=>(await f.as(id,'select zone_football($1,$2::jsonb) v',[action,JSON.stringify(args)])).rows[0].v;
+ for(const id of f.ids){await f.db.query('insert into saves values($1,$2,now())',[id,JSON.stringify({cur:'Test',profiles:{Test:{wallet:10000,skins:[],royale:{wallet:0}}}})]);await f.as(id,`select zone_hub('home','{"walletProtocol":1}')`);await f.as(id,`select zone_hub('add_game','{"game_id":"zone-football","purchasePrice":50}')`);await rpc(id,'state');}
+ await assert.rejects(rpc(null,'state'),/HUB_LOGIN|permission denied/);
+ await assert.rejects(f.as(a,"select * from zone_football_private.card_market"),/permission denied/);
+ await assert.rejects(f.as(a,"select zone_football_private.command('buy_pack','{}')"),/permission denied/);
+ await assert.rejects(f.as(a,"select zone_football_private.packs_command('buy_pack','{}')"),/permission denied/);
+ const nonce=randomUUID(),args={bundle:'zf-10000',expected_zc:1000,nonce};let s=await rpc(a,'topup',args);assert.equal(s.club.zf,10000);assert.equal(s.wallet.balance,8950);s=await rpc(a,'topup',args);assert.equal(s.club.zf,10000);assert.equal(s.wallet.balance,8950);
+ await assert.rejects(rpc(a,'topup',{...args,bundle:'zf-1000',expected_zc:100}),/FOOTBALL_NONCE/);
+ await assert.rejects(rpc(a,'topup',{...args,nonce:randomUUID(),expected_zc:0}),/FOOTBALL_PRICE/);
+ for(let i=0;i<2;i++)await rpc(a,'topup',{...args,nonce:randomUUID()});
+ let balance=30000;for(const pack of D.packs){const n=randomUUID(),p={nonce:n,pack:pack.id,expected_zf:pack.price};s=await rpc(a,'buy_pack',p);balance-=pack.price;assert.equal(s.club.zf,balance);assert.equal(s.wallet.balance,6950);assert.equal(s.pulled.length,3);for(const card of s.pulled)if(pack.positions)assert(pack.positions.includes(D.byId[card.player_id].position));assert.deepEqual((await rpc(a,'buy_pack',p)).pulled,s.pulled);assert.equal((await rpc(a,'state')).club.zf,balance);}
+ const before=await rpc(c,'state');await assert.rejects(rpc(c,'buy_pack',{pack:'gold',expected_zf:5000,nonce:randomUUID()}),/FOOTBALL_ZF_FUNDS/);assert.deepEqual((await rpc(c,'state')).club,before.club);
+ // No duplicate instance or duplicate player template may occupy any of the 18 slots.
+ s=await rpc(a,'state');const base=s.club.cards.find(x=>x.id===s.club.squad[1]),baseCount=s.club.cards.filter(x=>x.player_id===base.player_id).length,copy={...base,id:randomUUID()},copy2={...base,id:randomUUID()};await f.db.query('update zone_football_private.clubs set cards=cards||$2::jsonb where user_id=$1',[a,JSON.stringify([copy,copy2])]);
+ s=await rpc(a,'state');const grouped=D.grouped(s.club);assert.equal(grouped.find(g=>g.player.id===base.player_id).copies.length,baseCount+2);assert.equal(new Set(grouped.map(g=>g.player.id)).size,grouped.length);
+ const duplicateSquad=[...s.club.squad];duplicateSquad[13]=copy.id;await assert.rejects(rpc(a,'squad',{...s.club,squad:duplicateSquad}),/FOOTBALL_SQUAD/);
+ const bad=[...s.club.squad];[bad[1],bad[4]]=[bad[4],bad[1]];await assert.rejects(rpc(a,'squad',{...s.club,squad:bad}),/FOOTBALL_POSITION/);
+ await assert.rejects(rpc(a,'quick_sell',{card:base.id,expected_zf:20,nonce:randomUUID()}),/FOOTBALL_EQUIPPED/);
+ await assert.rejects(rpc(a,'market_list',{card:base.id,price:50,nonce:randomUUID()}),/FOOTBALL_EQUIPPED/);
+ const sale={card:copy.id,expected_zf:20,nonce:randomUUID()};s=await rpc(a,'quick_sell',sale);balance+=20;assert.equal(s.club.zf,balance);assert(!s.club.cards.some(x=>x.id===copy.id));assert(s.club.cards.some(x=>x.id===base.id));assert.equal((await rpc(a,'quick_sell',sale)).club.zf,balance);
+ const list={card:copy2.id,price:333,nonce:randomUUID()};let listing=await rpc(a,'market_list',list);assert(!listing.club.cards.some(x=>x.id===copy2.id));assert.equal((await rpc(a,'market_list',list)).listing_id,listing.listing_id);
+ const filtered=await rpc(a,'market',{position:'GK',query:'no match'});assert.equal(filtered.market.rows.length,0);assert.equal(filtered.market.own.length,1);
+ await assert.rejects(rpc(c,'market_withdraw',{listing:listing.listing_id,nonce:randomUUID()}),/FOOTBALL_LISTING_OWNER/);
+ await assert.rejects(rpc(a,'market_buy',{listing:listing.listing_id,expected_zf:333,nonce:randomUUID()}),/FOOTBALL_SELF_BUY/);
+ for(const id of[b,c])await rpc(id,'topup',{bundle:'zf-1000',expected_zc:100,nonce:randomUUID()});
+ await assert.rejects(rpc(b,'market_buy',{listing:listing.listing_id,expected_zf:1,nonce:randomUUID()}),/FOOTBALL_PRICE/);
+ const purchases=[{id:b,nonce:randomUUID()},{id:c,nonce:randomUUID()}],results=await Promise.allSettled(purchases.map(({id,nonce})=>rpc(id,'market_buy',{listing:listing.listing_id,expected_zf:333,nonce})));assert.equal(results.filter(x=>x.status==='fulfilled').length,1);assert.equal(results.filter(x=>x.status==='rejected').length,1);
+ const winner=purchases[results.findIndex(x=>x.status==='fulfilled')];const win=await rpc(winner.id,'state');assert.equal(win.club.zf,667);assert(win.club.cards.some(x=>x.id===copy2.id));assert.equal((await rpc(a,'state')).club.zf,balance+333);assert.equal((await rpc(winner.id,'market_buy',{listing:listing.listing_id,expected_zf:333,nonce:winner.nonce})).club.zf,667);
+ // Withdraw returns the same card once, irrespective of current search filters.
+ const extra=s.club.cards.find(x=>!s.club.squad.includes(x.id));listing=await rpc(a,'market_list',{card:extra.id,price:500,nonce:randomUUID()});const withdraw={listing:listing.listing_id,nonce:randomUUID()};await rpc(a,'market_withdraw',withdraw);await rpc(a,'market_withdraw',withdraw);assert.equal((await rpc(a,'state')).club.cards.filter(x=>x.id===extra.id).length,1);
+ await f.db.query("insert into zone_football_private.test_pack_grants(user_id,campaign,pack,quantity) values($1,'qa','gold',2)",[a]);const freeNonce=randomUUID();s=await rpc(a,'open_test_pack',{pack:'gold',nonce:freeNonce});const zf=s.club.zf;assert.equal(s.test_packs.gold,1);assert.equal((await rpc(a,'open_test_pack',{pack:'gold',nonce:freeNonce})).club.zf,zf);
+ await assert.rejects(rpc(a,'open_test_pack',{pack:'gold',nonce:args.nonce}),/FOOTBALL_NONCE/);
+ assert.equal((await rpc(a,'state')).test_packs.gold,1);
+ // Replacing a substitute by a new reserve is accepted without disturbing the starting LB.
+ s=await rpc(a,'state');const replacement=s.club.cards.find(x=>!s.club.squad.includes(x.id)&&!D.roster(s.club).some(p=>p.id===x.player_id));const changed=[...s.club.squad];changed[17]=replacement.id;s=await rpc(a,'squad',{name:s.club.name,formation:s.club.formation,squad:changed,zf:999999});assert.equal(s.club.squad[17],replacement.id);assert.equal(s.club.zf,zf);
+ }finally{await f.db.close();}});

@@ -13,7 +13,7 @@ function prepare(destination=path.join(root,'game/football/index.html')){
  if(!html.includes(wallet))throw Error('Football wallet isolation anchor missing');
  html=html.replace(wallet,'<!-- Zone Football preview never connects the shared wallet. -->');
  html=html.replace(/<!-- SZ BRAND START -->[\s\S]*?<!-- SZ BRAND END -->/,'<style>'+fs.readFileSync(path.join(root,'shared/branding.css'),'utf8')+'</style><script>document.documentElement.style.setProperty("--sz-brand-image",\'url("'+assets.logo+'")\');document.documentElement.style.setProperty("--sz-loading-art",\'url("'+assets.cover+'")\');</script><link rel="icon" href="'+assets.logo+'">');
- html=html.replace('</head>',()=>'<style>'+fs.readFileSync(path.join(root,'game/football.css'),'utf8')+['ui.css','break-ui.css','pack-show.css'].map(f=>fs.readFileSync(path.join(root,'game/football-ultimate',f),'utf8')).join('\n')+'</style></head>');
+ html=html.replace('</head>',()=>'<style>'+fs.readFileSync(path.join(root,'game/football.css'),'utf8')+['ui.css','break-ui.css','pack-show.css','club-ui.css'].map(f=>fs.readFileSync(path.join(root,'game/football-ultimate',f),'utf8')).join('\n')+'</style></head>');
  // Disable the inherited shooter splash before it can paint. One football loader owns startup.
  html=html.replace('<div id="splash">','<div id="splash" style="display:none!important">');
  html=html.replace(/<div class="sl">STRIKE <b>ZONE<\/b><\/div><div class="ss">[^<]*<\/div>/,'<div class="sl">ZONE <b>FOOTBALL</b></div><div class="ss">FOOTBALL / CLUBS</div>');
