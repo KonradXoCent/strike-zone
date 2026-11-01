@@ -77,3 +77,14 @@ Bieżąca gałąź: `feature/football-ultimate-club`, baza `f39a2a617b5079a223cb
 - Online: prywatne lobby dwóch graczy, serwer przydziela użytkowników i składy oraz losowy topic `zfu-<uuid>`. Host symuluje, gość wysyła sterowanie. Nie jest to dedykowany serwer meczu ani publiczny matchmaking. Wyniki nie służą rozliczaniu ekonomii.
 - Football jest wbudowany w Hub i aktualizowany z nim. Start gry i zakupy wymagają zalogowania/własności; plik HTML jest demonstracją offline bez prawdziwego portfela i zakupów. Preload dopuszcza tylko zamkniętą listę operacji klubu.
 - Testy: `tests/zone-football-engine.test.cjs`, `tests/zone-football-economy.test.cjs`, `scripts/football-ultimate-smoke.cjs`; ostatni uruchamia dwa prawdziwe klienty przypiętego SDK z lokalną bazą i brokerem. Test Huba obejmuje zakup gry za 50 ZC oraz uruchomienie z sesją. Zachować dotychczasowe testy 5v5, Zombie, czatu/rynku i usunięcia trybów Strike.
+
+
+## Football 0.2.1 / Hub 0.1.18 — zgłoszenia użytkownika po teście
+
+Poprawiono rozstawienie przed kickoffem we wszystkich formacjach i obu połowach; wyjątek to zawodnik rozpoczynający na środku. Wszyscy przeciwnicy są poza kołem 165 jednostek. Kolory zestawów są wspólne w danych/renderowaniu/radarze/HUD: niebieski i pomarańczowy, keeper fioletowy/żółty.
+
+VAR wymaga rzeczywistego faulu i poważnej sytuacji (pole karne lub nieostrożny odbiór), niejednoznacznego dystansu i 120 s od poprzedniego sprawdzenia. Goal-line dotyczy granicznego przechwytu, z 180 s przerwy; oczywiste przekroczenie linii daje od razu gola. AI podejmuje odbiór przy osiągalnej piłce. Granice rozstrzyga najwcześniejszy punkt przecięcia toru całej piłki; również piłka prowadzona podlega sprawdzeniu.
+
+`break-ui.js/css` zawiera wizualny panel zmian, `pack-show.js/css` animację paczek. Natywny test obejmuje wybór z boiska/ławki, limit i zmiany gościa; pack test obejmuje zakup, darmowe otwarcie i zapis kart. Demo przechowuje 6 testowych otwarć tylko lokalnie, osobno od portfela.
+
+`zone-football-test-packs.sql` wprowadza prywatne, skończone granty i `packs_command`, zachowując stary `command` oraz routing Huba/Haunt. Nowa akcja `open_test_pack` wymaga własności gry, zużywa jeden grant, zapisuje 3 karty i nonce, nie obciąża ZC. Przyznawanie grantów nie jest akcją klienta. Każdy grant ma klucz `(user_id,campaign,pack)`. Zestaw dla ZeroX jest jednorazowy; nie przyznawać automatycznie całej społeczności ani nie rozdawać licencji na grę.

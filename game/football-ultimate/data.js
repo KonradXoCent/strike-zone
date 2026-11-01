@@ -23,5 +23,6 @@
  function demoClub(){return{name:'Zone United',formation:'4-3-3',cards:starter.map((id,i)=>({id:'demo-'+i,player_id:id})),squad:starter.map((_,i)=>'demo-'+i),progress:{}};}
  function roster(club){return club.squad.map(id=>{const c=club.cards.find(c=>c.id===id);return c?{...byId[c.player_id],cardId:c.id}:null;}).filter(Boolean);}
  function opponent(level=0,seed=0){const pool=players.filter(p=>p.tier===['bronze','silver','gold','elite'][Math.max(0,Math.min(3,level))]),taken=new Set();return starterPositions.map((pos,i)=>{const list=pool.filter(p=>p.position===pos&&!taken.has(p.id)),p=list[(seed+i)%list.length]||pool.find(p=>!taken.has(p.id));taken.add(p.id);return{...p,cardId:'bot-'+i};});}
- return{players,byId,positions,starter,formations,packs,competitions,clubs,demoClub,roster,opponent,version:'0.2.0'};
+ const kits=[{shirt:'#318bff',trim:'#f1f7ff',keeper:'#ba9aff',name:'blue'},{shirt:'#ff963f',trim:'#152333',keeper:'#ffe078',name:'orange'}];
+ return{kits,players,byId,positions,starter,formations,packs,competitions,clubs,demoClub,roster,opponent,version:'0.2.1'};
 });

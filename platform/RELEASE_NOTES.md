@@ -1,3 +1,12 @@
+Zone Hub 0.1.18 · Zone Football 0.2.1 — poprawki meczu i paczki testowe
+
+- Wyraźne stroje niebieskie i pomarańczowe, osobne kolory bramkarzy, zgodne oznaczenia radaru i wyniku. Drużyny przed rozpoczęciem od środka stoją na własnych połowach, a przeciwnicy poza kołem środkowym; dotyczy to też kolejnej połowy i wznowienia po golu.
+- VAR nie zatrzymuje zwykłych odbiorów ani rutynowych fauli. Sprawdza tylko poważny, niejednoznaczny rzeczywisty faul, z przerwą pomiędzy kontrolami. Goal-line nie pojawia się przy oczywistych golach i zwykłych obronach.
+- Wznowienie zależy od pierwszej przekroczonej linii, także przy strzałach po skosie. Koniec boiska poza bramką oznacza rzut od bramki lub rożny; wrzut z autu dotyczy wyłącznie linii bocznej. Posiadanie piłki nie pomija kontroli granic.
+- Nowy panel przerwy: tablica wyniku, czas i limit zmian, schemat ustawienia, wybór zawodnika na boisku, porównanie parametrów i wizualna ławka. Zachowany limit pięciu zmian oraz zgodność pozycji bramkarza; panel działa także u gościa online.
+- Animowane otwieranie paczek: zamknięta paczka, światła, rozbłysk, kolejno obracane karty i dźwięk respektujący głośność. Można pominąć animację; karty są zapisane przed pokazaniem wyniku. Ograniczenie animacji jest respektowane.
+- Demo ma sześć lokalnych paczek testowych (po dwie każdego rodzaju), bez ZC. Konto ZeroX może otrzymać taki sam jednorazowy zestaw serwerowy; pozostała liczba jest rozliczana atomowo i nie odnawia się przy ponownym logowaniu. Zakupy za ZC zachowują osobne potwierdzenie i ceny.
+
 Zone Hub 0.1.17 · Zone Football 0.2.0 — Ultimate Team (podgląd)
 
 - Osobny Ultimate Team 11v11 obok istniejącego szybkiego 5v5. Przełączanie pomiędzy dziesięcioma zawodnikami z pola; bramkarze zawsze AI. Większe boisko, kamera podążająca za piłką, radar i dolne paski zawodnika/posiadania.

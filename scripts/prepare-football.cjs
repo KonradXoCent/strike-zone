@@ -13,11 +13,11 @@ function prepare(destination=path.join(root,'game/football/index.html')){
  if(!html.includes(wallet))throw Error('Football wallet isolation anchor missing');
  html=html.replace(wallet,'<!-- Zone Football preview never connects the shared wallet. -->');
  html=html.replace(/<!-- SZ BRAND START -->[\s\S]*?<!-- SZ BRAND END -->/,'<style>'+fs.readFileSync(path.join(root,'shared/branding.css'),'utf8')+'</style><script>document.documentElement.style.setProperty("--sz-brand-image",\'url("'+assets.logo+'")\');document.documentElement.style.setProperty("--sz-loading-art",\'url("'+assets.cover+'")\');</script><link rel="icon" href="'+assets.logo+'">');
- html=html.replace('</head>',()=>'<style>'+fs.readFileSync(path.join(root,'game/football.css'),'utf8')+fs.readFileSync(path.join(root,'game/football-ultimate/ui.css'),'utf8')+'</style></head>');
+ html=html.replace('</head>',()=>'<style>'+fs.readFileSync(path.join(root,'game/football.css'),'utf8')+['ui.css','break-ui.css','pack-show.css'].map(f=>fs.readFileSync(path.join(root,'game/football-ultimate',f),'utf8')).join('\n')+'</style></head>');
  // Disable the inherited shooter splash before it can paint. One football loader owns startup.
  html=html.replace('<div id="splash">','<div id="splash" style="display:none!important">');
  html=html.replace(/<div class="sl">STRIKE <b>ZONE<\/b><\/div><div class="ss">[^<]*<\/div>/,'<div class="sl">ZONE <b>FOOTBALL</b></div><div class="ss">FOOTBALL / CLUBS</div>');
- html=html.replace('</body>',()=>'<script>'+['game/football.js','game/football-stadiums.js','game/football-ultimate/data.js','game/football-ultimate/engine.js','game/football-ultimate/view.js','game/football-ultimate/network.js','game/football-ultimate/ui.js'].map(file=>fs.readFileSync(path.join(root,file),'utf8')).join('\n').replace(/<\/script/gi,'<\\/script')+'</script></body>');
+ html=html.replace('</body>',()=>'<script>'+['game/football.js','game/football-stadiums.js','game/football-ultimate/data.js','game/football-ultimate/engine.js','game/football-ultimate/view.js','game/football-ultimate/network.js','game/football-ultimate/break-ui.js','game/football-ultimate/pack-show.js','game/football-ultimate/ui.js'].map(file=>fs.readFileSync(path.join(root,file),'utf8')).join('\n').replace(/<\/script/gi,'<\\/script')+'</script></body>');
  fs.mkdirSync(path.dirname(destination),{recursive:true});fs.writeFileSync(destination,html);return destination;
 }
 if(require.main===module)console.log(prepare(process.argv[2]&&path.resolve(process.argv[2])));
