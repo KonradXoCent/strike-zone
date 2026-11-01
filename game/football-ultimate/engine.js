@@ -35,14 +35,14 @@
  }
  function pass(m,p,x,y,exempt=false){if(!p||m.ball.owner!==p.id)return false;const dir=direction(m,p.team),ax=(x??p.x+dir*200)-p.x,ay=(y??p.y)-p.y,al=Math.hypot(ax,ay)||1,list=m.players.filter(q=>q.team===p.team&&q.id!==p.id&&!q.red&&dist(q,p)>40);list.sort((a,b)=>{const rank=q=>{const d=dist(p,q);return((q.x-p.x)*ax+(q.y-p.y)*ay)/(d*al)*600-d*.23;};return rank(b)-rank(a);});const target=list[0];if(!target)return false;return release(m,p,target.x+target.vx*.25,target.y+target.vy*.25,510+p.pass*1.2,target,exempt);}
  function shoot(m,p,x,y){if(!p||p.keeper||m.ball.owner!==p.id)return false;const dir=direction(m,p.team),goal=dir>0?FIELD.right+50:FIELD.left-50;let ax=x,ay=y;if(!Number.isFinite(x)||Math.hypot(x-p.x,y-p.y)<40){ax=goal;ay=FIELD.cy;}const error=(rng(m)-.5)*(100-p.shoot)*1.1;m.stats[p.team].shots++;return release(m,p,ax,ay+error,650+p.shoot*2);}
- function foulVerdict(e){return e.bodyDistance<34&&!e.ballFirst;}
+ function foulVerdict(e){return e.bodyDistance<=R*2+1&&!e.ballFirst;}
  function applyFoul(m,e){const offender=m.players[e.offender],victim=m.players[e.victim];if(!foulVerdict(e)){m.ball.owner=e.ballFirst?offender.id:m.ball.owner;note(m,'tackle','PLAY ON');return;}
  m.stats[offender.team].fouls++;if(e.reckless){offender.yellows++;if(offender.yellows>=2){offender.red=true;offender.x=FIELD.cx;offender.y=FIELD.bottom+120;if(m.selected[offender.team]===offender.id)switchPlayer(m,offender.team);}}
  const goal=ownGoal(m,offender.team),penalty=Math.abs(victim.x-goal)<280&&Math.abs(victim.y-FIELD.cy)<270;restart(m,penalty?'penalty':'free-kick',victim.team,penalty?goal+direction(m,offender.team)*210:victim.x,penalty?FIELD.cy:victim.y,e.reckless?(offender.red?'RED CARD':'YELLOW CARD'):'FOUL');
  }
  function tackle(m,p){if(!p||p.keeper||p.cooldown>0)return false;p.cooldown=clamp(.9-(p.defend-65)*.004,.72,1.02);const b=m.ball,v=m.players.find(q=>q.id===b.owner);if(v?.keeper)return false;if(!v){if(dist(p,b)<40){b.owner=p.id;b.lastTeam=p.team;b.lastPlayer=p.id;}return true;}if(v.team===p.team||dist(p,v)>45)return false;
  const bodyDistance=dist(p,v),ballDistance=dist(p,b),ballFirst=ballDistance<28+(p.defend-65)*.12&&ballDistance<bodyDistance-4,e={offender:p.id,victim:v.id,bodyDistance,ballDistance,ballFirst,reckless:Math.hypot(p.vx,p.vy)>190&&!ballFirst};
- const inPenaltyArea=Math.abs(v.x-ownGoal(m,p.team))<280&&Math.abs(v.y-FIELD.cy)<270,serious=e.reckless||inPenaltyArea,uncertain=Math.abs(bodyDistance-34)<4&&ballDistance>28;
+ const inPenaltyArea=Math.abs(v.x-ownGoal(m,p.team))<280&&Math.abs(v.y-FIELD.cy)<270,serious=e.reckless||inPenaltyArea,uncertain=Math.abs(bodyDistance-(R*2+1))<2&&ballDistance>28;
  if(foulVerdict(e)&&serious&&uncertain&&m.elapsed-(m.lastVarTime??-999)>120){m.lastVarTime=m.elapsed;review(m,'var',e,true);}else if(foulVerdict(e)){applyFoul(m,e);}else if(ballFirst){b.owner=p.id;b.lastTeam=p.team;b.lastPlayer=p.id;note(m,'tackle','BALL WON',{team:p.team});}return true;
  }
  function review(m,kind,evidence,verdict){if(m.phase==='review')return;m.review={kind,evidence:copy(evidence),verdict,frames:copy(m.history.slice(-90)),priorPhase:m.phase,priorTime:m.phaseTime,priorDuration:m.phaseDuration};m.ball.vx=m.ball.vy=0;phase(m,'review',6);note(m,kind,kind==='var'?'VAR · CHECKING CONTACT':'GOAL LINE · CHECKING');}
