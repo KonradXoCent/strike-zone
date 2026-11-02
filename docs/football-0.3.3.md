@@ -1,0 +1,13 @@
+# Football 0.3.3 / Hub 0.1.22
+
+The old looping band-pass noise has been replaced by an actual stadium recording. A seamless 22-second crowd loop and a separate goal cheer are bundled as Opus and embedded in the offline HTML, so matches need no audio-service connection. The master volume, crowd switch, quiet breaks, visibility suspension and exit cleanup still work. Each host event plays once, including repeated multiplayer snapshots. Short procedural impacts remain for boots, tackles and gloves.
+
+Recording: Félix Blume, “Soccer game in Brazil, goals and crowd shouting”, https://freesound.org/people/felix.blume/sounds/611816/ . The source is CC0 (https://creativecommons.org/publicdomain/zero/1.0/). Edits from the public high-quality preview, time ranges and processing are documented in `assets/audio/football/CREDITS.txt`; the game settings also show the source and license.
+
+Shot speed now rises more strongly near a full 1.2-second charge. A typical full shot leaves at approximately 1,000–1,120 world units per second, more than twice a tap, while passes keep their previous controlled speed. The host still owns charge timing and clamps it to full power. AI uses the same shot and goalkeeper rules and can hit powerful shots. Goalkeeper reaction delay depends on rating.
+
+A goalkeeper catches a reachable slow ball, but parries a ball above the rating-dependent catch threshold. A parry leaves the ball free, attributes the last touch to the goalkeeper, animates the gloves and sends it behind the goal outside the posts, awarding the attacking team a corner. A hard shot outside the keeper's reach can still score. Interceptions test the entire flight segment before boundary decisions, preventing fast balls from skipping through the keeper while never reversing an already crossed goal line. Training counts a parried attempt as one save after the visible rebound exits.
+
+The common engine covers 5v5, quick 11v11, Ultimate Club, training and host snapshots. Tests cover both teams, halves and formats; catches versus parries, corners, fast-segment interception, unreachable shots and AI power. Actual Electron tests exercise charged keyboard input and power UI, decoded recordings, goal reactions, mute/toggle/exit, visible saves and corners, and both quick-match and Ultimate Club two-client synchronization. The Windows workflow builds the installer and verifies an installed upgrade from public Hub 0.1.21.
+
+This update changes no wallet rewards, account balances, owned themes, cards, packs or match progress. The catalog package metadata advances Football to 0.3.3; no database schema migration is required.

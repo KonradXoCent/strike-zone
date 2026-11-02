@@ -1,0 +1,16 @@
+Zone Football stadium recordings
+
+Original: Soccer game in Brazil, goals and crowd shouting
+Author: Félix Blume (felix.blume)
+Source: https://freesound.org/people/felix.blume/sounds/611816/
+License: Creative Commons Zero 1.0 Universal (CC0)
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Game edits from the public high-quality preview:
+- crowd-loop.ogg: 00:40–01:04, high-pass 85 Hz, low-pass 9 kHz,
+  loudness normalization, two-second circular crossfade, Opus encoding.
+- crowd-cheer.ogg: 01:24–01:31, high-pass 85 Hz, low-pass 10 kHz,
+  loudness normalization, short fades, Opus encoding.
+
+Both recordings are bundled and embedded in the offline HTML.
+No request to Freesound or any audio service is made during play.

@@ -143,4 +143,4 @@ revoke execute on function zone_football_private.command(text,jsonb),zone_footba
 create or replace function public.zone_football(action text,args jsonb default '{}') returns jsonb language sql security invoker set search_path='' as $$ select zone_football_private.market_command(action,args) $$;
 revoke all on function public.zone_football(text,jsonb) from public,anon;
 grant execute on function public.zone_football(text,jsonb) to authenticated;
-update public.zh_games set package_config=coalesce(package_config,'{}')||'{"version":"0.3.2"}'::jsonb where id='zone-football';
+update public.zh_games set package_config=coalesce(package_config,'{}')||'{"version":"0.3.3"}'::jsonb where id='zone-football';
