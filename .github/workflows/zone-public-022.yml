@@ -1,0 +1,40 @@
+name: Publish verified Zone Hub 0.1.22 and Football 0.3.3
+on:
+  push:
+    branches: [release/zonehub-0.1.22]
+    paths:
+      - .github/workflows/zone-public-022.yml
+      - scripts/publish-zone-patch-022.cjs
+      - docs/public-release-0.1.22.md
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: zonehub-public-0.1.22
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.repository == 'KonradXoCent/strike-zone' && github.ref == 'refs/heads/release/zonehub-0.1.22'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Verify and publish the tested patch installer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/publish-zone-patch-022.cjs
+      - name: Keep publication verification
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: Zone-Public-0.1.22-Verification
+          path: public-release-022/public-release-verified.json
+          if-no-files-found: ignore
+          retention-days: 90
+
