@@ -24,19 +24,20 @@ jobs:
         run: node --test --test-concurrency=2 tests/zone-hub*.test.cjs tests/zone-football*.test.cjs
       - name: Test Zone Hub interface and account flows
         run: node scripts/zone-hub-smoke.cjs
-      - name: Test Football interface and recent regressions
-        run: |
-          node scripts/football-060-smoke.cjs
-          node scripts/football-060-regressions.cjs
-      - name: Test Football games and online handoff
-        run: |
-          node scripts/football-preview-network.cjs
-          node scripts/football-ultimate-smoke.cjs
-          node scripts/football-offline-smoke.cjs
-      - name: Prepare game and build the Windows installer
-        run: |
-          node scripts/prepare-game.cjs
-          node scripts/build-platform.cjs
+      - name: Test Football interface
+        run: node scripts/football-060-smoke.cjs
+      - name: Test Football regressions
+        run: node scripts/football-060-regressions.cjs
+      - name: Test quick online matches
+        run: node scripts/football-preview-network.cjs
+      - name: Test Ultimate Team online and live catalog
+        run: node scripts/football-ultimate-smoke.cjs
+      - name: Test offline Football and pack openings
+        run: node scripts/football-offline-smoke.cjs
+      - name: Prepare managed games
+        run: node scripts/prepare-game.cjs
+      - name: Build the Windows installer
+        run: node scripts/build-platform.cjs
       - name: Download the current public Zone Hub
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
