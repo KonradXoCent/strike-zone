@@ -14,3 +14,20 @@ Game edits from the public high-quality preview:
 
 Both recordings are bundled and embedded in the offline HTML.
 No request to Freesound or any audio service is made during play.
+
+
+Football of Madrid, Hala Madrid.wav — flosicalcat59
+https://freesound.org/people/flosicalcat59/sounds/238942/
+CC BY 3.0 https://creativecommons.org/licenses/by/3.0/
+Public HQ preview, excerpt 00:01.5–00:14.5; high/low-pass filters, fades, Ogg conversion.
+Recording of supporters at home, not an official club anthem.
+
+barca_versus_arsenal_preview.mp3 — Bram
+https://freesound.org/people/Bram/sounds/19043/
+CC BY 4.0 https://creativecommons.org/licenses/by/4.0/
+Public HQ preview, excerpt 00:07–00:20; normalized, fades, Ogg conversion.
+Supporters celebrating in Barcelona, not an official club anthem.
+
+crowd-goal-fast.ogg: existing Félix Blume CC0 goal recording trimmed at 2.2s,
+4.8s duration; 8ms fade-in, 500ms fade-out. Club support for other teams uses
+original timing/rate/stereo arrangements of the existing CC0 crowd recording.

@@ -4,7 +4,7 @@
  function move(point,dx,dy,width,height,rect){const finite=n=>Number.isFinite(n)?n:0;return{x:Math.max(0,Math.min(width,finite(point.x)+finite(dx)*width/Math.max(1,rect.width))),y:Math.max(0,Math.min(height,finite(point.y)+finite(dy)*height/Math.max(1,rect.height)))};}
  function mount(root){
   const t=s=>root.szLocale?.t(s)||s,canvas=$('cv'),game=$('game');let pending=false,failed=false,wasLocked=false,expectedExit=false,requestId=0,timeout,gestureTimer,gesture='',escapeUntil=0,rect=canvas.getBoundingClientRect();
-  const enabled=()=>ST_().pointerLock!==0,locked=()=>document.pointerLockElement===canvas;
+  const enabled=()=>!root.SZ_FOOTBALL&&ST_().pointerLock!==0,locked=()=>document.pointerLockElement===canvas;
   const visible=id=>{const e=$(id);return !!e&&!e.hidden&&e.style.display!==''&&e.style.display!=='none';};
   function playable(){return !!G&&!G.spectator&&!game.hidden&&!G.paused&&!G.intro&&!G.over&&!visible('buy')&&!visible('ov')&&!visible('pm')&&!root.document.querySelector('dialog[open]')&&!document.querySelector('#br-map:not([hidden])');}
   function clear(){keys={};mouse.d=mouse.r=0;if(G?.client)netSend({t:'in',k:{w:false,a:false,s:false,d:false,e:false},an:G.me.a||0,nd:G.me.nd||null,f:false});}
@@ -32,7 +32,7 @@
   for(const name of['begin0','beginClient'])wrap(name,(old,self,args)=>{failed=false;const result=old.apply(self,args);sync();return result;});
   wrap('quit',(old,self,args)=>{release();const result=old.apply(self,args);sync();return result;});
   wrap('fit',(old,self,args)=>{const width=VW,result=old.apply(self,args);mouse.x=Math.max(0,Math.min(VW,mouse.x*VW/Math.max(1,width)));mouse.y=Math.max(0,Math.min(640,mouse.y));rect=canvas.getBoundingClientRect();return result;});
-  function blur(){release();if(playable())togglePause();sync();}addEventListener('blur',blur);document.addEventListener('visibilitychange',()=>{if(document.hidden)blur();});
+  function blur(){release();if(playable()&&!root.SZ_FOOTBALL)togglePause();sync();}addEventListener('blur',blur);document.addEventListener('visibilitychange',()=>{if(document.hidden)blur();});
   const observer=new MutationObserver(sync),observed=new WeakSet();function watch(e){if(!e||observed.has(e))return;observed.add(e);observer.observe(e,{subtree:true,attributes:true,attributeFilter:['hidden','style','open']});}
   watch(game);watch($('pm'));watch($('br-map'));document.querySelectorAll('dialog').forEach(watch);new MutationObserver(records=>{for(const r of records)for(const n of r.addedNodes)if(n.nodeType===1){if(n.matches('dialog'))watch(n);n.querySelectorAll('dialog').forEach(watch);}sync();}).observe(document.body,{childList:true});
   const oldSettings=setTab;function settings(target){if(target.querySelector('[data-pointer-settings]'))return;const panel=document.createElement('section');panel.className='box';panel.dataset.pointerSettings='';panel.dataset.noTranslate='';panel.innerHTML='<h3>'+t('Sterowanie myszą')+'</h3><label><input type="checkbox" data-pointer-lock '+(enabled()?'checked':'')+'> '+t('Przechwytuj mysz podczas gry')+'</label><p>'+t('Kursor pozostaje w oknie gry. Escape otwiera menu i zwalnia mysz; zakupy i rozmowy również ją zwalniają.')+'</p>';panel.querySelector('input').onchange=e=>root.SzGameInput.setEnabled(e.target.checked);target.append(panel);}

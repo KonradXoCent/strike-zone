@@ -1,0 +1,56 @@
+name: Verify Zone Football 0.6.1 public update
+on:
+  push:
+    branches: [release/football-061]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows-verification:
+    if: github.repository == 'KonradXoCent/strike-zone' && github.ref == 'refs/heads/release/football-061'
+    runs-on: windows-2022
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/ensure-generated.cjs
+      - name: Check frontend syntax and translations
+        run: npm run check:ui
+      - name: Test football, account, wallet and update rules
+        run: node --test --test-concurrency=2 tests/zone-hub*.test.cjs tests/zone-football*.test.cjs
+      - name: Test Zone Hub interface and account flows
+        run: node scripts/zone-hub-smoke.cjs
+      - name: Test Football interface and recent regressions
+        run: |
+          node scripts/football-060-smoke.cjs
+          node scripts/football-060-regressions.cjs
+      - name: Test Football games and online handoff
+        run: |
+          node scripts/football-preview-network.cjs
+          node scripts/football-ultimate-smoke.cjs
+          node scripts/football-offline-smoke.cjs
+      - name: Prepare game and build the Windows installer
+        run: |
+          node scripts/prepare-game.cjs
+          node scripts/build-platform.cjs
+      - name: Download the current public Zone Hub
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release download zonehub-v0.1.22 --repo KonradXoCent/strike-zone --pattern ZoneHub-Beta-0.1.22.exe --dir previous-platform
+      - name: Verify the installed update preserves login, settings and games
+        run: node scripts/zone-hub-windows-update-smoke.cjs --from=0.1.22
+      - name: Store the verified installer
+        uses: actions/upload-artifact@v7
+        with:
+          name: Zone-Hub-0.1.27-Verified-Installer
+          path: |
+            dist-platform/ZoneHub-Beta-0.1.27.exe
+            dist-platform/ZoneHub-Beta-0.1.27.exe.blockmap
+            dist-platform/zonehub.yml
+            dist-platform/installed-update-report.json
+          if-no-files-found: error
+          retention-days: 30

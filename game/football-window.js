@@ -1,0 +1,2 @@
+/* Window controls shared by every football match surface. */
+(function(root){'use strict';async function fullscreen(){if(root.zoneFootballDesktop?.fullscreen)return root.zoneFootballDesktop.fullscreen();if(document.fullscreenElement)return document.exitFullscreen();return document.documentElement.requestFullscreen?.();}document.addEventListener('click',e=>{if(e.target.closest('[data-zf-fullscreen]'))fullscreen().catch(()=>{});});root.ZoneFootballWindow={fullscreen};})(globalThis);
