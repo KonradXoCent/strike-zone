@@ -22,6 +22,8 @@ jobs:
         run: npm run check:ui
       - name: Test football, account, wallet and update rules
         run: node --test --test-concurrency=2 tests/zone-hub*.test.cjs tests/zone-football*.test.cjs
+      - name: Test Zone Studio import and rollback
+        run: node --test tests/zone-studio-hub.test.cjs
       - name: Test Zone Hub interface and account flows
         run: node scripts/zone-hub-smoke.cjs
       - name: Test Football interface
