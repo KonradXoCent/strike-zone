@@ -1,0 +1,39 @@
+name: Publish verified Zone Football 0.6.1
+on:
+  push:
+    branches: [release/publish-football-061]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: zonehub-verified-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: "github.repository == 'KonradXoCent/strike-zone' && github.event.head_commit.message == 'publish: verified Zone Football 0.6.1'"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Verify the publication safeguards
+        run: node --test tests/publish-football-061.test.cjs
+      - name: Verify the exact successful Windows build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/publish-football-061.cjs --check-source
+      - name: Download the verified installer and update report
+        uses: actions/download-artifact@v7
+        with:
+          name: Zone-Hub-0.1.27-Verified-Installer
+          run-id: 41948712053
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: dist-platform
+      - name: Verify and publish the tested files
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/publish-football-061.cjs
