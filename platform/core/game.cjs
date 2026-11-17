@@ -12,7 +12,7 @@ class ManagedGame extends EventEmitter{
  flatpakSupportsEnvFd(){
   try{
    const result=this.spawnSyncProcess(this.flatpakCommand,['run','--help'],{encoding:'utf8',timeout:5000,windowsHide:true,stdio:['ignore','pipe','pipe']});
-   return !result?.error&&result?.status===0&&/--env-fd(?:=|\\s|$)/.test(String(result.stdout||'')+' '+String(result.stderr||''));
+   return !result?.error&&result?.status===0&&(String(result.stdout||'')+' '+String(result.stderr||'')).includes('--env-fd');
   }catch{return false;}
  }
  wineLaunch(executable,transport){
@@ -35,7 +35,7 @@ class ManagedGame extends EventEmitter{
   try{
    await this.packages.check();if(!this.packages.snapshot().canPlay)throw Error('PACKAGE_REQUIRED');if(!await this.account.validate())throw Error('HUB_LOGIN');
    const transport=this.createTransport?await this.createTransport():null;this.transport=transport;
-   const executable=this.packages.executable(),useWine=this.platform==='linux'&&/\\.exe$/i.test(executable);
+   const executable=this.packages.executable(),useWine=this.platform==='linux'&&path.extname(executable).toLowerCase()==='.exe'
    const launch=useWine?this.wineLaunch(executable,transport):{command:executable,args:['--zonehub-managed'],flatpak:false};
    const command=launch.command,args=launch.args;
    const env={...process.env,...(!launch.flatpak?transport?.env:{})};
