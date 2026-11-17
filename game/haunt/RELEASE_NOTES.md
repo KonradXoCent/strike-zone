@@ -1,4 +1,4 @@
-# Zone Haunt 0.1.16 — zgodność z Wine i Zone Hub
+# Zone Haunt 0.1.17 — komunikacja z launcherem Linux
 
 Uaktualnienie wersji 0.1.14a zaakceptowanej po testach lokalnych.
 
@@ -19,9 +19,10 @@ Uaktualnienie wersji 0.1.14a zaakceptowanej po testach lokalnych.
 
 Wersja przeznaczona do aktualizacji w bibliotece Zone Hub. Publikacja wymaga przejścia testów pakietu Windows i zgodności z usługą online.
 
-## Zmiany techniczne 0.1.16
+## Zmiany techniczne 0.1.17
 
-- Przebudowany pakiet Windows zawiera aktualny most komunikacyjny Zone Hub, zgodny z uruchamianiem przez systemowe Wine i Wine z Flathuba.
+- Pakiet Windows zawiera obsługę uwierzytelnionego kanału loopback TCP z Zone Hub. Komunikacja nie korzysta ze standardowych uchwytów stdin/stdout, które mogą być niedostępne dla okienkowych procesów Windows w Wine.
+- Kanał nasłuchuje wyłącznie na 127.0.0.1, używa jednorazowego losowego potwierdzenia i przekazuje sesję poza argumentami procesu.
 - Aktualizacja jest dostarczana przez bibliotekę Zone Hub i nie wymaga ponownej instalacji launchera.
 
 ## Status wydania
