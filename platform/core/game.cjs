@@ -1,7 +1,7 @@
 'use strict';
 const {EventEmitter}=require('node:events'),{spawn}=require('node:child_process'),{createChannel}=require('../../core/platform-transport.cjs');
 class ManagedGame extends EventEmitter{
- constructor({packages,account,getPreferences=()=>({}),spawnProcess=spawn,createTransport=process.platform==='win32'?createChannel:null}){super();Object.assign(this,{packages,account,getPreferences,spawnProcess,createTransport});this.child=null;this.pipe=null;this.transport=null;this.gameRunning=false;this.ready=false;this.epoch=0;this.starting=false;}
+ constructor({packages,account,getPreferences=()=>({}),spawnProcess=spawn,createTransport=process.platform==='win32'?createChannel:null,platform=process.platform,wineCommand=process.env.ZONEHUB_WINE||'wine'}){super();Object.assign(this,{packages,account,getPreferences,spawnProcess,createTransport,platform,wineCommand});this.child=null;this.pipe=null;this.transport=null;this.gameRunning=false;this.ready=false;this.epoch=0;this.starting=false;}
  snapshot(){return{launcherRunning:!!this.child,gameRunning:this.gameRunning,ready:this.ready};}
  changed(){this.packages.running=!!this.child;this.packages.emit('state',this.packages.snapshot());this.emit('state',this.snapshot());}
  write(value){const input=this.pipe||this.child?.stdin;if(input&&!input.destroyed)input.write(JSON.stringify(value)+'\n');}
@@ -14,12 +14,12 @@ class ManagedGame extends EventEmitter{
    await this.packages.check();if(!this.packages.snapshot().canPlay)throw Error('PACKAGE_REQUIRED');if(!await this.account.validate())throw Error('HUB_LOGIN');
    const transport=this.createTransport?await this.createTransport():null;this.transport=transport;
    const env={...process.env,...transport?.env};for(const k of['ELECTRON_RUN_AS_NODE','ELECTRON_ENABLE_LOGGING','NODE_OPTIONS','ELECTRON_NO_ASAR'])delete env[k];env.ELECTRON_NO_ATTACH_CONSOLE='1';
-   const child=this.spawnProcess(this.packages.executable(),['--zonehub-managed'],{stdio:[transport?'ignore':'pipe','pipe','pipe'],windowsHide:false,shell:false,env});this.child=child;this.ready=false;const epoch=++this.epoch;let buffer='';
+   const executable=this.packages.executable(),useWine=this.platform==='linux'&&/\\.exe$/i.test(executable),command=useWine?this.wineCommand:executable,args=useWine?[executable,'--zonehub-managed']:['--zonehub-managed'];if(useWine)env.WINEDEBUG=process.env.WINEDEBUG||'-all';const child=this.spawnProcess(command,args,{stdio:[transport?'ignore':'pipe','pipe','pipe'],windowsHide:false,shell:false,env});this.child=child;this.ready=false;const epoch=++this.epoch;let buffer='';
    const timer=setTimeout(()=>{if(this.child===child&&!this.ready){this.emit('error',Error('HUB_START_TIMEOUT'));this.stop();}},25000);
    const receive=chunk=>{buffer+=chunk.toString();if(buffer.length>64000){this.stop();return;}let i;while((i=buffer.indexOf('\n'))>=0){const line=buffer.slice(0,i);buffer=buffer.slice(i+1);if(!line.startsWith('ZONEHUB:'))continue;try{const m=JSON.parse(line.slice(8));if(m.type==='ready'&&m.userId===this.account.snapshot().user?.id){this.ready=true;clearTimeout(timer);}else if(m.type==='failed'){this.emit('error',Error('HUB_WINDOW'));this.stop();}else if(m.type==='game')this.gameRunning=m.running===true;else if(m.type==='logout-request')this.emit('logout');this.changed();}catch{}}};
    child.stdin?.on('error',()=>{});child.stderr.on('data',()=>{});child.stdout.on('data',transport?()=>{}:receive);
    const finish=()=>{clearTimeout(timer);if(this.epoch!==epoch)return;transport?.close();this.pipe=null;this.transport=null;this.child=null;this.ready=false;this.gameRunning=false;this.changed();};
-   child.once('error',error=>{finish();this.emit('error',error);});child.once('exit',finish);
+   child.once('error',error=>{finish();if(useWine&&error.code==='ENOENT')this.emit('error',Object.assign(Error('HUB_WINE_MISSING'),{code:'HUB_WINE_MISSING'}));else this.emit('error',error);});child.once('exit',finish);
    if(transport)transport.connection.then(socket=>{if(this.child!==child){socket.destroy();return;}this.pipe=socket;socket.on('error',()=>{});socket.on('data',receive);socket.once('close',()=>{if(this.child===child)this.stop();});socket.resume();this.session();}).catch(error=>{if(this.child===child){this.emit('error',error);this.stop();}});
    else this.session();this.changed();return this.snapshot();
   }catch(error){if(!this.child){this.transport?.close();this.transport=null;}throw error;}finally{this.starting=false;}
