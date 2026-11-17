@@ -20,7 +20,7 @@ permissions:
   actions: read
 concurrency:
   group: zonehub-debian-0.1.27
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-24.04
