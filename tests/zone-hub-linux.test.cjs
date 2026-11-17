@@ -18,7 +18,7 @@ function childProcess(){
  const child=new EventEmitter();child.stdin=new PassThrough();child.stdout=new PassThrough();child.stderr=new PassThrough();child.kill=()=>child.emit('exit',0);return child;
 }
 function readLines(stream){
- let buffer='';const lines=[];stream.on('data',chunk=>{buffer+=chunk.toString();let at;while((at=buffer.indexOf('\\n'))>=0){lines.push(buffer.slice(0,at));buffer=buffer.slice(at+1);}});return lines;
+ let buffer='';const lines=[];stream.on('data',chunk=>{buffer+=chunk.toString();let at;while((at=buffer.indexOf('\n'))>=0){lines.push(buffer.slice(0,at));buffer=buffer.slice(at+1);}});return lines;
 }
 async function waitForLine(lines,predicate,timeout=5000){
  const started=Date.now();while(Date.now()-started<timeout){const found=lines.find(predicate);if(found)return found;await new Promise(resolve=>setTimeout(resolve,10));}throw Error('Timed out waiting for protocol line');
@@ -39,9 +39,9 @@ test('Linux creates an authenticated loopback-only TCP handoff channel',{skip:pr
  
  const {transport,client,lines}=await makeLiveTransport();
  const server=await transport.connection;server.resume();
- client.write('PING\\n');
+ client.write('PING\n');
  assert.equal(await waitForLine(lines,line=>line==='PING'),'PING');
- server.write('PONG\\n');
+ server.write('PONG\n');
  assert.equal(await waitForLine(lines,line=>line==='PONG'),'PONG');
  client.destroy();transport.close();
 });
@@ -73,7 +73,7 @@ test('Debian launches Windows game through system Wine using the private channel
  assert.equal(options.env.ZONEHUB_PIPE,transport.env.ZONEHUB_PIPE);assert.equal(options.env.ZONEHUB_PROOF,transport.env.ZONEHUB_PROOF);
  const session=await waitForLine(lines,line=>line.includes('"type":"session"'));
  assert(session.includes('TEST_ACCESS'));assert(!args.join(' ').includes('TEST_ACCESS'));
- client.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\\n');
+ client.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\n');
  await waitForLine(lines,line=>line.includes('"type":"ready"'));
  assert.equal(game.snapshot().ready,true);
  await stopGame(game,client,child);
@@ -93,7 +93,7 @@ test('Debian passes the loopback channel and network permission into Flathub Win
  assert.equal(options.shell,false);assert.deepEqual(options.stdio,['ignore','pipe','pipe']);
  assert.equal(options.env.ZONEHUB_PIPE,transport.env.ZONEHUB_PIPE);assert.equal(options.env.ZONEHUB_PROOF,transport.env.ZONEHUB_PROOF);
  const session=await waitForLine(lines,line=>line.includes('"type":"session"'));assert(session.includes('TEST_ACCESS'));
- client.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\\n');
+ client.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\n');
  await waitForLine(lines,line=>line.includes('"type":"ready"'));assert.equal(game.snapshot().ready,true);
  await stopGame(game,client,child);assert.equal(game.snapshot().launcherRunning,false);
 });
