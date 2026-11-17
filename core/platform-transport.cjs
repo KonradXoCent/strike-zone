@@ -13,7 +13,7 @@ async function createChannel(){
   sockets.add(socket);socket.on('error',()=>{});socket.once('close',()=>sockets.delete(socket));
   if(accepted||sockets.size>8){socket.destroy();return;}let pending='';socket.setTimeout(2500,()=>socket.destroy());
   const receive=chunk=>{
-   pending+=chunk.toString();if(pending.length>1024){socket.destroy();return;}const at=pending.indexOf('\\n');if(at<0)return;
+   pending+=chunk.toString();if(pending.length>1024){socket.destroy();return;}const at=pending.indexOf('\n');if(at<0)return;
    let value;try{value=JSON.parse(pending.slice(0,at));}catch{socket.destroy();return;}if(!value||typeof value!=='object'){socket.destroy();return;}
    const key=typeof value.proof==='string'?Buffer.from(value.proof):Buffer.alloc(0),expected=Buffer.from(proof);
    if(accepted||value.type!=='hello'||key.length!==expected.length||!crypto.timingSafeEqual(key,expected)){socket.destroy();return;}
@@ -44,6 +44,6 @@ function connectChannel(env=process.env){
  else if(process.platform!=='win32'&&path.isAbsolute(address))socket=net.createConnection(address);
  else throw Error('HUB_HANDOFF');
  delete env.ZONEHUB_PIPE;delete env.ZONEHUB_PROOF;
- socket.on('error',()=>{});socket.once('connect',()=>socket.write(JSON.stringify({type:'hello',proof})+'\\n'));return socket;
+ socket.on('error',()=>{});socket.once('connect',()=>socket.write(JSON.stringify({type:'hello',proof})+'\n'));return socket;
 }
 module.exports={createChannel,connectChannel};
