@@ -1,6 +1,8 @@
 'use strict';
 // Account tokens travel only through a private OS channel, never through
 // arguments, environment variables, deep links, files or logs.
+// Linux Wine GUI processes may not have a usable stdout descriptor; Zone Hub
+// selects stderr with ZONEHUB_BRIDGE_USE_STDERR=1 for this managed handoff.
 const readline=require('node:readline'),{EventEmitter}=require('node:events');
 class PlatformBridge extends EventEmitter{
  constructor(input,output){super();if(!input){const channel=require('./platform-transport.cjs').connectChannel();input=channel||process.stdin;output=channel||(process.env.ZONEHUB_BRIDGE_USE_STDERR==='1'?process.stderr:process.stdout);}this.output=output;this.bootstrap=null;this.closed=false;this.reader=readline.createInterface({input,crlfDelay:Infinity});
