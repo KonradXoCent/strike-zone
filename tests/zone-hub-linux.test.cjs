@@ -87,21 +87,25 @@ test('Debian launches Windows game through system Wine using the private channel
 });
 
 test('Debian passes the loopback channel and network permission into Flathub Wine',{skip:process.platform!=='linux'},async()=>{
- const {transport,client,lines}=await makeLiveTransport();let command,args,options,child;
+ const {transport,client,lines}=await makeLiveTransport();let command,args,options,child,fdData='',fdDone;
  const game=setup({createTransport:async()=>transport,spawnSyncProcess:(cmd,argv)=>{
   if(cmd==='/usr/bin/wine')return{status:1,error:Object.assign(new Error('not found'),{code:'ENOENT'})};
   if(cmd==='flatpak'&&argv[0]==='run'&&argv[1]==='--help')return{status:0,stdout:'  --env-fd=FD  Read environment variables from file descriptor'};
   if(cmd==='flatpak'&&argv[0]==='run'&&argv.includes('--command=wine')&&argv.includes('--version'))return{status:0,stdout:'wine-11.0'};
   return{status:1};
- },spawnProcess:(cmd,argv,opts)=>{command=cmd;args=argv;options=opts;child=childProcess();return child;}});
- let fdData='',fdDone;
+ },spawnProcess:(cmd,argv,opts)=>{
+  command=cmd;args=argv;options=opts;child=childProcess();
+  child.stdio[3].on('data',chunk=>{fdData+=chunk.toString();});
+  fdDone=once(child.stdio[3],'finish');
+  return child;
+ }});
  game.on('error',error=>{throw error;});await game.start();
  assert.equal(command,'flatpak');
  assert.deepEqual(args,['run','--share=network','--filesystem=/home/test/.config/ZoneHub/games/strike-zone/versions/hash:ro','--env=WINEDEBUG=-all','--env-fd=3','--command=wine','org.winehq.Wine',executable,'--zonehub-managed','--zonehub-wine-compat','--no-sandbox','--disable-gpu','--disable-gpu-compositing']);
  assert.equal(options.shell,false);assert.deepEqual(options.stdio,['ignore','pipe','pipe','pipe']);
  assert.equal(options.env.ZONEHUB_PIPE,undefined);assert.equal(options.env.ZONEHUB_PROOF,undefined);
  assert(!args.join(' ').includes(transport.env.ZONEHUB_PROOF));
- fdDone=once(child.stdio[3],'finish');child.stdio[3].on('data',chunk=>{fdData+=chunk.toString();});await fdDone;
+ await fdDone;
  assert(fdData.includes('ZONEHUB_PIPE='+transport.env.ZONEHUB_PIPE+String.fromCharCode(0)));
  assert(fdData.includes('ZONEHUB_PROOF='+transport.env.ZONEHUB_PROOF+String.fromCharCode(0)));
  const session=await waitForLine(lines,line=>line.includes('"type":"session"'));assert(session.includes('TEST_ACCESS'));
