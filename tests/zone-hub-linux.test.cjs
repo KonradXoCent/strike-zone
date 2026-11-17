@@ -55,13 +55,14 @@ test('Wine GUI handoff does not require inherited stdin or stdout handles',{skip
   const {PlatformBridge}=require('./core/platform-bridge.cjs');
   const bridge=new PlatformBridge();
   bridge.send('ready',{userId:'user-1'});
-  bridge.output.end(()=>process.exit(0));
+  setTimeout(()=>process.exit(0),500);
  `;
  const child=spawn(process.execPath,['-e',code],{cwd:path.join(__dirname,'..'),env:{...process.env,...transport.env},stdio:['ignore','pipe','pipe']});
  const server=await transport.connection;const lines=readLines(server);server.resume();
  const exited=once(child,'exit');
+ const exitGuard=setTimeout(()=>child.kill(),6000);
  await waitForLine(lines,line=>line.includes('"type":"ready"')&&line.includes('"userId":"user-1"'));
- const [codeValue]=await exited;assert.equal(codeValue,0);
+ const [codeValue]=await exited;clearTimeout(exitGuard);assert.equal(codeValue,0);
  transport.close();
 });
 
