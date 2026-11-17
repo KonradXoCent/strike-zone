@@ -54,7 +54,9 @@ jobs:
           test -s dist-linux/zonehub-linux.yml
       - name: Read Debian release version
         id: release
-        run: echo "version=$(node -p \"require('./platform/package.json').version\")" >> "$GITHUB_OUTPUT"
+        run: |
+          VERSION=$(node -p "require('./platform/package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
         with:
           name: ZoneHub-Debian-${{ steps.release.outputs.version }}
