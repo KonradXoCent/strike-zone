@@ -30,7 +30,6 @@ test('Debian launches downloaded Windows game packages through system Wine and k
  assert.equal(options.shell,false);
  assert.equal(options.stdio[0],'pipe');
  assert.equal(options.env.ZONEHUB_BRIDGE_USE_STDERR,'1');
- assert.equal(options.env.ZONEHUB_BRIDGE_USE_STDERR,'1');
  assert(child.stdin.read().toString().includes('TEST_ACCESS'));
  child.stderr.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\n');
  assert.equal(game.snapshot().ready,true);
