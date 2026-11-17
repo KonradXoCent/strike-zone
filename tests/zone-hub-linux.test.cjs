@@ -22,7 +22,7 @@ function childProcess(){
  const child=new EventEmitter();child.stdin=new PassThrough();child.stdout=new PassThrough();child.stderr=new PassThrough();child.kill=()=>child.emit('exit',0);return child;
 }
 function readLines(stream){
- let buffer='';const lines=[];stream.on('data',chunk=>{buffer+=chunk.toString();let at;while((at=buffer.indexOf('\\n'))>=0){lines.push(buffer.slice(0,at));buffer=buffer.slice(at+1);}});return lines;
+ let buffer='';const lines=[];stream.on('data',chunk=>{buffer+=chunk.toString();let at;while((at=buffer.indexOf('\n'))>=0){lines.push(buffer.slice(0,at));buffer=buffer.slice(at+1);}});return lines;
 }
 
 test('Linux creates an authenticated loopback-only TCP handoff channel',async()=>{
@@ -33,11 +33,11 @@ test('Linux creates an authenticated loopback-only TCP handoff channel',async()=
  const client=connectChannel({...channel.env});
  const server=await channel.connection;
  const received=new Promise(resolve=>server.once('data',resolve));
- client.write('PING\\n');
- assert.equal((await received).toString(),'PING\\n');
+ client.write('PING\n');
+ assert.equal((await received).toString(),'PING\n');
  const reply=new Promise(resolve=>client.once('data',resolve));
- server.write('PONG\\n');
- assert.equal((await reply).toString(),'PONG\\n');
+ server.write('PONG\n');
+ assert.equal((await reply).toString(),'PONG\n');
  client.destroy();channel.close();
 });
 
@@ -72,7 +72,7 @@ test('Debian launches Windows game through system Wine using the private channel
  assert.equal(options.shell,false);assert.deepEqual(options.stdio,['ignore','pipe','pipe']);
  assert.equal(options.env.ZONEHUB_PIPE,transport.env.ZONEHUB_PIPE);assert.equal(options.env.ZONEHUB_PROOF,transport.env.ZONEHUB_PROOF);
  assert(sent.some(line=>line.includes('"type":"session"')&&line.includes('TEST_ACCESS')));
- transport.socket.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\\n');
+ transport.socket.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\n');
  assert.equal(game.snapshot().ready,true);
  child.stdin.on('data',chunk=>{if(chunk.toString().includes('"type":"logout"'))setImmediate(()=>child.emit('exit',0));});
  await game.stop();assert.equal(game.snapshot().launcherRunning,false);transport.close();
@@ -91,7 +91,7 @@ test('Debian passes the authenticated loopback channel into the Flathub Wine san
  assert.equal(options.shell,false);assert.deepEqual(options.stdio,['ignore','pipe','pipe']);
  assert.equal(options.env.ZONEHUB_PIPE,transport.env.ZONEHUB_PIPE);assert.equal(options.env.ZONEHUB_PROOF,transport.env.ZONEHUB_PROOF);
  assert(sent.some(line=>line.includes('"type":"session"')&&line.includes('TEST_ACCESS')));
- transport.socket.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\\n');
+ transport.socket.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\n');
  assert.equal(game.snapshot().ready,true);
  child.stdin.on('data',chunk=>{if(chunk.toString().includes('"type":"logout"'))setImmediate(()=>child.emit('exit',0));});
  await game.stop();assert.equal(game.snapshot().launcherRunning,false);transport.close();
