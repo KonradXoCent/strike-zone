@@ -38,7 +38,7 @@ async function stopGame(game,client,child){
 test('Linux creates an authenticated loopback-only TCP handoff channel',{skip:process.platform!=='linux'},async()=>{
  
  const {transport,client,lines}=await makeLiveTransport();
- const server=await transport.connection;server.resume();
+ const server=await transport.connection;server.on('data',chunk=>server.write(chunk));server.resume();
  client.write('PING\n');
  assert.equal(await waitForLine(lines,line=>line==='PING'),'PING');
  server.write('PONG\n');
