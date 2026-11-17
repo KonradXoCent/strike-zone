@@ -1,0 +1,76 @@
+name: Build Zone Hub Debian package
+on:
+  push:
+    branches:
+      - debian/zonehub-0.1.27
+    paths:
+      - '.github/workflows/zonehub-debian.yml'
+      - 'scripts/build-platform-linux.cjs'
+      - 'platform/**'
+      - 'game/football/**'
+      - 'game/zombie/**'
+      - 'core/**'
+      - 'shared/**'
+      - 'assets/**'
+      - 'package*.json'
+      - 'tests/zone-hub-linux.test.cjs'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: zonehub-debian-0.1.27
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: debian/zonehub-0.1.27
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install project dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Generate and prepare bundled games
+        run: |
+          node scripts/ensure-generated.cjs
+          npm run prepare:game
+      - name: Test Zone Hub services and Linux launch integration
+        run: |
+          npm run test:platform
+          npm run check:ui
+          node --test tests/zone-hub-linux.test.cjs
+      - name: Build native Debian package
+        run: node scripts/build-platform-linux.cjs
+      - name: Verify Debian package metadata and contents
+        run: |
+          dpkg-deb --info dist-linux/zonehub.deb
+          dpkg-deb --contents dist-linux/zonehub.deb > dist-linux/package-contents.txt
+          grep -q '/opt/Zone Hub/zonehub' dist-linux/package-contents.txt
+          test -s dist-linux/zonehub-linux.yml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ZoneHub-Debian-0.1.27
+          path: |
+            dist-linux/zonehub.deb
+            dist-linux/zonehub-linux.yml
+            dist-linux/package-contents.txt
+          if-no-files-found: error
+          retention-days: 90
+      - name: Publish Debian beta release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: zonehub-debian-v0.1.27
+          name: Zone Hub Debian Beta 0.1.27
+          prerelease: true
+          draft: false
+          fail_on_unmatched_files: true
+          files: |
+            dist-linux/zonehub.deb
+            dist-linux/zonehub-linux.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
