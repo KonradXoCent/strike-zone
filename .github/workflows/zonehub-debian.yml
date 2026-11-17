@@ -52,9 +52,12 @@ jobs:
           dpkg-deb --contents dist-linux/zonehub.deb > dist-linux/package-contents.txt
           grep -q '/opt/Zone Hub/zonehub' dist-linux/package-contents.txt
           test -s dist-linux/zonehub-linux.yml
+      - name: Read Debian release version
+        id: release
+        run: echo "version=$(node -p \"require('./platform/package.json').version\")" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
         with:
-          name: ZoneHub-Debian-0.1.27
+          name: ZoneHub-Debian-${{ steps.release.outputs.version }}
           path: |
             dist-linux/zonehub.deb
             dist-linux/zonehub-linux.yml
@@ -64,8 +67,8 @@ jobs:
       - name: Publish Debian beta release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: zonehub-debian-v0.1.27
-          name: Zone Hub Debian Beta 0.1.27
+          tag_name: zonehub-debian-v${{ steps.release.outputs.version }}
+          name: Zone Hub Debian Beta ${{ steps.release.outputs.version }}
           prerelease: true
           draft: false
           fail_on_unmatched_files: true
