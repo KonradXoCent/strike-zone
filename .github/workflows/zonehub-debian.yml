@@ -39,11 +39,14 @@ jobs:
         run: |
           node scripts/ensure-generated.cjs
           npm run prepare:game
-      - name: Test Zone Hub services and Linux launch integration
+      - name: Test Zone Hub services and UI
         run: |
-          npm run test:platform
+          FILES=$(find tests -maxdepth 1 -type f -name 'zone-hub*.test.cjs' ! -name 'zone-hub-linux.test.cjs' -print)
+          node --test $FILES
           npm run check:ui
-          node --test tests/zone-hub-linux.test.cjs
+      - name: Test authenticated Wine IPC on Linux
+        timeout-minutes: 3
+        run: node --test tests/zone-hub-linux.test.cjs
       - name: Build native Debian package
         run: node scripts/build-platform-linux.cjs
       - name: Verify Debian package metadata and contents
