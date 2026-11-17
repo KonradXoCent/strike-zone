@@ -12,6 +12,9 @@ const { Controller: SocialController } = require('./shared/social.js');
 const { preferences } = require('./core/preferences.cjs');
 const { createAuthStorage } = require('./core/auth-storage.cjs');
 const { launcherBounds } = require('./core/window-size.cjs');
+// Wine/Chromium compatibility is enabled only by Zone Hub's Linux launcher.
+const wineCompatibility=process.argv.includes('--zonehub-wine-compat');
+if(wineCompatibility)app.disableHardwareAcceleration();
 const platformManaged=process.argv.includes('--zonehub-managed');
 const platformBridge=platformManaged?new(require('./core/platform-bridge.cjs').PlatformBridge)():null;
 if(require('./package.json').platformOnly===true&&!platformManaged)app.exit(1);
@@ -81,7 +84,7 @@ function createLauncher() {
     title: 'Strike Zone 2D — Launcher', titleBarStyle: 'hidden', backgroundColor: '#101418',
     icon: path.join(root,hauntStandalone?'assets/haunt-icon.png':royaleStandalone?'assets/royale-icon.png':'assets/icon.png'), show: false,
     webPreferences: { preload: path.join(root, 'preload.cjs'), contextIsolation: true,
-      nodeIntegration: false, sandbox: true, webSecurity: true, spellcheck: false }
+      nodeIntegration: false, sandbox: !wineCompatibility, webSecurity: true, spellcheck: false }
   });
   protectWindow(launcher, LAUNCHER_URL);
   launcher.once('ready-to-show', () => {if(!royaleStandalone)showManagedWindow(launcher);});
@@ -103,7 +106,7 @@ async function openGame() {
     title: productName, backgroundColor: '#10141b', autoHideMenuBar: true,
     icon: path.join(root,hauntStandalone?'assets/haunt-icon.png':royaleStandalone?'assets/royale-icon.png':'assets/icon.png'), show: false,
     webPreferences: { preload: path.join(root, 'game-preload.cjs'), contextIsolation: true,
-      nodeIntegration: false, sandbox: true, webSecurity: true, spellcheck: false,
+      nodeIntegration: false, sandbox: !wineCompatibility, webSecurity: true, spellcheck: false,
       backgroundThrottling: false }
   });
   const win = game;

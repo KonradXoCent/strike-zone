@@ -9,30 +9,53 @@ class ManagedGame extends EventEmitter{
  inventory(){this.write({type:'inventory'});}
  preferences(value){this.write({type:'preferences',preferences:{language:value.language,fullscreen:value.fullscreen}});}
  probe(command,args,timeout=8000){try{const result=this.spawnSyncProcess(command,args,{encoding:'utf8',timeout,windowsHide:true,stdio:['ignore','pipe','ignore']});return !result?.error&&result?.status===0;}catch{return false;}}
+ flatpakSupportsEnvFd(){
+  try{
+   const result=this.spawnSyncProcess(this.flatpakCommand,['run','--help'],{encoding:'utf8',timeout:5000,windowsHide:true,stdio:['ignore','pipe','pipe']});
+   return !result?.error&&result?.status===0&&/--env-fd(?:=|\\s|$)/.test(String(result.stdout||'')+' '+String(result.stderr||''));
+  }catch{return false;}
+ }
  wineLaunch(executable,transport){
-  if(this.probe(this.wineCommand,['--version']))return{command:this.wineCommand,args:[executable,'--zonehub-managed'],flatpak:false};
+  const compatibility=['--zonehub-wine-compat','--no-sandbox','--disable-gpu','--disable-gpu-compositing'];
+  if(this.probe(this.wineCommand,['--version']))return{command:this.wineCommand,args:[executable,'--zonehub-managed',...compatibility],flatpak:false};
   if(this.probe(this.flatpakCommand,['run','--command=wine',this.flatpakAppId,'--version'],15000)){
    const folder=path.dirname(executable),debug=process.env.WINEDEBUG||'-all',bridge=[];
-   if(transport?.env?.ZONEHUB_PIPE?.startsWith('tcp://')){
+   const usesTcp=transport?.env?.ZONEHUB_PIPE?.startsWith('tcp://');let envFd=null;
+   if(usesTcp){
     bridge.push('--share=network');
+    if(!this.flatpakSupportsEnvFd())throw Object.assign(Error('HUB_FLATPAK_ENV_FD_REQUIRED'),{code:'HUB_FLATPAK_ENV_FD_REQUIRED'});
+    envFd=3;
    }
-   return{command:this.flatpakCommand,args:['run',...bridge,`--filesystem=${folder}:ro`,`--env=WINEDEBUG=${debug}`,'--command=wine',this.flatpakAppId,executable,'--zonehub-managed'],flatpak:true};
+   return{command:this.flatpakCommand,args:['run',...bridge,`--filesystem=${folder}:ro`,`--env=WINEDEBUG=${debug}`,...(envFd?[`--env-fd=${envFd}`]:[]),'--command=wine',this.flatpakAppId,executable,'--zonehub-managed',...compatibility],flatpak:true,envFd};
   }
-  return{command:this.wineCommand,args:[executable,'--zonehub-managed'],flatpak:false};
+  return{command:this.wineCommand,args:[executable,'--zonehub-managed',...compatibility],flatpak:false};
  }
  async start(){
   if(this.child)return this.snapshot();if(this.starting)throw Error('HUB_STARTING');this.starting=true;
   try{
    await this.packages.check();if(!this.packages.snapshot().canPlay)throw Error('PACKAGE_REQUIRED');if(!await this.account.validate())throw Error('HUB_LOGIN');
    const transport=this.createTransport?await this.createTransport():null;this.transport=transport;
-   const env={...process.env,...transport?.env};for(const k of['ELECTRON_RUN_AS_NODE','ELECTRON_ENABLE_LOGGING','NODE_OPTIONS','ELECTRON_NO_ASAR'])delete env[k];env.ELECTRON_NO_ATTACH_CONSOLE='1';
-   const executable=this.packages.executable(),useWine=this.platform==='linux'&&/\.exe$/i.test(executable),launch=useWine?this.wineLaunch(executable,transport):{command:executable,args:['--zonehub-managed'],flatpak:false},command=launch.command,args=launch.args;if(useWine)env.WINEDEBUG=process.env.WINEDEBUG||'-all';const child=this.spawnProcess(command,args,{stdio:[transport?'ignore':'pipe','pipe','pipe'],windowsHide:false,shell:false,env});this.child=child;this.ready=false;const epoch=++this.epoch;
+   const executable=this.packages.executable(),useWine=this.platform==='linux'&&/\\.exe$/i.test(executable);
+   const launch=useWine?this.wineLaunch(executable,transport):{command:executable,args:['--zonehub-managed'],flatpak:false};
+   const command=launch.command,args=launch.args;
+   const env={...process.env,...(!launch.flatpak?transport?.env:{})};
+   for(const k of['ELECTRON_RUN_AS_NODE','ELECTRON_ENABLE_LOGGING','NODE_OPTIONS','ELECTRON_NO_ASAR'])delete env[k];
+   env.ELECTRON_NO_ATTACH_CONSOLE='1';if(useWine)env.WINEDEBUG=process.env.WINEDEBUG||'-all';
+   const stdio=launch.flatpak&&launch.envFd?['ignore','pipe','pipe','pipe']:[transport?'ignore':'pipe','pipe','pipe'];
+   const child=this.spawnProcess(command,args,{stdio,windowsHide:false,shell:false,env});
+   if(launch.flatpak&&launch.envFd){
+    const handoff=Object.entries(transport?.env||{}).map(([key,value])=>key+'='+value+String.fromCharCode(0)).join('');
+    const descriptor=child.stdio?.[launch.envFd];
+    if(!descriptor){child.kill();throw Object.assign(Error('HUB_FLATPAK_HANDOFF'),{code:'HUB_FLATPAK_HANDOFF'});}
+    descriptor.end(Buffer.from(handoff,'utf8'));
+   }
+   this.child=child;this.ready=false;const epoch=++this.epoch;
    const timer=setTimeout(()=>{if(this.child===child&&!this.ready){this.emit('error',Error('HUB_START_TIMEOUT'));this.stop();}},25000);
-   const makeReceiver=()=>{let buffer='';return chunk=>{buffer+=chunk.toString();if(buffer.length>64000){buffer='';return;}let i;while((i=buffer.indexOf('\n'))>=0){const line=buffer.slice(0,i);buffer=buffer.slice(i+1);if(!line.startsWith('ZONEHUB:'))continue;try{const m=JSON.parse(line.slice(8));if(m.type==='ready'&&m.userId===this.account.snapshot().user?.id){this.ready=true;clearTimeout(timer);}else if(m.type==='failed'){this.emit('error',Error('HUB_WINDOW'));this.stop();}else if(m.type==='game')this.gameRunning=m.running===true;else if(m.type==='logout-request')this.emit('logout');this.changed();}catch{}}};},receiveStdout=makeReceiver(),receiveStderr=makeReceiver();
+   const makeReceiver=()=>{let buffer='';return chunk=>{buffer+=chunk.toString();if(buffer.length>64000){buffer='';return;}let i;while((i=buffer.indexOf('\n'))>=0){const line=buffer.slice(0,i);buffer=buffer.slice(i+1);if(!line.startsWith('ZONEHUB:'))continue;try{const m=JSON.parse(line.slice(8));if(m.type==='ready'&&m.userId===this.account.snapshot().user?.id){this.ready=true;clearTimeout(timer);}else if(m.type==='failed'){this.emit('error',Error('HUB_WINDOW'));this.stop();}else if(m.type==='game')this.gameRunning=m.running===true;else if(m.type==='logout-request')this.emit('logout');this.changed();}catch{}}};},receiveTransport=makeReceiver(),receiveStdout=makeReceiver(),receiveStderr=makeReceiver();
    child.stdin?.on('error',()=>{});child.stderr.on('data',useWine&&!transport?receiveStderr:()=>{});child.stdout.on('data',transport?()=>{}:receiveStdout);
    const finish=()=>{clearTimeout(timer);if(this.epoch!==epoch)return;transport?.close();this.pipe=null;this.transport=null;this.child=null;this.ready=false;this.gameRunning=false;this.changed();};
    child.once('error',error=>{finish();if(useWine&&error.code==='ENOENT')this.emit('error',Object.assign(Error('HUB_WINE_MISSING'),{code:'HUB_WINE_MISSING'}));else this.emit('error',error);});child.once('exit',finish);
-   if(transport)transport.connection.then(socket=>{if(this.child!==child){socket.destroy();return;}this.pipe=socket;socket.on('error',()=>{});socket.on('data',receive);socket.once('close',()=>{if(this.child===child)this.stop();});socket.resume();this.session();}).catch(error=>{if(this.child===child){this.emit('error',error);this.stop();}});
+   if(transport)transport.connection.then(socket=>{if(this.child!==child){socket.destroy();return;}this.pipe=socket;socket.on('error',()=>{});socket.on('data',receiveTransport);socket.once('close',()=>{if(this.child===child)this.stop();});socket.resume();this.session();}).catch(error=>{if(this.child===child){this.emit('error',error);this.stop();}});
    else this.session();this.changed();return this.snapshot();
   }catch(error){if(!this.child){this.transport?.close();this.transport=null;}throw error;}finally{this.starting=false;}
  }

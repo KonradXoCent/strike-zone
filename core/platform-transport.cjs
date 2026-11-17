@@ -44,6 +44,23 @@ function connectChannel(env=process.env){
  else if(process.platform!=='win32'&&path.isAbsolute(address))socket=net.createConnection(address);
  else throw Error('HUB_HANDOFF');
  delete env.ZONEHUB_PIPE;delete env.ZONEHUB_PROOF;
- socket.on('error',()=>{});socket.once('connect',()=>socket.write(JSON.stringify({type:'hello',proof})+'\n'));return socket;
+ // The managed Electron process can send "ready" before TCP connects.
+ // Queue application writes so the one-time proof is always first.
+ const nativeWrite=socket.write.bind(socket),pending=[];let authenticated=false;
+ socket.write=(chunk,encoding,callback)=>{
+  if(typeof encoding==='function'){callback=encoding;encoding=undefined;}
+  if(authenticated)return encoding===undefined?nativeWrite(chunk,callback):nativeWrite(chunk,encoding,callback);
+  pending.push([chunk,encoding,callback]);return true;
+ };
+ socket.on('error',()=>{});
+ socket.once('connect',()=>{
+  nativeWrite(JSON.stringify({type:'hello',proof})+'\n');
+  authenticated=true;
+  for(const [chunk,encoding,callback] of pending){
+   if(encoding===undefined)nativeWrite(chunk,callback);else nativeWrite(chunk,encoding,callback);
+  }
+  pending.length=0;
+ });
+ return socket;
 }
 module.exports={createChannel,connectChannel};

@@ -12,7 +12,7 @@ Uaktualnienie wersji 0.1.14a zaakceptowanej po testach lokalnych.
 - Nowe duchy, dowody, rejestrator dźwięku z odsłuchem, bonusy fotograficzne, mgliste otoczenie.
 - Rozbudowany tryb obserwatora, ciała pozostające do końca śledztwa i upuszczanie sprzętu.
 - Polski i angielski interfejs.
-- Poprawiona komunikacja PlatformBridge podczas uruchamiania przez Wine: protokół Zone Hub korzysta ze stderr zamiast niedostępnego stdout, eliminując błąd EBADF. Wymagana jednakowa wersja klienta podczas rozgrywki wieloosobowej.
+- Poprawiona komunikacja PlatformBridge podczas uruchamiania przez Wine: uwierzytelniony kanał lokalny 127.0.0.1 działa niezależnie od uchwytów stdin/stdout, których może brakować okienkowym procesom Windows w Wine.
 - Poprawiony aparat fotograficzny w vanie: pewny odbiór przedmiotu, odświeżanie zapasów i synchronizacja zdjęć między członkami ekipy.
 - Poprawiona fizyka koszykówki w lobby 3D i kompletne testy wszystkich 20 map oraz 21 narzędzi.
 - Usprawniony test multiplayera trzech klientów, w tym wejście do drugiej wyprawy bez rozdzielenia ekipy.
@@ -23,6 +23,7 @@ Wersja przeznaczona do aktualizacji w bibliotece Zone Hub. Publikacja wymaga prz
 
 - Pakiet Windows zawiera obsługę uwierzytelnionego kanału loopback TCP z Zone Hub. Komunikacja nie korzysta ze standardowych uchwytów stdin/stdout, które mogą być niedostępne dla okienkowych procesów Windows w Wine.
 - Kanał nasłuchuje wyłącznie na 127.0.0.1, używa jednorazowego losowego potwierdzenia i przekazuje sesję poza argumentami procesu.
+- Tryb Wine uruchamia Electron bez akceleracji GPU oraz wyłącza sandbox Chromium wyłącznie dla tego procesu. Włączone pozostają context isolation, web security, blokada nawigacji i wyłączony Node Integration.
 - Aktualizacja jest dostarczana przez bibliotekę Zone Hub i nie wymaga ponownej instalacji launchera.
 
 ## Status wydania

@@ -7,5 +7,6 @@ Zone Royale 0.1.11
 
 Zmiany techniczne 0.1.11:
 - Pakiet Windows obsługuje uwierzytelniony kanał loopback TCP z Zone Hub. Handoff sesji nie używa standardowych uchwytów stdin/stdout, które mogą być niedostępne dla okienkowych procesów Windows w Wine.
+- Tryb Wine uruchamia Electron z renderowaniem programowym i bez sandboxa Chromium, zachowując izolację kontekstu, web security, wyłączony Node Integration i ograniczenia nawigacji.
 - Kanał jest ograniczony do 127.0.0.1 i korzysta z jednorazowego, losowego potwierdzenia; token konta nie trafia do argumentów procesu.
 - Aktualizacja jest dostępna w bibliotece Zone Hub bez ponownego instalowania platformy. Cała ekipa powinna zaktualizować Zone Royale przed wspólną grą.

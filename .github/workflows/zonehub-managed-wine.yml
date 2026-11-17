@@ -6,6 +6,9 @@ on:
     paths:
       - '.github/workflows/zonehub-managed-wine.yml'
       - 'core/**'
+      - 'main.cjs'
+      - 'preload.cjs'
+      - 'game-preload.cjs'
       - 'game/managed-version.json'
       - 'scripts/build-managed.cjs'
       - 'scripts/prepare-game.cjs'
