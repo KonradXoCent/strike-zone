@@ -65,7 +65,7 @@ async function main(){
      'libgbm1',
      'libasound2 | libasound2t64'
     ],
-    recommends:['wine','libappindicator3-1'],
+    recommends:['flatpak','libappindicator3-1'],
     priority:'optional',
     packageCategory:'games',
     maintainer:'Konrad Xocent',
