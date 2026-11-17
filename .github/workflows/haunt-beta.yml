@@ -1,8 +1,8 @@
 name: Zone Haunt standalone game update
 on:
   push:
-    branches: [feature/zonehub-online-updates, release/zone-haunt-0.1.15]
-    paths: ['game/haunt/**', 'game/haunt-version.json', 'database/zone-haunt.sql', 'database/haunt-progression.sql', 'database/haunt-research.sql', 'database/haunt-operations.sql', 'database/haunt-fieldwork.sql', 'database/haunt-expeditions.sql', 'shared/money.js', 'scripts/*haunt*', 'tests/haunt*', '.github/workflows/haunt-beta.yml']
+    branches: [feature/zonehub-online-updates, release/zone-haunt-0.1.15, debian/zonehub-0.1.27]
+    paths: ['game/haunt/**', 'game/haunt-version.json', 'core/**', 'main.cjs', 'game-preload.cjs', 'database/zone-haunt.sql', 'database/haunt-progression.sql', 'database/haunt-research.sql', 'database/haunt-operations.sql', 'database/haunt-fieldwork.sql', 'database/haunt-expeditions.sql', 'shared/money.js', 'scripts/*haunt*', 'tests/haunt*', '.github/workflows/haunt-beta.yml']
   workflow_dispatch:
 permissions:
   contents: write
@@ -27,6 +27,8 @@ jobs:
         run: node --test tests/haunt*.test.cjs tests/zone-hub-cosmetics.test.cjs
       - name: Verify direct Zone Hub SSO
         run: node scripts/zone-hub-handoff-smoke.cjs --haunt
+      - name: Check Linux Wine bridge regression
+        run: node --test tests/zone-hub-linux.test.cjs
       - name: Verify stable planning scroll and the first-person renderer
         run: node scripts/haunt-graphics-smoke.cjs
       - name: Verify basements, marked rooms, bone retrieval and photo bonuses
