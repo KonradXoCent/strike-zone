@@ -13,7 +13,7 @@ class ManagedGame extends EventEmitter{
   if(this.probe(this.wineCommand,['--version']))return{command:this.wineCommand,args:[executable,'--zonehub-managed'],flatpak:false};
   if(this.probe(this.flatpakCommand,['run','--command=wine',this.flatpakAppId,'--version'],15000)){
    const folder=path.dirname(executable),debug=process.env.WINEDEBUG||'-all';
-   return{command:this.flatpakCommand,args:['run',`--filesystem=${folder}:ro`,`--env=WINEDEBUG=${debug}`,'--command=wine',this.flatpakAppId,executable,'--zonehub-managed'],flatpak:true};
+   return{command:this.flatpakCommand,args:['run',`--filesystem=${folder}:ro`,`--env=WINEDEBUG=${debug}`,'--env=ZONEHUB_BRIDGE_USE_STDERR=1','--command=wine',this.flatpakAppId,executable,'--zonehub-managed'],flatpak:true};
   }
   return{command:this.wineCommand,args:[executable,'--zonehub-managed'],flatpak:false};
  }
