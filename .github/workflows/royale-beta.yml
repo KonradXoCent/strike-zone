@@ -1,8 +1,8 @@
 name: Zone Royale standalone game update
 on:
   push:
-    branches: [feature/zonehub-online-updates]
-    paths: ['game/royale*', 'shared/royale*', 'database/zone-royale*', 'scripts/*royale*', 'scripts/publish-haunt.cjs', 'tests/royale*', '.github/workflows/royale-beta.yml']
+    branches: [feature/zonehub-online-updates, debian/zonehub-0.1.27]
+    paths: ['game/royale*', 'core/**', 'main.cjs', 'game-preload.cjs', 'shared/royale*', 'database/zone-royale*', 'scripts/*royale*', 'scripts/publish-haunt.cjs', 'tests/royale*', '.github/workflows/royale-beta.yml']
   workflow_dispatch:
 permissions:
   contents: write
@@ -36,6 +36,8 @@ jobs:
           node scripts/royale-identity-smoke.cjs
       - name: Verify direct Zone Hub account handoff
         run: node scripts/zone-hub-handoff-smoke.cjs --royale --wallet
+      - name: Check Linux Wine bridge regression
+        run: node --test tests/zone-hub-linux.test.cjs
       - name: Build only Zone Royale
         run: node scripts/build-managed.cjs --royale
       - name: Install and inspect the real Windows package
