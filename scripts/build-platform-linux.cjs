@@ -45,7 +45,7 @@ async function main(){
    linux:{
     target:['deb'],
     executableName:'zonehub',
-    icon:'assets/icon.png',
+    icon:'assets/hub-icon.png',
     category:'Game',
     synopsis:'Launcher gier Zone Hub',
     description:'Zone Hub — launcher, biblioteka, sklep i Zone Studio dla gier Zone.',
