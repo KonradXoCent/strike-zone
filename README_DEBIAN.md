@@ -1,6 +1,6 @@
 # Zone Hub for Debian
 
-This branch adds a native amd64 Debian package for Zone Hub 0.1.28.
+This branch adds a native amd64 Debian package for Zone Hub 0.1.29.
 
 ## Build
 
