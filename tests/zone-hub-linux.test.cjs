@@ -35,8 +35,8 @@ async function stopGame(game,client,child){
  client.destroy();game.transport?.close();
 }
 
-test('Linux creates an authenticated loopback-only TCP handoff channel',async()=>{
- if(process.platform!=='linux')return;
+test('Linux creates an authenticated loopback-only TCP handoff channel',{skip:process.platform!=='linux'},async()=>{
+ 
  const {transport,client,lines}=await makeLiveTransport();
  const server=await transport.connection;server.resume();
  client.write('PING\\n');
@@ -46,7 +46,7 @@ test('Linux creates an authenticated loopback-only TCP handoff channel',async()=
  client.destroy();transport.close();
 });
 
-test('Wine GUI handoff does not require inherited stdin or stdout handles',async()=>{
+test('Wine GUI handoff does not require inherited stdin or stdout handles',{skip:process.platform!=='linux'},async()=>{
  if(process.platform!=='linux')return;
  const transport=await createChannel();
  const code=`
@@ -64,7 +64,7 @@ test('Wine GUI handoff does not require inherited stdin or stdout handles',async
  transport.close();
 });
 
-test('Debian launches Windows game through system Wine using the private channel, not stdio',async()=>{
+test('Debian launches Windows game through system Wine using the private channel, not stdio',{skip:process.platform!=='linux'},async()=>{
  const {transport,client,lines}=await makeLiveTransport();let command,args,options,child;
  const game=setup({createTransport:async()=>transport,spawnSyncProcess:(cmd,argv)=>({status:cmd==='/usr/bin/wine'&&argv[0]==='--version'?0:1}),spawnProcess:(cmd,argv,opts)=>{command=cmd;args=argv;options=opts;child=childProcess();return child;}});
  game.on('error',error=>{throw error;});await game.start();
@@ -80,7 +80,7 @@ test('Debian launches Windows game through system Wine using the private channel
  assert.equal(game.snapshot().launcherRunning,false);
 });
 
-test('Debian passes the loopback channel and network permission into Flathub Wine',async()=>{
+test('Debian passes the loopback channel and network permission into Flathub Wine',{skip:process.platform!=='linux'},async()=>{
  const {transport,client,lines}=await makeLiveTransport();let command,args,options,child;
  const game=setup({createTransport:async()=>transport,spawnSyncProcess:(cmd,argv)=>{
   if(cmd==='/usr/bin/wine')return{status:1,error:Object.assign(new Error('not found'),{code:'ENOENT'})};
@@ -98,7 +98,7 @@ test('Debian passes the loopback channel and network permission into Flathub Win
  await stopGame(game,client,child);assert.equal(game.snapshot().launcherRunning,false);
 });
 
-test('Debian reports a clear Wine installation error when neither system Wine nor Flathub Wine is present',async()=>{
+test('Debian reports a clear Wine installation error when neither system Wine nor Flathub Wine is present',{skip:process.platform!=='linux'},async()=>{
  let child;const game=setup({spawnSyncProcess:()=>({status:1,error:Object.assign(new Error('not found'),{code:'ENOENT'})}),spawnProcess:()=>{child=childProcess();setImmediate(()=>child.emit('error',Object.assign(new Error('spawn wine ENOENT'),{code:'ENOENT'})));return child;}});
  const failed=once(game,'error');await game.start();const [error]=await failed;
  assert.equal(error.code,'HUB_WINE_MISSING');assert.equal(error.message,'HUB_WINE_MISSING');
