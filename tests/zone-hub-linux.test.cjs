@@ -3,6 +3,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {EventEmitter,once}=require('node:events');
 const {PassThrough}=require('node:stream');
+const {spawnSync}=require('node:child_process');
 const {ManagedGame}=require('../platform/core/game.cjs');
 
 function setup({spawnProcess,spawnSyncProcess=(_command,args)=>({status:args?.[0]==='--version'?0:1}),platform='linux'}={}){
@@ -28,8 +29,9 @@ test('Debian launches downloaded Windows game packages through system Wine and k
  assert.deepEqual(args,['/home/test/.config/ZoneHub/games/strike-zone/versions/hash/StrikeZone.exe','--zonehub-managed']);
  assert.equal(options.shell,false);
  assert.equal(options.stdio[0],'pipe');
+ assert.equal(options.env.ZONEHUB_BRIDGE_USE_STDERR,'1');
  assert(child.stdin.read().toString().includes('TEST_ACCESS'));
- child.stdout.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\n');
+ child.stderr.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\n');
  assert.equal(game.snapshot().ready,true);
  child.stdin.on('data',chunk=>{if(chunk.toString().includes('"type":"logout"'))setImmediate(()=>child.emit('exit',0));});
  await game.stop();
@@ -67,4 +69,17 @@ test('Debian reports a clear Wine installation error when neither system Wine no
  const [error]=await failed;
  assert.equal(error.code,'HUB_WINE_MISSING');
  assert.equal(error.message,'HUB_WINE_MISSING');
+});
+
+test('Wine PlatformBridge does not access invalid stdout and sends protocol over stderr',()=>{
+ const code=`
+  Object.defineProperty(process,'stdout',{configurable:true,get(){throw Object.assign(new Error('open EBADF'),{code:'EBADF'});}});
+  const {PlatformBridge}=require('./core/platform-bridge.cjs');
+  const bridge=new PlatformBridge();
+  bridge.send('ready',{userId:'user-1'});
+ `;
+ const result=spawnSync(process.execPath,['-e',code],{cwd:require('node:path').join(__dirname,'..'),encoding:'utf8',env:{...process.env,ZONEHUB_BRIDGE_USE_STDERR:'1'}});
+ assert.equal(result.status,0,result.stderr||result.error?.message);
+ assert.match(result.stderr,/ZONEHUB:.*"type":"ready".*"userId":"user-1"/);
+ assert.equal(result.stdout,'');
 });
