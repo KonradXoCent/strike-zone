@@ -1,6 +1,6 @@
 # Zone Hub for Debian
 
-This branch adds a native amd64 Debian package for Zone Hub 0.1.29.
+This branch builds a native amd64 Debian package for Zone Hub 0.1.30.
 
 ## Build
 
@@ -21,7 +21,7 @@ After the release artifact has been published:
 sudo apt install ./zonehub.deb
 ```
 
-Strike Zone 2D, Zone Royale and Zone Haunt are currently distributed as Windows game packages. On Linux, the launcher starts them with either system Wine or the Flathub Wine app (`org.winehq.Wine`). If both are installed, system Wine is preferred. For Flatpak Wine, Zone Hub grants read-only access only to the selected game's version directory; it does not grant access to the whole home directory.
+Strike Zone 2D, Zone Royale and Zone Haunt are Windows game packages launched through system Wine or the Flathub Wine app (`org.winehq.Wine`). The Linux launcher sends the account session over a one-shot authenticated TCP channel bound only to `127.0.0.1`; the session token is not placed in process arguments or environment variables. For Flathub Wine, Zone Hub grants network access for this loopback channel and read-only access only to the selected game's version directory. It does not grant access to the whole home directory.
 
 To install the Flathub version:
 
@@ -37,5 +37,5 @@ The Linux build uses the independent `zonehub-debian-v*` update channel and Linu
 
 - Debian amd64 package; this is not an ARM build.
 - Existing Supabase accounts, wallet, catalog and cloud pack management are unchanged.
-- The Linux 0.1.28 release includes Zone Hub 0.1.27 / Zone Football 0.6.1 content with Linux launcher fixes for system and Flathub Wine.
+- Zone Hub 0.1.30 includes the Wine GUI IPC handoff fix. The Windows game packages receive matching content-only updates.
 - Wine compatibility of the Windows-only game packages must be confirmed on the target Debian machine; Windows packages are not native Linux builds.
