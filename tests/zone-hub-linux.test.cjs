@@ -48,7 +48,7 @@ test('Debian detects Flathub Wine and grants it read-only access to the selected
  game.on('error',error=>{throw error;});
  await game.start();
  assert.equal(command,'flatpak');
- assert.deepEqual(args,['run','--filesystem=/home/test/.config/ZoneHub/games/strike-zone/versions/hash:ro','--env=WINEDEBUG=-all','--command=wine','org.winehq.Wine',executable,'--zonehub-managed']);
+ assert.deepEqual(args,['run','--filesystem=/home/test/.config/ZoneHub/games/strike-zone/versions/hash:ro','--env=WINEDEBUG=-all','--env=ZONEHUB_BRIDGE_USE_STDERR=1','--command=wine','org.winehq.Wine',executable,'--zonehub-managed']);
  assert.equal(options.shell,false);
  assert.equal(options.stdio[0],'pipe');
  assert.equal(options.env.ZONEHUB_BRIDGE_USE_STDERR,'1');
