@@ -59,8 +59,9 @@ test('Wine GUI handoff does not require inherited stdin or stdout handles',{skip
  `;
  const child=spawn(process.execPath,['-e',code],{cwd:path.join(__dirname,'..'),env:{...process.env,...transport.env},stdio:['ignore','pipe','pipe']});
  const server=await transport.connection;const lines=readLines(server);server.resume();
+ const exited=once(child,'exit');
  await waitForLine(lines,line=>line.includes('"type":"ready"')&&line.includes('"userId":"user-1"'));
- const [codeValue]=await once(child,'exit');assert.equal(codeValue,0);
+ const [codeValue]=await exited;assert.equal(codeValue,0);
  transport.close();
 });
 
