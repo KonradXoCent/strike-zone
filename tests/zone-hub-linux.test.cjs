@@ -30,6 +30,7 @@ test('Debian launches downloaded Windows game packages through system Wine and k
  assert.equal(options.shell,false);
  assert.equal(options.stdio[0],'pipe');
  assert.equal(options.env.ZONEHUB_BRIDGE_USE_STDERR,'1');
+ assert.equal(options.env.ZONEHUB_BRIDGE_USE_STDERR,'1');
  assert(child.stdin.read().toString().includes('TEST_ACCESS'));
  child.stderr.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\n');
  assert.equal(game.snapshot().ready,true);
@@ -51,8 +52,9 @@ test('Debian detects Flathub Wine and grants it read-only access to the selected
  assert.deepEqual(args,['run','--filesystem=/home/test/.config/ZoneHub/games/strike-zone/versions/hash:ro','--env=WINEDEBUG=-all','--command=wine','org.winehq.Wine',executable,'--zonehub-managed']);
  assert.equal(options.shell,false);
  assert.equal(options.stdio[0],'pipe');
+ assert.equal(options.env.ZONEHUB_BRIDGE_USE_STDERR,'1');
  assert(child.stdin.read().toString().includes('TEST_ACCESS'));
- child.stdout.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\n');
+ child.stderr.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\n');
  assert.equal(game.snapshot().ready,true);
  child.stdin.on('data',chunk=>{if(chunk.toString().includes('"type":"logout"'))setImmediate(()=>child.emit('exit',0));});
  await game.stop();
