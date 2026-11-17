@@ -1,0 +1,61 @@
+name: Build Wine-compatible managed Strike Zone package
+on:
+  push:
+    branches:
+      - debian/zonehub-0.1.27
+    paths:
+      - '.github/workflows/zonehub-managed-wine.yml'
+      - 'core/**'
+      - 'game/managed-version.json'
+      - 'scripts/build-managed.cjs'
+      - 'scripts/prepare-game.cjs'
+      - 'package*.json'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: zonehub-managed-wine
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: debian/zonehub-0.1.27
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install project dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Prepare the game and bundled SDK
+        run: npm run prepare:game
+      - name: Test source and platform bridge
+        run: |
+          npm test
+          npm run check:ui
+      - name: Build managed Windows game and content-only update
+        run: node scripts/build-managed.cjs --beta
+      - name: Read managed release version
+        id: release
+        shell: pwsh
+        run: |
+          $meta = Get-Content game/managed-version.json -Raw | ConvertFrom-Json
+          "version=$($meta.version)" >> $env:GITHUB_OUTPUT
+          "tag=$($meta.releaseTag)" >> $env:GITHUB_OUTPUT
+      - name: Publish managed game package for Zone Hub
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release.outputs.tag }}
+          name: Strike Zone 2D Zone Hub compatibility ${{ steps.release.outputs.version }}
+          prerelease: true
+          draft: false
+          fail_on_unmatched_files: true
+          files: |
+            dist-managed/StrikeZone-Platform-${{ steps.release.outputs.version }}.zip
+            dist-managed/StrikeZone-Content-${{ steps.release.outputs.version }}.zip
+            dist-managed/zonehub-game-manifest.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
