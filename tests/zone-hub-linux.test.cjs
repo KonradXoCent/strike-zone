@@ -24,6 +24,14 @@ function readLines(stream){
 async function waitForLine(lines,predicate,timeout=5000){
  const started=Date.now();while(Date.now()-started<timeout){const found=lines.find(predicate);if(found)return found;await new Promise(resolve=>setTimeout(resolve,10));}throw Error('Timed out waiting for protocol line');
 }
+async function waitForReady(game,timeout=5000){
+ if(game.snapshot().ready)return;
+ await new Promise((resolve,reject)=>{
+  const timer=setTimeout(()=>{game.removeListener('state',check);reject(Error('Timed out waiting for Zone Hub ready state'));},timeout);
+  const check=state=>{if(state.ready){clearTimeout(timer);game.removeListener('state',check);resolve();}};
+  game.on('state',check);
+ });
+}
 async function makeLiveTransport(){
  const transport=await createChannel();
  const client=connectChannel({...transport.env});
@@ -80,7 +88,7 @@ test('Debian launches Windows game through system Wine using the private channel
  const session=await waitForLine(lines,line=>line.includes('"type":"session"'));
  assert(session.includes('TEST_ACCESS'));assert(!args.join(' ').includes('TEST_ACCESS'));
  client.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\n');
- await waitForLine(lines,line=>line.includes('"type":"ready"'));
+ await waitForReady(game);
  assert.equal(game.snapshot().ready,true);
  await stopGame(game,client,child);
  assert.equal(game.snapshot().launcherRunning,false);
@@ -110,7 +118,7 @@ test('Debian passes the loopback channel and network permission into Flathub Win
  assert(fdData.includes('ZONEHUB_PROOF='+transport.env.ZONEHUB_PROOF+String.fromCharCode(0)));
  const session=await waitForLine(lines,line=>line.includes('"type":"session"'));assert(session.includes('TEST_ACCESS'));
  client.write('ZONEHUB:'+JSON.stringify({type:'ready',userId:'user-1'})+'\n');
- await waitForLine(lines,line=>line.includes('"type":"ready"'));assert.equal(game.snapshot().ready,true);
+ await waitForReady(game);assert.equal(game.snapshot().ready,true);
  await stopGame(game,client,child);assert.equal(game.snapshot().launcherRunning,false);
 });
 
